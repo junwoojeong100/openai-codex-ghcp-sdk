@@ -1,6 +1,6 @@
 # OpenAI Codex × GitHub Copilot SDK
 
-[English](README.md) · [구조](docs/ARCHITECTURE_KO.md) · [호환성](docs/COMPATIBILITY_KO.md)
+[English](README.md) · [구조](docs/ARCHITECTURE_KO.md) · [호환성](docs/COMPATIBILITY_KO.md) · [네이티브 검증](docs/NATIVE_SCENARIOS_KO.md)
 
 공식 **Codex CLI**에서 **GitHub Copilot 계정의 모델**을 사용하기 위한 로컬 Responses API 변환기입니다.
 
@@ -189,7 +189,19 @@ npm test
 ./bin/ghcp-doctor
 ```
 
-`npm test`는 Node 내장 테스트 러너, fake SDK, 루프백 HTTP만 사용하며 실제 모델을 호출하지 않습니다. 실제 Codex 실행은 별도이며 Copilot 인증이 필요합니다. 공유 검증 실행기나 이웃 프로젝트의 테스트 결과는 사용하지 않습니다.
+`npm test`는 Node 내장 테스트 러너, 테스트 대역, 소유한 하위 프로세스와 루프백 HTTP를 사용하며 실제 모델을 호출하지 않습니다. 네이티브 검증 실행기는 옆 `claude-code-ghcp-sdk`의 시나리오 설계를 Codex에 대응시키되, 그 실행기나 실모델 성공 증거를 가져오지 않습니다.
+
+```bash
+npm run test:scenarios       # 69개 기능 / 207개 네이티브 시나리오 계약
+npm run test:runner:prepare  # 드라이버 준비 상태; 공백이 있으면 종료 코드 1
+npm run test:runner:runtime  # 실제 고정 버전 Codex, 합성 catalog, 모델 호출 없음
+npm run test:runner:drivers  # 실제 Codex + scripted SDK; 실모델 호환성 점수 없음
+```
+
+[시나리오·대응표](docs/NATIVE_SCENARIOS_KO.md)와 [실행 방법](docs/EXHAUSTIVE_TESTING_KO.md)에
+7모델 전체 결과표, 사전 점검 증명과 명시적 실모델 실행 명령을 설명했습니다.
+전체 acceptance는 모든 드라이버·판정기가 준비되어야 하므로 현재는 실행 전 차단됩니다.
+선택 진단의 일부 성공이나 별도 보조 `test:e2e:protocol`을 전체 네이티브 검증으로 보고하지 않습니다.
 
 실제 연결 검증 기록: [2026-09-20 검증 리포트](docs/VALIDATION_REPORT_2026-09-20_KO.md). `gpt-6-astra`로 수행한 결과이며, 당시 버전·환경과 검증 범위에 한정됩니다.
 

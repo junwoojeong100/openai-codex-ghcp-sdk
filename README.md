@@ -1,6 +1,6 @@
 # OpenAI Codex × GitHub Copilot SDK
 
-[한국어](README_KO.md) · [Architecture](docs/ARCHITECTURE.md) · [Compatibility](docs/COMPATIBILITY.md)
+[한국어](README_KO.md) · [Architecture](docs/ARCHITECTURE.md) · [Compatibility](docs/COMPATIBILITY.md) · [Native validation](docs/NATIVE_SCENARIOS.md)
 
 Run the official **Codex CLI** against models available through your **GitHub Copilot** account, using a local Responses API adapter.
 
@@ -189,7 +189,19 @@ npm test
 ./bin/ghcp-doctor
 ```
 
-`npm test` uses Node's built-in test runner, a fake SDK and loopback HTTP; it does not make paid model calls. Real Codex runs are separate and require Copilot authentication. No shared validation harness or neighboring project's test results are used.
+`npm test` uses Node's built-in test runner, test doubles, owned subprocesses and loopback HTTP; it does not call real models. The native validation harness adapts the neighboring `claude-code-ghcp-sdk` scenario design without importing its runtime or live results.
+
+```bash
+npm run test:scenarios       # 69 features / 207 native scenario contracts
+npm run test:runner:prepare  # Driver readiness; exits 1 while gaps remain
+npm run test:runner:runtime  # Real pinned Codex, synthetic catalog, no model calls
+npm run test:runner:drivers  # Real Codex + scripted SDK, no live compatibility credit
+```
+
+See [native scenarios and readiness](docs/NATIVE_SCENARIOS.md) for the seven-model matrix,
+source-bound preparation checks and explicit live execution. Full acceptance requires every
+driver/evaluator and currently remains gated; a selected diagnostic run is not a full pass.
+The separate `test:e2e:protocol` suite does not replace native validation.
 
 Live validation record: [2026-09-20 validation report](docs/VALIDATION_REPORT_2026-09-20.md). Results cover `gpt-6-astra` only for live inference and are limited to the versions, environment and scope recorded in the report.
 
