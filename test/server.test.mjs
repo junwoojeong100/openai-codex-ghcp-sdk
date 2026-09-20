@@ -7,7 +7,7 @@ import { BridgeRequestError, normalizeRequest } from "../src/request-policy.mjs"
 const model = "gpt-6-astra";
 const token = "local-test-token-not-a-github-credential";
 
-async function setup(t, overrides = {}) {
+async function setup(t, overrides = {}, serverOptions = {}) {
   const manager = {
     preferredModel: model,
     listModels: () => [{ id: model }, { id: "claude-haiku-4.5", policy: { state: "disabled" } }],
@@ -19,7 +19,7 @@ async function setup(t, overrides = {}) {
     },
     ...overrides,
   };
-  const server = createBridgeServer({ manager, apiKey: token, instanceId: "test-instance", maxBodyBytes: 1024 });
+  const server = createBridgeServer({ manager, apiKey: token, instanceId: "test-instance", maxBodyBytes: 1024, ...serverOptions });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   t.after(async () => {
     server.abortActiveRequests();
@@ -72,6 +72,13 @@ test("invalid JSON, oversized bodies, compression and unsupported routes fail be
   assert.equal((await post({ input: "hello" }, { headers: { "content-encoding": "zstd" } })).status, 415);
   assert.equal((await request("/v1/responses/compact", { method: "POST" })).status, 400);
   assert.equal((await request("/v1/unknown")).status, 404);
+});
+
+test("default body limit accepts requests above the former 25 MiB cap", async (t) => {
+  const { post } = await setup(t, {}, { maxBodyBytes: undefined });
+  const response = await post({ model, input: "x".repeat(25 * 1024 * 1024 + 1), stream: false });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).status, "completed");
 });
 
 test("request policy failures return JSON before SSE headers are sent", async (t) => {
@@ -127,4 +134,22 @@ test("direct-server configuration requires auth, loopback, valid limits and one 
   const config = bridgeConfig({ BRIDGE_API_KEY: token, PORT: "0" });
   assert.equal(config.port, 0);
   assert.equal(config.preferredModel, model);
+});
+
+test("body and replay limits default to 256 MiB and honor explicit overrides", () => {
+  const defaults = bridgeConfig({ BRIDGE_API_KEY: token });
+  assert.equal(defaults.maxBodyBytes, 256 * 1024 * 1024);
+  assert.equal(defaults.managerOptions.maxReplayBytes, 256 * 1024 * 1024);
+
+  const overrides = bridgeConfig({ BRIDGE_API_KEY: token, MAX_BODY_BYTES: "2048", MAX_REPLAY_BYTES: "512" });
+  assert.equal(overrides.maxBodyBytes, 2048);
+  assert.equal(overrides.managerOptions.maxReplayBytes, 512);
+});
+
+test("byte limit overrides must remain positive safe integers", () => {
+  for (const name of ["MAX_BODY_BYTES", "MAX_REPLAY_BYTES"]) {
+    for (const value of ["0", "-1", "1.5", "Infinity", String(Number.MAX_SAFE_INTEGER + 1)]) {
+      assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, [name]: value }), new RegExp(name));
+    }
+  }
 });

@@ -3,6 +3,7 @@ import path from "node:path";
 import { randomUUID, timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
+import { DEFAULT_MAX_BODY_BYTES, DEFAULT_MAX_REPLAY_BYTES } from "./limits.mjs";
 import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog } from "./model-map.mjs";
 import { BridgeRequestError } from "./request-policy.mjs";
 import { ResponsesStream, createResponse } from "./responses.mjs";
@@ -67,7 +68,7 @@ export function createBridgeServer({
   manager,
   apiKey,
   instanceId = null,
-  maxBodyBytes = 25 * 1024 * 1024,
+  maxBodyBytes = DEFAULT_MAX_BODY_BYTES,
   onDiagnostic = () => {},
 }) {
   if (!apiKey || typeof apiKey !== "string") throw new Error("BRIDGE_API_KEY is required.");
@@ -184,7 +185,7 @@ export function bridgeConfig(env = process.env) {
     host, port, preferredModel,
     apiKey: env.BRIDGE_API_KEY,
     instanceId: env.BRIDGE_INSTANCE_ID || null,
-    maxBodyBytes: integerEnv(env, "MAX_BODY_BYTES", 25 * 1024 * 1024),
+    maxBodyBytes: integerEnv(env, "MAX_BODY_BYTES", DEFAULT_MAX_BODY_BYTES),
     managerOptions: {
       preferredModel,
       logLevel: env.LOG_LEVEL || "error",
@@ -193,7 +194,7 @@ export function bridgeConfig(env = process.env) {
       pendingToolWaitMs: integerEnv(env, "PENDING_TOOL_WAIT_MS", 10_000),
       stateIdleTtlMs: integerEnv(env, "STATE_IDLE_TTL_MS", 30 * 60_000),
       maxStates: integerEnv(env, "MAX_STATES", 64),
-      maxReplayBytes: integerEnv(env, "MAX_REPLAY_BYTES", 256 * 1024),
+      maxReplayBytes: integerEnv(env, "MAX_REPLAY_BYTES", DEFAULT_MAX_REPLAY_BYTES),
       maxToolResults: integerEnv(env, "MAX_TOOL_RESULTS", 32),
     },
   };

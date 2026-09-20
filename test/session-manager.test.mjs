@@ -423,6 +423,35 @@ test("SDK subagent text is not forwarded as the root assistant output", async (t
   assert.equal(forwarded.length, 1);
 });
 
+test("default replay limit accepts histories above the former 256 KiB cap", async (t) => {
+  const { manager, client } = await setup(t);
+  assert.equal(manager.maxReplayBytes, 256 * 1024 * 1024);
+  const input = "x".repeat(256 * 1024 + 1);
+  const result = await manager.execute(body(input), headers("large-history"));
+  assert.equal(client.sessions[0].sent[0].prompt, input);
+  assert.equal(result.messages[0].content, `reply:${input}`);
+});
+
+test("explicit history limits still count UTF-8 bytes rather than characters", async (t) => {
+  const { manager, client } = await setup(t, { maxReplayBytes: 100 });
+  const request = body("한".repeat(30));
+  const serialized = JSON.stringify(normalizeRequest(request).input);
+  assert.ok(serialized.length < 100);
+  assert.ok(Buffer.byteLength(serialized) > 100);
+  await assert.rejects(manager.execute(request), { status: 413, code: "history_too_large" });
+  assert.equal(client.sessions.length, 0);
+});
+
+test("explicit history limits still include generated output", async (t) => {
+  const { manager, client } = await setup(t, { maxReplayBytes: 100 }, {
+    onSend: (session) => session.reply("x".repeat(100)),
+  });
+  await assert.rejects(manager.execute(body("hi")), { status: 413, code: "history_too_large" });
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(client.sessions[0].aborted, 1);
+  assert.equal(manager.states.size, 0);
+});
+
 test("history and model limits are checked before sending any prompt", async (t) => {
   const { manager, client } = await setup(t, { maxReplayBytes: 100 });
   await assert.rejects(manager.execute(body("x".repeat(100))), { code: "history_too_large" });

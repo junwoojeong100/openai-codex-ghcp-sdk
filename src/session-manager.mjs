@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { CopilotClient, defineTool } from "@github/copilot-sdk";
 
 import { resolveCopilotHome } from "./copilot-home.mjs";
+import { DEFAULT_MAX_REPLAY_BYTES } from "./limits.mjs";
 import {
   abortSession,
   deleteClientSession,
@@ -163,7 +164,7 @@ export class SessionManager {
     pendingToolWaitMs = 10_000,
     stateIdleTtlMs = 30 * 60_000,
     maxStates = 64,
-    maxReplayBytes = 256 * 1024,
+    maxReplayBytes = DEFAULT_MAX_REPLAY_BYTES,
     maxToolResults = 32,
     onDiagnostic = () => {},
   } = {}) {

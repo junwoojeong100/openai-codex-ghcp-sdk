@@ -180,6 +180,8 @@ See [Compatibility](docs/COMPATIBILITY.md) before relying on advanced Codex feat
 | Unsupported input or transport | Use the launcher defaults and text-only requests. Upgrading Codex can introduce new request forms. |
 | Custom tool parse error | Grammar is advisory through the SDK, not native constrained decoding. Try again or choose another allowed model; raw tool text is never silently rewritten. |
 
+Both the serialized conversation-history limit (`MAX_REPLAY_BYTES`) and HTTP request-body limit (`MAX_BODY_BYTES`) default to **268,435,456 bytes (256 MiB)**. These are finite bridge safeguards, not model context-window limits; very large conversations can still exceed available memory or the upstream model's context. Override either limit with a positive integer environment variable when needed, and restart the bridge to apply changes. The launcher does not automatically load `.env`. Stop a background bridge only after closing its Codex sessions, because restarting discards its in-memory conversation state.
+
 ## Local checks
 
 ```bash
