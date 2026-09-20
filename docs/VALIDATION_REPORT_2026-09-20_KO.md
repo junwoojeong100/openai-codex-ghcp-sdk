@@ -1,6 +1,6 @@
 # Codex × GitHub Copilot SDK 검증 리포트 — 2026-09-20
 
-[한국어 README](../README_KO.md) · [호환성 및 제한](COMPATIBILITY_KO.md)
+[English](VALIDATION_REPORT_2026-09-20.md) · [한국어 README](../README_KO.md) · [호환성 및 제한](COMPATIBILITY_KO.md)
 
 ## 1. 결론
 

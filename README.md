@@ -189,6 +189,8 @@ npm test
 
 `npm test` uses Node's built-in test runner, a fake SDK and loopback HTTP; it does not make paid model calls. Real Codex runs are separate and require Copilot authentication. No shared validation harness or neighboring project's test results are used.
 
+Live validation record: [2026-09-20 validation report](docs/VALIDATION_REPORT_2026-09-20.md). Results cover `gpt-6-astra` only for live inference and are limited to the versions, environment and scope recorded in the report.
+
 ## References
 
 - [Official Codex CLI](https://github.com/openai/codex)
