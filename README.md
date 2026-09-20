@@ -26,12 +26,71 @@ From this directory:
 ```bash
 npm install -g @openai/codex@0.154.0
 npm ci
-codex --version
+command codex --version
 ./bin/ghcp-doctor
 ./bin/ghcp-models
 ```
 
 Dependencies are pinned to `@github/copilot-sdk@1.0.14` and `proper-lockfile@4.1.2`. They are installed in this project, independently of any neighboring project. A newer Codex/SDK version may require protocol changes; do not assume that upgrading preserves compatibility.
+
+## Make `codex` use GitHub Copilot (zsh)
+
+After installing, add the following block **once** to `~/.zshrc`. It makes `codex` use this project's GHCP launcher in interactive zsh terminals, from any working directory. `codex-original` keeps direct access to the official CLI without the bridge.
+
+Back up your shell settings first:
+
+```zsh
+cp -p ~/.zshrc ~/.zshrc.codex-ghcp.bak.$(date +%Y%m%d-%H%M%S)
+```
+
+The block assumes this clone is at `$HOME/GitHub/openai-codex-ghcp-sdk`; adjust the launcher path if yours is elsewhere. Preserve your existing PATH and Claude integration. If you already have a `codex` or `codex-original` alias/function, reconcile that definition before adding this block.
+
+```zsh
+# >>> openai-codex-ghcp-sdk >>>
+codex() {
+  local codex_bin
+  codex_bin="$(builtin whence -p codex)" || {
+    builtin print -u2 -- 'Official Codex CLI not found on PATH. Install: npm install -g @openai/codex@0.154.0'
+    return 127
+  }
+  CODEX_BIN="$codex_bin" "$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp" "$@"
+}
+
+codex-original() {
+  local codex_bin
+  codex_bin="$(builtin whence -p codex)" || {
+    builtin print -u2 -- 'Official Codex CLI not found on PATH. Install: npm install -g @openai/codex@0.154.0'
+    return 127
+  }
+  "$codex_bin" "$@"
+}
+# <<< openai-codex-ghcp-sdk <<<
+```
+
+Open a new terminal, or activate it in your current terminal:
+
+```zsh
+source ~/.zshrc
+whence -v codex codex-original
+codex --help                # GHCP launcher help; does not start a bridge
+codex-original --version   # Official Codex version; does not start a bridge
+```
+
+Then use:
+
+```zsh
+codex
+codex --ghcp-model gpt-5.6-sol
+codex -- exec --skip-git-repo-check --sandbox read-only \
+  "Read README.md and summarize its purpose in one sentence."
+codex-original --help       # Official CLI help, bypassing GHCP
+```
+
+The default remains `gpt-6-astra`. Use `--ghcp-model` to select a Copilot model; the GHCP launcher rejects native `--model`/`-m` overrides. Other Codex arguments follow `--`. For a native version check, use `codex-original --version`, not `codex --version`.
+
+`whence -p` ignores shell functions and aliases and finds the executable on PATH each time, so there is no pinned nvm version path or recursion through the `codex` function. Keep the official `codex` executable on PATH; do not add a separate `codex` shim that points back to this launcher. `CODEX_BIN` is set only for the launcher invocation; arguments, working directory and exit status are preserved. Shells or programs that do not load this block still resolve the official executable. `./bin/codex-ghcp` remains available without shell integration.
+
+To undo, remove only the marked block from `~/.zshrc`, then open a new terminal or run `unfunction codex codex-original` in the current one. Restoring the entire backup also discards any unrelated shell edits made since that backup.
 
 ## Choose a model
 
@@ -84,7 +143,7 @@ These are project launcher commands, not built-in Codex options. Stopping a back
 
 ## Configuration stays local to the launch
 
-The launcher passes Responses provider settings through Codex `-c` arguments and a generated **local bridge credential** through the child process environment. It disables unsupported WebSocket, request compression, hosted web search, remote compaction and reasoning summaries. It does not edit `~/.codex/config.toml`, `auth.json`, shell startup files, or another project's server.
+The launcher passes Responses provider settings through Codex `-c` arguments and a generated **local bridge credential** through the child process environment. It disables unsupported WebSocket, request compression, hosted web search, remote compaction and reasoning summaries. The launcher itself does not edit `~/.codex/config.toml`, `auth.json`, shell startup files, or another project's server. The optional zsh integration above is a separate, explicit edit to `~/.zshrc`; it does not replace the official CLI or change Codex authentication.
 
 Copilot/GitHub authentication is not copied into Codex. The local bridge token is not a GitHub or OpenAI credential. Other Codex configuration can still affect a run; the wrapper is not a fresh Codex profile.
 

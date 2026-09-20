@@ -26,12 +26,71 @@ SDK가 기존 Copilot 로그인을 사용합니다. GitHub 토큰을 프로젝�
 ```bash
 npm install -g @openai/codex@0.154.0
 npm ci
-codex --version
+command codex --version
 ./bin/ghcp-doctor
 ./bin/ghcp-models
 ```
 
 의존성은 `@github/copilot-sdk@1.0.14`, `proper-lockfile@4.1.2`로 고정합니다. 이 프로젝트에 별도로 설치하므로 이웃 프로젝트의 `node_modules`나 서버를 공유하지 않습니다. Codex/SDK를 업그레이드하면 프로토콜 수정이 필요할 수 있습니다.
+
+## `codex`를 GitHub Copilot으로 기본 실행하기 (zsh)
+
+설치 후 아래 블록을 `~/.zshrc`에 **한 번만** 추가합니다. 대화형 zsh 터미널에서는 어느 작업 디렉토리에서든 `codex`만 입력하면 이 프로젝트의 GHCP 실행기를 거칩니다. `codex-original`은 bridge 없이 공식 CLI를 직접 실행합니다.
+
+먼저 기존 셸 설정을 백업합니다.
+
+```zsh
+cp -p ~/.zshrc ~/.zshrc.codex-ghcp.bak.$(date +%Y%m%d-%H%M%S)
+```
+
+아래 예시는 저장소가 `$HOME/GitHub/openai-codex-ghcp-sdk`에 있다고 가정합니다. 다른 위치에 clone했다면 실행기 경로를 바꾸세요. 기존 PATH와 Claude 연동 설정은 유지합니다. 이미 `codex` 또는 `codex-original` 별칭·함수가 있다면 해당 정의와의 충돌을 먼저 정리하세요.
+
+```zsh
+# >>> openai-codex-ghcp-sdk >>>
+codex() {
+  local codex_bin
+  codex_bin="$(builtin whence -p codex)" || {
+    builtin print -u2 -- 'Official Codex CLI not found on PATH. Install: npm install -g @openai/codex@0.154.0'
+    return 127
+  }
+  CODEX_BIN="$codex_bin" "$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp" "$@"
+}
+
+codex-original() {
+  local codex_bin
+  codex_bin="$(builtin whence -p codex)" || {
+    builtin print -u2 -- 'Official Codex CLI not found on PATH. Install: npm install -g @openai/codex@0.154.0'
+    return 127
+  }
+  "$codex_bin" "$@"
+}
+# <<< openai-codex-ghcp-sdk <<<
+```
+
+새 터미널을 열거나 현재 터미널에서 다음과 같이 활성화합니다.
+
+```zsh
+source ~/.zshrc
+whence -v codex codex-original
+codex --help                # GHCP 실행기 도움말. bridge를 시작하지 않음
+codex-original --version   # 공식 Codex 버전. bridge를 시작하지 않음
+```
+
+이후 다음처럼 사용합니다.
+
+```zsh
+codex
+codex --ghcp-model gpt-5.6-sol
+codex -- exec --skip-git-repo-check --sandbox read-only \
+  "README_KO.md를 읽고 프로젝트의 목적을 한 문장으로 요약해줘."
+codex-original --help       # GHCP를 거치지 않는 공식 CLI 도움말
+```
+
+기본 모델은 그대로 `gpt-6-astra`입니다. Copilot 모델은 `--ghcp-model`로 선택하며, GHCP 실행기는 공식 CLI의 `--model`/`-m` 재정의를 거절합니다. 나머지 Codex 인자는 `--` 뒤에 전달합니다. 공식 버전만 확인할 때는 `codex --version` 대신 `codex-original --version`을 사용하세요.
+
+`whence -p`는 함수·별칭을 제외하고 매번 PATH의 실행파일을 찾으므로, nvm 버전 경로를 고정하거나 `codex` 함수로 재귀하지 않습니다. 공식 `codex` 실행파일은 PATH에 유지하고, 이 실행기를 다시 가리키는 별도 `codex` shim은 추가하지 마세요. `CODEX_BIN`은 실행기 호출에만 적용하며 인자·현재 작업 디렉토리·종료 코드는 보존합니다. 이 블록을 로드하지 않는 셸·프로그램은 계속 공식 실행파일을 사용합니다. 셸 연동 없이도 기존 `./bin/codex-ghcp`를 사용할 수 있습니다.
+
+해제하려면 `~/.zshrc`에서 표시된 블록만 제거한 뒤 새 터미널을 열거나, 현재 터미널에서 `unfunction codex codex-original`을 실행하세요. 백업 파일 전체를 복원하면 백업 이후의 다른 셸 설정 변경도 사라지므로 주의하세요.
 
 ## 모델 선택
 
@@ -84,7 +143,7 @@ codex --version
 
 ## 기존 설정 보존
 
-실행기는 Codex의 `-c` 인자로 Responses 공급자 설정을, 자식 프로세스 환경 변수로 생성한 **로컬 bridge 전용 토큰**을 전달합니다. 미지원 WebSocket·요청 압축·호스팅 웹 검색·원격 compaction·reasoning summary는 비활성화합니다. `~/.codex/config.toml`, `auth.json`, 셸 시작 파일이나 다른 프로젝트의 서버는 수정하지 않습니다.
+실행기는 Codex의 `-c` 인자로 Responses 공급자 설정을, 자식 프로세스 환경 변수로 생성한 **로컬 bridge 전용 토큰**을 전달합니다. 미지원 WebSocket·요청 압축·호스팅 웹 검색·원격 compaction·reasoning summary는 비활성화합니다. 실행기 자체는 `~/.codex/config.toml`, `auth.json`, 셸 시작 파일이나 다른 프로젝트의 서버를 수정하지 않습니다. 위의 선택적 zsh 연동은 사용자가 명시적으로 적용하는 별도의 `~/.zshrc` 변경이며, 공식 CLI를 교체하거나 Codex 인증을 변경하지 않습니다.
 
 Copilot/GitHub 인증을 Codex로 복사하지 않습니다. bridge 토큰은 GitHub/OpenAI 인증정보가 아닙니다. 다만 다른 Codex 설정은 실행에 영향을 줄 수 있으며, 실행기가 완전히 새로운 Codex 프로필을 만드는 것은 아닙니다.
 
