@@ -189,6 +189,8 @@ npm test
 
 `npm test`는 Node 내장 테스트 러너, fake SDK, 루프백 HTTP만 사용하며 실제 모델을 호출하지 않습니다. 실제 Codex 실행은 별도이며 Copilot 인증이 필요합니다. 공유 검증 실행기나 이웃 프로젝트의 테스트 결과는 사용하지 않습니다.
 
+실제 연결 검증 기록: [2026-09-20 검증 리포트](docs/VALIDATION_REPORT_2026-09-20_KO.md). `gpt-6-astra`로 수행한 결과이며, 당시 버전·환경과 검증 범위에 한정됩니다.
+
 ## 공식 참고 자료
 
 - [Codex CLI](https://github.com/openai/codex)
