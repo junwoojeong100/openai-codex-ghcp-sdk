@@ -425,7 +425,7 @@ test("SDK subagent text is not forwarded as the root assistant output", async (t
 
 test("default replay limit accepts histories above the former 256 KiB cap", async (t) => {
   const { manager, client } = await setup(t);
-  assert.equal(manager.maxReplayBytes, 256 * 1024 * 1024);
+  assert.equal(manager.maxReplayBytes, 32 * 1024 * 1024);
   const input = "x".repeat(256 * 1024 + 1);
   const result = await manager.execute(body(input), headers("large-history"));
   assert.equal(client.sessions[0].sent[0].prompt, input);

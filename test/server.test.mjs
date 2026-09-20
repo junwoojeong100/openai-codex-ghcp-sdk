@@ -136,10 +136,10 @@ test("direct-server configuration requires auth, loopback, valid limits and one 
   assert.equal(config.preferredModel, model);
 });
 
-test("body and replay limits default to 256 MiB and honor explicit overrides", () => {
+test("body and replay limits default to 32 MiB and honor explicit overrides", () => {
   const defaults = bridgeConfig({ BRIDGE_API_KEY: token });
-  assert.equal(defaults.maxBodyBytes, 256 * 1024 * 1024);
-  assert.equal(defaults.managerOptions.maxReplayBytes, 256 * 1024 * 1024);
+  assert.equal(defaults.maxBodyBytes, 32 * 1024 * 1024);
+  assert.equal(defaults.managerOptions.maxReplayBytes, 32 * 1024 * 1024);
 
   const overrides = bridgeConfig({ BRIDGE_API_KEY: token, MAX_BODY_BYTES: "2048", MAX_REPLAY_BYTES: "512" });
   assert.equal(overrides.maxBodyBytes, 2048);
