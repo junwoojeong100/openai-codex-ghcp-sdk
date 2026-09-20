@@ -1,0 +1,27 @@
+{
+  "name": "openai-codex-ghcp-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Run OpenAI Codex with GitHub Copilot models through the GitHub Copilot SDK.",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "bin": {
+    "codex-ghcp": "bin/codex-ghcp",
+    "codex-ghcp-status": "bin/codex-ghcp-status",
+    "codex-ghcp-stop": "bin/codex-ghcp-stop",
+    "ghcp-doctor": "bin/ghcp-doctor",
+    "ghcp-models": "bin/ghcp-models"
+  },
+  "scripts": {
+    "bridge": "node src/server.mjs",
+    "doctor": "node src/doctor.mjs",
+    "models": "node src/list-models.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@github/copilot-sdk": "1.0.14",
+    "proper-lockfile": "4.1.2"
+  }
+}
