@@ -1,0 +1,4145 @@
+{
+  "kind": "public-live-verification-summary",
+  "schemaVersion": 1,
+  "runId": "4b7856b2-0183-49ac-acea-92ca26b130a2",
+  "executionKind": "live",
+  "startedAt": "2026-09-20T15:35:58.141Z",
+  "finishedAt": "2026-09-20T15:43:28.804Z",
+  "startedAtKst": "2026-09-21T00:35:58.141+09:00",
+  "finishedAtKst": "2026-09-21T00:43:28.804+09:00",
+  "durationMs": 450686,
+  "catalogId": "codex-ghcp-workflows-10-v2",
+  "catalogHash": "9013014390f817fd7af5bc12d1b8b89dcf36ca3a42ecffa3441bd35173836339",
+  "implementationHash": "afb98c1f714968fcbc194a24bc6cd99cd78193a26268adf1649c3dbb6d0515c8",
+  "versions": {
+    "codex": "0.154.0",
+    "copilotSdk": "1.0.14"
+  },
+  "modelConcurrency": 4,
+  "totalCases": 70,
+  "counts": {
+    "passed": 57,
+    "failed": 13,
+    "unsupported": 0,
+    "blocked": 0,
+    "timed-out": 0,
+    "not-run": 0
+  },
+  "fullMatrixPassed": false,
+  "perModel": [
+    {
+      "model": "gpt-5.6-sol",
+      "passed": 9,
+      "total": 10,
+      "percent": 90,
+      "outcome": "not-established",
+      "counts": {
+        "passed": 9,
+        "failed": 1,
+        "unsupported": 0,
+        "blocked": 0,
+        "timed-out": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "passed": 9,
+      "total": 10,
+      "percent": 90,
+      "outcome": "not-established",
+      "counts": {
+        "passed": 9,
+        "failed": 1,
+        "unsupported": 0,
+        "blocked": 0,
+        "timed-out": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "passed": 9,
+      "total": 10,
+      "percent": 90,
+      "outcome": "not-established",
+      "counts": {
+        "passed": 9,
+        "failed": 1,
+        "unsupported": 0,
+        "blocked": 0,
+        "timed-out": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "passed": 9,
+      "total": 10,
+      "percent": 90,
+      "outcome": "not-established",
+      "counts": {
+        "passed": 9,
+        "failed": 1,
+        "unsupported": 0,
+        "blocked": 0,
+        "timed-out": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "passed": 8,
+      "total": 10,
+      "percent": 80,
+      "outcome": "not-established",
+      "counts": {
+        "passed": 8,
+        "failed": 2,
+        "unsupported": 0,
+        "blocked": 0,
+        "timed-out": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "passed": 6,
+      "total": 10,
+      "percent": 60,
+      "outcome": "not-established",
+      "counts": {
+        "passed": 6,
+        "failed": 4,
+        "unsupported": 0,
+        "blocked": 0,
+        "timed-out": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "passed": 7,
+      "total": 10,
+      "percent": 70,
+      "outcome": "not-established",
+      "counts": {
+        "passed": 7,
+        "failed": 3,
+        "unsupported": 0,
+        "blocked": 0,
+        "timed-out": 0,
+        "not-run": 0
+      }
+    }
+  ],
+  "evidenceIntegrity": true,
+  "implementationUnchanged": true,
+  "userSettingsUnchanged": true,
+  "interrupted": false,
+  "coverage": {
+    "targetPercent": 90,
+    "measuredPercent": null,
+    "wholeProductCoverageClaim": false,
+    "nativeProviderParityMeasured": false
+  },
+  "methodology": "One unretried 10-workflow by 7-model live matrix. Original verdicts retained without post-run rescoring. These are strict suite outcomes, not measured whole-product compatibility.",
+  "limitations": [
+    "No native-provider A/B reference was executed, per the requested fixed 70-case scope.",
+    "C03 uses a strict JSON-only oracle and an ambiguous empty (empty.txt) prompt field; formatting/type failures are not sufficient evidence of a bridge defect.",
+    "C03 command recognition is narrower than valid Git syntax (git -c ... diff).",
+    "Tool budgets are scored as pass conditions, so extra verification commands can fail an otherwise correct workflow.",
+    "C05 requires a nonzero initial shell exit: pipelines without pipefail can conceal a failing test exit.",
+    "C10 requires the exact receipt value including its prefix; retaining only the nonce does not pass.",
+    "No model reached 10/10. No core-10-compatible or whole-product 90% claim is established."
+  ],
+  "rawEvidence": {
+    "localDirectory": ".runtime/workflows-live-20260921-003558",
+    "reportSha256": "f12e773d90bba8ef230278d28414eb402eab2e296db07fe783e894684e2fa224",
+    "published": false,
+    "reason": "Raw synthetic-fixture transcripts contain machine-specific paths and are retained locally. This is a redacted summary, not a standalone verifyReport evidence bundle."
+  },
+  "cases": [
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C01",
+      "status": "passed",
+      "durationMs": 14280,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C01.1",
+          "passed": true
+        },
+        {
+          "id": "C01.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "865fc1038a54804151c243e4a532393b522f281e80834e9ee99962a58e58778d"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C02",
+      "status": "passed",
+      "durationMs": 13642,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C02.1",
+          "passed": true
+        },
+        {
+          "id": "C02.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "085762ca3a94b30dbb9d5b572cde136bc49d1de226751407f29b0c8131993847"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C03",
+      "status": "failed",
+      "durationMs": 16470,
+      "failedChecks": [
+        "C03.1"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C03.1",
+          "passed": false
+        },
+        {
+          "id": "C03.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "empty is an empty string rather than boolean true."
+      ],
+      "resultSha256": "d8f0b9deb6751a36c1c9f317c628c41f8aa645d79c9051a9af71ab1f4d9a99ee"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C04",
+      "status": "passed",
+      "durationMs": 42321,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C04.1",
+          "passed": true
+        },
+        {
+          "id": "C04.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "dcb0b993d37d4fa87d42ca886a69922c70bef383105c46ba69a1902d2c11ee22"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C05",
+      "status": "passed",
+      "durationMs": 21249,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C05.1",
+          "passed": true
+        },
+        {
+          "id": "C05.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "73e762f41ed334581711a9c2a31a00c6eebd1ea1a6c44c2705a48af8ecec5010"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C06",
+      "status": "passed",
+      "durationMs": 14058,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C06.1",
+          "passed": true
+        },
+        {
+          "id": "C06.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "b160df8fee64484b07976214528cf6e23c32221064f43d04953aef4f4506cce1"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C07",
+      "status": "passed",
+      "durationMs": 16719,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C07.1",
+          "passed": true
+        },
+        {
+          "id": "C07.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "eebf7f9c752f8b237ff83439677c07b4a4484ef3c348fb332c78c89e05bb19af"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C08",
+      "status": "passed",
+      "durationMs": 24949,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C08.1",
+          "passed": true
+        },
+        {
+          "id": "C08.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "3b3965410eaa40b584785e005f32af177d3d1ce6b1050d3aa6b14542e671a96c"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C09",
+      "status": "passed",
+      "durationMs": 27092,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C09.1",
+          "passed": true
+        },
+        {
+          "id": "C09.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "9c31010a149d686410559840ca467aa84b8753d25101a4a5a6fa7ef7cf3db347"
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "C10",
+      "status": "passed",
+      "durationMs": 27104,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C10.1",
+          "passed": true
+        },
+        {
+          "id": "C10.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "25485cd08be9616c6e35b5b88a1f6604913f35b0d273ee69a17271367bfe61f5"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C01",
+      "status": "passed",
+      "durationMs": 10111,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C01.1",
+          "passed": true
+        },
+        {
+          "id": "C01.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "48be3f7304b19ce91ddfaa61101c8fe4997413b60ac15ae946eb4999d4ff6746"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C02",
+      "status": "passed",
+      "durationMs": 12729,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C02.1",
+          "passed": true
+        },
+        {
+          "id": "C02.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "7f6bd7b1d9496107fa7f8ce7182d5bc33f7ab00025f2c0cd9bfbd4c29ce62e4c"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C03",
+      "status": "failed",
+      "durationMs": 23033,
+      "failedChecks": [
+        "C03.1"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C03.1",
+          "passed": false
+        },
+        {
+          "id": "C03.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "empty contains the filename rather than boolean true."
+      ],
+      "resultSha256": "3f445e7b387fcdd16484ef45deddf5818299d2964c8a6cae2a6f460c7aef41b1"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C04",
+      "status": "passed",
+      "durationMs": 29720,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C04.1",
+          "passed": true
+        },
+        {
+          "id": "C04.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "1ba4687c133417b51bf30ad9f0650186bce02a72cbf959b745e05d31250e63ab"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C05",
+      "status": "passed",
+      "durationMs": 23421,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C05.1",
+          "passed": true
+        },
+        {
+          "id": "C05.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "a7d5c40d8c126a836bbb6e5890f9260b9134d7e7aa877be88e8944271ad67506"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C06",
+      "status": "passed",
+      "durationMs": 13133,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C06.1",
+          "passed": true
+        },
+        {
+          "id": "C06.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "01716a2fcbc4c8a2470aca8a48bcaf395f06587c56d9b38286d290ea28ac9f3b"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C07",
+      "status": "passed",
+      "durationMs": 16833,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C07.1",
+          "passed": true
+        },
+        {
+          "id": "C07.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "607e81642aaa1c0c8a8fd1c77a34c30f6c13c0fbeb56ba8ecc3f6a7846bbf7bc"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C08",
+      "status": "passed",
+      "durationMs": 10107,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C08.1",
+          "passed": true
+        },
+        {
+          "id": "C08.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "7da4c4132fb32d634771ea03cbfb15c11869632f2a47627753e736f67a27f416"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C09",
+      "status": "passed",
+      "durationMs": 26478,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C09.1",
+          "passed": true
+        },
+        {
+          "id": "C09.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "306e3f308b766225902032aac17583c07da065d4cd8ed0bf84b3011311eab948"
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "C10",
+      "status": "passed",
+      "durationMs": 23723,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C10.1",
+          "passed": true
+        },
+        {
+          "id": "C10.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "db71e6d8a96a72eedf751597b9fda99f705b5b00af4e59141d80a83ebf502e38"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C01",
+      "status": "passed",
+      "durationMs": 10392,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C01.1",
+          "passed": true
+        },
+        {
+          "id": "C01.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "2fc586f751ff213ff1d350b665298f86e63b805018483202b62e4fc3012ba280"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C02",
+      "status": "passed",
+      "durationMs": 12465,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C02.1",
+          "passed": true
+        },
+        {
+          "id": "C02.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "6d0f71b472ddbe85e440b1ca911afe0c9f463af1e5f4c3ddf6f6ccb8a2f04dd9"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C03",
+      "status": "failed",
+      "durationMs": 19433,
+      "failedChecks": [
+        "C03.1",
+        "C03.2"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C03.1",
+          "passed": false
+        },
+        {
+          "id": "C03.2",
+          "passed": false
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "empty is an empty string rather than boolean true.",
+        "The command oracle requires a literal git diff form; git -c ... diff is not recognized by that predicate."
+      ],
+      "resultSha256": "6481f5a418a4f45bfda301151da1fd28d974c9666cae16e91d91daacaa25e5f1"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C04",
+      "status": "passed",
+      "durationMs": 50266,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C04.1",
+          "passed": true
+        },
+        {
+          "id": "C04.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "460fde09eb6de9d16f9152ed36567e6d5c0120e2efe2251cdfc8532221e5d996"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C05",
+      "status": "passed",
+      "durationMs": 16346,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C05.1",
+          "passed": true
+        },
+        {
+          "id": "C05.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "29e48312a5a45bd77de8a4bbb6dfe5b3a16a74c2cf3348eea27467ae3f3f656b"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C06",
+      "status": "passed",
+      "durationMs": 13475,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C06.1",
+          "passed": true
+        },
+        {
+          "id": "C06.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "5803df97f2e7a1d025ee7820ae74f10006a8faefc3160682ae1a30ceff340b96"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C07",
+      "status": "passed",
+      "durationMs": 15057,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C07.1",
+          "passed": true
+        },
+        {
+          "id": "C07.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "72eba8308c8cefda847060147056a5aadd93352c404ab7cb7f015795ec76d0e0"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C08",
+      "status": "passed",
+      "durationMs": 11106,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C08.1",
+          "passed": true
+        },
+        {
+          "id": "C08.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "64d39f6086f84622d8e5dd87f85fa440b5df0f051528e848d11f47211a8a176b"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C09",
+      "status": "passed",
+      "durationMs": 27702,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C09.1",
+          "passed": true
+        },
+        {
+          "id": "C09.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "454dda065f6740c4f3a8da73a7933307d38ecb3c54d7b3b117e344d67d039a40"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "C10",
+      "status": "passed",
+      "durationMs": 26885,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C10.1",
+          "passed": true
+        },
+        {
+          "id": "C10.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "b60cb14eff25b26a2c8bf3447f15730c98d605e606547f95d157e6ad179da3dd"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C01",
+      "status": "passed",
+      "durationMs": 11034,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C01.1",
+          "passed": true
+        },
+        {
+          "id": "C01.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "798969ddb5a93a3848c8a2220baf6b2587c480662c4bedf744ed9bbff4006541"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C02",
+      "status": "passed",
+      "durationMs": 15802,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C02.1",
+          "passed": true
+        },
+        {
+          "id": "C02.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "63079e7210629e9f44b92d0432adfaa0f4ae2ea6f919ce14057e1a91e9cbf253"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C03",
+      "status": "failed",
+      "durationMs": 16562,
+      "failedChecks": [
+        "C03.1",
+        "C03.2"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C03.1",
+          "passed": false
+        },
+        {
+          "id": "C03.2",
+          "passed": false
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "empty is an empty string rather than boolean true; review.expected is explanatory text instead of the integer 7."
+      ],
+      "resultSha256": "481898f471793ace100a65be77f9aa8c831df1b804c4ef37c2eaf25ef1157d19"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C04",
+      "status": "passed",
+      "durationMs": 51266,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C04.1",
+          "passed": true
+        },
+        {
+          "id": "C04.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "3277eec9f55958149adeec4af8fafd1b35adce65e17199567b629a249a341062"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C05",
+      "status": "passed",
+      "durationMs": 25238,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C05.1",
+          "passed": true
+        },
+        {
+          "id": "C05.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "04b4a06c483f9ffaec6d63ac78ea373edb500ccc848ce286bf6335ba1d9780bf"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C06",
+      "status": "passed",
+      "durationMs": 18323,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C06.1",
+          "passed": true
+        },
+        {
+          "id": "C06.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "fd12ad244659dbcae8237f424d34c256435b67da2620b5c6adc91170614f5585"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C07",
+      "status": "passed",
+      "durationMs": 19026,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C07.1",
+          "passed": true
+        },
+        {
+          "id": "C07.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "6c57ad2b8aaf053c0cba7740d3e4f1cc871927269e2b2bbcf3438b6288d374e6"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C08",
+      "status": "passed",
+      "durationMs": 15620,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C08.1",
+          "passed": true
+        },
+        {
+          "id": "C08.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "aff5daab038c2992b40472d784095db15fa6210bf987713ebc73459408afd415"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C09",
+      "status": "passed",
+      "durationMs": 28402,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C09.1",
+          "passed": true
+        },
+        {
+          "id": "C09.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "9741bb1aa380e704a0cee6083f1151e2d82b9ec7376b826148f1503de2ff33dc"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "C10",
+      "status": "passed",
+      "durationMs": 21890,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C10.1",
+          "passed": true
+        },
+        {
+          "id": "C10.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "83b971d0a854c1a97b14577bd1e5c51bf62cd6f82c07418e6cfe4851ba65b4e3"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C01",
+      "status": "passed",
+      "durationMs": 10860,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C01.1",
+          "passed": true
+        },
+        {
+          "id": "C01.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "172107a3509af21822d8b1448e7d21232b42c19d59c22276d4c6a7cd95ae256b"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C02",
+      "status": "passed",
+      "durationMs": 16418,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C02.1",
+          "passed": true
+        },
+        {
+          "id": "C02.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "20aa2b134ddd25c614b90917a6c109310392f31a2028c9b45c817c1aa60df691"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C03",
+      "status": "failed",
+      "durationMs": 19358,
+      "failedChecks": [
+        "C03.1",
+        "C03.2"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C03.1",
+          "passed": false
+        },
+        {
+          "id": "C03.2",
+          "passed": false
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "Correct-looking JSON is enclosed in a Markdown fence; the strict JSON-only parser rejects it."
+      ],
+      "resultSha256": "53c7312cea58419bb978b7c5d451377e6181d6d1206b45c452a343481d5de715"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C04",
+      "status": "passed",
+      "durationMs": 39385,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C04.1",
+          "passed": true
+        },
+        {
+          "id": "C04.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "eaa74f8d1fed1dfd105afdfd493a8d114c7b19a730f481c9d04afddfade3cc74"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C05",
+      "status": "failed",
+      "durationMs": 16078,
+      "failedChecks": [
+        "C05.1"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C05.1",
+          "passed": false
+        },
+        {
+          "id": "C05.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "The failing test was piped through tail, so the observed shell exit was zero. Later three tests and independent inputs passed."
+      ],
+      "resultSha256": "9311e4030fdea1befe804806d49b7edd10ec85a04ceb9989fd54dd25984ae778"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C06",
+      "status": "passed",
+      "durationMs": 15644,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C06.1",
+          "passed": true
+        },
+        {
+          "id": "C06.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "b737fe9972fbb9193a780b438e22506b8dae32ae11958d4cd271ad76fe1762cc"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C07",
+      "status": "passed",
+      "durationMs": 16899,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C07.1",
+          "passed": true
+        },
+        {
+          "id": "C07.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "8563eafd2c6e1db8ee0fda3854a94b2162195ec614bc6099c1dd2111ef3ba57d"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C08",
+      "status": "passed",
+      "durationMs": 11289,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C08.1",
+          "passed": true
+        },
+        {
+          "id": "C08.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "efb5171293e585cfd584894016fa93774986a564ce961688e9e61f8cd2b5ba47"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C09",
+      "status": "passed",
+      "durationMs": 18146,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C09.1",
+          "passed": true
+        },
+        {
+          "id": "C09.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "376f9083c6e5bc4bf8f2ae096527d23719f59e1dc5e4d7815f95996d08d213be"
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "C10",
+      "status": "passed",
+      "durationMs": 15776,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C10.1",
+          "passed": true
+        },
+        {
+          "id": "C10.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "f17d4fe94a534cf4d6e601544d8dd33eb11f2eeeb8230c79d8a9ec5abc334817"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C01",
+      "status": "passed",
+      "durationMs": 9078,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C01.1",
+          "passed": true
+        },
+        {
+          "id": "C01.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "a841dfba694b0e5f31a0a77d9cdfd379428b89cf5c514ee84f4799b5ed739110"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C02",
+      "status": "passed",
+      "durationMs": 14967,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C02.1",
+          "passed": true
+        },
+        {
+          "id": "C02.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "927d7cc1f1767d4b78794b8931810292dfd427404951e4763201097aa1efec1e"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C03",
+      "status": "failed",
+      "durationMs": 50348,
+      "failedChecks": [
+        "tool-budget",
+        "C03.1",
+        "C03.2"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": false
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C03.1",
+          "passed": false
+        },
+        {
+          "id": "C03.2",
+          "passed": false
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "Markdown/prose surrounds the JSON; empty contains a filename. Eight tool items exceed the six-item budget."
+      ],
+      "resultSha256": "3d54adb75b29e96c71962f09c92cbf7d65973ef32245ff517e0422158a268c50"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C04",
+      "status": "failed",
+      "durationMs": 43553,
+      "failedChecks": [
+        "tool-budget"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": false
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C04.1",
+          "passed": true
+        },
+        {
+          "id": "C04.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "Ten tool items exceed the nine-item budget; the functional file-edit assertions passed."
+      ],
+      "resultSha256": "b8f2263b38db9db4c64285eef98ea4b65ac6512419f4152c466fd1f3a8fde44b"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C05",
+      "status": "failed",
+      "durationMs": 19651,
+      "failedChecks": [
+        "C05.1"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C05.1",
+          "passed": false
+        },
+        {
+          "id": "C05.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "The failing test was piped through tail, so the observed shell exit was zero. Later three tests and independent inputs passed."
+      ],
+      "resultSha256": "8d0b8d9340f1c3554ad3aef4b31dc72da5124ec260871310cd5e70c8b36f3f1c"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C06",
+      "status": "passed",
+      "durationMs": 16373,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C06.1",
+          "passed": true
+        },
+        {
+          "id": "C06.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "d6daa211baef3076820be2037dccd560ff10ece7a1780097a302655b7f209aa6"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C07",
+      "status": "passed",
+      "durationMs": 14059,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C07.1",
+          "passed": true
+        },
+        {
+          "id": "C07.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "faac937e1fab51d69acd720af473ecf7fa7e5f9a1ef7e7d0a35ef1336def32c5"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C08",
+      "status": "passed",
+      "durationMs": 10213,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C08.1",
+          "passed": true
+        },
+        {
+          "id": "C08.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "5e310e42520b4caecbdd90bd987798b1e1c921cc0f1522a5fc4fe0027b3e5951"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C09",
+      "status": "passed",
+      "durationMs": 18569,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C09.1",
+          "passed": true
+        },
+        {
+          "id": "C09.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "51eaeefcbeeb6044fb459a585852abaf8aac005e3ec481f789d278c93bb9b6a0"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "C10",
+      "status": "failed",
+      "durationMs": 16898,
+      "failedChecks": [
+        "C10.1"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C10.1",
+          "passed": false
+        },
+        {
+          "id": "C10.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "The recalled counter receipt omits its literal receipt: prefix; the nonce is retained and the no-replay assertion passed."
+      ],
+      "resultSha256": "dab958b67e9f6e39e60ba7e8632a43dc1b0537b5cf2f6ea687cf99737ecf2a92"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C01",
+      "status": "passed",
+      "durationMs": 9010,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C01.1",
+          "passed": true
+        },
+        {
+          "id": "C01.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "cc976b2dc9973644172a00e97bf3c45ab53a3e0348258ae5a0a8f96d4e8b4abd"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C02",
+      "status": "passed",
+      "durationMs": 17116,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C02.1",
+          "passed": true
+        },
+        {
+          "id": "C02.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "b16cd3e6b476673861cbc10a7b2cedf1cc38c9b40332c7d2da738769ef0ac514"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C03",
+      "status": "failed",
+      "durationMs": 33759,
+      "failedChecks": [
+        "tool-budget",
+        "C03.1",
+        "C03.2"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": false
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C03.1",
+          "passed": false
+        },
+        {
+          "id": "C03.2",
+          "passed": false
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "Markdown surrounds the JSON; empty is a filename and expected describes an incorrect index. Ten tool items exceed the six-item budget."
+      ],
+      "resultSha256": "c3524d91be9719a67ea88a662d572237a075bb52156d4107812bba7b2845b984"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C04",
+      "status": "failed",
+      "durationMs": 63042,
+      "failedChecks": [
+        "tool-budget",
+        "C04.1"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": false
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C04.1",
+          "passed": false
+        },
+        {
+          "id": "C04.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "The original notes.txt remains after creation of docs/notes.txt (copy, not move); ten tool items exceed the nine-item budget."
+      ],
+      "resultSha256": "7062e528d70c9131d11f651e05c1b77fb0ead85544b7c54b93b7df67a01ad117"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C05",
+      "status": "passed",
+      "durationMs": 19519,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C05.1",
+          "passed": true
+        },
+        {
+          "id": "C05.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "0862c7bb1e97ce71a82fba5485ad92e20006faedf5fb4fcaa09a023763a60965"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C06",
+      "status": "passed",
+      "durationMs": 20555,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C06.1",
+          "passed": true
+        },
+        {
+          "id": "C06.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "4b03505cdb3e2711137211b0ebe8448815a2f7a528b0270bddc32e3d1d9b9cb5"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C07",
+      "status": "passed",
+      "durationMs": 17822,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C07.1",
+          "passed": true
+        },
+        {
+          "id": "C07.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "770899487906032d775f86b02e82f4ed5131b09c2ca472d75439b8221f126240"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C08",
+      "status": "passed",
+      "durationMs": 10435,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C08.1",
+          "passed": true
+        },
+        {
+          "id": "C08.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "6759ebe9785dbe410d84507594e8a28a3e11f334cf814693ec787a9b91fb2b55"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C09",
+      "status": "passed",
+      "durationMs": 21121,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C09.1",
+          "passed": true
+        },
+        {
+          "id": "C09.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": null,
+      "observations": [],
+      "resultSha256": "505fdd9a06c54196a88614bfe1d22e41eda6cf3e943b8b150b8b4d12ccb55d78"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "C10",
+      "status": "failed",
+      "durationMs": 17924,
+      "failedChecks": [
+        "C10.1"
+      ],
+      "checks": [
+        {
+          "id": "identity",
+          "passed": true
+        },
+        {
+          "id": "native-completion",
+          "passed": true
+        },
+        {
+          "id": "native-surface",
+          "passed": true
+        },
+        {
+          "id": "transport",
+          "passed": true
+        },
+        {
+          "id": "route",
+          "passed": true
+        },
+        {
+          "id": "tool-budget",
+          "passed": true
+        },
+        {
+          "id": "isolation",
+          "passed": true
+        },
+        {
+          "id": "cleanup",
+          "passed": true
+        },
+        {
+          "id": "C10.1",
+          "passed": false
+        },
+        {
+          "id": "C10.2",
+          "passed": true
+        },
+        {
+          "id": "assertion-completeness",
+          "passed": true
+        }
+      ],
+      "category": "undetermined",
+      "observations": [
+        "The recalled counter receipt omits its literal receipt: prefix; the nonce is retained and the no-replay assertion passed."
+      ],
+      "resultSha256": "6a08d02a440a32edd1570c58b4c1f275a1e6277195e9bfc6d98b5b634e5ee76e"
+    }
+  ]
+}

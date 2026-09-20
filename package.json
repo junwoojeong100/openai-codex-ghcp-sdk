@@ -19,16 +19,11 @@
     "doctor": "node src/doctor.mjs",
     "models": "node src/list-models.mjs",
     "test": "node --test test/*.test.mjs",
-    "test:scenarios": "node scripts/native-coverage.mjs --design",
-    "test:runner:prepare": "node scripts/e2e-native-v2.mjs --prepare",
-    "test:runner:check": "node scripts/check-native-runner.mjs",
-    "test:runner:runtime": "node scripts/check-native-runtime.mjs",
-    "test:runner:drivers": "node scripts/check-native-drivers.mjs",
-    "test:e2e:native-v2": "node scripts/e2e-native-v2.mjs",
-    "test:e2e:native-coverage": "node scripts/native-coverage.mjs",
-    "test:e2e:protocol": "node scripts/validate.mjs",
-    "docs:scenarios": "node scripts/generate-native-docs.mjs",
-    "docs:scenarios:check": "node scripts/generate-native-docs.mjs --check"
+    "test:scenarios": "node scripts/check-scenario-design.mjs",
+    "test:compatibility": "node scripts/compatibility.mjs",
+    "test:compatibility:runtime": "node scripts/check-compatibility-runtime.mjs",
+    "docs:scenarios": "node scripts/generate-scenario-docs.mjs",
+    "docs:scenarios:check": "node scripts/generate-scenario-docs.mjs --check"
   },
   "dependencies": {
     "@github/copilot-sdk": "1.0.14",

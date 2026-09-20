@@ -182,28 +182,31 @@ See [Compatibility](docs/COMPATIBILITY.md) before relying on advanced Codex feat
 
 Both the serialized conversation-history limit (`MAX_REPLAY_BYTES`) and HTTP request-body limit (`MAX_BODY_BYTES`) default to **33,554,432 bytes (32 MiB)**. These are operational starting points, not benchmarked capacity guarantees or model context-window limits; very large conversations can still exceed available memory or the upstream model's context. Override either limit with a positive integer environment variable when needed, and restart the bridge to apply changes. The launcher does not automatically load `.env`. Stop a background bridge only after closing its Codex sessions, because restarting discards its in-memory conversation state.
 
-## Local checks
+## Local checks and integrated compatibility
 
 ```bash
-npm test
-./bin/ghcp-doctor
+npm test                              # Unit/controller checks, no model calls
+npm run test:scenarios                 # Ten integrated scenario contracts
+npm run docs:scenarios:check           # Generated document consistency
+npm run test:compatibility -- --plan   # Offline execution plan
+npm run test:compatibility:runtime     # Real Codex + SDK double, no model calls
 ```
 
-`npm test` uses Node's built-in test runner, test doubles, owned subprocesses and loopback HTTP; it does not call real models. The native validation harness adapts the neighboring `claude-code-ghcp-sdk` scenario design without importing its runtime or live results.
+Retired scenarios, runners and records have been replaced.
+**Ten scenarios × seven GHCP models = exactly 70 cases**, with no reference-provider run, fast suite or model subset.
+Up to four model lanes, individual deadlines and continuation after failure keep the run short. One hour is a target, not an overall cutoff.
+
+Live execution requires Copilot authentication and consumes usage. No OpenAI API key is required.
 
 ```bash
-npm run test:scenarios       # 69 features / 207 native scenario contracts
-npm run test:runner:prepare  # Driver readiness; exits 1 while gaps remain
-npm run test:runner:runtime  # Real pinned Codex, synthetic catalog, no model calls
-npm run test:runner:drivers  # Real Codex + scripted SDK, no live compatibility credit
+npm run test:compatibility -- --execute
+npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.json
 ```
 
-See [native scenarios and readiness](docs/NATIVE_SCENARIOS.md) for the seven-model matrix,
-source-bound preparation checks and explicit live execution. Full acceptance requires every
-driver/evaluator and currently remains gated; a selected diagnostic run is not a full pass.
-The separate `test:e2e:protocol` suite does not replace native validation.
+See [integrated scenarios and coverage](docs/NATIVE_SCENARIOS.md) and the [runner/evidence guide](docs/COMPATIBILITY_TESTING.md).
+**90% is an everyday-workflow coverage target, not a measured product-feature support rate.** Pass rates and included/excluded capabilities remain separate.
 
-Live validation record: [2026-09-20 validation report](docs/VALIDATION_REPORT_2026-09-20.md). Results cover `gpt-6-astra` only for live inference and are limited to the versions, environment and scope recorded in the report.
+Latest real run: [2026-09-21 results](docs/validation/2026-09-21/README.md) — **57/70 passed, 13 failed**, ~7m 31s. Evidence verified; the full suite did not pass.
 
 ## References
 

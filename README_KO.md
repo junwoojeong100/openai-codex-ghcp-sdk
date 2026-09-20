@@ -182,28 +182,31 @@ health 외에는 `Authorization: Bearer <bridge-token>` 또는 `x-api-key`가 �
 
 JSON으로 직렬화한 대화 이력 한도(`MAX_REPLAY_BYTES`)와 HTTP 요청 본문 한도(`MAX_BODY_BYTES`)의 기본값은 각각 **33,554,432바이트(32 MiB)**입니다. 이는 실측으로 검증된 최대 처리량이 아닌 운영상 초기 보호 한도이며 모델 문맥 한도와도 별개입니다. 큰 대화는 여전히 메모리나 모델 문맥 한도를 초과할 수 있습니다. 필요하면 양의 정수 환경 변수로 각 한도를 재정의하고 브리지를 재시작하세요. 실행기는 `.env`를 자동으로 읽지 않습니다. 상주 브리지는 연결된 Codex 세션을 닫은 뒤 종료하세요. 재시작하면 메모리의 대화 상태가 사라집니다.
 
-## 로컬 확인
+## 로컬 확인과 통합 호환성 검증
 
 ```bash
-npm test
-./bin/ghcp-doctor
+npm test                              # 단위/실행 제어 테스트, 모델 호출 없음
+npm run test:scenarios                 # 10개 통합 시나리오 계약 검사
+npm run docs:scenarios:check           # 생성 문서와 사양 일치 검사
+npm run test:compatibility -- --plan   # 모델 호출 없는 실행 계획
+npm run test:compatibility:runtime     # 실제 Codex + SDK 테스트 대역, 모델 호출 없음
 ```
 
-`npm test`는 Node 내장 테스트 러너, 테스트 대역, 소유한 하위 프로세스와 루프백 HTTP를 사용하며 실제 모델을 호출하지 않습니다. 네이티브 검증 실행기는 옆 `claude-code-ghcp-sdk`의 시나리오 설계를 Codex에 대응시키되, 그 실행기나 실모델 성공 증거를 가져오지 않습니다.
+기존 검증 시나리오·실행기·기록을 새 구성으로 교체했습니다.
+**시나리오 10개 × GHCP 7모델 = 총 70건**이며, 별도 기준선·빠른 모드·부분 모델 선택은 없습니다.
+최대 4모델 병렬 실행, 개별 타임아웃, 실패 후 계속 실행을 적용합니다. 전체 1시간은 목표이며 강제 종료 조건이 아닙니다.
+
+실제 검증에는 Copilot 인증이 필요하며 사용량이 발생합니다. OpenAI API 키는 필요하지 않습니다.
 
 ```bash
-npm run test:scenarios       # 69개 기능 / 207개 네이티브 시나리오 계약
-npm run test:runner:prepare  # 드라이버 준비 상태; 공백이 있으면 종료 코드 1
-npm run test:runner:runtime  # 실제 고정 버전 Codex, 합성 catalog, 모델 호출 없음
-npm run test:runner:drivers  # 실제 Codex + scripted SDK; 실모델 호환성 점수 없음
+npm run test:compatibility -- --execute
+npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.json
 ```
 
-[시나리오·대응표](docs/NATIVE_SCENARIOS_KO.md)와 [실행 방법](docs/EXHAUSTIVE_TESTING_KO.md)에
-7모델 전체 결과표, 사전 점검 증명과 명시적 실모델 실행 명령을 설명했습니다.
-전체 acceptance는 모든 드라이버·판정기가 준비되어야 하므로 현재는 실행 전 차단됩니다.
-선택 진단의 일부 성공이나 별도 보조 `test:e2e:protocol`을 전체 네이티브 검증으로 보고하지 않습니다.
+[통합 시나리오·커버리지](docs/NATIVE_SCENARIOS_KO.md)와 [실행·증거·환경 안내](docs/COMPATIBILITY_TESTING_KO.md)를 참고하세요.
+**90%는 일상 개발 작업의 커버리지 목표이지 실측된 제품 기능 지원율이 아닙니다.** 모델별 통과율과 포함·제외 기능을 구분합니다.
 
-실제 연결 검증 기록: [2026-09-20 검증 리포트](docs/VALIDATION_REPORT_2026-09-20_KO.md). `gpt-6-astra`로 수행한 결과이며, 당시 버전·환경과 검증 범위에 한정됩니다.
+최신 실검증: [2026-09-21 결과](docs/validation/2026-09-21/README_KO.md) — **57/70 통과·13건 실패**, 약 7분 31초. 증거 무결성은 확인했지만 전체 시험 통과는 아닙니다.
 
 ## 공식 참고 자료
 
