@@ -5,7 +5,7 @@ import path from "node:path";
 import http from "node:http";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { NATIVE_SCENARIO_CATALOG as C, NATIVE_SCENARIOS, NATIVE_MODELS, catalogFingerprint } from "../scripts/compatibility/catalog.mjs";
+import { NATIVE_SCENARIO_CATALOG as C, NATIVE_SCENARIOS, NATIVE_MODELS, TOTAL_CASES, catalogFingerprint } from "../scripts/compatibility/catalog.mjs";
 import { validateDesign } from "../scripts/compatibility/design.mjs";
 import { parseArguments } from "../scripts/compatibility.mjs";
 import { DRIVER_IDS, CaseExecutor } from "../scripts/compatibility/execute.mjs";
@@ -24,13 +24,13 @@ import { syntheticEvidence, writeSyntheticCase } from "./helpers/core-evidence.m
 function temporary(t) { const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "core10-unit-"))); t.after(() => fs.rmSync(dir, { recursive: true, force: true })); return dir; }
 const scenario = id => NATIVE_SCENARIOS.find(s => s.id === id);
 
-test("one integrated suite has ten scenarios, seven models and exactly 70 cells without a global cutoff", () => {
+test("one integrated suite has a versioned scenario catalog, seven models and a derived full matrix without a global cutoff", () => {
   const plan = validateDesign();
-  assert.equal(plan.scenarios, 10); assert.equal(plan.models, 7); assert.equal(plan.totalCases, 70);
-  assert.equal(plan.perModelSeconds, 1170); assert.equal(plan.scheduledCeilingEstimateSeconds, 2430);
+  assert.equal(plan.scenarios, NATIVE_SCENARIOS.length); assert.equal(plan.models, 7); assert.equal(plan.totalCases, TOTAL_CASES);
+  assert.equal(plan.perModelSeconds, NATIVE_SCENARIOS.reduce((sum, s) => sum + s.timeoutSeconds, 0)); assert.equal(plan.scheduledCeilingEstimateSeconds, C.budget.preflightSeconds + 2 * plan.perModelSeconds);
   assert.equal(plan.budget.globalDeadline, false); assert.equal(plan.modelCalls, 0); assert.equal(plan.liveCompatibilityVerified, false);
   assert.equal(plan.coverage.measuredPercent, null); assert.equal(plan.coverage.targetPercent, 90);
-  assert.equal(plan.coverage.namedCapabilities, 25); assert.ok(!Object.hasOwn(C, "baseline"));
+  assert.equal(plan.coverage.namedCapabilities, C.coverage.included.length); assert.ok(!Object.hasOwn(C, "baseline"));
   assert.deepEqual(DRIVER_IDS, NATIVE_SCENARIOS.map(s => s.id));
   assert.ok(Object.isFrozen(C) && Object.isFrozen(C.scenarios[0].assertions));
   const copy = structuredClone(C); copy.scenarios[0].timeoutSeconds = 999;
@@ -76,11 +76,11 @@ test("suite pass rates are not product coverage; no offline certification or red
   const report = newReport({ runId: "unit" });
   Object.assign(report, { finishedAt: new Date().toISOString(), implementationUnchanged: true, userSettingsUnchanged: true });
   report.cases.forEach(r => r.status = "passed");
-  assert.equal(summarize(report).fullMatrixPassed, true); assert.equal(report.cases.length, 70);
+  assert.equal(summarize(report).fullMatrixPassed, true); assert.equal(report.cases.length, TOTAL_CASES);
   assert.ok(!Object.hasOwn(report, "baseline"));
   for (const status of C.acceptance.statuses.filter(s => s !== "passed")) {
     report.cases[0].status = status; const summary = summarize(report);
-    assert.equal(summary.fullMatrixPassed, false); assert.equal(summary.perModel[0].total, 10); assert.equal(summary.perModel[0].percent, 90);
+    assert.equal(summary.fullMatrixPassed, false); assert.equal(summary.perModel[0].total, NATIVE_SCENARIOS.length); assert.equal(summary.perModel[0].percent, (NATIVE_SCENARIOS.length - 1) / NATIVE_SCENARIOS.length * 100);
   }
   report.cases[0].status = "passed"; report.executionKind = "offline-self-test";
   assert.equal(summarize(report).fullMatrixPassed, false);
@@ -154,7 +154,7 @@ test("fresh output directories reject overwrite and symlink parents", t => {
   const root = temporary(t); freshDirectory(path.join(root, "new")); assert.throws(() => freshDirectory(path.join(root, "new")));
   fs.symlinkSync(path.join(root, "new"), path.join(root, "alias")); assert.throws(() => freshDirectory(path.join(root, "alias", "child")), /symlink/);
 });
-test("full scheduler self-test records exactly 70 cells but cannot certify live compatibility; reports verify", async t => {
+test("full scheduler self-test records the whole current matrix but cannot certify live compatibility; reports verify", async t => {
   const root = temporary(t), calls = [];
   const workerSupervisor = async config => {
     calls.push(config);
@@ -163,12 +163,22 @@ test("full scheduler self-test records exactly 70 cells but cannot certify live 
     return { code: 0, killed: false, processGroupGone: true, durationMs: 5 };
   };
   const { report, directory } = await runCompatibility({ output: path.join(root, "results"), workerSupervisor });
-  assert.equal(calls.filter(c => c.action === "case").length, 70);
+  assert.equal(calls.filter(c => c.action === "case").length, TOTAL_CASES);
   assert.equal(report.executionKind, "offline-self-test"); assert.equal(report.summary.fullMatrixPassed, false);
   assert.ok(report.cases.every(r => r.status === "passed"), report.error);
   assert.equal(verifyReport(path.join(directory, "report.json")).evidenceIntegrity, true);
-  const bad = structuredClone(report); bad.cases.pop(); writeJson(path.join(directory, "report.json"), bad);
-  assert.throws(() => verifyReport(path.join(directory, "report.json")));
+  // Summaries are projections, not trusted substitutes for the case evidence.
+  for (const mutate of [
+    r => { r.cases[0].metrics.toolCalls += 1; },
+    r => { r.cases[0].failedChecks = ["fabricated-failure"]; },
+    r => { r.cases.pop(); },
+  ]) {
+    const bad = structuredClone(report); mutate(bad);
+    writeJson(path.join(directory, "report.json"), bad);
+    assert.throws(() => verifyReport(path.join(directory, "report.json")));
+  }
+  writeJson(path.join(directory, "report.json"), report);
+  assert.equal(verifyReport(path.join(directory, "report.json")).evidenceIntegrity, true);
 });
 test("failed or timed-out cases do not skip the remaining matrix or retry", async t => {
   const root = temporary(t), calls = [];
@@ -182,14 +192,14 @@ test("failed or timed-out cases do not skip the remaining matrix or retry", asyn
     return { code: 0, killed: false, processGroupGone: true, durationMs: 5 };
   };
   const { report, directory } = await runCompatibility({ output: path.join(root, "results"), workerSupervisor });
-  assert.equal(calls.length, 70); assert.equal(new Set(calls).size, 70);
+  assert.equal(calls.length, TOTAL_CASES); assert.equal(new Set(calls).size, TOTAL_CASES);
   assert.equal(report.cases.filter(r => r.status === "failed").length, 7);
   assert.equal(report.cases.filter(r => r.status === "timed-out").length, 7);
-  assert.equal(report.cases.filter(r => r.status === "passed").length, 56);
-  assert.equal(report.cases.length, 70); assert.equal(report.summary.fullMatrixPassed, false);
+  assert.equal(report.cases.filter(r => r.status === "passed").length, TOTAL_CASES - 2 * NATIVE_MODELS.length);
+  assert.equal(report.cases.length, TOTAL_CASES); assert.equal(report.summary.fullMatrixPassed, false);
   assert.equal(verifyReport(path.join(directory, "report.json")).evidenceIntegrity, true);
 });
-test("unavailable exact models remain as ten blocked cells without fallback", async t => {
+test("unavailable exact models remain as one blocked cell per current scenario without fallback", async t => {
   const root = temporary(t), called = [];
   const unavailable = NATIVE_MODELS[1];
   const workerSupervisor = async config => {
@@ -198,8 +208,8 @@ test("unavailable exact models remain as ten blocked cells without fallback", as
     return { code: 0, killed: false, processGroupGone: true, durationMs: 5 };
   };
   const { report } = await runCompatibility({ output: path.join(root, "results"), workerSupervisor });
-  assert.equal(called.length, 60); assert.ok(!called.includes(unavailable));
-  assert.equal(report.cases.filter(r => r.status === "blocked").length, 10); assert.equal(report.summary.totalCases, 70);
+  assert.equal(called.length, TOTAL_CASES - NATIVE_SCENARIOS.length); assert.ok(!called.includes(unavailable));
+  assert.equal(report.cases.filter(r => r.status === "blocked").length, NATIVE_SCENARIOS.length); assert.equal(report.summary.totalCases, TOTAL_CASES);
 });
 test("user cancellation stops new cases, preserves incomplete cells and cannot certify compatibility", async t => {
   const root = temporary(t), controller = new AbortController(); let cases = 0;
@@ -209,7 +219,7 @@ test("user cancellation stops new cases, preserves incomplete cells and cannot c
     return { code: 0, killed: false, processGroupGone: true, durationMs: 5 };
   };
   const { report } = await runCompatibility({ output: path.join(root, "results"), signal: controller.signal, workerSupervisor });
-  assert.equal(cases, 1); assert.equal(report.interrupted, true); assert.equal(report.cases.length, 70);
+  assert.equal(cases, 1); assert.equal(report.interrupted, true); assert.equal(report.cases.length, TOTAL_CASES);
   assert.equal(report.summary.fullMatrixPassed, false); assert.ok(report.cases.every(r => r.status === "not-run"));
 });
 test("scenario documentation is generated from the contract and local links resolve", () => {
@@ -230,7 +240,7 @@ test("preflight locates the actual SDK version through its CJS/ESM entry layout"
 });
 test("retired provider path cannot be used and subset injection is rejected", async () => {
   assert.throws(() => new Backend({ provider: "openai" }), /GHCP/);
-  await assert.rejects(runCompatibility({ models: ["gpt-6-astra"] }), /exactly ten/);
+  await assert.rejects(runCompatibility({ models: ["gpt-6-astra"] }), /complete current scenario matrix/);
 });
 
 test("command output is recovered only from correlated native tool result IDs", () => {

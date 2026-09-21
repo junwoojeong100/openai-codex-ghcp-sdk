@@ -6,18 +6,20 @@ import { runCompatibility } from "./compatibility/runner.mjs";
 import { verifyReport } from "./compatibility/report.mjs";
 import { scrubber } from "./compatibility/util.mjs";
 
-export const usage = `Codex/GHCP integrated workflow verification: 10 scenarios × 7 models = 70 cases
+import { NATIVE_SCENARIOS, NATIVE_MODELS, TOTAL_CASES } from "./compatibility/catalog.mjs";
+
+export const usage = `Codex/GHCP integrated workflow verification: ${NATIVE_SCENARIOS.length} scenarios × ${NATIVE_MODELS.length} models = ${TOTAL_CASES} cases
 
 node scripts/compatibility.mjs --plan
 node scripts/compatibility.mjs --execute [--output NEW_DIR] [--bin NATIVE_CODEX]
 node scripts/compatibility.mjs --verify REPORT_JSON
 
 Default: --plan (offline, no model calls or credential access).
-Live execution always uses all seven exact catalog IDs and all ten scenarios.
+Live execution always uses all seven exact catalog IDs and all current scenarios.
 No fast/subset suite, native OpenAI comparison or overall time cutoff.
 Individual case deadlines remain; failures do not skip later cases.
 Requires Copilot authentication, Codex 0.154.0 and macOS/Linux. No OpenAI API key.
-Exit: 0 = valid plan / all 70 passed; 1 = failed/blocked/incomplete; 2 = invalid arguments/evidence.
+Exit: 0 = valid plan / all ${TOTAL_CASES} passed; 1 = failed/blocked/incomplete; 2 = invalid arguments/evidence.
 `;
 export function parseArguments(args) {
   if (args.length === 1 && ["--help", "-h"].includes(args[0])) return { mode: "help" };

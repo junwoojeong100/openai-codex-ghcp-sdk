@@ -1,5 +1,8 @@
 import { isDeepStrictEqual as same } from "node:util";
 import { sha } from "./util.mjs";
+import { extendedChecks } from "./extended-oracles.mjs";
+import { gitDiffCommand } from "./native-output.mjs";
+export { gitDiffCommand } from "./native-output.mjs";
 import { safeApprovalCommand } from "./fixtures.mjs";
 
 const content = (files, file) => files?.[file]?.base64 == null ? null : Buffer.from(files[file].base64, "base64").toString("utf8");
@@ -8,13 +11,14 @@ const has = (text, value) => typeof value === "string" && value.length > 0 && ty
 const mutationPaths = Object.freeze({
   C01: [], C02: ["sub/skill-receipts.jsonl"], C03: [],
   C04: ["calc.mjs", "app.mjs", "notes.txt", "docs/notes.txt", "obsolete.txt", "README.md"], C05: ["discount.mjs"],
+  C11: [], C12: [], C13: [], C14: ["memory.txt"], C15: ["task-started.json"], C16: [], C17: [], C18: [],
   C06: [], C07: [], C08: ["allowed.txt"], C09: ["memory.txt", "other.txt"], C10: ["memory.txt"],
 });
 export function completedItems(records = []) {
   return records.filter(r => r.direction === "receive").flatMap(({ message: m = {} }) =>
     m.method === "item/completed" ? [m.params?.item].filter(Boolean) : m.type === "item.completed" ? [m.item].filter(Boolean) : []);
 }
-const toolTypes = new Set(["commandExecution", "command_execution", "fileChange", "file_change", "dynamicToolCall", "mcpToolCall"]);
+const toolTypes = new Set(["commandExecution", "command_execution", "fileChange", "file_change", "dynamicToolCall", "mcpToolCall", "collabAgentToolCall"]);
 const tools = records => completedItems(records).filter(i => toolTypes.has(i.type));
 export function commands(records, transport = []) {
   // Codex can emit only the tail in commandExecution. Recover earlier bytes
@@ -35,6 +39,18 @@ export function commands(records, transport = []) {
 }
 const code = i => i.exitCode ?? i.exit_code;
 const output = i => i.correlatedOutput ?? i.aggregatedOutput ?? i.aggregated_output ?? "";
+export function parseAnswer(text) {
+  if (typeof text !== "string") return null;
+  const fenced = /^\s*```(?:json)?\s*\n([\s\S]*?)\n```\s*$/i.exec(text);
+  return parse(fenced ? fenced[1] : text);
+}
+export function diagnosticMetrics(scenario, evidence) {
+  const count = tools(evidence.native || []).length;
+  const text = answer(evidence.native || []);
+  return { toolCalls: count, targetToolCalls: scenario.targetToolCalls, hardToolLimit: scenario.maxToolCalls,
+    efficiencyTargetExceeded: count > scenario.targetToolCalls,
+    answerPresentation: parse(text) !== null ? "json" : parseAnswer(text) !== null ? "fenced-json" : "text-or-invalid-json" };
+}
 export const answer = records => completedItems(records).filter(i => ["agentMessage", "agent_message"].includes(i.type)).at(-1)?.text?.trim() ?? "";
 export function streamEvents(row) {
   const events = [];
@@ -93,23 +109,25 @@ export function evaluate(scenario, e) {
   const lastRecords = phaseRecords(turns.at(-1));
   const posts = (e.transport || []).filter(r => r.method === "POST" && /^\/v1\/responses(?:\?|$)/.test(r.path));
   const sdk = e.sdk || [], sessions = sdk.filter(r => r.type === "session.created"), usages = sdk.filter(r => r.type === "assistant.usage" && !r.agentId);
-  const wire = wireOutputs(posts);
+  const acceptedPosts = scenario.id === "C18" ? posts.filter(r => r.status !== 503) : posts;
+  const wire = wireOutputs(acceptedPosts);
+  const cliCase = ["C01", "C11"].includes(scenario.id);
   check("identity", e.provider === "ghcp" && typeof e.model === "string" && typeof n === "string" && n.length > 10, "One exact GHCP model and an owned hidden fixture");
-  check("native-completion", scenario.id === "C01" ? e.cli?.code === 0 && records.some(r => r.message?.type === "turn.completed") :
-    turns.length > 0 && turns.length <= scenario.maxUserTurns && turns.every(t => t.result?.status === "completed" &&
+  check("native-completion", cliCase ? e.cli?.code === 0 && records.some(r => r.message?.type === "turn.completed") :
+    turns.length > 0 && turns.length <= scenario.maxUserTurns && turns.every(t => t.result?.status === (scenario.id === "C15" && t.label === "interrupt" ? "interrupted" : "completed") &&
       phaseRecords(t).some(r => r.direction === "receive" && r.message?.method === "turn/completed" &&
-        r.message.params?.threadId === t.threadId && r.message.params?.turn?.id === t.result.id && r.message.params?.turn?.status === "completed")),
+        r.message.params?.threadId === t.threadId && r.message.params?.turn?.id === t.result.id && r.message.params?.turn?.status === t.result.status)),
     "Actual completed native turn events, not generated success claims");
-  check("native-surface", records.length > 0 && (scenario.id === "C01"
+  check("native-surface", records.length > 0 && (cliCase
     ? records.some(r => r.message?.type === "thread.started" && r.message.thread_id)
     : threads.length > 0 && threads.every(p => p.result?.model === e.model && p.result?.modelProvider === "ghcp" && p.result?.thread?.id === p.threadId)),
     "Real native CLI/app-server identity");
-  check("transport", posts.length > 0 && posts.every(r => r.request?.model === e.model && r.status === 200 && !r.truncated && streamValid(r)),
+  check("transport", acceptedPosts.length > 0 && acceptedPosts.every(r => r.request?.model === e.model && r.status === 200 && !r.truncated && streamValid(r)),
     "Accepted Responses requests with coherent complete streams");
   check("route", sessions.length > 0 && sessions.every(s => s.model === e.model && s.sessionId) &&
     usages.length > 0 && usages.every(u => u.data?.model === e.model && sessions.some(s => s.sessionId === u.sessionId)) &&
     sessions.every(s => sdk.some(r => r.type === "session.send" && r.sessionId === s.sessionId) && usages.some(r => r.sessionId === s.sessionId)) &&
-    wire.length === posts.length && wire.every(r => r.model === e.model), "Observed SDK model use and response identity, no fallback");
+    wire.length === acceptedPosts.length && wire.every(r => r.model === e.model), "Observed SDK model use and response identity, no fallback");
   check("tool-budget", tools(records).length <= scenario.maxToolCalls && (e.toolLedger || []).length <= scenario.maxToolCalls, "Bounded tool invocations");
   check("isolation", same(e.fixture?.allowed, mutationPaths[scenario.id]) && unchangedOutside(e.before, e.after, mutationPaths[scenario.id] || []) &&
     e.gitBefore?.head && typeof e.gitBefore.index === "string" && same(e.gitBefore, e.gitAfter) &&
@@ -140,12 +158,12 @@ export function evaluate(scenario, e) {
       receipts.length === 1 && receipts[0].result === secrets.helper, "Real skill discovery/attachment, guide read and one helper execution");
   }
   if (scenario.id === "C03") {
-    const parsed = parse(final) || {};
+    const parsed = parseAnswer(final) || {};
     check("C03.1", parsed.path === "src/주문 계산.mjs" && parsed.line === 2 && parsed.value === n && parsed.empty === true &&
       allCommands.some(i => code(i) === 0 && has(output(i), n)) && allCommands.some(i => /\b(?:rg|grep|find)\b/.test(i.command || "")),
       "Actual search/read, exact path/line/value and empty-file verdict");
     check("C03.2", same(parsed.review, { path: "review.mjs", line: 3, operator: "<=", replacement: "<", input: [7], expected: 7 }) &&
-      allCommands.some(i => /\bgit\s+diff\b/.test(i.command || "") && code(i) === 0 && /\+.*i <= items\.length/.test(output(i))) && same(e.before, e.after),
+      allCommands.some(i => gitDiffCommand(i.command) && code(i) === 0 && /\+.*i <= items\.length/.test(output(i))) && same(e.before, e.after),
       "One concrete finding from the real uncommitted diff, no mutation");
   }
   if (scenario.id === "C04") {
@@ -226,6 +244,8 @@ export function evaluate(scenario, e) {
       allCommands.some(i => code(i) === 0 && has(output(i), n)) && tools(lastRecords).length === 0 && !e.after?.["memory.txt"],
       "New SDK session, counter runs once, no replayed side effect");
   }
+  extendedChecks(scenario, e, { check, records, allCommands, final, n, secrets, turns, threads, sessions, sdk, posts,
+    tools, phaseRecords, answer, content, code, output, completedItems, commands, has, parseAnswer, gitDiffCommand });
   check("assertion-completeness", scenario.assertions.every(a => checks.some(c => c.id === a.id)), "Every advertised assertion has a real oracle");
   return checks;
 }

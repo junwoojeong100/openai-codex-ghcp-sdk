@@ -19,6 +19,9 @@ export function artifactContents(config, scenario, evidence, checks, status) {
     "approvals.json": evidence.approvals, "sandbox.json": { preflight: evidence.sandboxPreflight, resources: evidence.resources },
     "resume.json": { restart: evidence.restart, phases: evidence.phases },
     "skill.json": evidence.skill || {}, "mcp.json": evidence.mcp || {},
+    "launcher.json": evidence.launcher || {}, "clarification.json": evidence.clarifications || [],
+    "compaction.json": evidence.compaction || {}, "interruption.json": evidence.interruption || {},
+    "agents.json": { native: evidence.native, sdk: evidence.sdk }, "retry.json": { retry: evidence.retry, transport: evidence.transport },
     "review.json": { native: evidence.native, diff: evidence.diff },
   };
   for (const name of new Set(scenario.assertions.map(a => a.evidence))) if (!contents[name]) {

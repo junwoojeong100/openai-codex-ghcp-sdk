@@ -2,8 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { sha, mkdir, writeJson } from "../../scripts/compatibility/util.mjs";
 import { NATIVE_SCENARIOS, catalogFingerprint } from "../../scripts/compatibility/catalog.mjs";
-import { evaluate } from "../../scripts/compatibility/oracles.mjs";
+import { evaluate, diagnosticMetrics } from "../../scripts/compatibility/oracles.mjs";
 import { artifactContents } from "../../scripts/compatibility/artifacts.mjs";
+
+import { extendedEvidence } from "./extended-evidence.mjs";
 
 // Synthetic oracle inputs only. They deliberately carry an offline label and
 // may never certify actual model behavior, even when every check is satisfied.
@@ -12,7 +14,7 @@ const received = message => ({ direction: "receive", message });
 const item = value => received({ method: "item/completed", params: { item: value } });
 const command = (cmd, output, exitCode = 0) => item({ type: "commandExecution", id: `cmd-${sha(cmd + output).slice(0, 12)}`, command: cmd, exitCode, aggregatedOutput: output, status: "completed" });
 const message = text => item({ type: "agentMessage", text, id: `msg-${sha(text).slice(0, 12)}` });
-const paths = { C01: [], C02: ["sub/skill-receipts.jsonl"], C03: [],
+const paths = { C11: [], C12: [], C13: [], C14: ["memory.txt"], C15: ["task-started.json"], C16: [], C17: [], C18: [], C01: [], C02: ["sub/skill-receipts.jsonl"], C03: [],
   C04: ["calc.mjs", "app.mjs", "notes.txt", "docs/notes.txt", "obsolete.txt", "README.md"], C05: ["discount.mjs"],
   C06: [], C07: [], C08: ["allowed.txt"], C09: ["memory.txt", "other.txt"], C10: ["memory.txt"] };
 const nonce = "N_01234567890123456789_한글";
@@ -123,6 +125,7 @@ export function syntheticEvidence(id, provider = "ghcp", model = "gpt-6-astra") 
   if (["C09", "C10"].includes(id)) { delete e.after["memory.txt"]; delete e.after["other.txt"]; }
   if (id !== "C01") e.transport.push({ method: "POST", path: "/v1/responses", request: { model, input: inputs }, status: 200,
     contentType: "application/json", responseText: JSON.stringify({ status: "completed", model, output }) });
+  extendedEvidence(id, e, { file, command, item, received });
   return e;
 }
 export function writeSyntheticCase(config, mutate) {
@@ -131,7 +134,7 @@ export function writeSyntheticCase(config, mutate) {
   const status = checks.every(c => c.passed) ? "passed" : "failed";
   mkdir(config.directory);
   const manifest = { runId: config.runId, catalogHash: catalogFingerprint(), scenarioId: scenario.id, model: config.model, provider: config.provider,
-    executionKind: "offline-self-test", durationMs: 5, status, checks, files: {} };
+    executionKind: "offline-self-test", durationMs: 5, status, checks, metrics: diagnosticMetrics(scenario, e), files: {} };
   for (const [name, text] of Object.entries(artifactContents(manifest, scenario, e, checks, status))) {
     fs.writeFileSync(path.join(config.directory, name), text, { mode: 0o600 }); manifest.files[name] = { sha256: sha(text), bytes: Buffer.byteLength(text) };
   }

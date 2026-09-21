@@ -3,7 +3,7 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { NATIVE_SCENARIOS, EXECUTION_BUDGET, catalogFingerprint } from "./catalog.mjs";
 import { CaseExecutor } from "./execute.mjs";
-import { evaluate } from "./oracles.mjs";
+import { evaluate, diagnosticMetrics } from "./oracles.mjs";
 import { preflight } from "./preflight.mjs";
 import { artifactContents } from "./artifacts.mjs";
 import { mkdir, safeRead, sha, writeJson, scrubber, statusFor } from "./util.mjs";
@@ -23,7 +23,7 @@ async function main() {
   const executor = new CaseExecutor({ ...config, scenario, signal });
   // Partial evidence is diagnostic only: it can never earn a passing cell.
   const partial = setInterval(() => {
-    try { writeJson(path.join(config.directory, "observation.partial.json"), scrubber(process.env, [executor.token])(executor.observation)); }
+    try { writeJson(path.join(config.directory, "observation.partial.json"), scrubber(process.env, [executor.token, executor.httpToken])(executor.observation)); }
     catch { /* The supervisor will retain its own failure/timeout receipt. */ }
   }, 500);
   let error;
@@ -33,13 +33,13 @@ async function main() {
   try { evidence = await executor.finish(); }
   catch (failure) { error ??= failure; evidence = executor.observation; evidence.resources = { cleaned: false, errors: [failure.message] }; }
   clearInterval(partial);
-  evidence = scrubber(process.env, [executor.token])(evidence);
+  evidence = scrubber(process.env, [executor.token, executor.httpToken])(evidence);
   const checks = evaluate(scenario, evidence);
   const status = error ? statusFor(error) : checks.every(c => c.passed) ? "passed" : "failed";
   const manifest = { scenarioId: scenario.id, provider: config.provider, model: config.model, catalogHash: config.catalogHash,
     runId: config.runId, executionKind: "live", durationMs: Math.ceil(performance.now() - started), status,
     category: error?.category || (status === "passed" ? null : "undetermined"),
-    error: error ? clean(error.message) : null, checks, files: {} };
+    error: error ? clean(error.message) : null, checks, metrics: diagnosticMetrics(scenario, evidence), files: {} };
   mkdir(config.directory);
   for (const [name, text] of Object.entries(artifactContents(config, scenario, evidence, checks, status))) {
     fs.writeFileSync(path.join(config.directory, name), text, { mode: 0o600 });

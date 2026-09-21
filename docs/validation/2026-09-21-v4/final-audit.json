@@ -1,0 +1,75 @@
+{
+  "recordedAt": "2026-09-21T03:28:00.923Z",
+  "catalogUnchangedSinceStart": true,
+  "implementationUnchangedSinceFreeze": true,
+  "frozenSnapshotFiles": 77,
+  "preservedExecutionAndHistoricalFiles": 67,
+  "evidenceIntegrity": true,
+  "currentAndFrozenVerifierAgree": true,
+  "totalCases": 126,
+  "passed": 100,
+  "failed": 26,
+  "reviewedFailures": 26,
+  "ownedProcessGroupsGone": 126,
+  "lineReferencesValidated": 95,
+  "jsonPointersValidated": 52,
+  "localMarkdownLinksChecked": 68,
+  "publishedArtifactsPrivacyCheck": true,
+  "finalChecks": [
+    {
+      "name": "docs",
+      "exitCode": 0
+    },
+    {
+      "name": "scenarios",
+      "exitCode": 0
+    },
+    {
+      "name": "plan",
+      "exitCode": 0
+    },
+    {
+      "name": "whitespace",
+      "exitCode": 0
+    }
+  ],
+  "kind": "v4-post-run-audit-not-a-full-matrix-pass",
+  "fullMatrixPassed": false,
+  "catalogHash": "1288898be512fc016d607cdcb870d895ed031c41f03377daadc28b0600ac9fd1",
+  "implementationHash": "30f3bf3b58ebd563827de6b1a351bc975b32fb5549911befeb9190fad62bdd96",
+  "commandExitCodes": {
+    "live": 1,
+    "verification": 1,
+    "frozen-source-verification": 1
+  },
+  "verifierReceipts": {
+    "verification": {
+      "sha256": "42126c47d9742a80d3db6b0ea8aa5e3652df668c585ae9f969a0b4496e3443da",
+      "evidenceIntegrity": true,
+      "fullMatrixPassed": false
+    },
+    "frozen-source-verification": {
+      "sha256": "42126c47d9742a80d3db6b0ea8aa5e3652df668c585ae9f969a0b4496e3443da",
+      "evidenceIntegrity": true,
+      "fullMatrixPassed": false
+    }
+  },
+  "finalCheckLogs": {
+    "docs": {
+      "localPath": ".runtime/workflows-18-v4-20260921/final-docs.log",
+      "sha256": "44cf778bd5062d8794d5cf7edc499c98b4c924cbc72172597811f7284fa1347b"
+    },
+    "scenarios": {
+      "localPath": ".runtime/workflows-18-v4-20260921/final-scenarios.log",
+      "sha256": "a207629bb469cb19cf6e8476374291187f460681e7e253f1cfa4feea8c7303e8"
+    },
+    "plan": {
+      "localPath": ".runtime/workflows-18-v4-20260921/final-plan.log",
+      "sha256": "eedfa4b492096ddbc934bbf1ba7cca67cd5105ae978e3281cc7ad923d0d52fb2"
+    },
+    "whitespace": {
+      "localPath": ".runtime/workflows-18-v4-20260921/final-whitespace.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -33,7 +33,7 @@ export class NativeHost {
     this.abort = () => { this.fail(this.signal.reason); this.child.kill("SIGTERM"); };
     this.signal?.addEventListener("abort", this.abort, { once: true });
     if (this.signal?.aborted) this.abort();
-    await this.request("initialize", { clientInfo: { name: "ghcp-core-10", version: "1.0.0" }, capabilities: { experimentalApi: true } });
+    await this.request("initialize", { clientInfo: { name: "ghcp-compatibility", version: "1.0.0" }, capabilities: { experimentalApi: true } });
     this.write({ method: "initialized" }); return this;
   }
   record(direction, message) { const r = { direction, message, at: Date.now() }; this.records.push(r); this.events.emit("record", r); }
@@ -73,9 +73,9 @@ export class NativeHost {
       }), this.signal);
     } finally { this.events.off("record", listener); this.events.off("failure", fail); }
   }
-  async turn(threadId, input) {
+  async turn(threadId, input, options = {}) {
     const after = this.records.length;
-    const result = await this.request("turn/start", { threadId, input: typeof input === "string" ? [{ type: "text", text: input }] : input });
+    const result = await this.request("turn/start", { ...options, threadId, input: typeof input === "string" ? [{ type: "text", text: input }] : input });
     if (!result.turn?.id) throw new Error("Native turn lacks ID");
     const final = await this.wait(r => r.direction === "receive" && r.message.method === "turn/completed" &&
       r.message.params?.threadId === threadId && r.message.params?.turn?.id === result.turn.id, after);

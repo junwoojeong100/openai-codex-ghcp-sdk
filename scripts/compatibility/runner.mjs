@@ -35,7 +35,7 @@ export function freshDirectory(output) {
 }
 export async function runCompatibility({ output, bin = process.env.CODEX_BIN || "codex", signal, env = process.env,
   onProgress = () => {}, workerSupervisor = supervise, ...unsupported } = {}) {
-  if (Object.keys(unsupported).some(key => !["mode"].includes(key))) throw new Error("This runner always executes exactly ten scenarios for all seven models.");
+  if (Object.keys(unsupported).some(key => !["mode"].includes(key))) throw new Error("This runner always executes the complete current scenario matrix for all seven models.");
   validateDesign(); signal?.throwIfAborted();
   const runId = randomUUID(), started = performance.now(), clean = scrubber(env), beforeSettings = settingsSnapshot(env);
   const report = newReport({ runId, executionKind: workerSupervisor === supervise ? "live" : "offline-self-test" });
@@ -63,7 +63,8 @@ export async function runCompatibility({ output, bin = process.env.CODEX_BIN || 
       if (fs.existsSync(path.join(caseDir, "result.json"))) {
         const { manifest } = readCase(caseDir, row, runId, report.catalogHash, report.executionKind);
         Object.assign(row, { artifactPath: relative, resultHash: sha(safeRead(path.join(caseDir, "result.json"))),
-          observedStatus: manifest.status, status: manifest.status, error: manifest.error, category: manifest.category });
+          observedStatus: manifest.status, status: manifest.status, error: manifest.error, category: manifest.category,
+          metrics: manifest.metrics, failedChecks: manifest.checks.filter(c => !c.passed).map(c => c.id) });
       } else { row.status = "failed"; row.reason = "No complete result; retained partial evidence/worker log"; }
       if (receipt.error?.name === "TimeoutError") { row.status = "timed-out"; row.category = "timeout"; }
       else if (signal?.aborted) { row.status = "not-run"; row.category = "interrupted"; }

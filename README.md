@@ -186,14 +186,14 @@ Both the serialized conversation-history limit (`MAX_REPLAY_BYTES`) and HTTP req
 
 ```bash
 npm test                              # Unit/controller checks, no model calls
-npm run test:scenarios                 # Ten integrated scenario contracts
+npm run test:scenarios                 # 18 versioned scenario contracts
 npm run docs:scenarios:check           # Generated document consistency
 npm run test:compatibility -- --plan   # Offline execution plan
 npm run test:compatibility:runtime     # Real Codex + SDK double, no model calls
 ```
 
-Retired scenarios, runners and records have been replaced.
-**Ten scenarios × seven GHCP models = exactly 70 cases**, with no reference-provider run, fast suite or model subset.
+The scenarios and runner have been expanded. Existing run results remain historical records of their original contract.
+**18 scenarios × seven GHCP models = 126 cases**, with no reference-provider run, fast suite or model subset.
 Up to four model lanes, individual deadlines and continuation after failure keep the run short. One hour is a target, not an overall cutoff.
 
 Live execution requires Copilot authentication and consumes usage. No OpenAI API key is required.
@@ -204,9 +204,11 @@ npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.js
 ```
 
 See [integrated scenarios and coverage](docs/NATIVE_SCENARIOS.md) and the [runner/evidence guide](docs/COMPATIBILITY_TESTING.md).
-**90% is an everyday-workflow coverage target, not a measured product-feature support rate.** Pass rates and included/excluded capabilities remain separate.
+**90% is an everyday-workflow coverage target, not a measured product-feature support rate.** The reviewer-defined 20-group checklist has a **75% design score**, not a live support rate.
 
-Latest real run: [2026-09-21 results](docs/validation/2026-09-21/README.md) — **57/70 passed, 13 failed**, ~7m 31s. Evidence verified; the full suite did not pass.
+The [v4 live run](docs/validation/2026-09-21-v4/README.md) passed **100/126 (79.4%)**, with **26 failures**, in ~12m 3s. Only **gpt-6-astra passed 18/18**; the full matrix did not pass. Evidence integrity was verified with both the current and frozen pre-run source. Older core-10 and v3 runs are not v4 evidence. Pass rates and included/excluded capabilities remain separate.
+
+Historical core-10 run (not the expanded suite): [2026-09-21 results](docs/validation/2026-09-21/README.md) — **57/70 passed, 13 failed**, ~7m 31s. Evidence verified; the full suite did not pass.
 
 ## References
 

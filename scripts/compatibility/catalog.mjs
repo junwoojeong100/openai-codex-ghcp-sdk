@@ -1,5 +1,7 @@
-// The only active compatibility suite. Every live run has exactly 10 × 7 cells.
+// The only active suite. Matrix dimensions are derived from this versioned contract.
 import { createHash } from "node:crypto";
+import { extendedScenarios } from "./extended-scenarios.mjs";
+import { CORE_CAPABILITIES } from "./capabilities.mjs";
 import { SUPPORTED_MODEL_IDS } from "../../src/model-map.mjs";
 const text = (ko, en) => ({ ko, en });
 function freeze(value) {
@@ -22,20 +24,14 @@ export const EXECUTION_BUDGET = freeze({
   targetSeconds: 3600, globalDeadline: false, preflightSeconds: 90,
   modelConcurrency: 4, caseCleanupReserveSeconds: 8, automaticCaseRetries: 0,
 });
-export const ACCEPTANCE = freeze({
-  scope: "Ten integrated everyday coding workflows; no measured whole-product coverage or native-provider parity claim.",
-  perModelDenominator: 10, minimumPassedPerModel: 10, allAssertionsRequired: true, allSevenModelsRequired: true,
-  statuses: ["passed", "failed", "unsupported", "blocked", "timed-out", "not-run"],
-  creditedStatuses: ["passed"], removeMissingFromDenominator: false,
-});
 export const COMMON_EVIDENCE = freeze(["case.json", "native.jsonl", "transport.jsonl", "sdk.jsonl", "oracle.json", "state.json", "resources.json"]);
 export const COMMON_GATES = freeze([
   text("실제 Codex CLI/app-server → bridge → Copilot SDK → 지정 모델 경로를 확인한다. SDK 직접 호출, 테스트 대역, 모델의 자기 선언은 실모델 통과 증거가 아니다.",
     "Require real Codex CLI/app-server → bridge → Copilot SDK → exact model. Direct SDK probes, doubles and model self-reports cannot earn live credit."),
   text("동일한 작은 합성 fixture와 지시문을 7모델에 사용한다. 모델별 도구/파일 결과를 독립 oracle로 판정하며 숨은 nonce는 프롬프트에 넣지 않는다.",
     "Use identical small synthetic fixtures/instructions across seven models. Independently evaluate tool/file outcomes; keep hidden nonces out of prompts."),
-  text("unified_exec와 freeform apply_patch를 명시적으로 노출한다. 이는 생산 launcher의 기본 catalog 자동 노출이나 OpenAI provider와의 A/B 동등성을 인증하는 시험이 아니다.",
-    "Explicitly expose unified_exec and freeform apply_patch. This does not certify production-launcher default tool advertisement or A/B equivalence with the OpenAI provider."),
+  text("unified_exec와 freeform apply_patch를 명시적으로 노출한다. C11만 기본 생산 launcher를 별도로 실행한다. OpenAI provider와의 A/B 동등성은 측정하지 않는다.",
+    "Explicitly expose unified_exec and freeform apply_patch. C11 separately exercises the production launcher without these overrides. OpenAI-provider A/B parity is not measured."),
   text("통합 시나리오의 모든 하위 조건과 증거가 있어야 passed다. 일부만 성공하거나 미지원 요청을 정직하게 거절해도 그 기능은 통과가 아니다.",
     "Every sub-assertion and artifact is required. Partial success or honest rejection of an unsupported feature is not a feature pass."),
   text("허용된 경로 외 파일·사용자 설정·Git index/HEAD를 보존한다. 승인·샌드박스를 우회하지 않고 비밀정보는 증거에서 제거한다.",
@@ -44,8 +40,8 @@ export const COMMON_GATES = freeze([
     "No overall time cutoff. Individual deadlines include setup, all turns/tools and teardown. Continue after failed/timed-out cases; user cancellation cleans up only owned processes."),
 ]);
 function scenario(id, name, seconds, turns, tools, fixture, prompt, steps, assertions, coverage, risk, sources) {
-  return { id, name, surface: id === "C01" ? "codex-cli" : "codex-app-server", timeoutSeconds: seconds,
-    maxUserTurns: turns, maxToolCalls: tools, fixture, prompt, steps,
+  return { id, name, surface: id === "C11" ? "production-launcher" : id === "C01" ? "codex-cli" : "codex-app-server", timeoutSeconds: seconds,
+    maxUserTurns: turns, targetToolCalls: tools, maxToolCalls: Math.max(12, tools * 3), fixture, prompt, steps,
     assertions: assertions.map(([description, evidence], i) => ({ id: `${id}.${i + 1}`, description, evidence })),
     coverage, bridgeRisk: risk, sources };
 }
@@ -66,7 +62,7 @@ export const NATIVE_SCENARIOS = freeze([
     ["instructions", "skills", "untrusted-data"], text("지시 계층 손실·Skill 문맥 누락", "Lost instruction hierarchy or skill context"), ["agents", "skills", "host"]),
   scenario("C03", text("저장소 탐색·코드 이해·Git diff 리뷰", "Repository exploration, code understanding and Git-diff review"), 90, 1, 6,
     text("한글 경로 구현/decoy, 빈 파일/CRLF, review.mjs의 미커밋 <→<= 경계 오류. 알려진 오류 한 개와 변경 줄을 oracle로 고정한다.", "Unicode implementation/decoy paths, empty/CRLF files and one uncommitted <→<= bounds bug in review.mjs; independently fixed bug/line oracle."),
-    "Find targetPrice under src, not the decoy. Read the actual git diff and review review.mjs without editing. Reply only with JSON: path, line (1-based function definition), value, empty (empty.txt), review:{path,line,operator,replacement,input,expected}. Report the concrete bounds error, using input [7]. Do not flag harmless changes.",
+    "Find targetPrice under src, not the decoy. Read the actual git diff and review review.mjs without editing. Return one JSON object (bare or in one JSON code fence): path (string), line (integer, 1-based function definition), value (string), empty (boolean: true iff empty.txt has zero bytes), review:{path (string),line (integer),operator (string),replacement (string),input (integer array),expected (integer, not prose)}. Review with input [7]; report only the concrete bounds error. Do not flag harmless changes. This is not an output-schema capability test.",
     [text("모델이 실제 검색/읽기와 git diff를 수행하고 구현 위치·반환값·오류 수정안을 답한다. 자연어 코드 리뷰 작업이며 별도 /review UI나 강제 JSON-schema 기능을 검증한다고 주장하지 않는다.", "Require actual search/read and git diff, then implementation location/value and concrete correction. This is a code-review task, not certification of /review UI or enforced JSON-schema output.")],
     [[text("src/주문 계산.mjs, 정의 줄 2, 실제 nonce와 empty=true가 맞다.", "Correct src/주문 계산.mjs, definition line two, real nonce and empty=true."), "oracle.json"],
      [text("review.mjs 줄 3의 <=를 <로 고치고 [7] 결과 7을 제시하며 실제 diff/읽기 증거가 있고 파일은 불변이다.", "Identify <= → < at review.mjs line three, [7] → 7, with real diff/read evidence and no changes."), "review.json"]],
@@ -80,7 +76,7 @@ export const NATIVE_SCENARIOS = freeze([
     ["editing", "multi-file", "git"], text("patch/경로 손상·사용자 변경 덮어쓰기", "Corrupted patch/path or overwritten user changes"), ["host", "exec"]),
   scenario("C05", text("실패 재현→디버깅→수정→회귀 테스트", "Reproduce failure, debug, fix and regression test"), 120, 1, 7,
     text("discount.mjs의 /100 누락 버그, 고정 Node 테스트 3개. 테스트 파일/설정을 수정할 수 없고 별도 입력으로 독립 검증한다.", "Missing /100 in discount.mjs and three fixed Node tests. Tests/config are immutable; independently check extra inputs."),
-    "Run node --test to reproduce the failure, fix only discount.mjs, then rerun the same tests. Do not modify tests or dependencies. Summarize the observed before/after result.",
+    "Run node --test as a standalone command (no pipes, tail, or exit-code masking) to reproduce the failure, fix only discount.mjs, then rerun the same tests as a standalone command. Preserve the complete TAP summary and actual exit codes. Do not modify tests or dependencies. Summarize the observed before/after result.",
     [text("실패 exit/log→코드 변경→성공 exit/log의 순서를 검증하고 별도 샌드박스에서 추가 입력을 확인한다.", "Verify failing exit/log → code edit → passing exit/log, then extra inputs in a separate sandbox.")],
     [[text("실패 재현 후 동일 3개 테스트가 통과하고 독립 입력도 맞다.", "Observed failure followed by the same three passing tests and correct independent inputs."), "test-results.json"],
      [text("제품 코드만 수정하고 테스트 약화·가짜 성공·의존성 설치가 없다.", "Only production code changes; no weakened tests, fake success or dependency installation."), "state.json"]],
@@ -120,11 +116,19 @@ export const NATIVE_SCENARIOS = freeze([
     [[text("새 프로세스의 같은 thread가 실제 nonce/receipt를 정확히 복원한다.", "A fresh process restores the same thread and exact nonce/receipt."), "resume.json"],
      [text("SDK 세션도 새로 만들어지고 counter는 총 1회이며 완료된 부작용을 재실행하지 않는다.", "SDK session is also fresh; counter total remains one with no replayed completed side effect."), "state.json"]],
     ["resume", "no-replay"], text("in-memory response ID 의존·이력 역할 손실", "Reliance on in-memory response IDs or lost history roles"), ["exec", "host"]),
+  ...extendedScenarios(scenario, text),
 ]);
+export const TOTAL_CASES = NATIVE_SCENARIOS.length * NATIVE_MODELS.length;
+export const ACCEPTANCE = freeze({
+  scope: "Versioned integrated local Codex workflows; checklist design scope is separate from live support and product coverage.",
+  perModelDenominator: NATIVE_SCENARIOS.length, minimumPassedPerModel: NATIVE_SCENARIOS.length,
+  allAssertionsRequired: true, allSevenModelsRequired: true, removeMissingFromDenominator: false,
+  statuses: ["passed", "failed", "unsupported", "blocked", "timed-out", "not-run"], creditedStatuses: ["passed"],
+});
 export const COVERAGE = freeze({
-  targetPercent: 90, targetPopulation: "everyday local coding workflows", measuredPercent: null,
-  method: text("실사용 빈도 자료가 없는 설계 목표다. 전체 Codex 기능의 분모나 사용 빈도 가중치를 만들지 않으며, 10/10 점수와 기능 커버리지를 혼동하지 않는다.",
-    "A design target without usage-frequency data. Do not invent a whole-product denominator or frequency weights; 10/10 is a suite score, not feature coverage."),
+  checklist: CORE_CAPABILITIES, targetPercent: 90, targetPopulation: "everyday local coding workflows", measuredPercent: null,
+  method: text("실사용 빈도 자료가 없는 설계 목표다. 전체 Codex 기능의 분모나 사용 빈도 가중치를 만들지 않으며, 시나리오 통과 점수와 기능 커버리지를 혼동하지 않는다.",
+    "A design target without usage-frequency data. Do not invent a whole-product denominator or frequency weights; A scenario pass rate is a suite score, not feature coverage."),
   included: [
     ["cli", "CLI 실행/JSONL", "CLI/JSONL execution"], ["routing", "정확한 모델/공급자", "Exact model/provider"], ["streaming", "SSE/유니코드 완료", "SSE/Unicode finalization"],
     ["instructions", "AGENTS/developer 지시", "AGENTS/developer instructions"], ["skills", "로컬 Skill/리소스/스크립트", "Local skills/resources/scripts"], ["untrusted-data", "도구 입력 주입 방어", "Untrusted tool text"],
@@ -134,22 +138,27 @@ export const COVERAGE = freeze({
     ["function-tools", "스키마/namespace/call ID", "Schemas/namespaces/call IDs"], ["mcp", "MCP discovery/resource/tool", "MCP discovery/resource/tool"], ["tool-recovery", "도구 오류 복구", "Tool-error recovery"],
     ["approvals", "승인 거절/한정 허용", "Approval deny/narrow grant"], ["sandbox", "파일/네트워크 샌드박스", "Filesystem/network sandbox"], ["cleanup", "소유 자원 정리", "Owned-resource cleanup"],
     ["history", "대화 기억/사용자 변경 지시", "History/revised instructions"], ["isolation", "동시 열린 thread 격리", "Open-thread isolation"], ["resume", "프로세스 재시작 resume", "Cross-process resume"], ["no-replay", "완료 작업 재실행 방지", "No replay of completed effects"],
+    ["launcher-defaults", "생산 launcher 기본 경로", "Production launcher defaults"], ["native-review", "네이티브 리뷰", "Native review"],
+    ["plan", "네이티브 Plan", "Native Plan"], ["clarification", "사용자 확인 왕복", "User clarification"],
+    ["compaction", "압축 후 새 프로세스 재개", "Compaction and fresh resume"], ["interruption", "실행 중 중단", "Active-turn interruption"],
+    ["http-mcp", "HTTP MCP 인증", "Authenticated HTTP MCP"], ["subagents", "네이티브 서브에이전트", "Native subagents"],
+    ["retry", "일시적 오류 재시도", "Transient request retry"],
   ].map(([id, ko, en]) => ({ id, name: text(ko, en), scenarios: NATIVE_SCENARIOS.filter(s => s.coverage.includes(id)).map(s => s.id) })),
   excluded: [
     text("이미지·오디오·영상·PDF 모델 입력", "Image/audio/video/PDF model inputs"),
     text("호스팅 웹 검색·file search·code interpreter", "Hosted web search/file search/code interpreter"),
     text("강제 JSON Schema·grammar·tool choice·고급 reasoning 조절", "Enforced JSON Schema/grammar/tool choice/advanced reasoning controls"),
-    text("서브에이전트·네이티브 Plan/clarification UI·예약·클라우드 작업", "Subagents/native Plan or clarification UI/scheduling/cloud jobs"),
-    text("장문 압축·토큰 한계·네트워크 재시도/취소·장기 부하", "Long-context compaction/token limits/network retry or interruption/soak tests"),
-    text("Desktop/TUI/IDE 표시·전체 plugin OAuth·과금 동등성·생산 launcher 기본 도구 광고", "Desktop/TUI/IDE rendering/full plugin OAuth/billing parity/default launcher tool advertisement"),
+    text("전체 Plan/TUI 표시·예약·클라우드 작업", "Full Plan/TUI rendering/scheduling/cloud jobs"),
+    text("자동/원격 압축·최대 토큰 한계·중간 SSE 재시도·미완료 호출 재시작·장기 부하", "Automatic/remote compaction/max-token limits/mid-SSE retry/unresolved-call restart/soak tests"),
+    text("Desktop/TUI/IDE 표시·전체 plugin OAuth·과금 동등성", "Desktop/TUI/IDE rendering/full plugin OAuth/billing parity"),
   ],
 });
 export const NATIVE_SCENARIO_CATALOG = freeze({
-  id: "codex-ghcp-workflows-10-v2", schemaVersion: 2, designedAt: "2026-09-20",
+  id: "codex-ghcp-workflows-18-v4", schemaVersion: 4, designedAt: "2026-09-21",
   status: "runner-implemented-live-unverified", runnerImplemented: true,
   versions: { codex: "0.154.0", copilotSdk: "1.0.14" }, models: NATIVE_MODELS, route: REQUIRED_ROUTE,
   budget: EXECUTION_BUDGET, acceptance: ACCEPTANCE, coverage: COVERAGE,
-  toolProfile: { shell: "unified_exec", applyPatch: "freeform", productionLauncherDefaultsCovered: false },
+  toolProfile: { shell: "unified_exec", applyPatch: "freeform", productionLauncherDefaultsScenario: "C11" },
   commonEvidence: COMMON_EVIDENCE, commonGates: COMMON_GATES, sources: SOURCES, scenarios: NATIVE_SCENARIOS,
 });
 export function catalogFingerprint(catalog = NATIVE_SCENARIO_CATALOG) {

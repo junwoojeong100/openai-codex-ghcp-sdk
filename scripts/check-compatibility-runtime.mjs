@@ -13,7 +13,7 @@ import { CoreScriptedSdk } from "../test/helpers/core-scripted-sdk.mjs";
 export async function checkRuntime({ bin = process.env.CODEX_BIN || "codex", scenarios = NATIVE_SCENARIOS } = {}) {
   const version = await run(bin, ["--version"], { signal: AbortSignal.timeout(5000) });
   if (version.stdout.trim() !== "codex-cli 0.154.0") throw new Error("Runtime check requires codex-cli 0.154.0");
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-core10-offline-")));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-compatibility-offline-")));
   const rows = [];
   try {
     for (const scenario of scenarios) {
@@ -30,7 +30,7 @@ export async function checkRuntime({ bin = process.env.CODEX_BIN || "codex", sce
       rows.push(row);
       console.log(JSON.stringify(scrubber()(row)));
       // Only temporary fixture logs, deleted on exit. No compatibility report.
-      if (!row.passed && process.env.CORE10_DEBUG === "1") console.error(JSON.stringify(scrubber(process.env, [f.token])(observation), null, 2));
+      if (!row.passed && (process.env.COMPATIBILITY_DEBUG === "1" || process.env.CORE10_DEBUG === "1")) console.error(JSON.stringify(scrubber(process.env, [f.token, f.httpToken])(observation), null, 2));
     }
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
   return { executionKind: "offline-self-test", realModelCalls: 0, liveCompatibilityVerified: false, passed: rows.every(r => r.passed), cases: rows };

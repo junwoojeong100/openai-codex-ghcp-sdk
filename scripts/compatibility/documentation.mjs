@@ -1,63 +1,63 @@
 import fs from "node:fs";
 import path from "node:path";
-import { NATIVE_SCENARIO_CATALOG as C, NATIVE_SCENARIOS, NATIVE_MODELS } from "./catalog.mjs";
+import { NATIVE_SCENARIO_CATALOG as C, NATIVE_SCENARIOS, NATIVE_MODELS, TOTAL_CASES } from "./catalog.mjs";
 import { ROOT } from "./util.mjs";
 import { validateDesign } from "./design.mjs";
 
 export function scenarioDocument(language = "ko") {
   if (!["ko", "en"].includes(language)) throw new Error("Unknown documentation language");
-  const ko = language === "ko", l = value => value[language], design = validateDesign();
-  const lines = [ko ? "# Codex 통합 개발 검증 시나리오 10개" : "# Ten integrated Codex development scenarios", "",
-    ko ? "[English](NATIVE_SCENARIOS.md) · [실행 안내](COMPATIBILITY_TESTING_KO.md) · [제품 경계](COMPATIBILITY_KO.md)"
-      : "[한국어](NATIVE_SCENARIOS_KO.md) · [Runner guide](COMPATIBILITY_TESTING.md) · [Product boundaries](COMPATIBILITY.md)", "",
-    ko ? "**단일 검증 구성: 시나리오 10개 × GHCP 모델 7개 = 총 70건.** 별도 기준선 실행·빠른 모드·부분 모델 선택은 없습니다. 실제 Codex의 개발 작업이 bridge/Copilot SDK 경로에서도 작동하는지 독립적인 파일·도구·이벤트 증거로 판정합니다."
-      : "**One verification suite: ten scenarios × seven GHCP models = exactly 70 cases.** No separate reference-provider run, fast suite or model subset. Independent file/tool/event evidence establishes whether real Codex development tasks work through the bridge and Copilot SDK.", "",
-    ko ? "## 90% 목표의 의미" : "## What the 90% target means", "",
-    ko ? "**90%는 일상적인 로컬 개발 작업을 넓게 다루려는 설계 목표이며, 실측 커버리지가 아닙니다.** 아래 기능을 통합 시나리오에 묶었습니다. 사용 빈도 조사나 Codex 전체 기능의 공인 분모가 없으므로 전체 제품 기능의 90% 지원, native GPT와의 동등성 또는 결함 부재를 보장하지 않습니다. 모델별 10/10은 이 시험의 통과율일 뿐 제품 커버리지 수치가 아닙니다."
-      : "**90% is a design target for broad everyday local coding coverage, not a measured coverage figure.** The capabilities below are combined into integrated workflows. Without usage-frequency data or an authoritative whole-product denominator, this cannot certify 90% of all Codex features, native-GPT equivalence or absence of defects. A 10/10 score is this suite's pass rate, not product coverage.", "",
-    ko ? "| 실제 검증 범위 | 연결 시나리오 |" : "| Capability exercised | Scenarios |", "|---|---|",
-    ...C.coverage.included.map(f => `| ${l(f.name)} | ${f.scenarios.map(id => `\`${id}\``).join(", ")} |`), "",
-    ko ? "### 이 시험에서 검증하지 않는 기능" : "### Not verified by this suite", "",
-    ...C.coverage.excluded.map(x => `- ${l(x)}`), "",
-    ko ? "## 실행 조건과 합격 기준" : "## Execution conditions and acceptance", "",
+  const ko = language === "ko", l = value => value[language], design = validateDesign(), count = NATIVE_SCENARIOS.length;
+  const choose = (koText, enText) => ko ? koText : enText;
+  const lines = [choose(`# Codex 통합 개발 검증 시나리오 ${count}개`, `# ${count} integrated Codex development scenarios`), "",
+    choose("[English](NATIVE_SCENARIOS.md) · [실행 안내](COMPATIBILITY_TESTING_KO.md) · [제품 경계](COMPATIBILITY_KO.md)",
+      "[한국어](NATIVE_SCENARIOS_KO.md) · [Runner guide](COMPATIBILITY_TESTING.md) · [Product boundaries](COMPATIBILITY.md)"), "",
+    choose(`**현재 계약: ${C.id}. 시나리오 ${count}개 × 모델 ${NATIVE_MODELS.length}개 = ${TOTAL_CASES}건.** 전체 행렬을 실행하며 빠른/부분 모델 모드는 없습니다.`,
+      `**Current contract: ${C.id}. ${count} scenarios × ${NATIVE_MODELS.length} models = ${TOTAL_CASES} cases.** One full matrix, no fast or model-subset mode.`), "",
+    choose("날짜별 실모델 결과와 증거는 실행 안내를 참고하세요. core-10(57/70)과 v3 결과는 각각의 과거 계약에만 속하며 현재 계약의 결과로 재사용하거나 재채점하지 않습니다.",
+      "See the runner guide for dated live results and evidence. The core-10 (57/70) and v3 results belong to their historical contracts; do not reuse or regrade them as current-contract results."), "",
+    choose("## 기능 커버리지와 통과율을 분리", "## Separate feature scope from pass rate"), "",
+    choose("90%는 여전히 일상 개발 작업의 목표이며 실측 제품 기능 커버리지는 null입니다. 7개 모델을 반복한다고 기능 종류가 7배가 되지 않습니다.",
+      "90% remains an everyday-workflow target; measured product-feature coverage is null. Repeating scenarios across seven models does not multiply feature breadth."), "",
+    choose(`고정된 검토자 체크리스트 20개: 직접 ${design.coverage.checklist.direct}, 부분 ${design.coverage.checklist.partial}, 미검증 ${design.coverage.checklist.uncovered}. 직접=1·부분=0.5·미검증=0으로 계산한 **설계 점수 ${design.coverage.checklist.designPercent}%**입니다. 공식 지표·사용 빈도 가중치·지원율이 아닙니다. 직접 검증은 구현된 시험이 있다는 뜻이지 통과나 예외 전수 검증을 뜻하지 않습니다.`,
+      `Fixed reviewer checklist of 20 groups: ${design.coverage.checklist.direct} direct, ${design.coverage.checklist.partial} partial, ${design.coverage.checklist.uncovered} uncovered. Direct=1, partial=0.5, none=0 gives a **design score of ${design.coverage.checklist.designPercent}%**. It is not an official, usage-weighted or support metric. Direct means an implemented probe, not a passed or exhaustive feature.`), "",
+    choose("| 핵심 기능군 | 범위 | 연결 시나리오 | 남은 한계 |", "| Core group | Scope | Scenarios | Remaining limits |"), "|---|---|---|---|",
+    ...C.coverage.checklist.map(f => `| ${l(f.name)} | ${f.level} | ${f.scenarios.join(", ") || "—"} | ${f.limitation || "Representative fixture only."} |`), "",
+    choose("### 세부 검증 태그", "### Detailed capability tags"), "",
+    choose("| 검증 범위 | 시나리오 |", "| Capability | Scenarios |"), "|---|---|",
+    ...C.coverage.included.map(f => `| ${l(f.name)} | ${f.scenarios.join(", ")} |`), "",
+    choose("### 검증하지 않는 기능", "### Not verified by this suite"), "", ...C.coverage.excluded.map(x => `- ${l(x)}`), "",
+    choose("## 실행 조건과 합격 기준", "## Execution conditions and acceptance"), "",
     `- Codex **${C.versions.codex}** · \`@github/copilot-sdk\` **${C.versions.copilotSdk}**.`,
-    ko ? "- 같은 실행의 동일한 합성 fixture·지시문을 7모델에 사용합니다. 프롬프트에 없는 nonce를 실제 파일/도구에서 얻어야 합니다. 임시 절대 경로와 수신 포트는 케이스마다 다를 수 있습니다."
-      : "- Use the same synthetic fixtures/instructions across the seven models within a run. Hidden nonces must be obtained from actual files/tools, not prompts. Disposable absolute paths and listener ports differ between cases.",
-    ko ? "- 모델별 모든 시나리오의 모든 조건을 통과한 **10/10**에만 `core-10-compatible`을 부여합니다. 7모델 각각 10/10이어야 전체 70건 통과입니다."
-      : "- Only **10/10 per model**, satisfying every assertion in every workflow, earns `core-10-compatible`. All seven models must individually pass for a 70-case pass.",
-    ko ? "- `failed`, `unsupported`, `blocked`, `timed-out`, `not-run`은 통과가 아니며 분모에서 제외하지 않습니다. 사용할 수 없는 모델을 다른 모델로 대체하지 않습니다."
-      : "- `failed`, `unsupported`, `blocked`, `timed-out` and `not-run` are not passes and stay in the denominator. An unavailable model is never substituted.",
-    ko ? "- 한 케이스의 실패/시간 초과는 다른 케이스 실행을 막지 않습니다. 공통 사전 조건 실패나 사용 불가 모델은 해당 슬롯을 blocked로 기록하고, 사용자 중단 시 미완료 슬롯을 남깁니다."
-      : "- A failed/timed-out case does not stop later cases. Failed shared prerequisites or unavailable models produce blocked slots; user cancellation retains unfinished slots.",
-    ko ? "- 실패를 모두 bridge 버그로 단정하지 않습니다. 증거로 분류할 수 없으면 `undetermined`입니다. 실모델 검증 결과와 실행기 자체의 테스트 대역 결과를 엄격히 분리합니다."
-      : "- Do not label every failure a bridge defect. Retain `undetermined` without causal evidence. Live-model results and scripted runner self-tests remain strictly separate.", "",
-    ko ? "## 대상 모델" : "## Models", "", ...NATIVE_MODELS.map(m => `- \`${m}\``), "",
-    ko ? "## 빠르게 실행하는 방법과 시간 제한" : "## Scheduling and time limits", "",
-    ko ? `전체 1시간 이내는 **목표일 뿐 강제 종료 조건이 아닙니다**. 최대 ${C.budget.modelConcurrency}개 모델을 병렬 처리하고 모델 안에서는 케이스를 순차 실행합니다. 케이스 자동 재시도는 없습니다.`
-      : `One hour is a **target, not an overall cutoff**. Run up to ${C.budget.modelConcurrency} models concurrently, with sequential cases per model. No automatic case retries.`, "",
-    ko ? `개별 케이스는 60~150초로 제한되며 준비·추론·모든 도구·정리가 포함됩니다. 마지막 ${C.budget.caseCleanupReserveSeconds}초는 정리용입니다. 모델당 합은 ${design.perModelSeconds}초이고, 모든 슬롯이 제한 시간을 사용할 때 사전 점검을 포함한 배정 시간 계산은 약 ${(design.scheduledCeilingEstimateSeconds / 60).toFixed(1)}분입니다. 스케줄링/리포트 I/O·OS 지연은 별도이므로 실제 소요나 성공을 보장하지 않습니다.`
-      : `Each 60–150 s case includes setup, inference, all tools and teardown, reserving ${C.budget.caseCleanupReserveSeconds} s for cleanup. Slots total ${design.perModelSeconds} s/model. If every slot consumes its limit, the scheduling estimate including preflight is about ${(design.scheduledCeilingEstimateSeconds / 60).toFixed(1)} minutes, excluding scheduling/report I/O and OS delays. This is not a duration or success guarantee.`, "",
-    ko ? "## 시나리오 목록" : "## Scenario index", "",
-    ko ? "| ID | 통합 작업 | 개별 제한 | 사용자 턴/도구 상한 |" : "| ID | Integrated workflow | Case limit | Turns/tools |", "|---|---|---:|---:|",
-    ...NATIVE_SCENARIOS.map(s => `| ${s.id} | ${l(s.name)} | ${s.timeoutSeconds}s | ${s.maxUserTurns}/${s.maxToolCalls} |`), "",
-    ko ? "## 공통 필수 조건" : "## Mandatory common gates", "", ...C.commonGates.map(g => `- ${l(g)}`), "",
-    ko ? "## 상세 검증 계약" : "## Detailed verification contracts", "",
+    choose(`- 모델별 모든 ${count}개 시나리오의 필수 조건이 맞아야 통과입니다. unsupported/blocked/timed-out/not-run도 분모에 남습니다.`,
+      `- All required assertions in all ${count} scenarios must pass per model. Unsupported, blocked, timed-out and not-run cells remain in the denominator.`),
+    choose("- 오프라인 대역·정직한 미지원 거절·일부 성공을 실모델 호환성 통과로 계산하지 않습니다. 원인 근거가 없으면 undetermined로 유지합니다.",
+      "- Doubles, honest unsupported rejections and partial success never earn live compatibility credit. Keep causes undetermined without evidence."),
+    choose("- 기본 도구 프로파일은 C11에서 실제 launcher로 검사합니다. 다른 케이스의 명시적 도구 노출과 혼동하지 않습니다.",
+      "- C11 exercises the actual launcher/default tool profile; other cases use an explicit test tool profile."), "",
+    choose("## 모델", "## Models"), "", ...NATIVE_MODELS.map(m => `- \`${m}\``), "",
+    choose("## 시간·도구 예산", "## Time and tool budgets"), "",
+    choose(`최대 ${C.budget.modelConcurrency}개 모델을 병렬 실행하고 각 모델 안에서는 순차 실행합니다. 1시간은 목표이지 전체 강제 종료가 아닙니다. 자동 케이스 재실행은 없으며 C18의 명시적인 단일 HTTP 재시도와 구별합니다.`,
+      `Up to ${C.budget.modelConcurrency} model lanes, sequential scenarios within a lane. One hour is a target, not a global cutoff. No automatic case reruns; C18 deliberately tests one native HTTP retry.`), "",
+    choose(`모든 개별 제한을 소진할 때 모델당 ${design.perModelSeconds}초, 사전 점검을 포함한 배정 추정치는 ${(design.scheduledCeilingEstimateSeconds / 60).toFixed(1)}분입니다. 정리 예비 시간 ${C.budget.caseCleanupReserveSeconds}초가 각 제한에 포함됩니다. 실제 수행 시간을 보장하지 않습니다.`,
+      `If every case exhausts its deadline, slots total ${design.perModelSeconds}s/model and the preflight-inclusive scheduling estimate is ${(design.scheduledCeilingEstimateSeconds / 60).toFixed(1)} minutes. Each limit includes ${C.budget.caseCleanupReserveSeconds}s cleanup reserve. This is not a wall-clock guarantee.`), "",
+    choose("도구 목표 횟수 초과는 효율 진단입니다. 별도의 높은 안전 상한을 넘은 경우에만 필수 예산 검사가 실패합니다. C03은 bare JSON 또는 단일 JSON fence의 의미를 검사하며 형식은 별도 진단합니다. C05는 파이프 없는 테스트 실행을 요청하여 종료 코드 가림을 방지합니다.",
+      "Exceeding the tool target is an efficiency diagnostic. Only the separate hard safety cap fails the budget gate. C03 accepts bare JSON or one JSON fence and records presentation separately. C05 requests standalone test commands to avoid masked pipeline exits."), "",
+    choose("## 시나리오 목록", "## Scenario index"), "",
+    choose("| ID | 작업 | 제한 | 턴 | 도구 목표/상한 |", "| ID | Workflow | Deadline | Turns | Tool target/hard cap |"), "|---|---|---:|---:|---:|",
+    ...NATIVE_SCENARIOS.map(s => `| ${s.id} | ${l(s.name)} | ${s.timeoutSeconds}s | ${s.maxUserTurns} | ${s.targetToolCalls}/${s.maxToolCalls} |`), "",
+    choose("## 공통 필수 조건", "## Mandatory common gates"), "", ...C.commonGates.map(g => `- ${l(g)}`), "",
+    choose("## 상세 계약", "## Detailed contracts"), "",
   ];
   for (const s of NATIVE_SCENARIOS) lines.push(`### ${s.id} — ${l(s.name)}`, "",
-    `**${ko ? "제한/표면" : "Limit/surface"}:** ${s.timeoutSeconds}s · ${s.surface}`, "",
-    `**${ko ? "준비/입력" : "Fixture/input"}:** ${l(s.fixture)}`, "",
-    `**${ko ? "프롬프트/작업" : "Prompt/task"}:**`, "", "```text", s.prompt, "```", "",
-    `**${ko ? "절차" : "Procedure"}:**`, ...s.steps.map((step, i) => `${i + 1}. ${l(step)}`), "",
-    `**${ko ? "합격 조건(전부 필수)" : "Pass conditions (all required)"}:**`,
-    ...s.assertions.map(a => `- \`${a.id}\`: ${l(a.description)} — \`${a.evidence}\``), "",
-    `**${ko ? "발견할 문제" : "Bridge risk"}:** ${l(s.bridgeRisk)}`, "");
-  lines.push(ko ? "## 근거와 사양 원본" : "## Sources and source of truth", "",
-    ko ? "OpenAI 공식 문서와 고정 버전 app-server schema를 기준으로 작성했습니다. 이 문서는 실모델 통과를 미리 선언하지 않습니다."
-      : "Based on official OpenAI documentation and the pinned app-server schema. This specification does not pre-credit live passes.", "",
+    `**${choose("제한/표면", "Limit/surface")}:** ${s.timeoutSeconds}s · ${s.surface}`, "",
+    `**${choose("준비", "Fixture")}:** ${l(s.fixture)}`, "", `**${choose("작업", "Task")}:**`, "", "```text", s.prompt, "```", "",
+    `**${choose("절차", "Procedure")}:**`, ...s.steps.map((x, i) => `${i + 1}. ${l(x)}`), "",
+    `**${choose("필수 조건", "Required assertions")}:**`, ...s.assertions.map(a => `- \`${a.id}\`: ${l(a.description)} — \`${a.evidence}\``), "",
+    `**${choose("위험", "Risk")}:** ${l(s.bridgeRisk)}`, "");
+  lines.push(choose("## 근거와 사양 원본", "## Sources and source of truth"), "",
     ...Object.entries(C.sources).map(([key, url]) => `- [${key}](${url})`), "",
     "[scripts/compatibility/catalog.mjs](../scripts/compatibility/catalog.mjs)", "",
-    ko ? "`npm run docs:scenarios`로 생성합니다. 상세 실행 방법은 [실행 안내](COMPATIBILITY_TESTING_KO.md)를 참고하세요."
-      : "Generated by `npm run docs:scenarios`. See the [runner guide](COMPATIBILITY_TESTING.md) for execution and evidence verification.", "");
+    choose("`npm run docs:scenarios`로 생성합니다. 실모델 통과를 미리 선언하지 않습니다.", "Generated by `npm run docs:scenarios`; no advance claim of live compatibility."), "");
   return lines.join("\n");
 }
 export function updateDocumentation({ check = false } = {}) {

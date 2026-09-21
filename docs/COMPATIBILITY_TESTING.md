@@ -1,16 +1,24 @@
-# Integrated development verification runner
+# Integrated compatibility verification
 
-[한국어](COMPATIBILITY_TESTING_KO.md) · [Ten scenarios and coverage](NATIVE_SCENARIOS.md) · [Usage](../README.md)
+[한국어](COMPATIBILITY_TESTING_KO.md) · [Scenarios and checklist](NATIVE_SCENARIOS.md) · [Product boundaries](COMPATIBILITY.md)
 
-## Scope
+## Current contract and historical results
 
-**Exactly ten scenarios × seven GHCP models = 70 cases**, in one suite. There is no fast/full split, model subset or separate native OpenAI reference run. A case can contain multiple inference and tool calls.
+`codex-ghcp-workflows-18-v4`: **18 scenarios × seven exact GHCP models = 126 cases**. Matrix dimensions, report denominators and documentation are derived from the catalog. There is one full suite, no live subset, no automatic case reruns and no native OpenAI baseline.
 
-90% is a design target for broad **everyday local coding** coverage, not measured whole-product coverage or native-GPT parity. See the explicit coverage/exclusion table in the scenarios. Only all assertions passing in all ten workflows earns `core-10-compatible` for one model; the whole matrix requires all seven models to pass 10/10.
+The [2026-09-21 result](validation/2026-09-21/README.md), **57/70**, is a historical core-10 result from commit `57f0658`. It is not a result for this contract. Preserve those artifacts and verify them with their original runner revision in a separate checkout; the new verifier rejects mismatched contracts/implementations instead of silently regrading old evidence. The retained v3 run is also historical (86/126) and is not a v4 result.
 
-Retired scenarios, runners and records are removed. Every run uses fresh output and synthetic fixtures, never imported or cherry-picked earlier results.
+**[v4 live result — 2026-09-21](validation/2026-09-21-v4/README.md): 100/126 passed (79.4%), 26 failed, ~12m 3s.** No unsupported, blocked, timed-out or unrun cells. Only `gpt-6-astra` passed 18/18. Current and frozen-source verification both returned `evidenceIntegrity: true`, `fullMatrixPassed: false` (exit 1). The criteria were not changed and no case was rerun. [All failure observations and evidence locations](validation/2026-09-21-v4/FAILURES.md).
 
-## Offline self-checks
+## Three separate metrics
+
+1. **Checklist design scope:** 20 reviewer-defined, equal-weight feature groups; direct=1, partial=0.5, uncovered=0. Current score **75%** (12 direct, six partial, two uncovered). “Direct” means a representative implemented probe, not a successful or exhaustive feature.
+2. **Live matrix pass rate:** passed cells divided by **126**, plus model-specific results out of 18. Missing/unsupported/blocked/timed-out cells stay in the denominator. A model needs all 18 workflows to pass for the versioned compatibility verdict.
+3. **Measured product coverage:** **unknown/null**. The checklist is not an OpenAI metric, a usage-frequency survey or a product support percentage. **90% remains a target**, not a result.
+
+Reports also show feature-group evidence per model. Offline runs never establish live feature evidence. Partial scope remains partial even if its linked scenarios pass.
+
+## Checks without live inference
 
 ```bash
 npm test
@@ -20,51 +28,48 @@ npm run test:compatibility -- --plan
 npm run test:compatibility:runtime
 ```
 
-These make no real model calls. Unit tests use synthetic evidence, process supervision and owned loopback HTTP. The runtime check uses **real Codex 0.154.0 + a scripted SDK double** for all ten native tool/MCP/skill/file workflows. It tests driver mechanics, not actual model instruction-following or reasoning, and requires a working OS sandbox.
+Unit tests use synthetic evidence, owned subprocesses and loopback HTTP. The runtime check uses **real Codex 0.154.0 + mechanical SDK peers**, not real models. C11 starts the actual launcher and child bridge with explicit, offline-labelled observation instrumentation and isolated credentials. A valid OS sandbox is required. Runtime success is a harness check, never live compatibility credit.
 
-## Live execution
+## New native paths
 
-Requires the repository's Node version/dependencies, original Codex **0.154.0**, Copilot SDK **1.0.14**, macOS/Linux POSIX process groups, Copilot authentication/model access and an enforceable workspace-write/network-off sandbox. Windows live supervision is not implemented. **No OpenAI API key is required.**
+- **C11:** actual `bin/codex-ghcp`, production bridge lifecycle and default tool catalog; no injected `model_catalog_json`/patch profile. This does not certify interactive `/model` or every reasoning effort.
+- **C12:** native `review/start` and reviewer lifecycle, not a review-like prompt. If the native reviewer requires structured output unsupported by the bridge, that is an **unsupported** case, not a pass.
+- **C13:** native Plan collaboration mode and a correlated user-input callback. A hidden host answer must reach the final plan without edits.
+- **C14:** ≥12 KiB of history, explicit native local compaction and fresh-process resume. Not maximum-context, automatic/remote compaction or soak certification.
+- **C15:** interrupt an observed in-flight owned command, explicitly clean background terminals, prove its process exited and continue on the same thread.
+- **C16:** owned Streamable HTTP MCP endpoint, temporary bearer authentication, unauthorized rejection, discovery/resources and error recovery. Not external OAuth or plugin installation.
+- **C17:** native spawn/wait/close lifecycle for one read-only child, with distinct thread and SDK sessions.
+- **C18:** one marked 503 before inference, one bounded native HTTP retry and no duplicate SDK prompt/tool execution. Not retrying a failed case or a mid-stream response.
 
-`.env` is not automatically loaded. Never put credentials in prompts, code or reports. The following commands consume actual Copilot usage:
+C03 now explicitly specifies field types and distinguishes semantic JSON checks from presentation (bare JSON or one JSON fence). `git -c ... diff` is recognized. C05 requests standalone test commands so pipelines cannot mask the failing exit. Tool-call targets are **efficiency diagnostics**; a separate higher hard cap bounds runaway execution.
+
+## v4 evidence interpretation (fixed before execution)
+
+- C12 reads the native completed review's rendered findings or JSON. It still requires exactly one actionable finding at `review.mjs:3`, an actual diff read, the correlated reviewer lifecycle and unchanged files.
+- C13 reads the authoritative completed native `plan` item, not an incidental assistant message. The hidden host answer must be correlated and appear in the final plan; only read-only exploration is allowed, with no edits, mutating commands or broad permission grant.
+- Git-diff evidence recognizes grouped shell invocations and Git global options, but a quoted `git diff` string is not execution evidence. Negative tests reject wrong paths/turns, extra findings, missing diffs and uncorrelated or unsafe plans.
+- These are the existing v4 rules, not post-run exceptions. Freeze catalog and implementation hashes before live execution; preserve failures and do not rerun cells to improve the score.
+
+## Live execution: explicit opt-in and usage
+
+Copilot authentication is required and inference consumes usage. No OpenAI API key is needed.
 
 ```bash
-# Always all 10 × 7 cases
 npm run test:compatibility -- --execute
-
-npm run test:compatibility -- --execute \
-  --bin /absolute/path/to/codex --output .runtime/workflows-new-run
+npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
+npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
 ```
 
-The default is offline `--plan`. `--models`, `--fast` and `--suite` are rejected. Existing output folders are not overwritten. Unavailable exact models retain ten blocked cells, without fallback. Shared authentication/version failure produces a blocked report with all 70 cells intact.
+The default is offline `--plan`. Existing output folders are never overwritten. An unavailable model retains 18 blocked cells. Shared prerequisite failure retains all 126 cells. Failures do not skip subsequent cases. User interruption stops scheduling and preserves incomplete evidence.
 
-## Scheduling and failures
+Up to four model lanes run concurrently. Each case includes preparation, native/model/tool work and an eight-second cleanup reserve. The sum of worst-case slots is 2,220 seconds/model; including preflight and two scheduling waves gives **75.5 minutes**, excluding I/O/OS overhead. One hour is a target, **not a global cutoff**. Normal runs need not consume every deadline.
 
-- Preflight: up to 90 seconds, catalog/version checks without inference.
-- Up to four model lanes, sequential scenarios per model.
-- Each 60–150 second case includes startup, fixtures, inference, tools and teardown; its last eight seconds are reserved for cleanup.
-- One hour is a target, **not an overall cutoff**. A failed or timed-out case does not skip subsequent cases.
-- No automatic case retries or selection of passing attempts. Failed/unsupported/blocked/timed-out/not-run cells stay in the denominator.
-- Ctrl+C/SIGTERM stops new work, cleans up owned resources and records unfinished cells.
+## Isolation and evidence
 
-## Safety and evidence
+All fixtures have private temporary homes, immutable user-dirty/Git state and explicit mutation allowlists. Native shell environments exclude upstream authentication. Unknown callbacks are denied. Only the exact owned approval helper and scoped fixture MCP operations can be consented. A request-user-input response is supplied only to the C13 fixture question. No blanket permission or external OAuth grant is made.
 
-Private HOME/CODEX_HOME and synthetic Git repositories isolate tests from the user's worktree. Production bridge/SessionManager code is exercised with an explicit native `unified_exec` + freeform `apply_patch` profile; the production launcher's default catalog advertisement is outside this test.
+C11 instrumentation wraps the actual SDK and HTTP boundaries in live mode without changing production arguments or metadata. Only offline mode replaces the SDK, and that mode is checked when reading evidence. Temporary MCP credentials are not retained in headers/evidence. Owned processes, servers and SDK sessions must be cleaned.
 
-When a native command-completion event contains only a tail, only an actual outgoing tool result with the **same call ID** may supplement it. Generated assistant prose never substitutes for command evidence.
+Reports retain native JSONL, HTTP/SSE, SDK, state, assertion, cleanup and scenario-specific evidence. Verification checks contract and implementation hashes, every matrix slot, artifact ownership/hashes, recomputed assertions and metrics. Hashes are not third-party attestation. Inspect evidence for private information before publishing; raw evidence can stay under ignored `.runtime`.
 
-Approvals are limited to the exact fixture helper command with its original hash, or individual read-only calls to the owned local MCP fixture. There are no persistent or blanket grants. Native shell environments exclude SDK authentication. Immutable paths, user settings, Git index/HEAD, actual model routing and owned SDK/process cleanup are checked. Unsupported causes remain `undetermined` rather than being attributed to bridge/model/API behavior without evidence.
-
-## Saved results and verification
-
-Default output: `.runtime/compatibility-<run-id>/report.json` and `report.md`, plus per-case native/HTTP-SSE/SDK/filesystem/oracle/cleanup artifacts. Partial evidence from terminated cases is diagnostic only.
-
-```bash
-npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.json
-```
-
-Offline verification checks catalog/implementation hashes, the exact 70-cell matrix, artifact ownership/hashes, recomputed assertions and cleanup receipts. Hashes detect changes; they are not third-party signatures or remote attestation. Changed code/contracts require new results.
-
-Before publishing results, inspect summaries/evidence for credentials, account data and personal paths. Raw evidence may remain private under `.runtime`. Repository Git history is not a validation artifact and is not rewritten.
-
-Exit codes: `0` valid plan or 70/70 pass; `1` failed/blocked/incomplete; `2` invalid arguments or evidence.
+Exit codes: `0` valid plan or **126/126** live pass; `1` failed/blocked/unsupported/incomplete matrix; `2` invalid arguments or evidence. A runtime self-test has its own non-live verdict.
