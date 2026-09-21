@@ -2,13 +2,11 @@
 
 [한국어](COMPATIBILITY_TESTING_KO.md) · [Scenarios and checklist](NATIVE_SCENARIOS.md) · [Product boundaries](COMPATIBILITY.md)
 
-## Current contract and historical results
+## Current contract and verification records
 
 `codex-ghcp-workflows-18-v4`: **18 scenarios × seven exact GHCP models = 126 cases**. Matrix dimensions, report denominators and documentation are derived from the catalog. There is one full suite, no live subset, no automatic case reruns and no native OpenAI baseline.
 
-The [2026-09-21 result](validation/2026-09-21/README.md), **57/70**, is a historical core-10 result from commit `57f0658`. It is not a result for this contract. Preserve those artifacts and verify them with their original runner revision in a separate checkout; the new verifier rejects mismatched contracts/implementations instead of silently regrading old evidence. The retained v3 run is also historical (86/126) and is not a v4 result.
-
-**[v4 live result — 2026-09-21](validation/2026-09-21-v4/README.md): 100/126 passed (79.4%), 26 failed, ~12m 3s.** No unsupported, blocked, timed-out or unrun cells. Only `gpt-6-astra` passed 18/18. Current and frozen-source verification both returned `evidenceIntegrity: true`, `fullMatrixPassed: false` (exit 1). The criteria were not changed and no case was rerun. [All failure observations and evidence locations](validation/2026-09-21-v4/FAILURES.md).
+Previous verification results and raw evidence were deleted at the user’s request. See the [new verification records](validation/README.md). The current rerun covers the separate 11-scenario stability contract; its results cannot be credited as a pass of this 18-workflow contract.
 
 ## Three separate metrics
 

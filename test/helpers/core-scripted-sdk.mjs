@@ -7,6 +7,7 @@ import { randomUUID } from "node:crypto";
 export class CoreScriptedSdk {
   constructor(scenarioId) { this.scenarioId = scenarioId; this.sessions = []; }
   async start() {}
+  async ping() { return { message: "ready" }; }
   async listModels() { return [{ id: "gpt-6-astra", supportedReasoningEfforts: ["low"], capabilities: { supports: { reasoningEffort: true } } }]; }
   async createSession(config) { const s = new ScriptedSession(config, this.scenarioId); this.sessions.push(s); return s; }
   async deleteSession() {}

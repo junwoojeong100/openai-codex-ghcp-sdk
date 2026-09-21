@@ -10,6 +10,8 @@ const token = "local-test-token-not-a-github-credential";
 async function setup(t, overrides = {}, serverOptions = {}) {
   const manager = {
     preferredModel: model,
+    async readiness() { return { ready: true, state: "ready" }; },
+    async ensureReady() {},
     listModels: () => [{ id: model }, { id: "claude-haiku-4.5", policy: { state: "disabled" } }],
     async execute(body, _headers, options) {
       const request = normalizeRequest(body);
@@ -151,5 +153,17 @@ test("byte limit overrides must remain positive safe integers", () => {
     for (const value of ["0", "-1", "1.5", "Infinity", String(Number.MAX_SAFE_INTEGER + 1)]) {
       assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, [name]: value }), new RegExp(name));
     }
+  }
+});
+
+test("request, queue and SDK lifecycle bounds validate independently of turn duration", () => {
+  const config = bridgeConfig({ BRIDGE_API_KEY: token, TURN_TIMEOUT_MS: "9000", REQUEST_TIMEOUT_MS: "15000",
+    MAX_REQUESTS_PER_SESSION: "3", MAX_REQUESTS: "9", SDK_READINESS_TIMEOUT_MS: "500", SDK_STARTUP_TIMEOUT_MS: "8000",
+    SDK_READINESS_INTERVAL_MS: "4000", SDK_RECOVERY_BACKOFF_MS: "2000" });
+  assert.equal(config.managerOptions.requestTimeoutMs, 15000);
+  assert.equal(config.managerOptions.maxRequestsPerFamily, 3); assert.equal(config.managerOptions.maxRequests, 9);
+  assert.equal(config.managerOptions.readinessTimeoutMs, 500); assert.equal(config.managerOptions.startupTimeoutMs, 8000);
+  for (const name of ["REQUEST_TIMEOUT_MS", "MAX_REQUESTS_PER_SESSION", "MAX_REQUESTS", "SDK_READINESS_TIMEOUT_MS", "SDK_STARTUP_TIMEOUT_MS", "SDK_READINESS_INTERVAL_MS", "SDK_RECOVERY_BACKOFF_MS"]) {
+    for (const value of ["0", "-1", "0.5", "Infinity"]) assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, [name]: value }), new RegExp(name));
   }
 });

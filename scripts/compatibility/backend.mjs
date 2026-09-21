@@ -14,8 +14,8 @@ export class Backend {
     Object.assign(this, { provider, model, env, token, signal, transport, sdk, diagnostics, clientFactory, turnTimeoutMs });
   }
   async start() {
-    const raw = this.clientFactory?.() ?? new CopilotClient({ mode: "empty", baseDirectory: resolveCopilotHome(this.env.COPILOT_HOME), logLevel: "error", enableRemoteSessions: false });
-    this.manager = new SessionManager({ client: observeSdk(raw, this.sdk), preferredModel: this.model, turnTimeoutMs: this.turnTimeoutMs,
+    const createClient = () => this.clientFactory?.() ?? new CopilotClient({ mode: "empty", baseDirectory: resolveCopilotHome(this.env.COPILOT_HOME), logLevel: "error", enableRemoteSessions: false });
+    this.manager = new SessionManager({ client: observeSdk(createClient(), this.sdk), clientFactory: () => observeSdk(createClient(), this.sdk), preferredModel: this.model, turnTimeoutMs: this.turnTimeoutMs,
       cleanupTimeoutMs: 1000, onDiagnostic: event => this.diagnostics.push(event) });
     await bounded(this.manager.start(), this.signal);
     const models = this.manager.listModels();

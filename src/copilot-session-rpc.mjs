@@ -26,12 +26,14 @@ export async function withinDeadline(operation, timeoutMs, signal) {
   let timer;
   let onAbort;
   try {
-    if (signal?.aborted) throw Object.assign(new Error("SDK operation cancelled."), { name: "AbortError" });
+    if (signal?.aborted) throw signal.reason ?? Object.assign(new Error("SDK operation cancelled."), { name: "AbortError" });
     return await Promise.race([
-      Promise.resolve().then(operation),
+      Promise.resolve().then(() => { signal?.throwIfAborted(); return operation(); }),
       new Promise((_, reject) => {
-        timer = setTimeout(() => reject(new Error("SDK operation deadline exceeded.")), timeoutMs);
-        onAbort = () => reject(Object.assign(new Error("SDK operation cancelled."), { name: "AbortError" }));
+        timer = setTimeout(() => reject(Object.assign(new Error("SDK operation deadline exceeded."), {
+          name: "TimeoutError", code: "sdk_operation_timeout",
+        })), timeoutMs);
+        onAbort = () => reject(signal.reason ?? Object.assign(new Error("SDK operation cancelled."), { name: "AbortError" }));
         signal?.addEventListener("abort", onAbort, { once: true });
       }),
     ]);

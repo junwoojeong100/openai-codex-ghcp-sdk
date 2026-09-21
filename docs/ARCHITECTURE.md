@@ -59,3 +59,15 @@ Session count, idle lifetime, body size, history size and turn duration are boun
 Bridge correlation and retry state live in memory. `store:false` means there is no Responses retrieval store here; it does **not** promise that Copilot, Codex or the SDK never writes local session files or retains service-side data. The bridge avoids logging request bodies and credentials. SDK errors may still contain service diagnostics.
 
 No sibling project's tests, validation runner or validation results are used. Offline tests exercise only this implementation with a fake SDK and local HTTP connections.
+
+## Stability and recovery boundaries
+
+- `request-queue.mjs` owns cancellable per-family FIFO admission, total request deadlines and bounds. Cancellation settles before cleanup, but the family lock is held until cleanup completes.
+- `sdk-lifecycle.mjs` owns bounded ping checks, single-flight recovery and fresh client generations. Lost conversations fail explicitly; uncertain side effects are not automatically replayed.
+- Tool-list ordering is metadata; real policy changes remain rejected. Conflict diagnostics contain field names, hashes and counts rather than raw text.
+- Delta/final stream reconciliation happens before committing the success cache or pending-tool state.
+- `/health` reports HTTP liveness and last-known readiness; authenticated `/readyz` probes the SDK. Catalog requests may trigger safe connection recovery.
+
+Defaults, errors and the separate 77-cell contract are documented in the [stability guide](STABILITY_TESTING.md). Historical v4 evidence is verified with frozen source, never regraded.
+
+- SDK-managed system/safety instructions are retained with append mode. Complete client instructions are appended unchanged; SDK built-in tools remain excluded and permission requests remain rejected.

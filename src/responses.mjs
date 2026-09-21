@@ -168,7 +168,9 @@ export class ResponsesStream {
     this.#delta(record, deltaContent);
   }
 
-  finish({ messages = [], tools = [], usage = null } = {}) {
+  // Validate without publishing done/tool events. The manager calls this before
+  // committing history, pending calls and its retry cache.
+  prepare({ messages = [], tools = [], usage = null } = {}) {
     if (this.finished) return this.response;
     const response = createResponse({ id: this.id, model: this.model, messages, tools, usage, createdAt: this.createdAt });
     const finalMessages = messages.filter((message) => message.content != null && message.content !== "");
@@ -184,6 +186,21 @@ export class ResponsesStream {
       // Rare SDK stubs omit messageId on a delta or final message. The ID already
       // emitted on this stream remains authoritative for the matching text item.
       item.id = record.id;
+    }
+    this.prepared = response;
+    this.preparedSequence = this.sequence;
+    return response;
+  }
+
+  finish(result = {}) {
+    if (this.finished) return this.response;
+    return this.finishPrepared(this.prepare(result));
+  }
+
+  finishPrepared(response) {
+    if (this.finished) return this.response;
+    if (!response || response !== this.prepared || this.sequence !== this.preparedSequence) {
+      throw protocolError("The prepared response no longer matches this stream.");
     }
     this.start();
     for (const [index, item] of response.output.entries()) {

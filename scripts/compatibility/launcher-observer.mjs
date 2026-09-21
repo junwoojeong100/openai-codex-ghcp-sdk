@@ -17,8 +17,11 @@ if (process.env.GHCP_COMPAT_OBSERVER && path.resolve(process.argv[1] || ".") ===
   SessionManager.prototype.start = async function () {
     if (config.executionKind === "offline-self-test") {
       const { CoreScriptedSdk } = await import("../../test/helpers/core-scripted-sdk.mjs");
-      this.client = new CoreScriptedSdk("C11");
+      this.clientFactory = () => new CoreScriptedSdk("C11");
+      this.client = this.clientFactory();
     }
+    const factory = this.clientFactory;
+    this.clientFactory = factory ? () => observeSdk(factory(), sdk) : null;
     this.client = observeSdk(this.client, sdk);
     const diagnostic = this.onDiagnostic;
     this.onDiagnostic = event => { diagnostics.push(event); diagnostic(event); };

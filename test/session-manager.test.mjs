@@ -97,6 +97,7 @@ class FakeClient {
     this.stopped = false;
   }
   async start() {}
+  async ping() { return { message: "ready" }; }
   async listModels() { return this.models; }
   async createSession(config) {
     const session = new FakeSession(config, this);
@@ -134,7 +135,7 @@ test("empty mode exposes only handlerless client tools and denies SDK permission
   assert.equal(config.tools[0].handler, undefined);
   assert.equal(config.tools[0].skipPermission, true);
   assert.equal(config.onPermissionRequest({}).kind, "reject");
-  assert.equal(config.systemMessage.mode, "replace");
+  assert.equal(config.systemMessage.mode, "append");
   assert.equal(config.systemMessage.content, "Base instruction\n\nFollow the client's instructions.");
   assert.deepEqual(config.infiniteSessions, { enabled: false });
   assert.equal(config.skipCustomInstructions, true);
@@ -348,6 +349,8 @@ test("aborting a live turn removes listeners and performs owned-session cleanup"
   await ready;
   controller.abort();
   await rejection;
+  // Cancellation settles promptly; the family lock remains held during cleanup.
+  await manager.queue.drain();
   assert.equal(manager.states.size, 0);
   assert.equal(client.sessions[0].aborted, 1);
   assert.equal(client.sessions[0].disconnected, 1);
@@ -466,4 +469,174 @@ test("usage is unknown without actual SDK counts and otherwise uses actual total
     input_tokens: 10, output_tokens: 4, total_tokens: 14,
     input_tokens_details: { cached_tokens: 3 }, output_tokens_details: { reasoning_tokens: 1 },
   });
+});
+
+
+test("pending results accept a reordered tool catalog and reordered retries stay idempotent", async (t) => {
+  const request = body("use tools", { tools: [functionTool, customTool] });
+  const { manager, client } = await setup(t, {}, {
+    onSend: session => session.toolCalls([call(request, 0, "reordered", { path: "owned" })]),
+    onSubmit: session => session.reply("ok"),
+  });
+  const first = await manager.execute(request, headers("reordered"));
+  const replay = await manager.execute({ ...request, tools: [...request.tools].reverse() }, headers("reordered"));
+  assert.deepEqual(replay, first);
+  assert.equal(client.sessions[0].sent.length, 1);
+  const next = body([{ role: "user", content: request.input }, ...outputItems(first.messages, first.tools),
+    { type: "function_call_output", call_id: "reordered", output: "exact value" }], { tools: [...request.tools].reverse() });
+  await manager.execute(next, headers("reordered"));
+  await manager.execute({ ...next, tools: request.tools }, headers("reordered"));
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].submitted.length, 1);
+});
+
+test("pending conflict diagnostics identify changed fields without disclosing content", async (t) => {
+  const diagnostics = [], request = body("private-user-value", { instructions: "private-instructions", tools: [functionTool, customTool] });
+  const { manager, client } = await setup(t, { onDiagnostic: d => diagnostics.push(d) }, {
+    onSend: session => session.toolCalls([call(request, 0, "private-call", {})]),
+    onSubmit: session => session.reply("ok"),
+  });
+  await manager.execute(request, headers("private-family"), { responseId: "diagnostic-response" });
+  const result = { type: "function_call_output", call_id: "private-call", output: "private-result" };
+  await assert.rejects(manager.execute(body([result], { previous_response_id: "diagnostic-response", instructions: "changed-private-policy" }), headers("private-family")), { code: "pending_session_changed" });
+  const event = diagnostics.find(d => d.event === "bridge.pending_session_changed");
+  assert.deepEqual(event.changed, ["instructions"]);
+  assert.equal(event.pendingCalls, 1);
+  assert.equal(event.suppliedResults, 1);
+  assert.match(event.familyHash, /^[a-f0-9]{64}$/);
+  assert.ok(!JSON.stringify(event).includes("private-"));
+  assert.equal(client.sessions[0].submitted.length, 0);
+  await manager.execute(body([result], { previous_response_id: "diagnostic-response" }), headers("private-family"));
+  assert.equal(client.sessions[0].submitted.length, 1);
+});
+
+test("cleanup identifies the operation and timeout without disclosing SDK error text", async t => {
+  const diagnostics = [];
+  const { manager, client } = await setup(t, { cleanupTimeoutMs: 10, onDiagnostic: event => diagnostics.push(event) });
+  await manager.execute(body("hello"));
+  client.sessions[0].abort = async () => { throw new Error("private-session-and-credential"); };
+  client.sessions[0].disconnect = () => new Promise(() => {});
+  await manager.stop();
+  const failed = diagnostics.filter(event => event.event === "bridge.session_cleanup_failed");
+  assert.deepEqual(failed.map(event => [event.operation, event.failureType]), [["abort", "rpc_error"], ["disconnect", "timeout"]]);
+  assert.ok(failed.every(event => event.timeoutMs === 10 && event.elapsedMs >= 0));
+  assert.ok(!JSON.stringify(diagnostics).includes("private-session-and-credential"));
+  assert.equal(manager.states.size, 0);
+});
+
+
+test("SDK foundation is retained even when a request supplies no instructions or tools", async t => {
+  const { manager, client } = await setup(t);
+  await manager.execute(body("hello"));
+  const config = client.sessions[0].config;
+  assert.deepEqual(config.systemMessage, { mode: "append", content: "" });
+  assert.deepEqual(config.availableTools, []);
+  assert.deepEqual(config.tools, []);
+  assert.equal(config.onPermissionRequest({ kind: "shell", managedApprovalRequired: true }).kind, "reject");
+});
+
+test("SDK foundation and all leading client instruction bytes survive a history rebuild", async t => {
+  const { manager, client } = await setup(t);
+  const instructions = "Respect the read-only sandbox.\n한글 instruction.";
+  const input = [
+    { role: "system", content: "Never execute tools outside the client." },
+    { role: "developer", content: "Require approval for any file modification." },
+    { role: "user", content: "hello" },
+  ];
+  await manager.execute(body(input, { instructions, tools: [functionTool] }), headers("foundation"));
+  const updated = [{ ...input[0] }, { ...input[1], content: input[1].content + "\nUse only declared tools." }, input[2]];
+  await manager.execute(body(updated, { instructions, tools: [functionTool] }), headers("foundation"));
+  assert.equal(client.sessions.length, 2);
+  for (const [i, session] of client.sessions.entries()) {
+    const leading = i === 0 ? input : updated;
+    assert.deepEqual(session.config.systemMessage, { mode: "append",
+      content: [instructions, leading[0].content, leading[1].content].join("\n\n") });
+    assert.deepEqual(session.config.availableTools, session.config.tools.map(tool => `custom:${tool.name}`));
+    assert.ok(session.config.tools.every(tool => tool.handler === undefined));
+    assert.equal(session.config.onPermissionRequest({ kind: "write" }).kind, "reject");
+    assert.deepEqual(session.config.toolSearch, { enabled: false });
+  }
+});
+
+
+for (const signal of [
+  { contentFilterTriggered: true, finishReason: "stop" },
+  { contentFilterTriggered: false, finishReason: "content_filter" },
+]) test(`explicit SDK content filtering rejects before committing (${JSON.stringify(signal)})`, async t => {
+  const diagnostics = [], forwarded = [];
+  let validated = false;
+  const { manager, client } = await setup(t, { onDiagnostic: d => diagnostics.push(d) }, {
+    onSend: session => {
+      session.emit("assistant.turn_start", {});
+      session.emit("assistant.message", message("not a successful answer", "blocked-message"));
+      session.emit("assistant.usage", { ...signal, model, inputTokens: 2, outputTokens: 0, privateDetail: "do-not-log-this" });
+      session.emit("assistant.message_delta", { messageId: "blocked-message", deltaContent: "must-not-forward" });
+      session.emit("assistant.turn_end", {});
+      session.emit("session.idle", {});
+    },
+  });
+  await assert.rejects(manager.execute(body("private-request"), headers("filtered"), {
+    responseId: "resp_filtered", onEvent: event => forwarded.push(event), validateResult: () => { validated = true; },
+  }), { status: 422, code: "upstream_content_filter" });
+  await manager.queue.drain();
+  assert.equal(validated, false);
+  assert.deepEqual(forwarded, []);
+  assert.equal(manager.states.size, 0);
+  assert.equal(manager.responses.size, 0);
+  assert.equal(manager.callStates.size, 0);
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(client.sessions[0].aborted, 1);
+  assert.equal(client.sessions[0].disconnected, 1);
+  assert.equal(client.sessions[0].events.eventNames().length, 0);
+  assert.equal(client.deleted.length, 1);
+  assert.deepEqual(diagnostics.filter(d => d.event === "bridge.upstream_content_filter"), [
+    { event: "bridge.upstream_content_filter", model },
+  ]);
+  assert.ok(!JSON.stringify(diagnostics).includes("do-not-log-this"));
+  assert.ok(!JSON.stringify(diagnostics).includes("private-request"));
+  await assert.rejects(manager.execute(body("continue", { previous_response_id: "resp_filtered" })), { code: "response_not_found" });
+  assert.equal(client.sessions.length, 1);
+  client.onSend = session => session.reply("fresh success");
+  const next = await manager.execute(body("new conversation"), headers("fresh"));
+  assert.equal(next.messages[0].content, "fresh success");
+  assert.equal(client.sessions.length, 2);
+});
+
+test("filter-looking text and subordinate usage do not falsely fail a root response", async t => {
+  const text = "The model returned no content because the response was blocked by content filtering.";
+  const { manager } = await setup(t, {}, {
+    onSend: session => {
+      session.emit("assistant.usage", { contentFilterTriggered: true, finishReason: "content_filter" }, { agentId: "other-agent" });
+      session.emit("assistant.usage", { contentFilterTriggered: "true", finishReason: "stop" });
+      session.reply(text);
+    },
+  });
+  const result = await manager.execute(body());
+  assert.equal(result.messages[0].content, text);
+  assert.equal(manager.responses.size, 1);
+});
+
+test("filtering a tool-result turn invalidates old response handles without resubmission", async t => {
+  const request = body("read", { tools: [functionTool] });
+  const { manager, client } = await setup(t, {}, {
+    onSend: session => session.toolCalls([call(request, 0, "filter-tool-call", {})]),
+    onSubmit: session => {
+      session.emit("assistant.usage", { model, finishReason: "content_filter", outputTokens: 0 });
+      session.reply("must not be committed");
+    },
+  });
+  await manager.execute(request, headers("tool-filter"), { responseId: "resp_tool_before_filter" });
+  const followup = body([{ type: "function_call_output", call_id: "filter-tool-call", output: "owned result" }],
+    { previous_response_id: "resp_tool_before_filter" });
+  await assert.rejects(manager.execute(followup, headers("tool-filter")), { code: "upstream_content_filter" });
+  await manager.queue.drain();
+  assert.equal(client.sessions[0].submitted.length, 1);
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(manager.responses.size, 0);
+  assert.equal(manager.callStates.size, 0);
+  await assert.rejects(manager.execute(followup, headers("tool-filter")), { code: "response_not_found" });
+  await assert.rejects(manager.execute(body(followup.input), headers("tool-filter")), { code: "unknown_tool_call" });
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].submitted.length, 1);
 });

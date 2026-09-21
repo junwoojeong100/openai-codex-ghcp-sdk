@@ -226,3 +226,22 @@ test("unknown tools, invalid arguments, and duplicate tool IDs fail closed", () 
   assert.throws(() => stream.handleSdkEvent({ type: "assistant.message_delta", data: { deltaContent: 5 } }), /invalid message delta/);
   assert.equal(res.chunks.length, 0);
 });
+
+test("preparing a response validates without emitting tool/done events, then commits once", () => {
+  const { tools, messages } = toolFixture(), res = sink(), stream = new ResponsesStream(res, meta);
+  delta(stream, "I will ");
+  const before = res.events().length, response = stream.prepare({ tools, messages });
+  assert.equal(res.events().length, before); assert.equal(res.writableEnded, false);
+  assert.ok(!res.events().some(e => e.item?.type === "function_call"));
+  assert.deepEqual(stream.finishPrepared(response), response);
+  assert.equal(res.events().filter(e => e.type === "response.completed").length, 1);
+  assert.deepEqual(stream.finishPrepared(response), response); assert.equal(res.endCount, 1);
+});
+
+test("a prepared response cannot be committed after additional streamed data", () => {
+  const res = sink(), stream = new ResponsesStream(res, meta);
+  delta(stream, "he"); const response = stream.prepare({ messages: [{ messageId: "m1", content: "hello" }] });
+  delta(stream, "l");
+  assert.throws(() => stream.finishPrepared(response), /no longer matches/);
+  assert.equal(res.writableEnded, false); assert.ok(!res.events().some(e => e.type === "response.completed"));
+});

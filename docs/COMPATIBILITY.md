@@ -26,7 +26,7 @@ Only `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra`, `claude-opus
 
 **Historical replay:** a fresh SDK session cannot import an arbitrary Responses transcript with native roles. Completed historical turns are serialized into prompt context. Live matching conversations preserve the SDK session and submit real pending tool results instead.
 
-**Instruction boundaries:** leading system/developer messages join the SDK replacement system prompt. Later context travels in a prompt or alongside a tool result; this is not a general-purpose role-equivalent transcript adapter.
+**Instruction boundaries:** request instructions and leading system/developer messages are preserved verbatim and appended to the SDK-managed system foundation. The bridge uses `systemMessage.mode="append"`, never `replace`, so SDK safety instructions remain in place. Later context travels in a prompt or alongside a tool result; this is not a general-purpose role-equivalent transcript adapter. SDK built-in tools remain unavailable, and only Codex performs client tools under its sandbox and approval policy.
 
 **Usage:** actual SDK token counts are returned when available. Missing usage is `null`, not estimated. Usage, caching and billing belong to Copilot and need not match OpenAI billing semantics.
 
@@ -42,6 +42,10 @@ Only `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra`, `claude-opus
 - Reasoning summaries/encrypted reasoning replay, durable response retrieval, stored/background Responses jobs and custom service tiers.
 
 The launcher disables incompatible transport/search features. Other unsupported semantics fail explicitly instead of being advertised as implemented. Informational Codex hints such as cache keys, metadata, text verbosity or encrypted-reasoning inclusion can be diagnosed as ignored; they do not add the corresponding service capability.
+
+## Upstream-filtered responses
+
+Explicit root SDK content-filter metadata is reported as `upstream_content_filter` (HTTP 422 for JSON, or a terminal `response.failed` event after SSE has begun). No success cache or pending call is committed for that turn, and there is no automatic replay. Already-delivered partial text is marked incomplete. Refusal-like text without structured filter metadata is preserved as ordinary model output; subordinate-agent metadata does not replace the root response.
 
 ## Operational notes
 

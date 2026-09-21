@@ -84,8 +84,11 @@ export function createBridgeServer({
       return;
     }
     if (req.method === "GET" && pathname === "/health") {
+      const readiness = manager.lifecycle?.snapshot() ?? { ready: false, state: "unknown" };
       writeJson(res, 200, {
         ok: true,
+        ready: readiness.ready,
+        upstreamState: readiness.state,
         protocol: "responses",
         instanceId,
         pid: process.pid,
@@ -98,15 +101,12 @@ export function createBridgeServer({
       writeJson(res, 401, { error: { type: "authentication_error", code: "invalid_api_key", message: "Invalid bridge credential." } });
       return;
     }
-    if (req.method === "GET" && pathname === "/v1/models") {
-      writeJson(res, 200, modelCatalog(manager.listModels()));
-      return;
-    }
     if (pathname === "/v1/responses/compact") {
       writeError(res, new BridgeRequestError("Remote Responses compaction is not supported by this bridge.", { code: "unsupported_compaction" }));
       return;
     }
-    if (req.method !== "POST" || pathname !== "/v1/responses") {
+    const controlRoute = req.method === "GET" && ["/readyz", "/v1/models"].includes(pathname);
+    if (!controlRoute && (req.method !== "POST" || pathname !== "/v1/responses")) {
       writeError(res, new BridgeRequestError("Not found.", { status: 404, code: "not_found" }));
       return;
     }
@@ -117,7 +117,18 @@ export function createBridgeServer({
     res.once("close", onClose);
     let stream;
     let keepAlive;
+    let preparedResponse;
     try {
+      if (controlRoute) {
+        if (pathname === "/readyz") {
+          const state = await manager.readiness();
+          writeJson(res, state.ready ? 200 : 503, { ready: state.ready, state: state.state });
+        } else {
+          await manager.ensureReady(controller.signal);
+          writeJson(res, 200, modelCatalog(manager.listModels()));
+        }
+        return;
+      }
       const body = await readBody(req, maxBodyBytes);
       const id = `resp_${requestId.replaceAll("-", "")}`;
       const result = await manager.execute(body, req.headers, {
@@ -140,11 +151,14 @@ export function createBridgeServer({
           keepAlive.unref();
         },
         onEvent: (event) => stream?.handleSdkEvent(event),
+        validateResult: result => {
+          preparedResponse = stream ? stream.prepare(result) : createResponse({ id, ...result });
+        },
       });
       clearInterval(keepAlive);
       if (res.destroyed) return;
-      if (stream) stream.finish(result);
-      else writeJson(res, 200, createResponse({ id, ...result }));
+      if (stream) stream.finishPrepared(preparedResponse ?? stream.prepare(result));
+      else writeJson(res, 200, preparedResponse ?? createResponse({ id, ...result }));
     } catch (error) {
       clearInterval(keepAlive);
       if (error.name === "AbortError" || res.destroyed) return;
@@ -190,6 +204,13 @@ export function bridgeConfig(env = process.env) {
       preferredModel,
       logLevel: env.LOG_LEVEL || "error",
       turnTimeoutMs: integerEnv(env, "TURN_TIMEOUT_MS", 300_000),
+      requestTimeoutMs: integerEnv(env, "REQUEST_TIMEOUT_MS", 360_000),
+      maxRequestsPerFamily: integerEnv(env, "MAX_REQUESTS_PER_SESSION", 8),
+      maxRequests: integerEnv(env, "MAX_REQUESTS", 128),
+      readinessTimeoutMs: integerEnv(env, "SDK_READINESS_TIMEOUT_MS", 2000),
+      startupTimeoutMs: integerEnv(env, "SDK_STARTUP_TIMEOUT_MS", 30_000),
+      readinessIntervalMs: integerEnv(env, "SDK_READINESS_INTERVAL_MS", 15_000),
+      recoveryBackoffMs: integerEnv(env, "SDK_RECOVERY_BACKOFF_MS", 5000),
       cleanupTimeoutMs: integerEnv(env, "CLEANUP_TIMEOUT_MS", 5_000),
       pendingToolWaitMs: integerEnv(env, "PENDING_TOOL_WAIT_MS", 10_000),
       stateIdleTtlMs: integerEnv(env, "STATE_IDLE_TTL_MS", 30 * 60_000),

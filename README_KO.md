@@ -206,9 +206,20 @@ npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.js
 [통합 시나리오·커버리지](docs/NATIVE_SCENARIOS_KO.md)와 [실행·증거·환경 안내](docs/COMPATIBILITY_TESTING_KO.md)를 참고하세요.
 **90%는 일상 개발 작업의 커버리지 목표이지 실측된 제품 기능 지원율이 아닙니다.** 검토자가 정한 핵심 기능군 20개의 **설계 점수는 75%**이며 실모델 지원율이 아닙니다.
 
-[v4 실검증 결과](docs/validation/2026-09-21-v4/README_KO.md)는 약 12분 3초 동안 **100/126 통과(79.4%)·26건 실패**이며, **gpt-6-astra만 18/18 통과**했습니다. 전체 시험 통과는 아닙니다. 현재 실행기와 실행 전 보존한 소스 양쪽에서 증거 무결성을 확인했습니다. core-10·v3 기록을 v4 증거로 재사용하지 않습니다. 모델별 통과율과 포함·제외 기능을 구분합니다.
+## 브릿지 안정성·복구 검사
 
-과거 core-10 실검증(새 시험의 결과 아님): [2026-09-21 결과](docs/validation/2026-09-21/README_KO.md) — **57/70 통과·13건 실패**, 약 7분 31초. 증거 무결성은 확인했지만 전체 시험 통과는 아닙니다.
+별도 계약 `codex-ghcp-stability-11-v3`은 **11개 시나리오 × 7개 모델 = 77건**입니다. 도구 순서 변경, pending 정책 거절, HTTP 중복·취소, SDK 연결 상실, 스트림 불일치, resume·문맥 압축을 실제 Codex 경로에서 검사합니다. 장애 주입과 실제 모델 결과를 구분합니다. [범위·판정 기준·설정·명령](docs/STABILITY_TESTING_KO.md)을 참고하세요.
+
+```bash
+npm run test:stability:stress
+npm run test:stability:runtime
+npm run test:stability -- --plan
+npm run test:stability -- --execute  # Copilot 사용량 발생
+```
+
+[새 77건 실모델 검증](docs/validation/2026-09-21-stability-rerun/README_KO.md): **66건 통과(85.7%), 11건 실패**, 미실행 0건. 새 실행의 증거 무결성을 확인했으며 판정 기준 변경이나 선택적 재실행은 없습니다.
+
+기존 검증 데이터·보고서는 사용자 요청으로 작업 트리에서 삭제했습니다. [새 검증 기록](docs/validation/README_KO.md)만 현재 실행의 근거로 사용합니다. 이전 결과를 새 실행의 점수로 재사용하지 않으며, 수시간 안정성이나 제품 전체 지원을 인증하지 않습니다.
 
 ## 공식 참고 자료
 

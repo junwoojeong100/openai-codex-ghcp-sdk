@@ -206,9 +206,20 @@ npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.js
 See [integrated scenarios and coverage](docs/NATIVE_SCENARIOS.md) and the [runner/evidence guide](docs/COMPATIBILITY_TESTING.md).
 **90% is an everyday-workflow coverage target, not a measured product-feature support rate.** The reviewer-defined 20-group checklist has a **75% design score**, not a live support rate.
 
-The [v4 live run](docs/validation/2026-09-21-v4/README.md) passed **100/126 (79.4%)**, with **26 failures**, in ~12m 3s. Only **gpt-6-astra passed 18/18**; the full matrix did not pass. Evidence integrity was verified with both the current and frozen pre-run source. Older core-10 and v3 runs are not v4 evidence. Pass rates and included/excluded capabilities remain separate.
+## Bridge stability and recovery checks
 
-Historical core-10 run (not the expanded suite): [2026-09-21 results](docs/validation/2026-09-21/README.md) — **57/70 passed, 13 failed**, ~7m 31s. Evidence verified; the full suite did not pass.
+The separate `codex-ghcp-stability-11-v3` contract has **11 scenarios × 7 models = 77 cases**. It exercises tool reordering, pending-policy rejection, HTTP duplication/cancellation, SDK loss, stream mismatch, resume and compaction through real Codex. Fault injections and actual model results are distinguished. See the [scope, acceptance, settings and commands](docs/STABILITY_TESTING.md).
+
+```bash
+npm run test:stability:stress
+npm run test:stability:runtime
+npm run test:stability -- --plan
+npm run test:stability -- --execute  # Consumes Copilot usage
+```
+
+[Fresh 77-cell live verification](docs/validation/2026-09-21-stability-rerun/README.md): **66 passed (85.7%), 11 failed**, 0 not run. New evidence integrity was verified without changed criteria or selective retries.
+
+Previous verification data and reports were removed from the working tree at the user’s request. Only the [new verification records](docs/validation/README.md) are evidence for the current run. Old results are not reused as new scores; this is not hours-long or whole-product certification.
 
 ## References
 

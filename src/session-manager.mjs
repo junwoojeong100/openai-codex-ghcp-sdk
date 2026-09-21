@@ -3,6 +3,8 @@ import { CopilotClient, defineTool } from "@github/copilot-sdk";
 
 import { resolveCopilotHome } from "./copilot-home.mjs";
 import { DEFAULT_MAX_REPLAY_BYTES } from "./limits.mjs";
+import { SdkLifecycle } from "./sdk-lifecycle.mjs";
+import { RequestQueue } from "./request-queue.mjs";
 import {
   abortSession,
   deleteClientSession,
@@ -14,7 +16,6 @@ import {
   DEFAULT_MODEL,
   resolveCopilotModel,
   resolveReasoningEffort,
-  supportedModels,
 } from "./model-map.mjs";
 import { BridgeRequestError, normalizeRequest } from "./request-policy.mjs";
 import { canonicalItem, outputItems } from "./responses.mjs";
@@ -36,7 +37,7 @@ function abortError() {
 }
 
 function assertNotAborted(signal) {
-  if (signal?.aborted) throw abortError();
+  if (signal?.aborted) throw signal.reason ?? abortError();
 }
 
 function isResult(item) {
@@ -73,8 +74,10 @@ function historyStartsWith(input, history) {
 }
 
 function sameToolDefinitions(previous, current) {
-  return previous.length === current.length && previous.every((tool, index) => {
-    const next = current[index];
+  const byName = new Map(current.map((tool) => [tool.name, tool]));
+  return previous.length === current.length && byName.size === current.length && previous.every((tool) => {
+    const next = byName.get(tool.name);
+    if (!next) return false;
     if (hash(tool) === hash(next)) return true;
     // Codex adds plugin attribution after the first turn. Only that suffix is
     // metadata; names, schemas and the original description must still match.
@@ -91,7 +94,7 @@ function requestKey(request) {
     instructions: request.instructions,
     instructionsProvided: request.instructionsProvided,
     input: request.input,
-    tools: request.tools,
+    tools: [...request.tools].sort((a, b) => a.name.localeCompare(b.name)),
     toolsProvided: request.toolsProvided,
     toolChoice: request.toolChoice,
     reasoningEffort: request.reasoningEffort,
@@ -156,10 +159,18 @@ export function aggregateUsage(events) {
 export class SessionManager {
   constructor({
     client,
+    clientFactory,
+    readinessTimeoutMs = 2000,
+    startupTimeoutMs = 30_000,
+    readinessIntervalMs = 15_000,
+    recoveryBackoffMs = 5000,
     baseDirectory = resolveCopilotHome(process.env.COPILOT_HOME),
     preferredModel = DEFAULT_MODEL,
     logLevel = "error",
     turnTimeoutMs = 300_000,
+    requestTimeoutMs = 360_000,
+    maxRequestsPerFamily = 8,
+    maxRequests = 128,
     cleanupTimeoutMs = 5_000,
     pendingToolWaitMs = 10_000,
     stateIdleTtlMs = 30 * 60_000,
@@ -168,34 +179,72 @@ export class SessionManager {
     maxToolResults = 32,
     onDiagnostic = () => {},
   } = {}) {
-    this.client = client ?? new CopilotClient({
-      mode: "empty",
-      baseDirectory,
-      logLevel,
-      enableRemoteSessions: false,
-    });
+    this.clientFactory = clientFactory ?? (client ? null : () => new CopilotClient({
+      mode: "empty", baseDirectory, logLevel, enableRemoteSessions: false,
+    }));
+    this.client = client ?? this.clientFactory();
     Object.assign(this, {
-      preferredModel, turnTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
-      stateIdleTtlMs, maxStates, maxReplayBytes, maxToolResults, onDiagnostic,
+      preferredModel, turnTimeoutMs, requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
+      readinessTimeoutMs, startupTimeoutMs, readinessIntervalMs, recoveryBackoffMs,
+      stateIdleTtlMs, maxStates, maxReplayBytes, maxToolResults,
     });
+    this.onDiagnostic = event => { try { onDiagnostic(event); } catch { /* Logging is not a control path. */ } };
     this.models = [];
     this.states = new Map();
     this.responses = new Map();
     this.callStates = new Map();
-    this.queues = new Map();
-    this.busyFamilies = new Map();
+    this.queue = new RequestQueue({ timeoutMs: requestTimeoutMs, maxPerFamily: maxRequestsPerFamily, maxTotal: maxRequests });
+    this.queues = this.queue.families;
+    this.busyFamilies = this.queue.counts;
     this.evictions = new Set();
     this.stopping = false;
+    this.lostFamilies = new Map();
   }
 
   async start() {
-    await this.client.start();
-    this.models = supportedModels(await this.client.listModels());
     if (this.stopping) throw new Error("Bridge is stopping.");
-    this.cleanupTimer = setInterval(() => {
-      void this.#expireStates().catch(() => this.onDiagnostic({ event: "bridge.expiry_failed" }));
-    }, Math.min(this.stateIdleTtlMs, 60_000));
-    this.cleanupTimer.unref();
+    if (this.startPromise) return this.startPromise;
+    this.lifecycle = new SdkLifecycle({ client: this.client, clientFactory: this.clientFactory,
+      timeoutMs: this.readinessTimeoutMs, startupTimeoutMs: this.startupTimeoutMs,
+      cleanupTimeoutMs: this.cleanupTimeoutMs, recoveryBackoffMs: this.recoveryBackoffMs,
+      onDiagnostic: event => this.onDiagnostic(event),
+      onReady: ({ client, models }) => { this.client = client; this.models = models; },
+      onLost: generation => {
+        const error = new BridgeRequestError("The upstream connection was lost. Start a new Codex conversation; pending work was not replayed.", {
+          status: 409, code: "upstream_session_lost",
+        });
+        for (const state of this.states.values()) {
+          if (state.generation !== generation) continue;
+          this.lostFamilies.set(state.family, Date.now());
+          state.upstreamLost = true;
+          void this.#evict(state, error).catch(() => {});
+        }
+        // Tombstones are finite; even after expiry orphan results still fail
+        // validateReplay. Never use a lost previous_response_id as fresh input.
+        while (this.lostFamilies.size > this.maxStates * 4) this.lostFamilies.delete(this.lostFamilies.keys().next().value);
+      },
+    });
+    this.startPromise = (async () => {
+      await this.lifecycle.start();
+      if (this.stopping) throw new Error("Bridge is stopping.");
+      this.cleanupTimer = setInterval(() => {
+        void this.#expireStates().catch(() => this.onDiagnostic({ event: "bridge.expiry_failed" }));
+      }, Math.min(this.stateIdleTtlMs, 60_000));
+      this.cleanupTimer.unref();
+      this.readinessTimer = setInterval(() => { void this.lifecycle.readiness().catch(() => {}); }, this.readinessIntervalMs);
+      this.readinessTimer.unref();
+    })();
+    return this.startPromise;
+  }
+
+  async readiness() {
+    return this.lifecycle ? this.lifecycle.readiness() : { ready: false, state: "starting", generation: 0 };
+  }
+
+  async ensureReady(signal) {
+    if (this.stopping) throw new BridgeRequestError("Bridge is stopping.", { status: 503, code: "bridge_stopping" });
+    if (!this.lifecycle) throw new BridgeRequestError("Bridge has not started.", { status: 503, code: "upstream_unavailable" });
+    await this.lifecycle.ensureReady(signal);
   }
 
   listModels() {
@@ -205,22 +254,21 @@ export class SessionManager {
   async stop() {
     if (this.stopPromise) return this.stopPromise;
     this.stopping = true;
+    this.lifecycle?.beginStop();
+    this.queue.close(abortError());
     clearInterval(this.cleanupTimer);
+    clearInterval(this.readinessTimer);
     this.stopPromise = (async () => {
       for (const state of this.states.values()) state.cancelActive?.(abortError());
       await Promise.allSettled([...this.states.values()].map((state) => this.#evict(state)));
       await Promise.allSettled(this.evictions);
-      try {
-        const errors = await withinDeadline(() => this.client.stop(), this.cleanupTimeoutMs);
-        if (errors?.length) throw errors[0];
-      } catch {
-        await withinDeadline(() => this.client.forceStop?.(), this.cleanupTimeoutMs).catch(() => {});
-      }
+      await this.queue.drain();
+      await this.lifecycle?.stop();
     })();
     return this.stopPromise;
   }
 
-  async execute(body, headers = {}, { responseId = `resp_${randomUUID().replaceAll("-", "")}`, onReady, onEvent, signal } = {}) {
+  async execute(body, headers = {}, { responseId = `resp_${randomUUID().replaceAll("-", "")}`, onReady, onEvent, validateResult, signal } = {}) {
     const request = normalizeRequest(body, this.onDiagnostic);
     assertNotAborted(signal);
     if (this.stopping) throw new BridgeRequestError("Bridge is stopping.", { status: 503, code: "bridge_stopping" });
@@ -240,23 +288,25 @@ export class SessionManager {
     }
     const inferred = !explicitFamily && !previous ? [...referencedStates][0] : null;
     const family = explicitFamily || previous?.state.family || inferred?.family || `anonymous:${randomUUID()}`;
-    const preceding = this.queues.get(family) || Promise.resolve();
-    this.busyFamilies.set(family, (this.busyFamilies.get(family) || 0) + 1);
-    const run = preceding.then(() => this.#executeLocked(request, family, { responseId, onReady, onEvent, signal }));
-    const tracked = run.catch(() => {}).finally(() => {
-      const count = this.busyFamilies.get(family) - 1;
-      if (count) this.busyFamilies.set(family, count);
-      else this.busyFamilies.delete(family);
-      if (this.queues.get(family) === tracked) this.queues.delete(family);
-    });
-    this.queues.set(family, tracked);
-    return run;
+    return this.queue.run(family, requestSignal => this.#executeLocked(request, family, {
+      responseId, onReady, onEvent, validateResult, signal: requestSignal,
+    }), { signal, onStart: ({ queueWaitMs }) => this.onDiagnostic({
+      event: "bridge.request_started", requestId: responseId, familyHash: hash(family), queueWaitMs,
+    }) });
   }
 
-  async #executeLocked(request, family, { responseId, onReady, onEvent, signal }) {
+  async #executeLocked(request, family, { responseId, onReady, onEvent, validateResult, signal }) {
     assertNotAborted(signal);
     if (this.stopping) throw new BridgeRequestError("Bridge is stopping.", { status: 503, code: "bridge_stopping" });
-    await this.#expireStates();
+    await this.ensureReady(signal);
+    assertNotAborted(signal);
+    if (this.lostFamilies.has(family)) {
+      throw new BridgeRequestError("This conversation lost its upstream session. Start a new conversation; no pending work was replayed.", {
+        status: 409, code: "upstream_session_lost",
+      });
+    }
+    await withinDeadline(() => this.#expireStates(), this.cleanupTimeoutMs * 3 + 100, signal);
+    assertNotAborted(signal);
     let state = this.states.get(family);
     if (state && Date.now() - state.lastUsedAt > this.stateIdleTtlMs) {
       await this.#evict(state);
@@ -271,6 +321,8 @@ export class SessionManager {
     if (state?.lastRequestKey === key && state.lastResult) {
       state.lastUsedAt = Date.now();
       onReady?.({ model: state.model });
+      validateResult?.(state.lastResult);
+      assertNotAborted(signal);
       this.#rememberResponse(state, responseId);
       return state.lastResult;
     }
@@ -303,8 +355,20 @@ export class SessionManager {
     const signatureTools = state && sameToolDefinitions(state.tools, tools) ? state.tools : tools;
     const signature = hash({ model, system, tools: signatureTools });
     let fresh = !state;
-    if (state && (signature !== state.signature || !historyStartsWith(input, state.history))) {
+    const historyMatches = !state || historyStartsWith(input, state.history);
+    if (state && (signature !== state.signature || !historyMatches)) {
       if (state.outstanding.size) {
+        // No raw instructions, tool descriptions, arguments, paths or family IDs.
+        const changed = [
+          ...(model !== state.model ? ["model"] : []),
+          ...(hash(system) !== state.systemHash ? ["instructions"] : []),
+          ...(!sameToolDefinitions(state.tools, tools) ? ["tools"] : []),
+          ...(!historyMatches ? ["history"] : []),
+        ];
+        this.onDiagnostic({ event: "bridge.pending_session_changed", familyHash: hash(family), changed,
+          pendingCalls: state.outstanding.size, suppliedResults: input.filter(isResult).length,
+          previousToolSetHash: hash(state.tools.map(t => t.name).sort()),
+          requestedToolSetHash: hash(tools.map(t => t.name).sort()) });
         throw new BridgeRequestError("The model, tools, instructions or history changed while tools were pending. Return their results before changing the session.", {
           status: 409, code: "pending_session_changed",
         });
@@ -341,6 +405,8 @@ export class SessionManager {
         await withinDeadline(() => state.session.setModel(model, reasoningEffort ? { reasoningEffort } : undefined), this.turnTimeoutMs, signal);
         state.reasoningEffort = reasoningEffort;
       }
+      assertNotAborted(signal);
+      if (state.evicted || state.fault) throw state.fault ?? abortError();
       onReady?.({ model });
       const turn = await this.#waitForTurn(state, async () => {
         if (submissions.length) {
@@ -354,6 +420,8 @@ export class SessionManager {
           await state.session.send({ prompt: renderPrompt(newInput), attachments: [] });
         }
       }, onEvent, signal);
+      assertNotAborted(signal);
+      if (state.evicted) throw state.fault ?? abortError();
       const output = outputItems(turn.messages, tools);
       if (!request.parallelToolCalls && output.filter(isCall).length > 1) {
         throw new BridgeRequestError("Copilot returned multiple tool calls when parallel_tool_calls=false. No calls were forwarded; start a new turn.", {
@@ -362,6 +430,12 @@ export class SessionManager {
       }
       const completeHistory = [...input, ...output.map(canonicalItem).filter(Boolean)];
       this.#checkHistorySize(completeHistory);
+      const result = { model, messages: turn.messages, tools, usage: turn.usage };
+      // Internal synchronous validation only; no network I/O or re-inference.
+      // Any validation error evicts the uncommitted session in the catch below.
+      validateResult?.(result);
+      assertNotAborted(signal);
+      if (state.evicted) throw state.fault ?? abortError();
       for (const item of output.filter(isCall)) {
         const owner = this.callStates.get(item.call_id);
         if (owner && owner !== state) throw new Error("Copilot returned a tool call ID belonging to another session.");
@@ -373,7 +447,7 @@ export class SessionManager {
       state.history = completeHistory;
       state.lastRequestKey = key;
       state.version += 1;
-      state.lastResult = { model, messages: turn.messages, tools, usage: turn.usage };
+      state.lastResult = result;
       this.#rememberResponse(state, responseId);
       return state.lastResult;
     } catch (error) {
@@ -418,17 +492,25 @@ export class SessionManager {
   }
 
   async #createState({ family, model, system, tools, instructions, signature, reasoningEffort, signal }) {
+    assertNotAborted(signal);
     while (this.states.size >= this.maxStates) {
       const oldest = [...this.states.values()].filter((entry) => !this.busyFamilies.has(entry.family))
         .sort((a, b) => a.lastUsedAt - b.lastUsedAt)[0];
       if (!oldest) throw new BridgeRequestError("All bridge sessions are busy. Try again later.", { status: 429, code: "session_limit" });
       await this.#evict(oldest);
+      assertNotAborted(signal);
+    }
+    if (!this.lifecycle.snapshot().ready || !this.lifecycle.owns(this.client, this.lifecycle.generation)) {
+      throw new BridgeRequestError("The upstream connection changed before session creation. No inference was submitted.", {
+        status: 503, code: "upstream_unavailable",
+      });
     }
     const state = {
-      family, model, tools, instructions, signature, reasoningEffort,
+      family, model, tools, instructions, signature, reasoningEffort, systemHash: hash(system),
       sessionId: `codex-ghcp-${randomUUID()}`,
       history: [], pending: new Map(), outstanding: new Map(), completed: new Map(),
       callIds: new Set(), responseIds: [], waiters: new Map(), unsubscribers: [],
+      client: this.client, generation: this.lifecycle.generation,
       version: 0, lastUsedAt: Date.now(), session: null, creationController: new AbortController(),
     };
     this.states.set(family, state);
@@ -440,7 +522,7 @@ export class SessionManager {
       overridesBuiltInTool: true,
     }));
     try {
-      state.creation = this.client.createSession({
+      state.creation = state.client.createSession({
         sessionId: state.sessionId,
         model,
         ...(reasoningEffort ? { reasoningEffort } : {}),
@@ -449,7 +531,10 @@ export class SessionManager {
         toolSearch: { enabled: false },
         streaming: true,
         infiniteSessions: { enabled: false },
-        systemMessage: { mode: "replace", content: system },
+        // Keep the SDK-managed foundation, including its safety instructions.
+        // Replace mode removes that foundation; transport adaptation must not
+        // disable it. Preserve the client's complete instruction text as-is.
+        systemMessage: { mode: "append", content: system },
         skipCustomInstructions: true,
         customAgentsLocalOnly: true,
         enableSessionTelemetry: false,
@@ -520,7 +605,7 @@ export class SessionManager {
         if (error) reject(error);
         else resolve({ messages, usage: aggregateUsage(usage) });
       };
-      const onAbort = () => settle(abortError());
+      const onAbort = () => settle(signal?.reason ?? abortError());
       const timeout = setTimeout(() => settle(new BridgeRequestError("Timed out waiting for GitHub Copilot.", {
         status: 504, code: "copilot_timeout",
       })), this.turnTimeoutMs);
@@ -549,7 +634,21 @@ export class SessionManager {
             try { onEvent?.(event); } catch (error) { settle(error); }
           }
         }),
-        state.session.on("assistant.usage", (event) => { if (!event.agentId && !settled) usage.push(event.data); }),
+        state.session.on("assistant.usage", (event) => {
+          if (event.agentId || settled) return;
+          const data = event.data ?? {};
+          // Use the SDK's explicit signal, never match assistant prose. A
+          // blocked/truncated turn is not a completed answer or cached success.
+          if (data.contentFilterTriggered === true || data.finishReason === "content_filter") {
+            this.onDiagnostic({ event: "bridge.upstream_content_filter", model: state.model });
+            settle(new BridgeRequestError(
+              "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried.",
+              { status: 422, code: "upstream_content_filter" },
+            ));
+            return;
+          }
+          usage.push(data);
+        }),
         state.session.on("assistant.turn_end", (event) => { if (!event.agentId) finish(); }),
         state.session.on("session.idle", (event) => { if (!event.agentId) finish(); }),
       );
@@ -557,7 +656,11 @@ export class SessionManager {
       signal?.addEventListener("abort", onAbort, { once: true });
       if (signal?.aborted) { onAbort(); return; }
       if (state.fault) { settle(state.fault); return; }
-      Promise.resolve().then(trigger).then(() => {
+      Promise.resolve().then(() => {
+        assertNotAborted(signal);
+        if (state.evicted || state.fault) throw state.fault ?? abortError();
+        return trigger();
+      }).then(() => {
         triggerFinished = true;
         if (ready) settle();
       }).catch(settle);
@@ -597,26 +700,35 @@ export class SessionManager {
 
   async #disposeSession(state) {
     if (!state.session) return;
-    for (const operation of [
-      () => abortSession(state.session),
-      () => disconnectSession(state.session),
-      () => deleteClientSession(this.client, state.sessionId),
+    for (const [operationName, operation] of [
+      ["abort", () => abortSession(state.session)],
+      ["disconnect", () => disconnectSession(state.session)],
+      ["delete", () => deleteClientSession(state.client, state.sessionId)],
     ]) {
-      await withinDeadline(operation, this.cleanupTimeoutMs).catch(() => {
-        this.onDiagnostic({ event: "bridge.session_cleanup_failed" });
+      // deleteSession can auto-start a disconnected SDK client. Never resurrect
+      // a retired generation while cleaning a late/failed operation.
+      if (state.upstreamLost || !this.lifecycle.owns(state.client, state.generation)) return;
+      const startedAt = Date.now();
+      await withinDeadline(operation, this.cleanupTimeoutMs).catch(error => {
+        // SDK messages may contain session identifiers or user content. Log
+        // only the owned operation, timing and a bounded failure category.
+        this.onDiagnostic({ event: "bridge.session_cleanup_failed", operation: operationName,
+          failureType: error?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error",
+          timeoutMs: this.cleanupTimeoutMs, elapsedMs: Math.max(0, Date.now() - startedAt) });
       });
     }
   }
 
-  #evict(state) {
+  #evict(state, reason = abortError()) {
     if (state.eviction) return state.eviction;
     state.evicted = true;
-    state.creationController.abort();
+    state.fault ??= reason;
+    state.creationController.abort(reason);
     if (this.states.get(state.family) === state) this.states.delete(state.family);
     for (const id of state.responseIds) this.responses.delete(id);
     for (const id of state.callIds) if (this.callStates.get(id) === state) this.callStates.delete(id);
-    state.cancelActive?.(abortError());
-    for (const waiters of state.waiters.values()) for (const waiter of waiters) waiter.reject(abortError());
+    state.cancelActive?.(reason);
+    for (const waiters of state.waiters.values()) for (const waiter of waiters) waiter.reject(reason);
     for (const unsubscribe of state.unsubscribers) unsubscribe();
     state.eviction = this.#disposeSession(state).finally(() => this.evictions.delete(state.eviction));
     this.evictions.add(state.eviction);

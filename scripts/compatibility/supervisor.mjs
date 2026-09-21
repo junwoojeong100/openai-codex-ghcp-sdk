@@ -13,6 +13,22 @@ export function killOwnedGroup(pid, signal = "SIGKILL") {
   if (!Number.isSafeInteger(pid) || pid <= 1 || pid === process.pid) throw new Error("Invalid owned process group");
   try { process.kill(-pid, signal); } catch (error) { if (error.code !== "ESRCH") throw error; }
 }
+// SIGKILL delivery and process-group disappearance are not synchronous.
+// Spend only the remaining case slot (at most 2s) observing our own group.
+export async function waitForOwnedGroupExit(pid, milliseconds, {
+  probe = groupExists, now = () => performance.now(),
+  sleep = ms => new Promise(resolve => setTimeout(resolve, ms)),
+} = {}) {
+  if (!Number.isSafeInteger(pid) || pid <= 1 || !Number.isFinite(milliseconds)) throw new Error("Invalid owned process group wait");
+  const deadline = now() + Math.max(0, Math.min(2000, milliseconds));
+  while (probe(pid)) {
+    const remaining = deadline - now();
+    if (remaining <= 0) return false;
+    await sleep(Math.min(10, remaining));
+  }
+  return true;
+}
+
 export function workerEnvironment(env = process.env) {
   const result = {};
   for (const key of ["PATH", "HOME", "USERPROFILE", "SHELL", "LANG", "LC_ALL", "SystemRoot", "WINDIR", "TMPDIR",
@@ -62,9 +78,7 @@ export async function supervise(config, { signal, env = process.env, command = p
   if (child.pid) {
     try {
       if (groupExists(child.pid)) killOwnedGroup(child.pid);
-      // No sleeps beyond the slot. The parent records an incomplete cleanup if
-      // the kernel still reports a group; such a case cannot pass.
-      groupGone = !groupExists(child.pid);
+      groupGone = await waitForOwnedGroupExit(child.pid, config.timeoutMs - (performance.now() - started));
     } catch (error) { failure ??= error; }
     onGroup?.(child.pid, false);
   }

@@ -4,7 +4,7 @@
 
 **Current contract: codex-ghcp-workflows-18-v4. 18 scenarios × 7 models = 126 cases.** One full matrix, no fast or model-subset mode.
 
-See the runner guide for dated live results and evidence. The core-10 (57/70) and v3 results belong to their historical contracts; do not reuse or regrade them as current-contract results.
+See the runner guide for live results and evidence. Results from other contracts or deleted past runs must not be reused or regraded as current-contract results.
 
 ## Separate feature scope from pass rate
 

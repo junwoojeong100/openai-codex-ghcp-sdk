@@ -1,0 +1,117 @@
+{
+  "recordedAt": "2026-09-21T10:56:10.881Z",
+  "runId": "6eb67b7a-6780-4398-8161-17b444276ddf",
+  "kind": "fresh-live-run-evidence-audit",
+  "scope": {
+    "scenarios": 11,
+    "models": 7,
+    "totalCases": 77
+  },
+  "evidenceIntegrity": true,
+  "currentAndFrozenVerifierAgree": true,
+  "goalThresholdPercent": 95,
+  "requiredPassingCells": 74,
+  "goalThresholdPassed": false,
+  "realRouteVerifiedCells": 77,
+  "structuredUpstreamFilterCells": 11,
+  "bridgeFilterResponseCells": 11,
+  "fullMatrixPassed": false,
+  "implementationUnchanged": true,
+  "userSettingsUnchanged": true,
+  "interrupted": false,
+  "executedCases": 77,
+  "passed": 66,
+  "counts": {
+    "passed": 66,
+    "failed": 11,
+    "blocked": 0,
+    "unsupported": 0,
+    "timed-out": 0,
+    "not-run": 0
+  },
+  "reviewedNonPassingCells": 11,
+  "ownedProcessGroupReceiptsGone": 77,
+  "finalResourceReceiptsClean": 77,
+  "sourceFilesMatched": 82,
+  "jsonPointersValidated": 148,
+  "fidelity": {
+    "failingFinalPhases": 0,
+    "identityCorrelatedMessages": 0,
+    "sdkToBridgeExact": 0,
+    "bridgeToNativeExact": 0,
+    "noNativeFinalMessage": 0,
+    "uncorrelatedMessages": 0,
+    "mismatches": []
+  },
+  "selectiveCaseRetries": 0,
+  "oldResultsReused": false,
+  "reset": {
+    "resetAt": "2026-09-21T10:20:46.908315+00:00",
+    "deletedTargetCount": 3,
+    "backupsCreated": false,
+    "gitHistoryRewritten": false,
+    "operatingBridgeFilesRemoved": false,
+    "receipt": {
+      "localPath": ".runtime/stability-rerun-20260921/reset.json",
+      "sha256": "7697b5c4d17e4e1215e855a2bb4a1d434c8a7054696df1ad96da4d83ef50a62b",
+      "bytes": 2559
+    }
+  },
+  "verificationReceipts": {
+    "current": {
+      "sha256": "df70b47a8d7f4a1bdfda322561023ed803700c8ad7978d192d70fa2ea2eb32ea",
+      "bytes": 1417
+    },
+    "frozen": {
+      "sha256": "df70b47a8d7f4a1bdfda322561023ed803700c8ad7978d192d70fa2ea2eb32ea",
+      "bytes": 1417
+    }
+  },
+  "hoursLongSoakCertified": false,
+  "measuredProductCoverage": null,
+  "localMarkdownLinksChecked": 92,
+  "publishedArtifactsPrivacyCheck": true,
+  "publicationScripts": {
+    "audit": {
+      "sha256": "1299808c28b174842d7cf360c972b9c3f5105aba81ea79fa6f0f5fe2f9e29840",
+      "bytes": 13805
+    },
+    "documents": {
+      "sha256": "6bbf90f7d8cefbb7bbe99cdd730ab031d5fd70eda7f9310b46d457c88d49bb1e",
+      "bytes": 28559
+    },
+    "qa": {
+      "sha256": "ae663103b301768dd6417fa16bbc444375955fc76179779fe7b8878e197798e1",
+      "bytes": 4925
+    }
+  },
+  "oldRuntimeDataAbsent": true,
+  "oldPublishedResultsAbsent": true,
+  "rawEvidenceFilesRehashed": 697,
+  "finalDocumentationChecks": [
+    {
+      "name": "generated-docs",
+      "command": [
+        "npm",
+        "run",
+        "docs:scenarios:check"
+      ],
+      "exitCode": 0,
+      "log": ".runtime/stability-rerun-20260921/checks/post-generated-docs.log",
+      "sha256": "44cf778bd5062d8794d5cf7edc499c98b4c924cbc72172597811f7284fa1347b",
+      "bytes": 142
+    },
+    {
+      "name": "whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": ".runtime/stability-rerun-20260921/checks/post-whitespace.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ]
+}

@@ -23,7 +23,10 @@
     "test:compatibility": "node scripts/compatibility.mjs",
     "test:compatibility:runtime": "node scripts/check-compatibility-runtime.mjs",
     "docs:scenarios": "node scripts/generate-scenario-docs.mjs",
-    "docs:scenarios:check": "node scripts/generate-scenario-docs.mjs --check"
+    "docs:scenarios:check": "node scripts/generate-scenario-docs.mjs --check",
+    "test:stability": "node scripts/stability.mjs",
+    "test:stability:runtime": "node scripts/stability.mjs --runtime",
+    "test:stability:stress": "node scripts/check-stability-stress.mjs"
   },
   "dependencies": {
     "@github/copilot-sdk": "1.0.14",

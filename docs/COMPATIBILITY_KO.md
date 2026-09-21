@@ -26,7 +26,7 @@
 
 **과거 대화 replay:** 새 SDK 세션에 임의의 Responses 이력을 원래 역할 그대로 가져올 수 없습니다. 완료된 과거 턴은 직렬화된 프롬프트 문맥으로 전달합니다. 정상적으로 연결된 live 대화는 기존 SDK 세션과 실제 대기 도구 결과 RPC를 사용합니다.
 
-**지시문 경계:** 앞부분의 system/developer 메시지는 SDK replacement system prompt에 합칩니다. 이후의 문맥은 프롬프트나 도구 결과와 함께 전달되므로 범용적인 역할 보존 transcript 변환기는 아닙니다.
+**지시문 경계:** 요청 지시문과 앞부분의 system/developer 메시지는 원문 그대로 SDK 기본 시스템 지시에 덧붙입니다. `systemMessage.mode="append"`를 사용하고 `replace`로 SDK 보호 지시를 제거하지 않습니다. 이후의 문맥은 프롬프트나 도구 결과와 함께 전달되므로 범용적인 역할 보존 transcript 변환기는 아닙니다. SDK 기본 도구는 계속 비활성화하고, 클라이언트 도구는 Codex가 자신의 샌드박스·승인 정책 아래 실행합니다.
 
 **사용량:** SDK가 실제 토큰 수를 제공하면 반환하고, 없으면 추정하지 않고 `null`로 표시합니다. 사용량·캐시·과금은 Copilot 기준이며 OpenAI API의 과금 의미와 같다고 보장하지 않습니다.
 
@@ -42,6 +42,10 @@
 - reasoning summary/암호화 reasoning replay, 영구 응답 조회, stored/background Responses 작업, 별도 service tier.
 
 실행기가 호환되지 않는 전송·검색 기능을 끕니다. 그 밖에 의미를 지킬 수 없는 요청은 지원한다고 가장하지 않고 명시적으로 거절합니다. 캐시 키·metadata·text verbosity·암호화 reasoning 포함 요청 등 일부 힌트는 무시됨을 진단할 수 있지만, 이것이 해당 서비스 기능을 구현한다는 뜻은 아닙니다.
+
+## 상위 서비스에서 필터링한 응답
+
+루트 SDK의 명시적인 필터 신호는 `upstream_content_filter`로 알립니다(JSON HTTP 422, 이미 시작된 SSE는 마지막 `response.failed` 이벤트). 해당 턴의 성공 캐시·pending 호출을 확정하거나 자동 재실행하지 않습니다. 이미 전송한 부분 텍스트는 미완료로 표시합니다. 구조화된 필터 신호 없이 거절처럼 보이는 문구는 원래 모델 출력 그대로 유지하고, 하위 에이전트 신호로 루트 응답을 대신 판정하지 않습니다.
 
 ## 운영 시 주의
 
