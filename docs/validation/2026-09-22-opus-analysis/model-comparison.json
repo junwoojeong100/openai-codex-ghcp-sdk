@@ -1,0 +1,2843 @@
+{
+  "matched": {
+    "kind": "unscored-matched-opus-sonnet-comparison",
+    "startedAt": "2026-09-21T22:27:25.899Z",
+    "models": [
+      "claude-opus-5",
+      "claude-sonnet-5"
+    ],
+    "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+    "fixtureHash": "3c05d8fc91aadcaa058a90478236211234585d219b3c55e3377a2d2f266b2c2d",
+    "catalogHash": "bcb5958d066a1628552f059aecd6e4fb04808acab0d0443ec70075df6e1b23fd",
+    "implementationHash": "7cb34838fe930672c375fcf6a68e5c6bafb1ef07ddc253c6cb77f870f5a82402",
+    "automaticRetries": 0,
+    "safetyPolicyChanges": false,
+    "identicalClientPromptAndTool": true,
+    "reverseModelOrderOnSecondRepeat": true,
+    "cases": [
+      {
+        "id": "1-sdk-claude-opus-5",
+        "repeat": 1,
+        "route": "sdk",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:27:25.928Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10999,
+              "sha256": "5be8f1161a67e3d4aa0bdbd8f938269fe8e5f31408319299cd8dd81259d8670a",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1783,
+              "sha256": "53946ceddcdd2ae16f87be309f947c443707b26734704013ee5438e0f1ef7fd7",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3773,
+              "outputTokens": 0,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3773,
+            "outputTokens": 0
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 0,
+        "cleanup": [
+          {
+            "operation": "abort",
+            "passed": true
+          },
+          {
+            "operation": "disconnect",
+            "passed": true
+          },
+          {
+            "operation": "delete",
+            "passed": true
+          },
+          {
+            "operation": "stop",
+            "passed": true
+          },
+          {
+            "operation": "forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "catalog": {
+          "id": "claude-opus-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 1,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-opus-5",
+          "modelExcludedHash": "34be74f0a8c4aa1b2e7af77b374e3b787f7f4eacd4dc69de08971163cf86e602",
+          "messagesHash": "4c0dbee096ba1ff832e1baee7e1b17fc60eb1f4c55faaf766dadc8fad0d27bb9",
+          "systemHash": "112b7f52df00295dd4ad92c0a09ddd50985e97700e69ad7c530692cc7d00de6b",
+          "toolsHash": "d9b6505c5d926dd941c2f8eaa5eac812adfc506db29761f656e1813f8306fc57",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 84,
+        "answerHash": "31130c844282d2a2456c1a539ac9578e542924ab00606fbc7fa9429c5c9484f4",
+        "exactFixture": false,
+        "fixtureValuesPreserved": false,
+        "status": "filtered",
+        "finishedAt": "2026-09-21T22:27:34.116Z"
+      },
+      {
+        "id": "1-sdk-claude-sonnet-5",
+        "repeat": 1,
+        "route": "sdk",
+        "model": "claude-sonnet-5",
+        "startedAt": "2026-09-21T22:27:34.117Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10828,
+              "sha256": "49a6d054b979f18322f51b4a6216f17fd40c11f2ab853a7e4d0c1ca8d68025ba",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1824,
+              "sha256": "c4b65cdab162e21da2867c8d3bc6dea019b1a51073a2b6ea6f086b6570ec01aa",
+              "parsedChunks": 7,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3748,
+              "outputTokens": 28,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 3746,
+              "textBytes": 0,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11137,
+              "sha256": "6c292f625ae245953232dfc0738ae7b58a7a72c0343f4f98484e341fbaf2f048",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2607,
+              "sha256": "ea9105664fa68838c67826834fd83a56c9b968c8459a19cfe8adb06f48c76332",
+              "parsedChunks": 14,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3822,
+              "outputTokens": 47,
+              "cacheReadTokens": 3746,
+              "cacheWriteTokens": 74,
+              "textBytes": 81,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls",
+            "inputTokens": 3748,
+            "outputTokens": 28
+          },
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "stop",
+            "inputTokens": 3822,
+            "outputTokens": 47
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "external_tool.requested",
+          "external_tool.completed",
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 1,
+        "cleanup": [
+          {
+            "operation": "abort",
+            "passed": true
+          },
+          {
+            "operation": "disconnect",
+            "passed": true
+          },
+          {
+            "operation": "delete",
+            "passed": true
+          },
+          {
+            "operation": "stop",
+            "passed": true
+          },
+          {
+            "operation": "forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "catalog": {
+          "id": "claude-sonnet-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 5,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-sonnet-5",
+          "modelExcludedHash": "29c732a50b613f0920229384d143ff9b76812e6df66f0979696dfa6318c4040b",
+          "messagesHash": "ad48af12a4d367b43f544005b3d7e7550a13a7fd6f16d142bae230e190f2a96d",
+          "systemHash": "78282431bc4e671978c82e087a73da06155d658b8026d1dc7f0028ec3d244b36",
+          "toolsHash": "d9b6505c5d926dd941c2f8eaa5eac812adfc506db29761f656e1813f8306fc57",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 81,
+        "answerHash": "10819a1d50d86b22271bb42c5a82bc0d19843ea8cd805f4a18b29a32276c42ed",
+        "exactFixture": true,
+        "fixtureValuesPreserved": true,
+        "status": "completed",
+        "finishedAt": "2026-09-21T22:27:40.461Z"
+      },
+      {
+        "id": "1-bridge-claude-opus-5",
+        "repeat": 1,
+        "route": "bridge",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:27:40.462Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11051,
+              "sha256": "fc602c89ef86a7f02cf7373cbeb83ac4f0a3e50ba259cf89915d19190e048dc1",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1773,
+              "sha256": "3d4206116e6abe5d4e438a5930f43145cb050cb899740094b4f6adc532e7c584",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3768,
+              "outputTokens": 0,
+              "cacheReadTokens": 3496,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3768,
+            "outputTokens": 0
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 0,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_9fe87fcc-185f-4dbb-8e95-f41808f7670a",
+            "familyHash": "b894297e713cbdc5cdd9db7fab39693eca4d6532d19944ff2efba840273954f6",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5",
+            "phase": "prompt",
+            "pendingToolCalls": 0,
+            "toolResultSubmissions": 0,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3768,
+            "outputTokens": 0
+          }
+        ],
+        "catalog": {
+          "id": "claude-opus-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 1,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-opus-5",
+          "modelExcludedHash": "3ac878d605c55f8288204820ffa58d246bcd421be2ce9e85673dd8e29b7a122b",
+          "messagesHash": "edf1e955410eca61648e49a733bb81031cf95414cdefb1a5569080e5946d56fd",
+          "systemHash": "112b7f52df00295dd4ad92c0a09ddd50985e97700e69ad7c530692cc7d00de6b",
+          "toolsHash": "d33a311e8f09f9377d31d3f24141bf51179b9f564c5b32dcf761f357a3a15ec9",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "status": "filtered",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter"
+        },
+        "finishedAt": "2026-09-21T22:27:45.895Z"
+      },
+      {
+        "id": "1-bridge-claude-sonnet-5",
+        "repeat": 1,
+        "route": "bridge",
+        "model": "claude-sonnet-5",
+        "startedAt": "2026-09-21T22:27:45.896Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10880,
+              "sha256": "5ca8feec172d8a13a2ce58eaf0bee18b9c1629825b842345743db4e28590c947",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1849,
+              "sha256": "2ee9bf57f538ce2070cde956c41d6b786708acdaa3dead4db6ec058077eb09a5",
+              "parsedChunks": 7,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3782,
+              "outputTokens": 50,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 3780,
+              "textBytes": 0,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11214,
+              "sha256": "70972150fb646284129c1a7b2cabfce739c8c1e028e57b9188674698bb209c18",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2607,
+              "sha256": "15ef179c028bff30a9d7730c8a0606fead22ae1fe1975f89e7a57cbfba57f6fe",
+              "parsedChunks": 14,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3878,
+              "outputTokens": 47,
+              "cacheReadTokens": 3780,
+              "cacheWriteTokens": 96,
+              "textBytes": 81,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls",
+            "inputTokens": 3782,
+            "outputTokens": 50
+          },
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "stop",
+            "inputTokens": 3878,
+            "outputTokens": 47
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "external_tool.requested",
+          "external_tool.completed",
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 1,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_e972362d-c132-4334-a1db-3649443a9bb5",
+            "familyHash": "510d4a0b06d0804f5422867a4006bd7b1e20eda9135b03a48bbc436244e4d417",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_b5d376e1bb52442fad3c87ce95ad7a56",
+            "familyHash": "510d4a0b06d0804f5422867a4006bd7b1e20eda9135b03a48bbc436244e4d417",
+            "queueWaitMs": 1
+          }
+        ],
+        "catalog": {
+          "id": "claude-sonnet-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 5,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-sonnet-5",
+          "modelExcludedHash": "e89434e8fc90fe14e905bab6860f70f3a068393ea321188eb7cc03cd4a386ff3",
+          "messagesHash": "c4fc87985c056df44d4f115730c491384c437684b739c831b09fe4bc8d0739f3",
+          "systemHash": "78282431bc4e671978c82e087a73da06155d658b8026d1dc7f0028ec3d244b36",
+          "toolsHash": "d33a311e8f09f9377d31d3f24141bf51179b9f564c5b32dcf761f357a3a15ec9",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 81,
+        "answerHash": "10819a1d50d86b22271bb42c5a82bc0d19843ea8cd805f4a18b29a32276c42ed",
+        "exactFixture": true,
+        "fixtureValuesPreserved": true,
+        "status": "completed",
+        "finishedAt": "2026-09-21T22:27:52.734Z"
+      },
+      {
+        "id": "2-sdk-claude-sonnet-5",
+        "repeat": 2,
+        "route": "sdk",
+        "model": "claude-sonnet-5",
+        "startedAt": "2026-09-21T22:27:52.735Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10828,
+              "sha256": "1e57769e935b558f213e960ae1fc1b973ecd9fc5be62c4b52e30a64d5086f083",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1829,
+              "sha256": "756b084cee9507447b7496bd9ccd7d6a8e5d83fb2ea891f327ec2e319b4d4490",
+              "parsedChunks": 7,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3748,
+              "outputTokens": 28,
+              "cacheReadTokens": 3476,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11137,
+              "sha256": "61506db7a3b801e8eed6508af1b9166f73937468d9269440b1043731ab7dee58",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2607,
+              "sha256": "ab544d44a669629ce4f11e099dc4ac4831c444c20a90b29b97c4679971208e72",
+              "parsedChunks": 14,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3822,
+              "outputTokens": 47,
+              "cacheReadTokens": 3746,
+              "cacheWriteTokens": 74,
+              "textBytes": 81,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls",
+            "inputTokens": 3748,
+            "outputTokens": 28
+          },
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "stop",
+            "inputTokens": 3822,
+            "outputTokens": 47
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "external_tool.requested",
+          "external_tool.completed",
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 1,
+        "cleanup": [
+          {
+            "operation": "abort",
+            "passed": true
+          },
+          {
+            "operation": "disconnect",
+            "passed": true
+          },
+          {
+            "operation": "delete",
+            "passed": true
+          },
+          {
+            "operation": "stop",
+            "passed": true
+          },
+          {
+            "operation": "forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "catalog": {
+          "id": "claude-sonnet-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 5,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-sonnet-5",
+          "modelExcludedHash": "41d4ba2e9eba5474d719be992cad82f0848af987768c4495718fba1736c670b6",
+          "messagesHash": "b5874962b3b381ef711a58216290fccf67e704f189d8d8b88f55e66e057010b1",
+          "systemHash": "78282431bc4e671978c82e087a73da06155d658b8026d1dc7f0028ec3d244b36",
+          "toolsHash": "d9b6505c5d926dd941c2f8eaa5eac812adfc506db29761f656e1813f8306fc57",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 81,
+        "answerHash": "10819a1d50d86b22271bb42c5a82bc0d19843ea8cd805f4a18b29a32276c42ed",
+        "exactFixture": true,
+        "fixtureValuesPreserved": true,
+        "status": "completed",
+        "finishedAt": "2026-09-21T22:27:58.631Z"
+      },
+      {
+        "id": "2-sdk-claude-opus-5",
+        "repeat": 2,
+        "route": "sdk",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:27:58.632Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10999,
+              "sha256": "a457512bb13427d306293b22c3f7482e73682bb44ec3bfcacf14a3fb88795dd5",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1783,
+              "sha256": "8975e92276bb4858d6a951f6fcb725a55431805b1129c6b113119475017073d7",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3773,
+              "outputTokens": 0,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3773,
+            "outputTokens": 0
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 0,
+        "cleanup": [
+          {
+            "operation": "abort",
+            "passed": true
+          },
+          {
+            "operation": "disconnect",
+            "passed": true
+          },
+          {
+            "operation": "delete",
+            "passed": true
+          },
+          {
+            "operation": "stop",
+            "passed": true
+          },
+          {
+            "operation": "forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "catalog": {
+          "id": "claude-opus-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 1,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-opus-5",
+          "modelExcludedHash": "b1fc1c3863e1dc9f962233a723ad6ab0bbdf8b97b11535bec165fb750762411e",
+          "messagesHash": "65f91bf17042a80655994e19e4b1534566d493c3d47005a42b70ce90761fcd40",
+          "systemHash": "112b7f52df00295dd4ad92c0a09ddd50985e97700e69ad7c530692cc7d00de6b",
+          "toolsHash": "d9b6505c5d926dd941c2f8eaa5eac812adfc506db29761f656e1813f8306fc57",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 84,
+        "answerHash": "31130c844282d2a2456c1a539ac9578e542924ab00606fbc7fa9429c5c9484f4",
+        "exactFixture": false,
+        "fixtureValuesPreserved": false,
+        "status": "filtered",
+        "finishedAt": "2026-09-21T22:28:03.789Z"
+      },
+      {
+        "id": "2-bridge-claude-sonnet-5",
+        "repeat": 2,
+        "route": "bridge",
+        "model": "claude-sonnet-5",
+        "startedAt": "2026-09-21T22:28:03.791Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10880,
+              "sha256": "93e83106493a1a38e8447002419e57dfa3504c34bd6361ae211c3f26c39aa079",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1854,
+              "sha256": "d41cd6b394a49b7677408753df0b42eb70c1102391d8419dbb40d59892157586",
+              "parsedChunks": 7,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3782,
+              "outputTokens": 50,
+              "cacheReadTokens": 3510,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11214,
+              "sha256": "6f0af790975f3f01193dcc8a27ac27eb45a2a7e97e6cce9636fcdc35519d4ad0",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2726,
+              "sha256": "964a0d6c9e96d87c681ea7a3663cad29d8fd5d301ba84727e1256ef08254211d",
+              "parsedChunks": 15,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3878,
+              "outputTokens": 48,
+              "cacheReadTokens": 3780,
+              "cacheWriteTokens": 96,
+              "textBytes": 85,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls",
+            "inputTokens": 3782,
+            "outputTokens": 50
+          },
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "stop",
+            "inputTokens": 3878,
+            "outputTokens": 48
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "external_tool.requested",
+          "external_tool.completed",
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 1,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_1a80bd71-9fca-4821-9727-40f33075b19d",
+            "familyHash": "5c60db9a3d16eb26c37d7783ae4c95616b0a5c582decfb58252295dce5e2d4f4",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_ea2f9c0dbbd649318976d7b5c03f288a",
+            "familyHash": "5c60db9a3d16eb26c37d7783ae4c95616b0a5c582decfb58252295dce5e2d4f4",
+            "queueWaitMs": 1
+          }
+        ],
+        "catalog": {
+          "id": "claude-sonnet-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 5,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-sonnet-5",
+          "modelExcludedHash": "4e6d178ba9eb6e14e4a07e66cc1d82c754e2e6c65138ae753e7597bbfa8df986",
+          "messagesHash": "a6aca410e9d3849abe7088c456d9f35a0972b5995972a98941ec46a8a2a8ccd3",
+          "systemHash": "78282431bc4e671978c82e087a73da06155d658b8026d1dc7f0028ec3d244b36",
+          "toolsHash": "d33a311e8f09f9377d31d3f24141bf51179b9f564c5b32dcf761f357a3a15ec9",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 85,
+        "answerHash": "54c59ed633ee1f70786eb3346a30c69e1d95bd6134a0e2c619e60fc88e581163",
+        "exactFixture": true,
+        "fixtureValuesPreserved": true,
+        "status": "completed",
+        "finishedAt": "2026-09-21T22:28:12.203Z"
+      },
+      {
+        "id": "2-bridge-claude-opus-5",
+        "repeat": 2,
+        "route": "bridge",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:28:12.204Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11051,
+              "sha256": "da805af5b8db3b33e5bf511f0b224784acd3718a17137126583ec7f96f6deacd",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1773,
+              "sha256": "64ba4414707ff4f5071149ec2ab02c3b48ee9d502781023c502659935c2655a5",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3768,
+              "outputTokens": 0,
+              "cacheReadTokens": 3496,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3768,
+            "outputTokens": 0
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 0,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_b5d56825-67a4-4025-8e0d-e81284069173",
+            "familyHash": "c1a8f89cd0b70d908f3b177dc9d3d0037e9f3769de41655b0209b9fe64bbb9a2",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5",
+            "phase": "prompt",
+            "pendingToolCalls": 0,
+            "toolResultSubmissions": 0,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3768,
+            "outputTokens": 0
+          }
+        ],
+        "catalog": {
+          "id": "claude-opus-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 1,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "payload": {
+          "model": "claude-opus-5",
+          "modelExcludedHash": "590645608e3cbc8ce493e0757a774596e9b5756fe9415a0bc0928eccb8947910",
+          "messagesHash": "f475b9056a1257c3cba0bb56554b4980c69edbe6058f0c274b96d0488690782a",
+          "systemHash": "112b7f52df00295dd4ad92c0a09ddd50985e97700e69ad7c530692cc7d00de6b",
+          "toolsHash": "d33a311e8f09f9377d31d3f24141bf51179b9f564c5b32dcf761f357a3a15ec9",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "status": "filtered",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter"
+        },
+        "finishedAt": "2026-09-21T22:28:17.705Z"
+      }
+    ],
+    "comparisons": [
+      {
+        "repeat": 1,
+        "route": "sdk",
+        "available": true,
+        "identicalExceptModel": false,
+        "differences": [
+          {
+            "path": "/model",
+            "leftHash": "7e9a339b9517a06d17675660d43566fd15ea24547ba4c2cd7e2fc8075bfa5382",
+            "rightHash": "30c1f92362fbf9ad1f8aae0e41fc431d190aad5c12b8c740592f799925c9b2ca",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 15,
+            "rightBytes": 17
+          },
+          {
+            "path": "/system/1/text",
+            "leftHash": "7e40d31f955298e36f2bb6c86ad7c1b46b705cd63e3c98845a4ae060dd5e4b04",
+            "rightHash": "1c34f6c16825d81933aefb9fbd4cb0bca5de1fc44d9e3062df09f242dc9b791b",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 5353,
+            "rightBytes": 5180
+          },
+          {
+            "path": "/messages/0/content/0/text",
+            "leftHash": "54729c803082be694540517b3ee88cd3902672f1bdbc136305061f8d5218d4cd",
+            "rightHash": "bb4ddfe03a61e044b1b1d6945e13536583571245055ff3cade66b228a2a6ee61",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 642,
+            "rightBytes": 642
+          }
+        ]
+      },
+      {
+        "repeat": 1,
+        "route": "bridge",
+        "available": true,
+        "identicalExceptModel": false,
+        "differences": [
+          {
+            "path": "/model",
+            "leftHash": "7e9a339b9517a06d17675660d43566fd15ea24547ba4c2cd7e2fc8075bfa5382",
+            "rightHash": "30c1f92362fbf9ad1f8aae0e41fc431d190aad5c12b8c740592f799925c9b2ca",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 15,
+            "rightBytes": 17
+          },
+          {
+            "path": "/system/1/text",
+            "leftHash": "7e40d31f955298e36f2bb6c86ad7c1b46b705cd63e3c98845a4ae060dd5e4b04",
+            "rightHash": "1c34f6c16825d81933aefb9fbd4cb0bca5de1fc44d9e3062df09f242dc9b791b",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 5353,
+            "rightBytes": 5180
+          },
+          {
+            "path": "/messages/0/content/0/text",
+            "leftHash": "3694fd968efd390d42fe03c4e6d0b23a04a490c063c1125163e4ac540df50f97",
+            "rightHash": "eecfb78e1ee6951dd1cb03a4a24f39208383ee26c7d3dc295126b3ca1ab653e7",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 642,
+            "rightBytes": 642
+          }
+        ]
+      },
+      {
+        "repeat": 2,
+        "route": "sdk",
+        "available": true,
+        "identicalExceptModel": false,
+        "differences": [
+          {
+            "path": "/model",
+            "leftHash": "7e9a339b9517a06d17675660d43566fd15ea24547ba4c2cd7e2fc8075bfa5382",
+            "rightHash": "30c1f92362fbf9ad1f8aae0e41fc431d190aad5c12b8c740592f799925c9b2ca",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 15,
+            "rightBytes": 17
+          },
+          {
+            "path": "/system/1/text",
+            "leftHash": "7e40d31f955298e36f2bb6c86ad7c1b46b705cd63e3c98845a4ae060dd5e4b04",
+            "rightHash": "1c34f6c16825d81933aefb9fbd4cb0bca5de1fc44d9e3062df09f242dc9b791b",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 5353,
+            "rightBytes": 5180
+          },
+          {
+            "path": "/messages/0/content/0/text",
+            "leftHash": "1624bd1bf17a1df73d6fbbf61498e33306e3548ad53beadd7a59d1b837b76258",
+            "rightHash": "f65138387af3ae5b0a55813ac5a3832a13641ded314d462e58e45d6ea970f65c",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 642,
+            "rightBytes": 642
+          }
+        ]
+      },
+      {
+        "repeat": 2,
+        "route": "bridge",
+        "available": true,
+        "identicalExceptModel": false,
+        "differences": [
+          {
+            "path": "/model",
+            "leftHash": "7e9a339b9517a06d17675660d43566fd15ea24547ba4c2cd7e2fc8075bfa5382",
+            "rightHash": "30c1f92362fbf9ad1f8aae0e41fc431d190aad5c12b8c740592f799925c9b2ca",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 15,
+            "rightBytes": 17
+          },
+          {
+            "path": "/system/1/text",
+            "leftHash": "7e40d31f955298e36f2bb6c86ad7c1b46b705cd63e3c98845a4ae060dd5e4b04",
+            "rightHash": "1c34f6c16825d81933aefb9fbd4cb0bca5de1fc44d9e3062df09f242dc9b791b",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 5353,
+            "rightBytes": 5180
+          },
+          {
+            "path": "/messages/0/content/0/text",
+            "leftHash": "802db25446151b7358db583e3da07f01f267ff7f9fb2d9e8438f42c3c2837982",
+            "rightHash": "923d565d5c5123d17994c96ac22ecf21e65ab6e3869cd8809376447fc5a18720",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 642,
+            "rightBytes": 642
+          }
+        ]
+      }
+    ],
+    "finishedAt": "2026-09-21T22:28:17.710Z",
+    "implementationUnchanged": true
+  },
+  "payloadDifferences": {
+    "kind": "unscored-matched-opus-sonnet-comparison",
+    "startedAt": "2026-09-21T22:29:37.661Z",
+    "models": [
+      "claude-opus-5",
+      "claude-sonnet-5"
+    ],
+    "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+    "fixtureHash": "d8e7e1c35cc8de9276abc9f46adfdff0baa5f1dd08be9224fddffe8721fbad83",
+    "catalogHash": "bcb5958d066a1628552f059aecd6e4fb04808acab0d0443ec70075df6e1b23fd",
+    "implementationHash": "7cb34838fe930672c375fcf6a68e5c6bafb1ef07ddc253c6cb77f870f5a82402",
+    "automaticRetries": 0,
+    "safetyPolicyChanges": false,
+    "identicalClientPromptAndTool": true,
+    "reverseModelOrderOnSecondRepeat": false,
+    "cases": [
+      {
+        "id": "1-sdk-claude-opus-5",
+        "repeat": 1,
+        "route": "sdk",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:29:37.672Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10999,
+              "sha256": "90c8635cd8fd4dee1c5ff02a45e00862f3b9981100d23eb607c27e03f729cd98",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1783,
+              "sha256": "0fdac85c798e14cb7d97145f525bd0c72f0d303befeeeb8c7a3c64ff0d88e6f5",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3773,
+              "outputTokens": 0,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3773,
+            "outputTokens": 0
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 0,
+        "cleanup": [
+          {
+            "operation": "abort",
+            "passed": true
+          },
+          {
+            "operation": "disconnect",
+            "passed": true
+          },
+          {
+            "operation": "delete",
+            "passed": true
+          },
+          {
+            "operation": "stop",
+            "passed": true
+          },
+          {
+            "operation": "forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "catalog": {
+          "id": "claude-opus-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 1,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "publicHeaders": {
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+          "copilot-integration-id": "copilot-sdk",
+          "user-agent": "copilot/1.0.85 (darwin unknown) term/Apple_Terminal client/sdk"
+        },
+        "payload": {
+          "model": "claude-opus-5",
+          "modelExcludedHash": "4a779e8131ad0bbc9a7e2c14a65b77763bdb841a64447f1be04e427498a36d2b",
+          "messagesHash": "fd07b4d943d65d2b5326f3d40a54886142899ae1f4d0a375bacc6370e463df17",
+          "systemHash": "112b7f52df00295dd4ad92c0a09ddd50985e97700e69ad7c530692cc7d00de6b",
+          "toolsHash": "d9b6505c5d926dd941c2f8eaa5eac812adfc506db29761f656e1813f8306fc57",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 84,
+        "answerHash": "31130c844282d2a2456c1a539ac9578e542924ab00606fbc7fa9429c5c9484f4",
+        "exactFixture": false,
+        "fixtureValuesPreserved": false,
+        "status": "filtered",
+        "finishedAt": "2026-09-21T22:29:44.423Z"
+      },
+      {
+        "id": "1-sdk-claude-sonnet-5",
+        "repeat": 1,
+        "route": "sdk",
+        "model": "claude-sonnet-5",
+        "startedAt": "2026-09-21T22:29:44.425Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10828,
+              "sha256": "5a5aee1fccecf429024d585b5bf7a4e00a412886dadad663866f3e7dfb478b3a",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1829,
+              "sha256": "a8754ba8aa6ebd6d4b7414ffc63e3bdf8e13c3488613abcb6eb331fdae0ba849",
+              "parsedChunks": 7,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3748,
+              "outputTokens": 28,
+              "cacheReadTokens": 3476,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11137,
+              "sha256": "5a51c3e41e7fd9bc3696009212f569a7452aa583a0fb74fbcbcbf5884bd23ae8",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2607,
+              "sha256": "171f295d7b994a441367e84e4f4adbb38007e0c43e9431977ab233e9201d22d2",
+              "parsedChunks": 14,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3823,
+              "outputTokens": 48,
+              "cacheReadTokens": 3746,
+              "cacheWriteTokens": 75,
+              "textBytes": 81,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls",
+            "inputTokens": 3748,
+            "outputTokens": 28
+          },
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "stop",
+            "inputTokens": 3823,
+            "outputTokens": 48
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "external_tool.requested",
+          "external_tool.completed",
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 1,
+        "cleanup": [
+          {
+            "operation": "abort",
+            "passed": true
+          },
+          {
+            "operation": "disconnect",
+            "passed": true
+          },
+          {
+            "operation": "delete",
+            "passed": true
+          },
+          {
+            "operation": "stop",
+            "passed": true
+          },
+          {
+            "operation": "forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "catalog": {
+          "id": "claude-sonnet-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 5,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "publicHeaders": {
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+          "copilot-integration-id": "copilot-sdk",
+          "user-agent": "copilot/1.0.85 (darwin unknown) term/Apple_Terminal client/sdk"
+        },
+        "payload": {
+          "model": "claude-sonnet-5",
+          "modelExcludedHash": "cd124579d67ea5470a1d768f0a49631e4ffd2042a55ae2d408bd1375aec87eea",
+          "messagesHash": "77c03634919ca0404d6fe9edcba2a8ce5bb47abc7a2c2f2e19b6e8389840ff7e",
+          "systemHash": "78282431bc4e671978c82e087a73da06155d658b8026d1dc7f0028ec3d244b36",
+          "toolsHash": "d9b6505c5d926dd941c2f8eaa5eac812adfc506db29761f656e1813f8306fc57",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 81,
+        "answerHash": "36a99beb5b0a78c8fd1ff208d7b465ca2bfa6c04ac6365e56fe2749a3865db74",
+        "exactFixture": true,
+        "fixtureValuesPreserved": true,
+        "status": "completed",
+        "finishedAt": "2026-09-21T22:29:50.429Z"
+      }
+    ],
+    "comparisons": [
+      {
+        "repeat": 1,
+        "route": "sdk",
+        "available": true,
+        "identicalExceptModel": false,
+        "differences": [
+          {
+            "path": "/model",
+            "stringDifference": {
+              "commonPrefixCharacters": 7,
+              "commonSuffixCharacters": 2,
+              "left": "opus",
+              "right": "sonnet"
+            },
+            "leftHash": "7e9a339b9517a06d17675660d43566fd15ea24547ba4c2cd7e2fc8075bfa5382",
+            "rightHash": "30c1f92362fbf9ad1f8aae0e41fc431d190aad5c12b8c740592f799925c9b2ca",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 15,
+            "rightBytes": 17
+          },
+          {
+            "path": "/system/1/text",
+            "leftHash": "7e40d31f955298e36f2bb6c86ad7c1b46b705cd63e3c98845a4ae060dd5e4b04",
+            "rightHash": "1c34f6c16825d81933aefb9fbd4cb0bca5de1fc44d9e3062df09f242dc9b791b",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 5353,
+            "rightBytes": 5180,
+            "semanticDifference": {
+              "modelIdentity": true,
+              "opusAdditionalToolFormattingInstruction": "IMPORTANT: when calling a tool whose parameter is an object, emit a real JSON object for that parameter. Never put XML or angle-bracket markup inside string values of a tool call."
+            }
+          },
+          {
+            "path": "/messages/0/content/0/text",
+            "stringDifference": {
+              "commonPrefixCharacters": 36,
+              "commonSuffixCharacters": 597,
+              "left": "3.025",
+              "right": "7.687"
+            },
+            "leftHash": "8bfd1706b8ca24036f6ef56481aad2064c07b4de173e92abed37763761a77eca",
+            "rightHash": "3fddfdd650a724a73468628e782566eacc0c2e3ae83687f8452bc0868007da67",
+            "leftType": "string",
+            "rightType": "string",
+            "leftBytes": 642,
+            "rightBytes": 642
+          }
+        ]
+      }
+    ],
+    "finishedAt": "2026-09-21T22:29:50.433Z",
+    "implementationUnchanged": true
+  },
+  "additiveSonnetInstructionControl": {
+    "kind": "unscored-sonnet-additive-tool-format-control",
+    "extraRule": "IMPORTANT: when calling a tool whose parameter is an object, emit a real JSON object for that parameter. Never put XML or angle-bracket markup inside string values of a tool call.",
+    "controlPurpose": "Add the Opus-specific JSON restriction; never remove default SDK instructions",
+    "startedAt": "2026-09-21T22:31:24.588Z",
+    "models": [
+      "claude-sonnet-5"
+    ],
+    "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+    "fixtureHash": "79b4e79fb425b352aaf8ac562dbee38670eaf3e6da2717666eda881635c048dc",
+    "catalogHash": "bcb5958d066a1628552f059aecd6e4fb04808acab0d0443ec70075df6e1b23fd",
+    "implementationHash": "7cb34838fe930672c375fcf6a68e5c6bafb1ef07ddc253c6cb77f870f5a82402",
+    "automaticRetries": 0,
+    "safetyPolicyChanges": false,
+    "identicalClientPromptAndTool": true,
+    "reverseModelOrderOnSecondRepeat": false,
+    "cases": [
+      {
+        "id": "1-sdk-claude-sonnet-5",
+        "repeat": 1,
+        "route": "sdk",
+        "model": "claude-sonnet-5",
+        "startedAt": "2026-09-21T22:31:24.596Z",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11011,
+              "sha256": "44ffff739f45b96aa0ff38ff7d03562c8ab9ab9aa953327b6cd5f9f0f87b8640",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2681,
+              "sha256": "ea17036f5232979b121bb23e1b634413f2bdea16e34820e4aa7fb72efa519f90",
+              "parsedChunks": 11,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3810,
+              "outputTokens": 38,
+              "cacheReadTokens": 1769,
+              "cacheWriteTokens": 2039,
+              "textBytes": 0,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11757,
+              "sha256": "cf8ade10a354b9adedb9596d8bc1ed4600593f78361d7c3e6b1f1affa52111ec",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2841,
+              "sha256": "fa8ef824888d773a9524c95c1e0848611eacd257233feeec2b4df22fcb7c0e38",
+              "parsedChunks": 16,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3901,
+              "outputTokens": 55,
+              "cacheReadTokens": 3808,
+              "cacheWriteTokens": 91,
+              "textBytes": 85,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls",
+            "inputTokens": 3810,
+            "outputTokens": 38
+          },
+          {
+            "modelMatches": true,
+            "contentFilterTriggered": false,
+            "finishReason": "stop",
+            "inputTokens": 3901,
+            "outputTokens": 55
+          }
+        ],
+        "sequence": [
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "external_tool.requested",
+          "external_tool.completed",
+          "assistant.turn_start",
+          "assistant.usage",
+          "assistant.message",
+          "session.idle"
+        ],
+        "submissions": 1,
+        "cleanup": [
+          {
+            "operation": "abort",
+            "passed": true
+          },
+          {
+            "operation": "disconnect",
+            "passed": true
+          },
+          {
+            "operation": "delete",
+            "passed": true
+          },
+          {
+            "operation": "stop",
+            "passed": true
+          },
+          {
+            "operation": "forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "catalog": {
+          "id": "claude-sonnet-5",
+          "reasoningEfforts": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "supports": {
+            "adaptive_thinking": "required",
+            "max_thinking_budget": 32000,
+            "min_thinking_budget": 1024,
+            "parallel_tool_calls": true,
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "streaming": true,
+            "structured_outputs": true,
+            "tool_calls": true,
+            "vision": true,
+            "reasoningEffort": true
+          },
+          "limits": {
+            "max_context_window_tokens": 1000000,
+            "max_non_streaming_output_tokens": 16000,
+            "max_output_tokens": 64000,
+            "max_prompt_tokens": 936000,
+            "vision": {
+              "max_prompt_image_size": 3145728,
+              "max_prompt_images": 5,
+              "supported_media_types": [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "application/pdf"
+              ]
+            }
+          },
+          "policyState": "enabled"
+        },
+        "endpoint": "/v1/messages",
+        "publicHeaders": {
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+          "copilot-integration-id": "copilot-sdk",
+          "user-agent": "copilot/1.0.85 (darwin unknown) term/Apple_Terminal client/sdk"
+        },
+        "payload": {
+          "model": "claude-sonnet-5",
+          "modelExcludedHash": "46b40119f1b48666cb5930e3f67fed14d455182d907838c1e8efbb229680a5f7",
+          "messagesHash": "9caa5d1e596a43ba8b9f521dfc6eac3bc34ea67664410f12e5590eba98c2f199",
+          "systemHash": "7e1ee62de2e0e7973f7804996bcc626d3ad30ce9922449a8de1c8b6c1ea96119",
+          "toolsHash": "d9b6505c5d926dd941c2f8eaa5eac812adfc506db29761f656e1813f8306fc57",
+          "stream": true,
+          "reasoningEffort": "low",
+          "thinking": {
+            "type": "adaptive",
+            "display": "omitted"
+          },
+          "maxTokens": 32000,
+          "temperature": 1
+        },
+        "answerBytes": 85,
+        "answerHash": "8e2f00d1bf1cd9c939c5fcef6e73ab8a5160c386d8e6f38cc2816fa79932b701",
+        "exactFixture": true,
+        "fixtureValuesPreserved": true,
+        "status": "completed",
+        "finishedAt": "2026-09-21T22:31:33.003Z"
+      }
+    ],
+    "comparisons": [
+      {
+        "repeat": 1,
+        "route": "sdk",
+        "available": false,
+        "identicalExceptModel": false,
+        "differences": null
+      }
+    ],
+    "finishedAt": "2026-09-21T22:31:33.004Z",
+    "implementationUnchanged": true
+  },
+  "exactCapturedOpusRequest": {
+    "kind": "unscored-exact-captured-initial-request",
+    "source": ".runtime/bridge-repair-20260922/live-final/cases/claude-opus-5/S01/transport.jsonl",
+    "sourceHash": "21babf13b303f305a8ea164f69a58d8fd5b075056d2bcde9734530d5765c09b5",
+    "requestHash": "1b23a12f588b5204affbcc03b80b5a018bf51e135bde6332f481c39a4ac56a45",
+    "implementationHash": "7cb34838fe930672c375fcf6a68e5c6bafb1ef07ddc253c6cb77f870f5a82402",
+    "startedAt": "2026-09-21T22:30:10.983Z",
+    "wire": [
+      {
+        "transport": "http",
+        "request": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "parsed": false,
+          "complete": true
+        },
+        "status": 200,
+        "response": {
+          "bytes": 40325,
+          "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+          "parsedChunks": 1,
+          "invalidChunks": 0,
+          "protocols": [],
+          "done": false,
+          "contentFilter": false,
+          "nativeRefusal": false,
+          "refusalCategories": [],
+          "finishReasons": [],
+          "stopReasons": [],
+          "modelMatches": null,
+          "inputTokens": null,
+          "outputTokens": null,
+          "cacheReadTokens": null,
+          "cacheWriteTokens": null,
+          "textBytes": 0,
+          "toolCallDeltas": 0,
+          "explicitBlock": null,
+          "complete": true
+        }
+      },
+      {
+        "transport": "http",
+        "request": {
+          "bytes": 24529,
+          "sha256": "9bdbd742ff72197653bef651d73a0f91c7f04101b714c63542bbf57162eec285",
+          "parsed": true,
+          "modelMatches": true,
+          "messageCount": 1,
+          "toolCount": 7,
+          "streaming": true,
+          "complete": true
+        },
+        "status": 200,
+        "response": {
+          "bytes": 1779,
+          "sha256": "9b062e9704e60f21864b4d6abfc50f8b14447793a6375d22d2df9608fc32c0ef",
+          "parsedChunks": 3,
+          "invalidChunks": 0,
+          "protocols": [
+            "anthropic-messages"
+          ],
+          "done": true,
+          "contentFilter": false,
+          "nativeRefusal": true,
+          "refusalCategories": [
+            "reasoning_extraction"
+          ],
+          "finishReasons": [],
+          "stopReasons": [
+            "refusal"
+          ],
+          "modelMatches": true,
+          "inputTokens": 8942,
+          "outputTokens": 0,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 8901,
+          "textBytes": 0,
+          "toolCallDeltas": 0,
+          "explicitBlock": true,
+          "complete": true
+        }
+      }
+    ],
+    "diagnostics": [
+      {
+        "event": "bridge.unsupported_hints",
+        "fields": [
+          "reasoning.encrypted_content",
+          "prompt_cache_key",
+          "client_metadata"
+        ]
+      },
+      {
+        "event": "bridge.request_started",
+        "requestId": "resp_79ec406e0400492bb9917787170ae259",
+        "familyHash": "a2fc6fb5cfea612608ba3d97ab946373b4b1ed236d2c0c6b31c457b161e9d9d0",
+        "queueWaitMs": 1
+      },
+      {
+        "event": "bridge.upstream_content_filter",
+        "model": "claude-opus-5",
+        "phase": "prompt",
+        "pendingToolCalls": 0,
+        "toolResultSubmissions": 0,
+        "contentFilterTriggered": true,
+        "finishReason": "content_filter",
+        "inputTokens": 8942,
+        "outputTokens": 0
+      }
+    ],
+    "toolResultSubmissions": 0,
+    "requestUnmodified": true,
+    "automaticRetries": 0,
+    "status": "filtered",
+    "error": {
+      "name": "BridgeRequestError",
+      "code": "upstream_content_filter"
+    },
+    "finishedAt": "2026-09-21T22:30:19.541Z",
+    "implementationUnchanged": true,
+    "cleanup": {
+      "states": 0,
+      "queue": 0,
+      "sdk": "stopped"
+    }
+  }
+}

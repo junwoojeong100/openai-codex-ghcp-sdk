@@ -26,7 +26,8 @@
     "docs:scenarios:check": "node scripts/generate-scenario-docs.mjs --check",
     "test:stability": "node scripts/stability.mjs",
     "test:stability:runtime": "node scripts/stability.mjs --runtime",
-    "test:stability:stress": "node scripts/check-stability-stress.mjs"
+    "test:stability:stress": "node scripts/check-stability-stress.mjs",
+    "diagnose:opus": "node scripts/diagnose-opus.mjs"
   },
   "dependencies": {
     "@github/copilot-sdk": "1.0.14",

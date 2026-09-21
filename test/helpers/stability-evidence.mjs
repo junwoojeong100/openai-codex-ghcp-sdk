@@ -1,12 +1,14 @@
-import { FLOW, PROMPTS } from "../../scripts/stability/catalog.mjs";
+import { FLOW } from "../../scripts/stability/catalog.mjs";
+import { getProfile, DEFAULT_PROFILE } from "../../scripts/stability/profiles.mjs";
 import { sha } from "../../scripts/compatibility/util.mjs";
 import { ResponsesStream } from "../../src/responses.mjs";
 
 // Synthetic evidence for oracle mutation tests, never live validation credit.
-export function stabilityEvidence(id) {
+export function stabilityEvidence(id, profile = DEFAULT_PROFILE) {
+  const PROMPTS = getProfile(profile).catalog.prompts;
   const model = "gpt-6-astra", value = `value:N_${"a".repeat(20)}_한글`, receipt = `receipt:N_${"b".repeat(20)}_한글`;
   const text = `${value}\n${receipt}`, file = content => ({ base64: Buffer.from(content).toString("base64"), hash: sha(content), mode: 384 });
-  const e = { provider: "ghcp", model, scenarioId: id, executionKind: "offline-self-test", fixture: { expectedValue: value, expectedReceipt: receipt },
+  const e = { profile, provider: "ghcp", model, scenarioId: id, executionKind: "offline-self-test", fixture: { expectedValue: value, expectedReceipt: receipt },
     native: [], sdk: [], transport: [], phases: [], controls: [], logicalPrompts: [], toolLedger: [], approvals: [], hosts: [{ pid: 5001, model, provider: "ghcp" }],
     before: { "fixture-data.txt": file(text), "user-dirty.txt": file("KEEP") }, protectedBefore: { "sentinel.txt": file("KEEP") },
     gitBefore: { head: "synthetic-head", index: "synthetic-index" },

@@ -19,15 +19,15 @@ const REFACTOR = "*** Begin Patch\n*** Update File: calc.mjs\n@@\n-export functi
 class ScriptedSession {
   constructor(config, scenarioId) {
     this.config = config; this.id = scenarioId; this.sessionId = config.sessionId ?? randomUUID(); this.events = new EventEmitter(); this.step = 0;
-    this.outputs = [];
+    this.outputs = []; this.steering = [];
     this.rpc = { tools: { handlePendingToolCall: async request => {
       this.emit("external_tool.completed", { requestId: request.requestId });
       const output = request.result.textResultForLlm;
-      // An interrupted native call can return its result and the next user
-      // turn together. Consume only the context actually supplied by the bridge.
-      const context = /<new_client_context>\n([\s\S]*?)\n<\/new_client_context>/.exec(output);
-      if (this.id === "C15" && context) {
-        const next = JSON.parse(context[1]).findLast(i => i.type === "message" && i.role === "user")?.content;
+      // Immediate SDK messages are queued as context while a tool is pending;
+      // they must not execute a second assistant turn before its result arrives.
+      const context = this.steering.splice(0);
+      if (this.id === "C15" && context.length) {
+        const next = context.findLast(text => /^Read recovery\.txt/.test(text));
         assert.equal(typeof next, "string");
         assert.match(next, /^Read recovery\.txt/);
         await this.send({ prompt: next });
@@ -137,7 +137,8 @@ Use release code ${tokens(output)[0]} without changing files.
     if (this.id === "C10") return `${this.memory} receipt:${this.memory}`;
     return output;
   }
-  async send({ prompt }) {
+  async send({ prompt, mode }) {
+    if (mode === "immediate") { this.steering.push(prompt); return randomUUID(); }
     // Resume may recover memory only from the history delivered to this session.
     this.memory ??= tokens(prompt)[0];
     let latest = prompt;

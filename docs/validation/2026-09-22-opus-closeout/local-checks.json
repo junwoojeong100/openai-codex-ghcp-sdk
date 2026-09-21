@@ -1,0 +1,247 @@
+{
+  "closeout": {
+    "startedAt": "2026-09-21T23:38:39.164Z",
+    "implementationHash": "74a337f0e2c388707393ba51da9b1c539d4bb37b0979395651e6e1760eff549f",
+    "additionalModelCalls": 0,
+    "checks": [
+      {
+        "name": "unit",
+        "command": [
+          "npm",
+          "test"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "startedAt": "2026-09-21T23:38:39.172Z",
+        "finishedAt": "2026-09-21T23:38:41.426Z",
+        "log": ".runtime/opus-resolution-20260922/checks/closeout-unit.log",
+        "passed": true
+      },
+      {
+        "name": "scenarios",
+        "command": [
+          "npm",
+          "run",
+          "test:scenarios"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "startedAt": "2026-09-21T23:38:41.427Z",
+        "finishedAt": "2026-09-21T23:38:41.533Z",
+        "log": ".runtime/opus-resolution-20260922/checks/closeout-scenarios.log",
+        "passed": true
+      },
+      {
+        "name": "scenario-docs",
+        "command": [
+          "npm",
+          "run",
+          "docs:scenarios:check"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "startedAt": "2026-09-21T23:38:41.533Z",
+        "finishedAt": "2026-09-21T23:38:41.637Z",
+        "log": ".runtime/opus-resolution-20260922/checks/closeout-scenario-docs.log",
+        "passed": true
+      },
+      {
+        "name": "stress",
+        "command": [
+          "npm",
+          "run",
+          "test:stability:stress"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "startedAt": "2026-09-21T23:38:41.638Z",
+        "finishedAt": "2026-09-21T23:38:41.810Z",
+        "log": ".runtime/opus-resolution-20260922/checks/closeout-stress.log",
+        "passed": true
+      },
+      {
+        "name": "native-compatibility",
+        "command": [
+          "npm",
+          "run",
+          "test:compatibility:runtime"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "startedAt": "2026-09-21T23:38:41.810Z",
+        "finishedAt": "2026-09-21T23:38:58.506Z",
+        "log": ".runtime/opus-resolution-20260922/checks/closeout-native-compatibility.log",
+        "passed": true
+      }
+    ],
+    "finishedAt": "2026-09-21T23:38:58.506Z",
+    "sourceUnchanged": true
+  },
+  "unit": {
+    "tests": 266,
+    "pass": 266,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "compatibility": {
+    "executionKind": "offline-self-test",
+    "realModelCalls": 0,
+    "liveCompatibilityVerified": false,
+    "passed": true,
+    "cases": [
+      {
+        "id": "C01",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C02",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C03",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C04",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C05",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C06",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C07",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C08",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C09",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C10",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C11",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C12",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C13",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C14",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C15",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C16",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C17",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C18",
+        "passed": true,
+        "failedChecks": []
+      }
+    ]
+  },
+  "stress": {
+    "executionKind": "offline-stress",
+    "realModelCalls": 0,
+    "passed": true,
+    "cycles": 100,
+    "toolResults": 100,
+    "exactResultRetries": 100,
+    "cancelledWaiters": 10,
+    "recoveredGenerations": 10,
+    "maximumResidentStates": 8,
+    "finalQueue": 0,
+    "finalStates": 0,
+    "listenersRemaining": 0,
+    "durationMs": 60,
+    "hoursLongSoakCertified": false
+  },
+  "nativeStability": {
+    "evidenceIntegrity": true,
+    "profile": "application-data-v1",
+    "catalogId": "codex-ghcp-stability-11-application-data-v1",
+    "totalCases": 11,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "blocked": 0,
+      "unsupported": 0,
+      "timed-out": 0,
+      "not-run": 0
+    },
+    "passed": 11,
+    "percent": 100,
+    "fullMatrixPassed": false,
+    "offlineHarnessPassed": true,
+    "perModel": [
+      {
+        "model": "gpt-6-astra",
+        "passed": 11,
+        "total": 11,
+        "verdict": "not-established"
+      }
+    ],
+    "realModelCalls": 0,
+    "faultInjectionLabelled": true,
+    "hoursLongSoakCertified": false,
+    "measuredProductCoverage": null,
+    "historicalV4Regraded": false
+  },
+  "profileRegressionsBefore": {
+    "tests": 18,
+    "pass": 17,
+    "fail": 1,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "profileRegressionsAfter": {
+    "tests": 43,
+    "pass": 43,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "additionalModelCallsDuringCloseout": 0
+}

@@ -19,7 +19,7 @@ function textPart(text) {
   return { type: "output_text", text, annotations: [], logprobs: [] };
 }
 
-function toolArguments(value) {
+export function toolArguments(value) {
   if (typeof value === "string") {
     try { value = JSON.parse(value); } catch {
       throw protocolError("Copilot returned invalid JSON tool arguments.");

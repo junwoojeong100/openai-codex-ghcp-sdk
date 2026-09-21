@@ -16,9 +16,9 @@ import { executeExtended, runLauncher, requireCompleted } from "./extended-execu
 export const DRIVER_IDS = Object.freeze(Array.from({ length: 18 }, (_, i) => `C${String(i + 1).padStart(2, "0")}`));
 const q = value => JSON.stringify(value);
 export class CaseExecutor {
-  constructor({ directory, workRoot, provider = "ghcp", model, scenario, seed, bin, env = process.env, signal, backendFactory }) {
+  constructor({ directory, workRoot, provider = "ghcp", model, scenario, seed, bin, env = process.env, signal, backendFactory, teardownTimeoutMs = 5000 }) {
     if (provider !== "ghcp") throw new Error("This suite runs GHCP only.");
-    Object.assign(this, { directory, workRoot, provider, model, scenario, seed, bin, env, signal, backendFactory });
+    Object.assign(this, { directory, workRoot, provider, model, scenario, seed, bin, env, signal, backendFactory, teardownTimeoutMs });
     this.observation = { provider, model, scenarioId: scenario.id, native: [], transport: [], sdk: [], diagnostics: [],
       phases: [], toolLedger: [], approvals: [], resources: { cleaned: false }, hosts: [], logicalPrompts: [] };
     this.hosts = []; this.backends = []; this.networkConnections = 0;
@@ -249,7 +249,7 @@ export class CaseExecutor {
   }
   async finish() {
     const errors = [];
-    const teardown = AbortSignal.timeout(5000);
+    const teardown = AbortSignal.timeout(this.teardownTimeoutMs);
     for (const host of this.hosts) try { await bounded(host.close(), teardown); } catch (error) { errors.push(error.message); }
     for (const backend of this.backends) try { await bounded(backend.close(), teardown); } catch (error) { errors.push(error.message); }
     if (this.httpMcp) try { await bounded(this.httpMcp.close(), teardown); } catch (error) { errors.push(error.message); }

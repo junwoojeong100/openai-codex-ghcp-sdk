@@ -1,0 +1,74 @@
+{
+  "kind": "unscored-benign-task-contract-isolation",
+  "startedAt": "2026-09-21T22:56:52.616Z",
+  "finishedAt": "2026-09-21T22:57:59.351Z",
+  "matrixCredit": false,
+  "productionRequestsChanged": false,
+  "cases": [
+    {
+      "id": "original-control",
+      "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+      "status": "filtered",
+      "submissions": 0,
+      "exactFixture": false,
+      "refusalCategories": [
+        "reasoning_extraction"
+      ],
+      "cleanupPassed": true
+    },
+    {
+      "id": "without-negative-data-disclaimer",
+      "promptHash": "adc8c1426b4ae9274ab82943a2ac43b6749052d27abdcd561fbf242df8b6d6f1",
+      "status": "filtered",
+      "submissions": 0,
+      "exactFixture": false,
+      "refusalCategories": [
+        "reasoning_extraction"
+      ],
+      "cleanupPassed": true
+    },
+    {
+      "id": "without-test-meta-instruction",
+      "promptHash": "4c7e46c8154509cb66bfc7849b25c1518243b09e5bca1171d55b7043098d12db",
+      "status": "filtered",
+      "submissions": 0,
+      "exactFixture": false,
+      "refusalCategories": [
+        "reasoning_extraction"
+      ],
+      "cleanupPassed": true
+    },
+    {
+      "id": "without-line-format-instruction",
+      "promptHash": "7db49437ff5ce242d52653ad7a6afb25e5e3b36f67a080de736c322a87d8a346",
+      "status": "filtered",
+      "submissions": 0,
+      "exactFixture": false,
+      "refusalCategories": [
+        "reasoning_extraction"
+      ],
+      "cleanupPassed": true
+    },
+    {
+      "id": "application-data-contract",
+      "promptHash": "6509b1b218d41c3886cdad013cfb0e3c90155dfade15254b937c030af5bf45c6",
+      "status": "completed",
+      "submissions": 1,
+      "exactFixture": true,
+      "refusalCategories": [],
+      "cleanupPassed": true
+    },
+    {
+      "id": "original-control-after",
+      "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+      "status": "filtered",
+      "submissions": 0,
+      "exactFixture": false,
+      "refusalCategories": [
+        "reasoning_extraction"
+      ],
+      "cleanupPassed": true
+    }
+  ],
+  "limitation": "The shorter task wording passed a diagnostic, but did not resolve the original refusal or establish full workflow compatibility."
+}

@@ -43,12 +43,12 @@ All pending results from a turn must be returned together. Unknown, duplicate, w
 
 - Codex `session-id`/`thread-id` headers identify a conversation. With no headers, a known `previous_response_id` or live tool call can identify it; otherwise a new isolated conversation is created.
 - Requests within a conversation are serialized. Independent conversations use independent SDK sessions.
-- For full-history requests, a canonical prefix comparison removes already-processed items. Wire-only IDs/status/phase are not used for comparison; custom input bytes remain significant.
+- For full-history requests, a canonical prefix comparison removes already-processed items. Wire-only IDs/status are ignored; assistant `phase` and custom input bytes remain significant. An omitted old phase reuses the known value, while an explicitly changed phase is a history change.
 - `previous_response_id` supports process-local continuation, not a durable Responses store. Only the current conversation version can be continued.
 - An exact retry of the most recent normalized request returns its cached result without resending the prompt or tool results.
 - Model, tool, instruction or history changes cannot replace a session with unresolved calls. Codex's appended plugin-provenance sentence on a function tool is accepted as metadata only when its name, schema and original description still match. Once there are no pending calls, an incompatible full history can start a new SDK session.
 
-The SDK's send interface is not a general Responses transcript-import API. Cold starts with historical messages serialize that history into context for a new user prompt. This is an approximation, not native role-preserving replay or a guarantee of identical answers. Ordinary matching live turns do not use that replay path.
+The SDK's send interface is not a general Responses transcript-import API. Cold starts with historical messages serialize non-instruction history into context for a new user prompt, preserving assistant phases. Delimiter characters inside the JSON are escaped without changing the decoded text. This is an approximation, not native role-preserving replay or a guarantee of identical answers. Ordinary matching live turns do not use that replay path.
 
 ## Lifetime and security boundaries
 
@@ -70,4 +70,7 @@ No sibling project's tests, validation runner or validation results are used. Of
 
 Defaults, errors and the separate 77-cell contract are documented in the [stability guide](STABILITY_TESTING.md). Historical v4 evidence is verified with frozen source, never regraded.
 
-- SDK-managed system/safety instructions are retained with append mode. Complete client instructions are appended unchanged; SDK built-in tools remain excluded and permission requests remain rejected.
+- SDK-managed system/safety instructions are retained with append mode. All top-level client system/developer messages, including mid-history ones, are collected with request instructions; their text is appended unchanged. A changed instruction policy rebuilds an idle session and is rejected while tools are pending. SDK built-in tools remain excluded and permission requests remain rejected.
+- New user messages accompanying tool results use SDK immediate steering before results are released, not text appended to a tool output. Tool-result text remains byte-exact and exact retries do not repeat either operation.
+- Assistant tool calls must match their pending SDK request IDs, session ID, tool names and JSON arguments before handoff. Both modern `agentId` and legacy `parentToolCallId` exclude subordinate events from root responses.
+- Text completion waits for root `session.idle`, not an intermediate `assistant.turn_end`. A tool handoff instead waits for the matching pending requests, since the SDK cannot become idle until Codex returns their results. An empty answer with no tool calls fails rather than entering the success cache.

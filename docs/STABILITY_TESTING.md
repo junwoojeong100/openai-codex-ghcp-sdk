@@ -6,6 +6,21 @@
 
 Previous results, logs and reports were deleted at the user’s request. A fresh full 11-scenario × 7-model (77-cell) run uses the v3 criteria frozen before each execution. Results are published in the [new verification records](validation/README.md); no old scores or selective failed-cell reruns are reused.
 
+## Optional application-data profile and final status
+
+`v3` remains the default. `--profile application-data-v1` explicitly selects shorter read/remember/recall task wording under a distinct catalog ID and hash. The seven models, 11 scenarios, fixtures, fault schedule, budgets, literal-output and cleanup checks stay the same. Production user requests are not rewritten. Reports, workers and artifacts carry profile identity; verification rejects cross-profile case substitution and cannot be overridden with `--profile`.
+
+The final optional-profile live run scored **50/77 (64.94%), Opus 9/11**. The original/default v3 result remains **66/77 (85.71%), Opus 0/11**. The original issue and ≥95% target remain unresolved; the optional profile is not a recommended fix or new default. Experiments stopped at the user's request. See the [closeout record](validation/2026-09-22-opus-closeout/README.md).
+
+```sh
+# Plan only; no model calls
+npm run test:stability -- --plan --profile application-data-v1
+# Mechanical SDK / explicit live opt-in; each needs a new directory
+npm run test:stability -- --runtime --profile application-data-v1 --output .runtime/application-offline-new
+npm run test:stability -- --execute --profile application-data-v1 --output .runtime/application-live-new
+npm run test:stability -- --verify .runtime/application-live-new/report.json
+```
+
 ## Scope and fixed criteria
 
 `codex-ghcp-stability-11-v3` is a **separate 11-scenario × 7-model = 77-cell** matrix, using Codex **0.154.0** and Copilot SDK **1.0.14**. It does not replace, regrade, or enlarge the historical 18-workflow v4 result. No automatic case retries, model substitution, subset mode, or native OpenAI baseline.
@@ -49,7 +64,7 @@ The 77-cell denominator, exact model routing, literal value/receipt checks, requ
 - ACK readiness allows **45s**; SDK client startup/catalog initialization has a **30s** bound. Session creation is additionally governed by the turn/request deadlines; reaching the ACK gate must still be proved, never assumed. S06 uses a **45s** total request deadline and a **60s** bounded ACK gate, keeping the request deadline as the intended fault source. S05/S06 case limits are 120s/180s.
 - The supervisor waits for asynchronous owned-process-group exit only inside the remaining case slot (at most 2s). Groups that remain alive still fail.
 
-The user-requested iteration target is **at least 74/77 (96.1%)**; 73/77 is below 95%. This target does not change `fullMatrixPassed`, which still requires 77/77. Before every fresh live matrix, the user requested deletion of prior results/logs/reports; only the latest run's evidence is retained. No individual failed cell is selectively rerun or replaced within a matrix.
+The user-requested iteration target is **at least 74/77 (96.1%)**; 73/77 is below 95%. This target does not change `fullMatrixPassed`, which still requires 77/77. Archived verification records were removed before the current repair at the user’s request. The [repair record](validation/2026-09-22-bridge-repair/README.md) retains its preliminary and final full runs separately, including failures and timeouts; the latest score is not assembled from earlier cells. No individual failed cell is selectively rerun or replaced within a matrix.
 
 ## Explicit upstream filtering
 
@@ -106,3 +121,5 @@ node .runtime/stability-new-run/source-snapshot/scripts/stability.mjs \
 ```
 
 Exit codes: **0** = valid plan, passing offline harness, or all 77 live cells passed; **1** = valid evidence but non-passing/incomplete execution; **2** = invalid arguments/evidence. The report distinguishes offline from live and never calls an offline 11/11 a 77/77 live pass.
+
+[Opus diagnostics](OPUS_DIAGNOSTICS.md) correlate native upstream refusal metadata without changing the fixture prompt or scored matrix. Diagnostic controls and incomplete observations must remain separate from matrix results.

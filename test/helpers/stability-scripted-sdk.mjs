@@ -21,7 +21,7 @@ export class StabilityScriptedSdk extends FakeClient {
         let latest = prompt;
         const match = /<conversation_history>\n([\s\S]*?)\n<\/conversation_history>/.exec(prompt);
         if (match) latest = JSON.parse(match[1]).findLast(i => i.type === "message" && i.role === "user")?.content ?? prompt;
-        if (latest.startsWith("Use the read_fixture")) {
+        if (latest.startsWith("Use the read_fixture") || latest.startsWith("Call read_fixture")) {
           const declared = config.tools.find(t => /^Client tool (?:[^\n.]+\.)?read_fixture\.\n/.test(t.description));
           if (!declared) throw new Error("Native fixture tool was not declared");
           session.toolCalls([{ name: declared.name, toolCallId: randomUUID(), arguments: {} }]);

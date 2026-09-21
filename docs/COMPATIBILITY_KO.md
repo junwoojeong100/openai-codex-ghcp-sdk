@@ -11,7 +11,7 @@
 ## 구현한 동작
 
 - JSON 또는 HTTP/SSE 텍스트 응답의 `POST /v1/responses`, 인증된 `GET /v1/models`, 공개 `GET /health`.
-- 텍스트 메시지, 앞부분의 system/developer 지시문, 클라이언트 function/custom 도구.
+- 텍스트 메시지, 대화 이력 전체의 system/developer 지시문, 클라이언트 function/custom 도구.
 - Codex namespace와 `additional_tools` 선언. function 인자는 JSON 의미를, custom 입력은 문자열 원문을 유지합니다.
 - 여러 도구 호출과 그 호출 모두에 대한 후속 결과 배치.
 - `parallel_tool_calls=false`: 응답당 최대 한 호출만 전달합니다. SDK가 여러 호출을 반환하면 아무 호출도 전달하지 않고 `parallel_tool_calls_violation`으로 실패시킵니다. 모델의 생성 방식을 강제하는 것이 아니라 출력을 검사합니다.
@@ -26,11 +26,15 @@
 
 **과거 대화 replay:** 새 SDK 세션에 임의의 Responses 이력을 원래 역할 그대로 가져올 수 없습니다. 완료된 과거 턴은 직렬화된 프롬프트 문맥으로 전달합니다. 정상적으로 연결된 live 대화는 기존 SDK 세션과 실제 대기 도구 결과 RPC를 사용합니다.
 
-**지시문 경계:** 요청 지시문과 앞부분의 system/developer 메시지는 원문 그대로 SDK 기본 시스템 지시에 덧붙입니다. `systemMessage.mode="append"`를 사용하고 `replace`로 SDK 보호 지시를 제거하지 않습니다. 이후의 문맥은 프롬프트나 도구 결과와 함께 전달되므로 범용적인 역할 보존 transcript 변환기는 아닙니다. SDK 기본 도구는 계속 비활성화하고, 클라이언트 도구는 Codex가 자신의 샌드박스·승인 정책 아래 실행합니다.
+**지시문 경계:** 요청 지시문과 모든 최상위 system/developer 메시지를 대화 중간에 있더라도 원문 그대로 SDK 기본 시스템 지시에 덧붙입니다. `systemMessage.mode="append"`를 사용하고 `replace`로 SDK 보호 지시를 제거하지 않습니다. 두 지시문 역할은 SDK의 같은 필드를 사용하며, 과거 user/assistant 역할은 여전히 직렬화된 replay를 사용하므로 범용적인 역할 보존 transcript 가져오기는 아닙니다. 도구 결과와 함께 온 새 사용자 메시지는 SDK immediate steering으로 별도 전달하며 도구 출력에 섞지 않습니다. 도구가 대기 중일 때 지시문이 바뀌면 결과나 steering 메시지를 보내기 전에 명시적으로 거절합니다. SDK 기본 도구는 계속 비활성화하고, 클라이언트 도구는 Codex가 자신의 샌드박스·승인 정책 아래 실행합니다.
+
+**Assistant phase와 완료 경계:** [Responses phase 의미](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter)에 따라 `commentary`와 `final_answer`를 정규화·replay에서 보존합니다. 과거 phase가 생략되면 기존 값을 유지하고 명시적으로 바뀌면 live prefix가 달라진 것으로 처리합니다. 텍스트 응답은 루트 `session.idle`까지 기다려 중간 보정·사용량·오류를 수집합니다. 도구 응답은 대신 대응하는 외부 pending 호출의 상관관계를 검증한 뒤 반환합니다. 비어 있고 도구도 없는 응답이나 pending 호출 불일치는 성공 상태를 저장하기 전에 실패합니다.
 
 **사용량:** SDK가 실제 토큰 수를 제공하면 반환하고, 없으면 추정하지 않고 `null`로 표시합니다. 사용량·캐시·과금은 Copilot 기준이며 OpenAI API의 과금 의미와 같다고 보장하지 않습니다.
 
 **보관:** 응답 상관관계는 메모리에만 있습니다. 재시작·TTL·용량 제거로 response ID나 미완료 호출이 만료됩니다. `store:false`는 Codex/SDK 로컬 파일을 끄거나 Copilot의 무보관을 보장하는 옵션이 아닙니다.
+
+**추론 요약 정책:** SDK 세션 생성과 모델 설정 변경에 `reasoningSummary: "none"`을 명시하여 실행기의 요약 비활성화 정책과 일치시킵니다. 요청한 추론 강도는 별도로 유지합니다. 이는 설정 일관성 수정이며 상위 서비스 거절의 원인이나 해결책으로 확정한 것은 아닙니다.
 
 ## 거절하거나 비활성화하는 기능
 
@@ -55,3 +59,5 @@
 - Codex의 승인·샌드박스 정책은 유지합니다. bridge가 승인 우회 옵션을 대신 추가하지 않습니다.
 - 백그라운드 daemon 상태는 프로젝트 전용입니다. 재사용/종료 전에 자신이 소유한 인스턴스를 확인합니다.
 - 새 CLI 버전에 필드·도구가 추가되면 어댑터를 수정해야 할 수 있습니다. 확인하기 전에는 버전을 고정하세요.
+
+필터 감시는 도구 handoff와 idle 뒤에도 유지합니다. 늦은 루트 신호는 다음 캐시 재시도나 pending 결과 재개를 차단하며, 이미 보낸 출력은 회수할 수 없습니다. 뒤이은 SDK 종료 오류가 최초 원인을 덮어쓰지 않습니다. 원문을 저장하지 않는 선택적 상위 refusal 진단은 [Opus 진단](OPUS_DIAGNOSTICS_KO.md)을 참고하세요.

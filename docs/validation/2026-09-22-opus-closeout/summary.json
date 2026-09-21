@@ -1,0 +1,933 @@
+{
+  "schemaVersion": 1,
+  "runId": "2ffc04e3-7d48-4c5a-9183-878092a56bf5",
+  "profile": "application-data-v1",
+  "catalogId": "codex-ghcp-stability-11-application-data-v1",
+  "catalogHash": "ae362ca209a9de118d4d6b74b6931c348ac0231e642023b1595e44766e37fc9a",
+  "implementationHash": "74a337f0e2c388707393ba51da9b1c539d4bb37b0979395651e6e1760eff549f",
+  "startedAt": "2026-09-21T23:26:34.594Z",
+  "finishedAt": "2026-09-21T23:34:30.349Z",
+  "durationMs": 475765,
+  "result": {
+    "profile": "application-data-v1",
+    "catalogId": "codex-ghcp-stability-11-application-data-v1",
+    "totalCases": 77,
+    "counts": {
+      "passed": 50,
+      "failed": 27,
+      "blocked": 0,
+      "unsupported": 0,
+      "timed-out": 0,
+      "not-run": 0
+    },
+    "passed": 50,
+    "percent": 64.93506493506493,
+    "fullMatrixPassed": false,
+    "offlineHarnessPassed": false,
+    "perModel": [
+      {
+        "model": "gpt-5.6-sol",
+        "passed": 11,
+        "total": 11,
+        "verdict": "codex-ghcp-stability-11-application-data-v1-passed"
+      },
+      {
+        "model": "gpt-5.6-terra",
+        "passed": 2,
+        "total": 11,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-5.6-luna",
+        "passed": 5,
+        "total": 11,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 11,
+        "total": 11,
+        "verdict": "codex-ghcp-stability-11-application-data-v1-passed"
+      },
+      {
+        "model": "claude-opus-5",
+        "passed": 9,
+        "total": 11,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 11,
+        "total": 11,
+        "verdict": "codex-ghcp-stability-11-application-data-v1-passed"
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 1,
+        "total": 11,
+        "verdict": "not-established"
+      }
+    ],
+    "realModelCalls": null,
+    "faultInjectionLabelled": true,
+    "hoursLongSoakCertified": false,
+    "measuredProductCoverage": null,
+    "historicalV4Regraded": false
+  },
+  "target": {
+    "minimumPassed": 74,
+    "denominator": 77,
+    "met": false
+  },
+  "resolution": "unresolved; closed at user request after this final live run",
+  "implementationUnchanged": true,
+  "userSettingsUnchanged": true,
+  "productionSourceUnchangedSinceProfileBaseline": true,
+  "noModelSubstitution": true,
+  "noFailedCellReplacement": true,
+  "defaultProfile": "v3",
+  "resourcesCleaned": 77,
+  "processGroupsGone": 77,
+  "historicalV3": {
+    "runId": "84c01bbd-cd87-49a8-b019-e36613f49d94",
+    "catalogId": "codex-ghcp-stability-11-v3",
+    "catalogHash": "bcb5958d066a1628552f059aecd6e4fb04808acab0d0443ec70075df6e1b23fd",
+    "passed": 66,
+    "total": 77,
+    "opusPassed": 0,
+    "statusesUnchanged": true,
+    "notCombinedWithThisRun": true
+  },
+  "cells": [
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S01",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 12119,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S02",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 11050,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S03",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 12195,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S04",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 11190,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S05",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 14627,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S06",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 58681,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S07",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 20648,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S08",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 23966,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S09",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 22374,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S10",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 20317,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S11",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 44350,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S01",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 12520,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S02",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9562,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S03",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 10470,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S04",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10803,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S05",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 10990,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S06",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 55276,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S07",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 19649,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S08",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 19150,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S09",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 17422,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S10",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 18500,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 48934,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S01",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 12370,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S02",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10256,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S03",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10306,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S04",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10510,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S05",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10126,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S06",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 65063,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S07",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 19094,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S08",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16739,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S09",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16342,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S10",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16418,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 35952,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 14568,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S02",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 12723,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S03",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 12990,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S04",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10921,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S05",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10565,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S06",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 57964,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S07",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 22224,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S08",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 20549,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S09",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 21575,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S10",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 31869,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S11",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 56503,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9326,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S02",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 10414,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S03",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9594,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S04",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9927,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S05",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9726,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S06",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 55335,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S07",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 17203,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S08",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 16456,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S09",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 15717,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "turns",
+        "transport-outcomes",
+        "readiness"
+      ],
+      "durationMs": 16567,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "turns",
+        "transport-outcomes",
+        "readiness",
+        "S11.compaction",
+        "S11.repetition"
+      ],
+      "durationMs": 10955,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S01",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9395,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S02",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9465,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S03",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9281,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S04",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9501,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S05",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 9013,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S06",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 55428,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S07",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 17260,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S08",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 15860,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S09",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 14760,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S10",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 17850,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S11",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 34743,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S01",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9416,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S02",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9427,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S03",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9630,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S04",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9349,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S05",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9247,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S06",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 55439,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S07",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 17556,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S08",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16201,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S09",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 15951,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S10",
+      "status": "passed",
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "durationMs": 18248,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 50967,
+      "processGroupGone": true,
+      "resourcesCleaned": true
+    }
+  ]
+}

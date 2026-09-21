@@ -192,7 +192,7 @@ npm run test:compatibility -- --plan   # Offline execution plan
 npm run test:compatibility:runtime     # Real Codex + SDK double, no model calls
 ```
 
-The scenarios and runner have been expanded. Existing run results remain historical records of their original contract.
+The 18-scenario compatibility contract is separate from the 11-scenario stability contract; stability results do not certify this larger live matrix.
 **18 scenarios × seven GHCP models = 126 cases**, with no reference-provider run, fast suite or model subset.
 Up to four model lanes, individual deadlines and continuation after failure keep the run short. One hour is a target, not an overall cutoff.
 
@@ -217,9 +217,9 @@ npm run test:stability -- --plan
 npm run test:stability -- --execute  # Consumes Copilot usage
 ```
 
-[Fresh 77-cell live verification](docs/validation/2026-09-21-stability-rerun/README.md): **66 passed (85.7%), 11 failed**, 0 not run. New evidence integrity was verified without changed criteria or selective retries.
+**Final live run (2026-09-22), separate `application-data-v1` profile: 50/77 (64.94%), Opus 9/11. The issue and ≥95% target remain unresolved; experiments stopped at the user’s request.** The original/default v3 result remains 66/77 (85.71%), Opus 0/11. Profiles differ in task wording; scores are not combined and the optional profile is not a production fix. See the [final report and evidence](docs/validation/2026-09-22-opus-closeout/README.md) and [verification index](docs/validation/README.md).
 
-Previous verification data and reports were removed from the working tree at the user’s request. Only the [new verification records](docs/validation/README.md) are evidence for the current run. Old results are not reused as new scores; this is not hours-long or whole-product certification.
+Archived verification documents were removed before this repair at the user’s request and have not been restored. Complete runs during this repair are recorded separately, including failures and timeouts; old cells are not reused as new scores. This is not hours-long or whole-product certification.
 
 ## References
 

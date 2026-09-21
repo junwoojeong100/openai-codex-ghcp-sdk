@@ -11,7 +11,7 @@ Only `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra`, `claude-opus
 ## Implemented behavior
 
 - `POST /v1/responses`, with either JSON or HTTP/SSE text output; authenticated `GET /v1/models` and public `GET /health`.
-- Text messages, leading system/developer instructions, client function tools, and custom/freeform tools.
+- Text messages, system/developer instructions throughout the supplied transcript, client function tools, and custom/freeform tools.
 - Codex tool namespaces and `additional_tools` declarations. Function arguments retain JSON meaning; custom tool input retains the original string.
 - Multiple pending calls and a following batch containing all corresponding outputs.
 - `parallel_tool_calls=false`: at most one call is forwarded per response. If the SDK emits multiple calls, none are forwarded and the turn fails with `parallel_tool_calls_violation`; this validates the output, not the model's decoding behavior.
@@ -26,11 +26,15 @@ Only `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra`, `claude-opus
 
 **Historical replay:** a fresh SDK session cannot import an arbitrary Responses transcript with native roles. Completed historical turns are serialized into prompt context. Live matching conversations preserve the SDK session and submit real pending tool results instead.
 
-**Instruction boundaries:** request instructions and leading system/developer messages are preserved verbatim and appended to the SDK-managed system foundation. The bridge uses `systemMessage.mode="append"`, never `replace`, so SDK safety instructions remain in place. Later context travels in a prompt or alongside a tool result; this is not a general-purpose role-equivalent transcript adapter. SDK built-in tools remain unavailable, and only Codex performs client tools under its sandbox and approval policy.
+**Instruction boundaries:** request instructions and all top-level system/developer messages are preserved verbatim and appended to the SDK-managed system foundation, even when an instruction occurs mid-history. The bridge uses `systemMessage.mode="append"`, never `replace`, so SDK safety instructions remain in place. Both instruction roles share this SDK field; arbitrary historical user/assistant roles still require serialized replay, not a general-purpose role-equivalent transcript import. New user messages accompanying pending results use immediate steering as separate SDK user messages; they are not embedded in tool-output text. Instruction changes with pending tools fail explicitly before any result or steering message is sent. SDK built-in tools remain unavailable, and only Codex performs client tools under its sandbox and approval policy.
+
+**Assistant phases and completion:** `commentary` and `final_answer` survive canonicalization and replay, following the [Responses phase semantics](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter). Omitted old phases reuse known values; explicit phase changes invalidate the live prefix. Text responses finish at root `session.idle`, allowing intervening corrections, usage and errors to arrive. Tool responses instead require fully correlated pending external calls. Empty, tool-less responses and mismatched pending calls fail before success commitment.
 
 **Usage:** actual SDK token counts are returned when available. Missing usage is `null`, not estimated. Usage, caching and billing belong to Copilot and need not match OpenAI billing semantics.
 
 **Persistence:** response correlation is memory-only. Restart, TTL or capacity eviction invalidates response IDs and unresolved calls. `store:false` does not disable Codex/SDK local files or promise zero retention by Copilot.
+
+**Reasoning summary policy:** SDK session creation and model-setting updates explicitly use `reasoningSummary: "none"`, matching the launcher’s disabled-summary policy. Requested reasoning effort is preserved independently. This is configuration consistency, not an established cause or fix for upstream refusals.
 
 ## Rejected or disabled
 
@@ -55,3 +59,5 @@ Explicit root SDK content-filter metadata is reported as `upstream_content_filte
 - Codex retains its normal sandbox and approval behavior. The bridge never substitutes an approval-bypass option.
 - Background-daemon state is specific to this project. Status/stop must verify the owned instance before reuse or termination.
 - Newer CLI releases may add fields or tools that require changes to this adapter. Pin versions until you have checked the new protocol.
+
+Filter monitoring remains active after tool handoff and idle. A late root signal invalidates the next cached retry or pending-result continuation; already-delivered output cannot be retracted. The first observed fault is retained if later SDK shutdown errors occur. See [Opus upstream diagnostics](OPUS_DIAGNOSTICS.md) for opt-in, privacy-bounded native refusal evidence.

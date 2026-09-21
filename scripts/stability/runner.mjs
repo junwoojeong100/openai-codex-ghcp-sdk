@@ -4,7 +4,8 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
-import { CATALOG, SCENARIOS } from "./catalog.mjs";
+import { SCENARIOS } from "./catalog.mjs";
+import { getProfile, DEFAULT_PROFILE } from "./profiles.mjs";
 import { newReport, summarize, markdown, readCase, implementationHash, sourceManifest } from "./report.mjs";
 import { pool, freshDirectory } from "../compatibility/runner.mjs";
 import { supervise, killOwnedGroup } from "../compatibility/supervisor.mjs";
@@ -20,12 +21,13 @@ function settings(env) {
       catch (e) { if (e.code !== "ENOENT") throw e; return { pathHash: sha(file), missing: true }; }
     });
 }
-export async function runStability({ output, bin = process.env.CODEX_BIN || "codex", executionKind = "live", signal,
+export async function runStability({ output, bin = process.env.CODEX_BIN || "codex", executionKind = "live", profile = DEFAULT_PROFILE, signal,
   env = process.env, onProgress = () => {}, ...unknown } = {}) {
   if (Object.keys(unknown).length) throw new Error("No subset, retry or model overrides are supported");
+  const { catalog: CATALOG } = getProfile(profile);
   signal?.throwIfAborted();
   const runId = randomUUID(), started = performance.now(), clean = scrubber(env);
-  const report = newReport({ runId, executionKind });
+  const report = newReport({ runId, executionKind, profile });
   const before = executionKind === "live" ? settings(env) : null;
   const directory = freshDirectory(output || path.join(ROOT, ".runtime", `stability-${executionKind}-${runId}`));
   const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-stability-")));
@@ -35,13 +37,14 @@ export async function runStability({ output, bin = process.env.CODEX_BIN || "cod
   const checkpoint = () => { report.summary = summarize(report); writeJson(path.join(directory, "report.json"), clean(report));
     fs.writeFileSync(path.join(directory, "report.md"), clean(markdown(report)), { mode: 0o600 }); };
   const launch = config => supervise({ bin, runId, seed: runId, provider: "ghcp", executionKind,
+    profile: report.profile, catalogId: report.catalogId,
     catalogHash: report.catalogHash, implementationHash: report.implementationHash, ...config }, { signal, env, onGroup, workerFile });
   try {
     const manifest = sourceManifest();
     for (const file of Object.keys(manifest)) {
       const target = path.join(directory, "source-snapshot", file); mkdir(path.dirname(target)); fs.copyFileSync(path.join(ROOT, file), target);
     }
-    writeJson(path.join(directory, "freeze.json"), { frozenAt: new Date().toISOString(), runId, executionKind,
+    writeJson(path.join(directory, "freeze.json"), { frozenAt: new Date().toISOString(), runId, executionKind, profile: report.profile,
       catalog: CATALOG, catalogHash: report.catalogHash, implementationHash: report.implementationHash, sources: manifest });
     checkpoint(); signal?.addEventListener("abort", stop, { once: true });
     const preDir = path.join(directory, "preflight");

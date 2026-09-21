@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { CATALOG } from "./stability/catalog.mjs";
+import { getProfile } from "./stability/profiles.mjs";
 import { runStability } from "./stability/runner.mjs";
 import { verifyReport } from "./stability/report.mjs";
 import { scrubber } from "./compatibility/util.mjs";
@@ -14,17 +14,19 @@ export function parseArguments(args) {
       if (action) throw new Error("Choose exactly one action"); action = true; options.mode = key.slice(2);
       if (key !== "--verify") continue;
     }
-    if (["--verify", "--output", "--bin"].includes(key)) {
+    if (["--verify", "--output", "--bin", "--profile"].includes(key)) {
       const value = args[++i]; if (!value || value.startsWith("-")) throw new Error(`Missing value for ${key}`);
       options[key === "--verify" ? "file" : key.slice(2)] = value;
     } else throw new Error(`Unknown option ${key}`);
   }
   if (!["execute", "runtime"].includes(options.mode) && (options.output || options.bin)) throw new Error("Output/bin options require execute or runtime");
+  getProfile(options.profile);
+  if (options.mode === "verify" && options.profile !== undefined) throw new Error("Verification uses the recorded profile; --profile cannot override it.");
   return options;
 }
 export async function main(args = process.argv.slice(2)) {
   const { mode, file, ...options } = parseArguments(args);
-  if (mode === "plan") { console.log(JSON.stringify({ ...CATALOG, modelCalls: 0, liveCompatibilityVerified: false }, null, 2)); return 0; }
+  if (mode === "plan") { console.log(JSON.stringify({ ...getProfile(options.profile).catalog, profile: getProfile(options.profile).name, catalogHash: getProfile(options.profile).catalogHash, modelCalls: 0, liveCompatibilityVerified: false }, null, 2)); return 0; }
   if (mode === "verify") {
     const result = verifyReport(path.resolve(file)); console.log(JSON.stringify(result, null, 2));
     return result.fullMatrixPassed || result.offlineHarnessPassed ? 0 : 1;

@@ -1,0 +1,11 @@
+{
+  "publishedAt": "2026-09-21T18:47:59.989Z",
+  "evidenceIntegrity": true,
+  "sourceFrozenAndCurrentEqual": true,
+  "catalogUnchanged": true,
+  "all77Retained": true,
+  "statusesUnchanged": true,
+  "checksPassed": true,
+  "liveTargetMet": false,
+  "localRoot": ".runtime/bridge-repair-20260922"
+}

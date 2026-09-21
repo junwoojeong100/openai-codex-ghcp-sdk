@@ -6,6 +6,21 @@
 
 기존 결과·로그·보고서는 사용자 요청으로 삭제했습니다. 실행 전에 동결하는 v3 기준으로 11개 시나리오 × 7개 모델의 전체 77건을 새로 실행하며, [새 검증 기록](validation/README_KO.md)에 결과를 게시합니다. 과거 점수를 재사용하거나 실패 셀만 재실행하지 않습니다.
 
+## 선택적 application-data 프로필과 최종 상태
+
+기본값은 `v3`입니다. `--profile application-data-v1`을 명시하면 read/remember/recall 요청 문구를 간결하게 작성한 별도 catalog ID·hash를 선택합니다. 7개 모델·11개 시나리오·fixture·장애 주입·예산·literal-output·정리 판정은 같습니다. production 사용자 요청을 재작성하지 않습니다. 보고서·worker·artifact에 프로필 identity를 전달하며, 다른 프로필의 통과 셀 대입이나 `--verify --profile` 재채점을 거절합니다.
+
+마지막 선택적 프로필 실측은 **50/77(64.94%), Opus 9/11**입니다. 원래/기본 v3는 **66/77(85.71%), Opus 0/11**로 보존합니다. 원래 이슈와 95% 목표는 미해결이며 새 프로필을 권장 해결책이나 기본값으로 승격하지 않습니다. 사용자 요청으로 추가 실험을 종료했습니다. [종료 기록](validation/2026-09-22-opus-closeout/README_KO.md)을 참고하세요.
+
+```sh
+# 계획만 출력, 모델 호출 없음
+npm run test:stability -- --plan --profile application-data-v1
+# 모의 SDK / 명시적 실모델 실행. 각각 새 디렉터리 사용
+npm run test:stability -- --runtime --profile application-data-v1 --output .runtime/application-offline-new
+npm run test:stability -- --execute --profile application-data-v1 --output .runtime/application-live-new
+npm run test:stability -- --verify .runtime/application-live-new/report.json
+```
+
 ## 범위와 실행 전 판정 기준
 
 `codex-ghcp-stability-11-v3`은 **11개 시나리오 × 7개 모델 = 77건**의 별도 계약입니다. Codex **0.154.0**, Copilot SDK **1.0.14**를 사용합니다. 기존 18개 워크플로 v4 결과를 대체·재채점하지 않으며, 자동 케이스 재실행·모델 대체·부분 선택·OpenAI 기준선은 없습니다.
@@ -49,7 +64,7 @@
 - ACK 준비 대기는 **45초**이며 SDK 클라이언트 시작·카탈로그 초기화 제한은 **30초**입니다. 세션 생성에는 별도의 턴·요청 제한 시간도 적용되므로 ACK gate 도달을 가정하지 않고 실제 증거를 요구합니다. S06은 전체 요청 제한 **45초**, ACK gate 제한 **60초**로 의도한 요청 제한 시간이 먼저 적용됩니다. S05/S06 시나리오 제한은 120초/180초입니다.
 - 감독자는 남은 시나리오 제한 안에서 최대 2초 동안 테스트 소유 프로세스 그룹의 비동기 종료를 기다립니다. 여전히 살아 있으면 실패입니다.
 
-사용자 요청 목표는 **최소 74/77(96.1%)**이며 73/77은 95% 미만입니다. `fullMatrixPassed`는 여전히 77/77에서만 참입니다. 매 전체 실검증 직전에 사용자 요청에 따라 이전 결과·로그·보고서를 삭제하고 최신 증거만 남깁니다. 행렬 안에서 실패 셀만 골라 다시 실행하거나 다른 결과로 교체하지 않습니다.
+사용자 요청 목표는 **최소 74/77(96.1%)**이며 73/77은 95% 미만입니다. `fullMatrixPassed`는 여전히 77/77에서만 참입니다. 사용자 요청으로 이번 수정 전에 과거 검증 기록을 삭제했습니다. [이번 수정 기록](validation/2026-09-22-bridge-repair/README_KO.md)은 예비·최종 전체 실행을 실패와 시간 초과까지 각각 보존하며, 이전 셀을 조합해 최신 점수를 만들지 않습니다. 행렬 안에서 실패 셀만 골라 다시 실행하거나 다른 결과로 교체하지 않습니다.
 
 ## 명시적인 상위 서비스 필터 차단
 
@@ -106,3 +121,5 @@ node .runtime/stability-new-run/source-snapshot/scripts/stability.mjs \
 ```
 
 종료 코드 **0**은 정상 plan·오프라인 전체 통과·실모델 77건 전체 통과, **1**은 유효한 증거의 미통과/미완료 실행, **2**는 인자·증거 오류입니다. 오프라인 11/11은 실모델 77/77이 아닙니다.
+
+[Opus 진단](OPUS_DIAGNOSTICS_KO.md)은 fixture 요청이나 채점 행렬을 바꾸지 않고 상위 refusal 메타데이터를 대조합니다. 별도 대조군과 불완전한 관측은 행렬 결과에 섞지 않습니다.

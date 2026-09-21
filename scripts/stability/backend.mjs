@@ -15,6 +15,11 @@ export const waitUntil = async (predicate, signal, ms = 8000) => {
 const events = text => text.split(/\r?\n/).filter(s => s.startsWith("data: {")).map(s => JSON.parse(s.slice(6)));
 const final = text => { try { return events(text).findLast(e => e.type === "response.completed")?.response; } catch { return null; } };
 const hasResult = body => body.input?.some?.(i => ["function_call_output", "custom_tool_call_output"].includes(i.type));
+async function relayResponse(response, res, text) {
+  res.writeHead(response.status, { "content-type": response.headers.get("content-type") ?? "application/json", "cache-control": "no-store" });
+  if (text !== undefined) res.end(text);
+  else { for await (const chunk of response.body) if (!res.destroyed) res.write(chunk); if (!res.destroyed) res.end(); }
+}
 function permute(tools) { return [...tools].reverse().map(t => t.type === "namespace" ? { ...t, tools: permute(t.tools) } : t); }
 function changeDescription(tools) {
   for (const tool of tools) {
@@ -38,9 +43,10 @@ export class StabilityBackend {
       this.sessions.push(session);
       return new Proxy(session, { get: (target, key) => {
         if (key === "send") return async (...args) => {
+          const gate = this.gate;
           const ack = await target.send(...args);
-          if (this.gate && !this.gate.used) {
-            const gate = this.gate; gate.used = true;
+          if (gate && gate === this.gate && !gate.used && !gate.released) {
+            gate.used = true;
             this.record("sdk-ack-held", { sessionId: target.sessionId });
             await bounded(gate.promise, AbortSignal.any([this.signal, AbortSignal.timeout(CATALOG.gateTimeoutMs)]));
             this.record("sdk-ack-released", { sessionId: target.sessionId });
@@ -65,7 +71,8 @@ export class StabilityBackend {
   }
   armGate() {
     let release; const promise = new Promise(r => { release = r; });
-    this.gate = { promise, release, used: false }; return this.gate;
+    const gate = { promise, used: false, released: false, release() { gate.released = true; release(); } };
+    this.gate = gate; return gate;
   }
   snapshot(label) {
     const m = this.manager;
@@ -148,15 +155,36 @@ export class StabilityBackend {
       void pendingResponse.catch(() => {});
       if (this.scenario.id === "S05" && this.gate && !this.cancelProbeUsed) {
         this.cancelProbeUsed = true;
+        const gate = this.gate, probe = new AbortController(), queued = new AbortController();
+        const probeSignal = AbortSignal.any([probe.signal, signal]);
+        // Headers/response.created can arrive before the send ACK. Race the
+        // *complete* upstream stream, not just fetch(), against the held ACK.
+        // An upstream rejection must reach Codex unchanged, never turn into a
+        // wait for a gate that the rejected SDK operation cannot enter.
+        const transfer = pendingResponse.then(response => relayResponse(response, res));
+        let copy;
         try {
-          await waitUntil(() => this.gate.used, signal, CATALOG.gateReadyTimeoutMs);
-          const queued = new AbortController();
-          const copy = this.fetch(body, headers, "control-cancelled", AbortSignal.any([queued.signal, signal])).then(async r => ({ status: r.status, text: await r.text() }), e => ({ errorName: e.name }));
-          await waitUntil(() => this.manager.queue.total === 2, signal);
-          this.snapshot("duplicate-queued"); queued.abort(); const outcome = await copy;
-          await waitUntil(() => this.manager.queue.total === 1, signal);
-          this.record("queued-copy-cancelled", { outcome, snapshot: this.snapshot("cancelled-before-release") });
-        } finally { this.gate.release(); }
+          const held = await Promise.race([
+            waitUntil(() => gate.used, probeSignal, CATALOG.gateReadyTimeoutMs).then(() => true),
+            transfer.then(() => false),
+          ]);
+          if (held) {
+            copy = this.fetch(body, headers, "control-cancelled", AbortSignal.any([queued.signal, signal]))
+              .then(async r => ({ status: r.status, text: await r.text() }), e => ({ errorName: e.name }));
+            await waitUntil(() => this.manager.queue.total === 2, signal);
+            this.snapshot("duplicate-queued"); queued.abort(); const outcome = await copy;
+            await waitUntil(() => this.manager.queue.total === 1, signal);
+            this.record("queued-copy-cancelled", { outcome, snapshot: this.snapshot("cancelled-before-release") });
+          }
+          gate.release();
+          await transfer;
+        } finally {
+          gate.release(); probe.abort(); queued.abort();
+          if (!res.writableEnded) controller.abort();
+          await copy?.catch(() => {});
+          await transfer.catch(() => {});
+        }
+        return;
       }
       const response = await pendingResponse;
       const copyResult = this.scenario.id === "S04" && result && !this.faultUsed;
@@ -168,9 +196,7 @@ export class StabilityBackend {
         const duplicate = await this.fetch(body, headers, "control-duplicate", signal), duplicateText = await duplicate.text();
         this.record("exact-retry", { firstStatus: response.status, retryStatus: duplicate.status, firstOutput: final(text)?.output ?? null, retryOutput: final(duplicateText)?.output ?? null, requestHash: sha(JSON.stringify(body)), before: first, after: this.snapshot("after-exact-retry") });
       }
-      res.writeHead(response.status, { "content-type": response.headers.get("content-type") ?? "application/json", "cache-control": "no-store" });
-      if (buffered) res.end(text);
-      else { for await (const chunk of response.body) if (!res.destroyed) res.write(chunk); if (!res.destroyed) res.end(); }
+      await relayResponse(response, res, text);
     } finally { req.off("aborted", close); res.off("close", close); }
   }
   async close() {

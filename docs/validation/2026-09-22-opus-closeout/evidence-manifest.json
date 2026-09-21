@@ -1,0 +1,3621 @@
+{
+  "localRoot": ".runtime/opus-resolution-20260922",
+  "files": {
+    "checks/application-profile-plan.json": {
+      "sha256": "d92cead17060ae35443033d899fb2619304752b52a41556abb9c0c108fa53368",
+      "bytes": 21804
+    },
+    "checks/closeout-native-compatibility.log": {
+      "sha256": "89003376ba55480a0ecd20e28d5b3d3dde3c8f771a275e0f667484e38f3cb4a6",
+      "bytes": 2477
+    },
+    "checks/closeout-scenario-docs.log": {
+      "sha256": "44cf778bd5062d8794d5cf7edc499c98b4c924cbc72172597811f7284fa1347b",
+      "bytes": 142
+    },
+    "checks/closeout-scenarios.log": {
+      "sha256": "a207629bb469cb19cf6e8476374291187f460681e7e253f1cfa4feea8c7303e8",
+      "bytes": 1411
+    },
+    "checks/closeout-stress.log": {
+      "sha256": "8b83a6f25db32377e1b5746171eee3813eef395c38beaecdad4bfa06a4fc23c7",
+      "bytes": 452
+    },
+    "checks/closeout-unit.log": {
+      "sha256": "e58f5cfbc36442463e7be72cd74b622c5d70a0425da6a24732ece94fad14030f",
+      "bytes": 62258
+    },
+    "checks/host-boundary.log": {
+      "sha256": "4a5fa14fc7ec708eca6fe8af800b7d1768751cc9a023dc549d897cef8b5ef711",
+      "bytes": 209
+    },
+    "checks/live-application.exit": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    "checks/live-application.log": {
+      "sha256": "f90e8cb8340210b37835f7dc3be417a7da548237acb002f27c3cef91fdce826f",
+      "bytes": 3599
+    },
+    "checks/profile-regressions-after.log": {
+      "sha256": "c5384f16c3186dc418ac57bafc2c473c11b18a9f5823e7f66002e5669d24eb36",
+      "bytes": 11015
+    },
+    "checks/profile-regressions-before.log": {
+      "sha256": "2fe0db9cae992bbcc76986e0a0a738fef3be6eea069ef3160698e0e39afadf13",
+      "bytes": 5615
+    },
+    "checks/profile-smoke.log": {
+      "sha256": "b7c195a153e4911b3ef2bda571200d06692c52b94accc9b7107ae438b2f80a56",
+      "bytes": 6281
+    },
+    "checks/runtime-application.exit": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "checks/runtime-application.log": {
+      "sha256": "43f4f41dd8d7219033850aa594ccf56e3f5e4948a73dfe021377c6025b86fa13",
+      "bytes": 1028
+    },
+    "checks/runtime-prompt-inspection.log": {
+      "sha256": "80d4b0cca7a6656181785fb9f651dbaa45bb8a279329f079e0bedb70b042afe4",
+      "bytes": 1596
+    },
+    "checks/task-contract.log": {
+      "sha256": "656269ea0dbc61cf98702450514405c338be2f57e552220eaf9ee56359fffa4e",
+      "bytes": 638
+    },
+    "checks/unit-final.exit": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "checks/unit-final.log": {
+      "sha256": "134e67b8e778d2f265bd63edec26b59abd3ceabe3bb1afffafb0a07276cfc3f7",
+      "bytes": 62281
+    },
+    "closeout-checks.json": {
+      "sha256": "edbc7a1f330b00eca69c731aa1826fd16db85ff2d347752924b62f4e334ec9b9",
+      "bytes": 2080
+    },
+    "host-boundary.json": {
+      "sha256": "ebdb59a59c0e00b6d68c97cab879260e2eea98e63c8221b7c4286b591855d295",
+      "bytes": 8740
+    },
+    "inspect-runtime-prompt.mjs": {
+      "sha256": "465ce22e8d5ec290d59a6064d6dfcff8d54357b73c95b09aa8af44355e44b26c",
+      "bytes": 2944
+    },
+    "live-application/cases/claude-haiku-4.5/S01/case.json": {
+      "sha256": "2a82940d39751ceaafdc6e8d8ab91dc7dbb348d9a616960d1b1afdd0a36e2eba",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S01/controls.json": {
+      "sha256": "dc2314b6dfc6ce36f3f31f6a84e493a162982f0e5ad3dad141c85a927855c2d3",
+      "bytes": 1147
+    },
+    "live-application/cases/claude-haiku-4.5/S01/native.jsonl": {
+      "sha256": "cbab72926606c217200876f184f6a21482f1dc1659932f5d0227f1f15a065c77",
+      "bytes": 15382
+    },
+    "live-application/cases/claude-haiku-4.5/S01/observation.json": {
+      "sha256": "797b9814c7bd4496cc6d024f5ca704c15af73584e63a99d3407b9bb1ac3a5d14",
+      "bytes": 104772
+    },
+    "live-application/cases/claude-haiku-4.5/S01/observation.partial.json": {
+      "sha256": "68fd1c36f9b7db3ae2aa4b4fc7bbca01d27de5f28b60913b4145716e4783fce8",
+      "bytes": 103424
+    },
+    "live-application/cases/claude-haiku-4.5/S01/oracle.json": {
+      "sha256": "7f5c1bab4a7df7a733b64e7e0420e6c87978356e54e60ab6f57773f817e62975",
+      "bytes": 1933
+    },
+    "live-application/cases/claude-haiku-4.5/S01/resources.json": {
+      "sha256": "ca40ef4aa68e7b59891ed8d1f92da6bb41c19ce30f6b7b8027d7ca884f7a6b4f",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S01/result.json": {
+      "sha256": "a841affbc80b2f22b6c5459a31ad0cd3a537b89ad812baff6cbb86334976fcfe",
+      "bytes": 3766
+    },
+    "live-application/cases/claude-haiku-4.5/S01/sdk.jsonl": {
+      "sha256": "5a93a228889f072e5e2de91c907d9bea48c7762aabee927d539e233fa65fadfd",
+      "bytes": 14369
+    },
+    "live-application/cases/claude-haiku-4.5/S01/transport.jsonl": {
+      "sha256": "fe79d2b3dc4f1b4ab4cacdca34db7f71363513074ff2c98312992f9b017a36cb",
+      "bytes": 39786
+    },
+    "live-application/cases/claude-haiku-4.5/S02/case.json": {
+      "sha256": "57a3cda6fe64ccd407bbb1bd511de752540450dbca46f1b682c810f54dbbdca8",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S02/controls.json": {
+      "sha256": "4290de395840daa47f8e8b854018cea6352e9786195b615ca84010dcffec9261",
+      "bytes": 40083
+    },
+    "live-application/cases/claude-haiku-4.5/S02/native.jsonl": {
+      "sha256": "de12b83301aa2462054c49d9a524ef6c44e570c32b2d6de5ae9f3f7c66aa97ff",
+      "bytes": 15096
+    },
+    "live-application/cases/claude-haiku-4.5/S02/observation.json": {
+      "sha256": "f5cb4661b71936d44c51d88348f2ab04dd428b988a3a174bc6f287c2f540f89b",
+      "bytes": 144170
+    },
+    "live-application/cases/claude-haiku-4.5/S02/observation.partial.json": {
+      "sha256": "e17e8e306765c00ee6ae7c416a6e86d0fcc1c4dc729b203a2b0fe8e615281345",
+      "bytes": 142675
+    },
+    "live-application/cases/claude-haiku-4.5/S02/oracle.json": {
+      "sha256": "ccc535751d4694e19df8c3b25deaaef900aeca602e44072f148fdd1b129d5935",
+      "bytes": 1987
+    },
+    "live-application/cases/claude-haiku-4.5/S02/resources.json": {
+      "sha256": "2eddc891435593a8afe651acbd03aac3e7f3fa31f7478f64432fb0f28123669a",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S02/result.json": {
+      "sha256": "f2054461497f7944aced4a4c689a6c86296ce6141cc54e9b6b51dd65ae9032e6",
+      "bytes": 3821
+    },
+    "live-application/cases/claude-haiku-4.5/S02/sdk.jsonl": {
+      "sha256": "da234a75b7ef897af8f5c81bee7f9a14f028a67caf5debffec8799ed9f807c98",
+      "bytes": 14329
+    },
+    "live-application/cases/claude-haiku-4.5/S02/transport.jsonl": {
+      "sha256": "4177bfc7316508aa419d6481eedf9e9bc396be205786e8dbf1585356e2feee22",
+      "bytes": 39554
+    },
+    "live-application/cases/claude-haiku-4.5/S03/case.json": {
+      "sha256": "2800d1d002bb612e50738dd9baad1d20499e204134e2150ea75bf9cfbecdef27",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S03/controls.json": {
+      "sha256": "e1cb492f8efe1048e65009a38f36049bbb2b91f7247fd3e64b2abd5283e957a0",
+      "bytes": 22409
+    },
+    "live-application/cases/claude-haiku-4.5/S03/native.jsonl": {
+      "sha256": "5cc9aa69c1ffc876cf46c8bcaa8dabe350dfbdf66be11135b8851de18e0d644f",
+      "bytes": 15382
+    },
+    "live-application/cases/claude-haiku-4.5/S03/observation.json": {
+      "sha256": "037845ebb95e245e377e6fce35a728070dca5d8945b35b8ef8e83cae4ee63869",
+      "bytes": 148616
+    },
+    "live-application/cases/claude-haiku-4.5/S03/observation.partial.json": {
+      "sha256": "33890eec83c25b01cbef5e55020e582eecd14dfad9b9a13f8c308fc92fc27041",
+      "bytes": 147121
+    },
+    "live-application/cases/claude-haiku-4.5/S03/oracle.json": {
+      "sha256": "a63c01518ff3f91ec533351a406c69218eaa82fa0d20d3233ea19ba664b46892",
+      "bytes": 2022
+    },
+    "live-application/cases/claude-haiku-4.5/S03/resources.json": {
+      "sha256": "8d4541ac85ebd87e923ad3133a83efac117a3c59527e4eb244c7a580937cf6c1",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S03/result.json": {
+      "sha256": "c62a848dfc1a2ca89d4727edc6801a2ec785aa6a0d8a53288b2ca829e686e360",
+      "bytes": 3856
+    },
+    "live-application/cases/claude-haiku-4.5/S03/sdk.jsonl": {
+      "sha256": "95c462c0428c93485d1bc8301c0fb0c379508526146d20558c27a1734d5c8556",
+      "bytes": 14325
+    },
+    "live-application/cases/claude-haiku-4.5/S03/transport.jsonl": {
+      "sha256": "e27046cf63a522cfc9eb8a9cc9f41433273b703158835bb7949bda21d6111375",
+      "bytes": 55639
+    },
+    "live-application/cases/claude-haiku-4.5/S04/case.json": {
+      "sha256": "9c6dabeed1d32c946b18d10696fad05bb867b5c9e8617d5ddcfee429b015f2f2",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S04/controls.json": {
+      "sha256": "a437217251edc81e5f132ccf925cc721f10a1367d60aa0f81c04061b7e7acd06",
+      "bytes": 3617
+    },
+    "live-application/cases/claude-haiku-4.5/S04/native.jsonl": {
+      "sha256": "f3acd86c9996b1baa91143538db26d22a62fde976e745f6ac4db02ef2913de33",
+      "bytes": 15382
+    },
+    "live-application/cases/claude-haiku-4.5/S04/observation.json": {
+      "sha256": "877e1fbca2c73130cbfaa6aca27271407e0e7a9f9d4b0cb0302ce8dcc34d3313",
+      "bytes": 131943
+    },
+    "live-application/cases/claude-haiku-4.5/S04/observation.partial.json": {
+      "sha256": "745b374354e79c9509ab0329f5a255487a920218c13be0d710448326cae787ab",
+      "bytes": 130595
+    },
+    "live-application/cases/claude-haiku-4.5/S04/oracle.json": {
+      "sha256": "b8531f1523d93fe0c0656f327e2a808599b5cb5182bbfaa7094b95a45961edbd",
+      "bytes": 2003
+    },
+    "live-application/cases/claude-haiku-4.5/S04/resources.json": {
+      "sha256": "5e3375796b3abf4e53eb83644223e9c6e5aea0a3791c24d10297090927883c39",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S04/result.json": {
+      "sha256": "99676b170a8e40065e4ca1b9db21ca3f89c1548a1cae6104dc409c19abad9c13",
+      "bytes": 3836
+    },
+    "live-application/cases/claude-haiku-4.5/S04/sdk.jsonl": {
+      "sha256": "23e3304fe640a43438a58d2ef5e78e9a6e46931811970456af9e8d75aaf6dd79",
+      "bytes": 14409
+    },
+    "live-application/cases/claude-haiku-4.5/S04/transport.jsonl": {
+      "sha256": "bfc8e6cedcc09b2427b3b95d7b59bde3db5c634c0bed07cb553978c50f1c69d5",
+      "bytes": 58859
+    },
+    "live-application/cases/claude-haiku-4.5/S05/case.json": {
+      "sha256": "38efe0450dc89b0beee117478d1f696014f413a892c5d1a575ba5a4aec7e675f",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S05/controls.json": {
+      "sha256": "e72d630c77133a25c51f5f82dfae57a0726138c4b879e27477a53f806a555333",
+      "bytes": 2548
+    },
+    "live-application/cases/claude-haiku-4.5/S05/native.jsonl": {
+      "sha256": "df1e384ef2ef036f7bdd0aa7d5cd45e6e3da9f0afdba18ae8ef9cc348fae6a02",
+      "bytes": 15382
+    },
+    "live-application/cases/claude-haiku-4.5/S05/observation.json": {
+      "sha256": "05861987c289dba030d2f0c521f992616c3f8f1e2c87d451d41ff3aa97f4ebc3",
+      "bytes": 126178
+    },
+    "live-application/cases/claude-haiku-4.5/S05/observation.partial.json": {
+      "sha256": "88e7860370e03866d8a78af7a82340ed103e4d796a577522866355b864c5ee52",
+      "bytes": 124830
+    },
+    "live-application/cases/claude-haiku-4.5/S05/oracle.json": {
+      "sha256": "81440f5c0f2d8930cd015cc7ab1f7b6e82f708461016b3591d3437f65239c2d4",
+      "bytes": 2008
+    },
+    "live-application/cases/claude-haiku-4.5/S05/resources.json": {
+      "sha256": "b82998aab2f877b268bc174905fe6e0c44e371ab92f1ddf9c17fca2e896e0cdd",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S05/result.json": {
+      "sha256": "e8adc996c00b81ea224a0cca0bc4462c414a8f07c2919036efa6effb0f88d409",
+      "bytes": 3841
+    },
+    "live-application/cases/claude-haiku-4.5/S05/sdk.jsonl": {
+      "sha256": "6155209097139e58f54f8082e76d0a4190dea0bb2d1aae4478a98b54fedd004b",
+      "bytes": 14360
+    },
+    "live-application/cases/claude-haiku-4.5/S05/transport.jsonl": {
+      "sha256": "6f9ff477be12d5bb37da9a966e26b4d55b1822851da522759ef338da48caf8c2",
+      "bytes": 54724
+    },
+    "live-application/cases/claude-haiku-4.5/S06/case.json": {
+      "sha256": "961d870f0684c0ec421c5c7804b05c99c7624f7e2bfeff952a1172106897ac74",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S06/controls.json": {
+      "sha256": "067a92404d7594eab82eafa929e4cbd817b1a2440921c6f8cf292b3f4e58de60",
+      "bytes": 1956
+    },
+    "live-application/cases/claude-haiku-4.5/S06/native.jsonl": {
+      "sha256": "dc7c5d2f4e9e60b8fddd5cbd096184531e4b6a5cf980e74c1b014619c6df122c",
+      "bytes": 22966
+    },
+    "live-application/cases/claude-haiku-4.5/S06/observation.json": {
+      "sha256": "368d475d1e82477c6105e0d8b3dcbf0d734bb3ac970005899b8912319bd2fcc5",
+      "bytes": 157979
+    },
+    "live-application/cases/claude-haiku-4.5/S06/observation.partial.json": {
+      "sha256": "a460e09762b7be5bbf9f509f6d3ac6bfd9b4195b6130a4661c506684509845d7",
+      "bytes": 156631
+    },
+    "live-application/cases/claude-haiku-4.5/S06/oracle.json": {
+      "sha256": "71bbcd0a6efae2cc8445fc5a295a67dfb9c50af7a240269111f34d4f5b6dcb5f",
+      "bytes": 2040
+    },
+    "live-application/cases/claude-haiku-4.5/S06/resources.json": {
+      "sha256": "3dba538026b40b728fcc6628f9b3b1732f0607d645b050be995e0cf8c4238e8d",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S06/result.json": {
+      "sha256": "f81737969abe6e874738c9aae35fce6fd747bcad2320805266eb86c76bb2c2f9",
+      "bytes": 3878
+    },
+    "live-application/cases/claude-haiku-4.5/S06/sdk.jsonl": {
+      "sha256": "fcd5a10047e9150064f2bfb742f311028152c995a13cf89e20914c72c5a98f7a",
+      "bytes": 24256
+    },
+    "live-application/cases/claude-haiku-4.5/S06/transport.jsonl": {
+      "sha256": "fec9d301af054815214a3c0935fb75ff1c5edcd681849fb8f3897598b550fa72",
+      "bytes": 55947
+    },
+    "live-application/cases/claude-haiku-4.5/S07/case.json": {
+      "sha256": "910e778d2313d0368351ade7f42aeab6da7e85b1c0f7c64ab789787412a600f3",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S07/controls.json": {
+      "sha256": "c2f0c7c364bf82eb2f2a5b8ed729b024c45c8e118630f5ec51929e3c726490ec",
+      "bytes": 2603
+    },
+    "live-application/cases/claude-haiku-4.5/S07/native.jsonl": {
+      "sha256": "9abc65ce7720bf1db8e53e3d340d106078add8bdea6adb1a96b2d8324c7ed46d",
+      "bytes": 33438
+    },
+    "live-application/cases/claude-haiku-4.5/S07/observation.json": {
+      "sha256": "e02d697583fb012cbcef175db4c8b3002424fe0d0ce4113d910362b23e30aa85",
+      "bytes": 233746
+    },
+    "live-application/cases/claude-haiku-4.5/S07/observation.partial.json": {
+      "sha256": "68e2b9ddeaef3ac6b3b594045f54920b99a0615841381b5e4660f690e276a6cf",
+      "bytes": 232251
+    },
+    "live-application/cases/claude-haiku-4.5/S07/oracle.json": {
+      "sha256": "cd5041d78ba9a830214ca68d0bb749ef7dbf719d28efc38c72b83002962213ad",
+      "bytes": 2030
+    },
+    "live-application/cases/claude-haiku-4.5/S07/resources.json": {
+      "sha256": "bfc1ad91159320d6a17445792634006389b14d0a1ec3a7bca455d963c62239eb",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S07/result.json": {
+      "sha256": "657aa4723cea1afbdd5889a65070798da91c714c51dc582e1a4ea34dae04d727",
+      "bytes": 3951
+    },
+    "live-application/cases/claude-haiku-4.5/S07/sdk.jsonl": {
+      "sha256": "7b1724a8d5732a68f98b2fa5e68a452bca1ce81bda6d07708d6da70d71489157",
+      "bytes": 28393
+    },
+    "live-application/cases/claude-haiku-4.5/S07/transport.jsonl": {
+      "sha256": "88dbb962dfcd17b38751b18d8cb0522dda6fd2ac52ebd98bbc3dd78f6267c300",
+      "bytes": 95770
+    },
+    "live-application/cases/claude-haiku-4.5/S08/case.json": {
+      "sha256": "f884e31c49775dc4ae9b9838ff983b2f22d1f3de6994656f4e7e0c24d7808a02",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S08/controls.json": {
+      "sha256": "3559baabbcd37dc32e565ae58d7ba4db7e7f5fa24a9d93278d046c6637599c2f",
+      "bytes": 3359
+    },
+    "live-application/cases/claude-haiku-4.5/S08/native.jsonl": {
+      "sha256": "65894e2afe17792367670864326d0bf9fa349910600f9a70ba9452edcbd06853",
+      "bytes": 24846
+    },
+    "live-application/cases/claude-haiku-4.5/S08/observation.json": {
+      "sha256": "0ce01907d027e21b00fe8b0c67f8509532b4bf016cffe28617630647e08b51b8",
+      "bytes": 186472
+    },
+    "live-application/cases/claude-haiku-4.5/S08/observation.partial.json": {
+      "sha256": "31716f5c9c2d627965318a3e3740bcde978fd4ef57b82d5d6c4afff0d758634e",
+      "bytes": 185124
+    },
+    "live-application/cases/claude-haiku-4.5/S08/oracle.json": {
+      "sha256": "a12126df6f734cb195052ccf2290489be10a25d56526779fdb6c553a5f5c2075",
+      "bytes": 2217
+    },
+    "live-application/cases/claude-haiku-4.5/S08/resources.json": {
+      "sha256": "81a91cb3a0c767909788842b6f629e187fa238595a5f3551f42e0cafda860f61",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S08/result.json": {
+      "sha256": "65c76c5449850145d323553350639fc7de1cf1a75bf019c956b68cc045e9fba6",
+      "bytes": 4055
+    },
+    "live-application/cases/claude-haiku-4.5/S08/sdk.jsonl": {
+      "sha256": "07c0a78f960ce0c3463bc87e88aaaa204297273d6da1888b8fc8bdfe6245cea5",
+      "bytes": 24048
+    },
+    "live-application/cases/claude-haiku-4.5/S08/transport.jsonl": {
+      "sha256": "c423f118b0134209639715fe13d17677588a7b1c6f335ddc9bab49163898c747",
+      "bytes": 73668
+    },
+    "live-application/cases/claude-haiku-4.5/S09/case.json": {
+      "sha256": "a88c348fb3d3f354aff3770842a157e4f98817518eb5ae283bbc1b1b8016516b",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S09/controls.json": {
+      "sha256": "dee15ab3ec529deef538e981046be825d46bab4472497ca8b4d6476093b2634e",
+      "bytes": 2190
+    },
+    "live-application/cases/claude-haiku-4.5/S09/native.jsonl": {
+      "sha256": "69b962e900ccef57718c87581d5b1db2638ce0b816430e89239128647755801a",
+      "bytes": 31724
+    },
+    "live-application/cases/claude-haiku-4.5/S09/observation.json": {
+      "sha256": "56ab8149e6b95a7a1ce70a15da95b223cfe57a300634bbed10a57b87fb956124",
+      "bytes": 207371
+    },
+    "live-application/cases/claude-haiku-4.5/S09/observation.partial.json": {
+      "sha256": "0b7a7f33923b03c52301656e359aab45d92ee54573886b9d525de159aed66222",
+      "bytes": 188168
+    },
+    "live-application/cases/claude-haiku-4.5/S09/oracle.json": {
+      "sha256": "d991df9b4f061a5318361fa26998e499ee56d3963c1c8985ce9cf7df366b89ac",
+      "bytes": 2039
+    },
+    "live-application/cases/claude-haiku-4.5/S09/resources.json": {
+      "sha256": "133fb62134f31ac185c50e7f3180b0c0a7ba4543589aa00eeadd6fc60d602ae2",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S09/result.json": {
+      "sha256": "5540e2e86830ba4f8776f6e50ebbf879cc4782adaa9e15b31482254b10f10504",
+      "bytes": 3877
+    },
+    "live-application/cases/claude-haiku-4.5/S09/sdk.jsonl": {
+      "sha256": "4947c2d105504fd847cefbf5fac551faefb79dde9cf93f966e0e69819b1e3da5",
+      "bytes": 28743
+    },
+    "live-application/cases/claude-haiku-4.5/S09/transport.jsonl": {
+      "sha256": "df545a2fbe46102ac8ed9133fd7f2b6c9d79879d7c9211638be055437af58204",
+      "bytes": 79841
+    },
+    "live-application/cases/claude-haiku-4.5/S10/case.json": {
+      "sha256": "f1d3a458718ad83cc14ab7856556d9dbfdcda3c3e40198cb36f9824ead40c7c6",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S10/controls.json": {
+      "sha256": "cc7d630597ee9fc0fd3910662005b10711c9ad4893a90d43f7d432b3ee6743b6",
+      "bytes": 1371
+    },
+    "live-application/cases/claude-haiku-4.5/S10/native.jsonl": {
+      "sha256": "f35777c072489e9bbe70002bc0f299342d6cd1c031768025c9e6e017fec3fccf",
+      "bytes": 35932
+    },
+    "live-application/cases/claude-haiku-4.5/S10/observation.json": {
+      "sha256": "8ec55c3913a572b883581b6bbef3de2b3f6d899aa44207e7aa4bb361cb9df7c8",
+      "bytes": 207135
+    },
+    "live-application/cases/claude-haiku-4.5/S10/observation.partial.json": {
+      "sha256": "21deedbebf587377cb5ccc550f61ca81dffce9add7a77fb2f262bb3ed8ee157d",
+      "bytes": 205576
+    },
+    "live-application/cases/claude-haiku-4.5/S10/oracle.json": {
+      "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+      "bytes": 1848
+    },
+    "live-application/cases/claude-haiku-4.5/S10/resources.json": {
+      "sha256": "18d5896255e5ff56537f78fd32cf5f6d5e740175dd6db22cf9eff5fe19f05788",
+      "bytes": 487
+    },
+    "live-application/cases/claude-haiku-4.5/S10/result.json": {
+      "sha256": "100a60874fcb73a4b5df202637d5bc3fb025efbe5611dcfdd82497b5958120e5",
+      "bytes": 3754
+    },
+    "live-application/cases/claude-haiku-4.5/S10/sdk.jsonl": {
+      "sha256": "598181e57542dc4c61541cf9e4f26c7ce54d88733d07290ba959b425b432ab7d",
+      "bytes": 26931
+    },
+    "live-application/cases/claude-haiku-4.5/S10/transport.jsonl": {
+      "sha256": "c27e9fd6ab652bf484968e85c9b4e3b244e18f07ac036eeb607ae506d091bb4f",
+      "bytes": 76085
+    },
+    "live-application/cases/claude-haiku-4.5/S11/case.json": {
+      "sha256": "b2c993df163a8dee7cc35081a8099bfde099967084afe71c915f3c082b93466c",
+      "bytes": 410
+    },
+    "live-application/cases/claude-haiku-4.5/S11/controls.json": {
+      "sha256": "edb89477c1298ee7ffd460282639e89aa87be193d1206ae027df754961ee2b03",
+      "bytes": 4060
+    },
+    "live-application/cases/claude-haiku-4.5/S11/native.jsonl": {
+      "sha256": "b2e375e0ee12e04e4efa98b2f9bfbf4a5b24c8ef8d86b23f7fa16d2cbc193e73",
+      "bytes": 160286
+    },
+    "live-application/cases/claude-haiku-4.5/S11/observation.json": {
+      "sha256": "a14df50b50e3bc2c5765a33a104b934fa8cd449177b7a466f77a7685447c7dee",
+      "bytes": 1000835
+    },
+    "live-application/cases/claude-haiku-4.5/S11/observation.partial.json": {
+      "sha256": "98c5a42757b206b6c4644dba3978f2de1f479113f8cb2e52ba4c3708c6701b67",
+      "bytes": 999340
+    },
+    "live-application/cases/claude-haiku-4.5/S11/oracle.json": {
+      "sha256": "346aae2e25689e3ffc633bce3c5655eaa3fa64353b4b259e34095d5704468cac",
+      "bytes": 2035
+    },
+    "live-application/cases/claude-haiku-4.5/S11/resources.json": {
+      "sha256": "b710bb49fda7b94211147c4afbed60574779c2eccd2bd6caa00b2998fb89a920",
+      "bytes": 296
+    },
+    "live-application/cases/claude-haiku-4.5/S11/result.json": {
+      "sha256": "35f124d2e856ec64c1e31b893da4efb6bae623c4690591ded1fa12935a446d5f",
+      "bytes": 4354
+    },
+    "live-application/cases/claude-haiku-4.5/S11/sdk.jsonl": {
+      "sha256": "bdeb0eb80845c54b372695d78dcb1245b188d33207418a8ed688c22162701940",
+      "bytes": 92043
+    },
+    "live-application/cases/claude-haiku-4.5/S11/transport.jsonl": {
+      "sha256": "6deb7171f61804931f88b5609d0e25db234b627191d4001d92506f2a6a5e6310",
+      "bytes": 489408
+    },
+    "live-application/cases/claude-opus-5/S01/case.json": {
+      "sha256": "b0a802c65f924532e5a56b7257826e8897416dd3e703bec9508f12dd7ad199e6",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S01/controls.json": {
+      "sha256": "fd918e8fdbdb163c704b994aa823ce0fddfbf74b2b39235212942ebf9bde4f15",
+      "bytes": 1147
+    },
+    "live-application/cases/claude-opus-5/S01/native.jsonl": {
+      "sha256": "40d69c2b40e18ad28b4163f05a5105bad0ff67a0f629e89c25e3cc7a4b26db65",
+      "bytes": 14248
+    },
+    "live-application/cases/claude-opus-5/S01/observation.json": {
+      "sha256": "f550d3f9ea5b153b0e9715e64c9f7d3a8b6f7edc6e6d402e08dc86b688e8836c",
+      "bytes": 99225
+    },
+    "live-application/cases/claude-opus-5/S01/observation.partial.json": {
+      "sha256": "257e900a27f673ec0d5846349061f7915cab1ae008841ef33db6ffe597832583",
+      "bytes": 97877
+    },
+    "live-application/cases/claude-opus-5/S01/oracle.json": {
+      "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+      "bytes": 1932
+    },
+    "live-application/cases/claude-opus-5/S01/resources.json": {
+      "sha256": "8dc337d590aaf61a32dd1a12ae2a3eae1a49ae8362877e72e4ffb1d54009dc57",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S01/result.json": {
+      "sha256": "35ca3182b1953fffdc7e798a25ad4ca1e719618f707a7e3a5b9c4539d4f1ad6a",
+      "bytes": 3751
+    },
+    "live-application/cases/claude-opus-5/S01/sdk.jsonl": {
+      "sha256": "2642eb2e256dce9502c380660df446adb060602c6f21b26efbcdc0d38b2f209f",
+      "bytes": 11548
+    },
+    "live-application/cases/claude-opus-5/S01/transport.jsonl": {
+      "sha256": "39eae119e92352af25ea446296cb66448e45bf89674a6ca56ac35fd5346f4b4b",
+      "bytes": 38929
+    },
+    "live-application/cases/claude-opus-5/S02/case.json": {
+      "sha256": "d8f0190a9ff317ba90388237b05ff30acc49ab06e9c48db2eef6f296d557e429",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S02/controls.json": {
+      "sha256": "41efba3323d19d2dad6cc330f6b4e399f9417e5002c77f9d83009fbe16c79bf9",
+      "bytes": 40769
+    },
+    "live-application/cases/claude-opus-5/S02/native.jsonl": {
+      "sha256": "6d0a9275c28a6a9eb90143f1b0fc076e0544374f9510b8689c3e73843bdf35ab",
+      "bytes": 15697
+    },
+    "live-application/cases/claude-opus-5/S02/observation.json": {
+      "sha256": "6ae15e31aaff4d7a5c6c3da81d501e8ce61698d08e24a7061748b79ab2532874",
+      "bytes": 144926
+    },
+    "live-application/cases/claude-opus-5/S02/observation.partial.json": {
+      "sha256": "efe2b5eb76bff02ee6fa9e4107847f740d1c3fad70a3634aa42228086ff2c61a",
+      "bytes": 143578
+    },
+    "live-application/cases/claude-opus-5/S02/oracle.json": {
+      "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+      "bytes": 1986
+    },
+    "live-application/cases/claude-opus-5/S02/resources.json": {
+      "sha256": "baba8c02c2198d9e603a00f5879f31405121a476d38059f11ca52ff75e8c124e",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S02/result.json": {
+      "sha256": "28a6bd9600aa180149d8f156658183cefc0ff2ce9cbb60f0a62c930ed43da19d",
+      "bytes": 3808
+    },
+    "live-application/cases/claude-opus-5/S02/sdk.jsonl": {
+      "sha256": "951ae617ba3ec2325c7d54c9332e5d162156f7a2ba92fb435d58d988c4cf75eb",
+      "bytes": 11590
+    },
+    "live-application/cases/claude-opus-5/S02/transport.jsonl": {
+      "sha256": "2fab545854a825c196063ea3f55598a7b1d3b9cddfa3204d52711b24aa14b43e",
+      "bytes": 41412
+    },
+    "live-application/cases/claude-opus-5/S03/case.json": {
+      "sha256": "19635e89e572842d5cbecde5530451715c2e33c5ae403764b6d5c8331949c323",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S03/controls.json": {
+      "sha256": "5cf7c395db977355aa8159dca419b846713e0e888965fb4003280bfd2a86e027",
+      "bytes": 22425
+    },
+    "live-application/cases/claude-opus-5/S03/native.jsonl": {
+      "sha256": "bb62c8d1d3238a592837e8c7e673a6a728cbf737ab4868466f7275aa03760477",
+      "bytes": 14255
+    },
+    "live-application/cases/claude-opus-5/S03/observation.json": {
+      "sha256": "4b5867cde681f504492db576337eebebdd5db3390c649231f2ae762efe361491",
+      "bytes": 143172
+    },
+    "live-application/cases/claude-opus-5/S03/observation.partial.json": {
+      "sha256": "b10cfae5c482acf8d8211a2f98b8b4db077beaa8fa719080102f4ca9ee140df6",
+      "bytes": 141677
+    },
+    "live-application/cases/claude-opus-5/S03/oracle.json": {
+      "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+      "bytes": 2021
+    },
+    "live-application/cases/claude-opus-5/S03/resources.json": {
+      "sha256": "881d8b8d30d252d34298b63f7e4564a417dc5eca8391a9dc54ca393a1dbb03fc",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S03/result.json": {
+      "sha256": "31bc653397bb1a5e213b1040da51467f9d51247fdb22e7af34137de4507558fe",
+      "bytes": 3842
+    },
+    "live-application/cases/claude-opus-5/S03/sdk.jsonl": {
+      "sha256": "db8dec3bfc2efa98884404308ba3f3cb836ffd60561b98a5eeed315aaeb0b097",
+      "bytes": 11557
+    },
+    "live-application/cases/claude-opus-5/S03/transport.jsonl": {
+      "sha256": "e06bbf9af639854c128214f3c772b0e795579d090638301c2b31a8101ea69bb6",
+      "bytes": 54784
+    },
+    "live-application/cases/claude-opus-5/S04/case.json": {
+      "sha256": "e81fdb5610862d82e69aae3da457af6506e95cc43835527919fad36df4aa2d05",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S04/controls.json": {
+      "sha256": "7575c14745cb228d66c0c2dba2059c181ff0854dea10bd316c4b622cf69492ff",
+      "bytes": 3653
+    },
+    "live-application/cases/claude-opus-5/S04/native.jsonl": {
+      "sha256": "f3aeab4ff8fba46311c3fed89d59f70036eb8b758a5352c653daaf7fe3b09936",
+      "bytes": 14541
+    },
+    "live-application/cases/claude-opus-5/S04/observation.json": {
+      "sha256": "1780d117b07d4577f3fd6500a4c9426c9c68b568273932cee3962537bc558b74",
+      "bytes": 127144
+    },
+    "live-application/cases/claude-opus-5/S04/observation.partial.json": {
+      "sha256": "82fe80ba4eabd446902b7271d59f4b92e98f523a43f74a17e5c81f672cc8c3f5",
+      "bytes": 79973
+    },
+    "live-application/cases/claude-opus-5/S04/oracle.json": {
+      "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+      "bytes": 2002
+    },
+    "live-application/cases/claude-opus-5/S04/resources.json": {
+      "sha256": "02521b7a84126bbcb05f422d222c29348b775880bebc37a95ea14b415f38d0e7",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S04/result.json": {
+      "sha256": "8934b36ef24a98e9fdccc186b118ac4ee39650030e6f01fe3aca6dfc6c10aa48",
+      "bytes": 3822
+    },
+    "live-application/cases/claude-opus-5/S04/sdk.jsonl": {
+      "sha256": "962e16610e3c022b1de3a580d8b6004171662d8d60b6aa797ffa0e4e6f430827",
+      "bytes": 11543
+    },
+    "live-application/cases/claude-opus-5/S04/transport.jsonl": {
+      "sha256": "e49cf2060e92c2317cffed6c480e491d4c86a28ecd72e48831618c04fd14e6d8",
+      "bytes": 58317
+    },
+    "live-application/cases/claude-opus-5/S05/case.json": {
+      "sha256": "f4d3804906e6d36d665ad9a3095f61bdd39be5376692bded04b406aaf7886927",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S05/controls.json": {
+      "sha256": "cf3a8fb4fce717f766a82fb653f2357cb6e6777ca1797257fdb2810e0cbf4511",
+      "bytes": 2548
+    },
+    "live-application/cases/claude-opus-5/S05/native.jsonl": {
+      "sha256": "01c4f4b9027ff067362b1359b3e3c4a5c99588e422b311047755dd78f2e3c242",
+      "bytes": 14255
+    },
+    "live-application/cases/claude-opus-5/S05/observation.json": {
+      "sha256": "4f12272b63b6c6e4acf8f0afd3733d33a74e0820667b327f2aa846353e72722a",
+      "bytes": 120666
+    },
+    "live-application/cases/claude-opus-5/S05/observation.partial.json": {
+      "sha256": "b56affaec8e569ad3b93d6aa7b6df8b43624fa421ff2511ba489db239065a313",
+      "bytes": 119171
+    },
+    "live-application/cases/claude-opus-5/S05/oracle.json": {
+      "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+      "bytes": 2007
+    },
+    "live-application/cases/claude-opus-5/S05/resources.json": {
+      "sha256": "59b84a1a394e2ede5870d78654d2aa5c59f8a752148b05fb0d7e1fdc59cbaf29",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S05/result.json": {
+      "sha256": "744adc7c3702bca8758c36ebc32a6e44859b28caae0bb76d33bcf7dad6b2e208",
+      "bytes": 3827
+    },
+    "live-application/cases/claude-opus-5/S05/sdk.jsonl": {
+      "sha256": "bb9c9bcb328b684c03754e9ac7671219df5e4c966404f1b0567f13a407e9b21d",
+      "bytes": 11541
+    },
+    "live-application/cases/claude-opus-5/S05/transport.jsonl": {
+      "sha256": "2c526426981b475e64e80ea98158039af22bcff549b9178b0eb8e8a93ad65583",
+      "bytes": 53872
+    },
+    "live-application/cases/claude-opus-5/S06/case.json": {
+      "sha256": "f2ffcec8e08e7d8ba0856d10ba83a1411eb4e969308db04b153db36764df9f6f",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S06/controls.json": {
+      "sha256": "13a30e8be15280c089e8687b95b27120e8bfe4be86f3a2ef84c14c873140d66c",
+      "bytes": 1956
+    },
+    "live-application/cases/claude-opus-5/S06/native.jsonl": {
+      "sha256": "c602c4325db86c522f74da3b18727517903956fa19c008b9d9190f2777c2f640",
+      "bytes": 21795
+    },
+    "live-application/cases/claude-opus-5/S06/observation.json": {
+      "sha256": "b9f02627b0e77ac8e928cfc91e68e70aa5980aee392ff02f65a22bf9fdc6a5d6",
+      "bytes": 150860
+    },
+    "live-application/cases/claude-opus-5/S06/observation.partial.json": {
+      "sha256": "da24d6fb5de7222fc890856d1d8857b73576e47d7f358fa828ab5a561dd0042a",
+      "bytes": 149512
+    },
+    "live-application/cases/claude-opus-5/S06/oracle.json": {
+      "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+      "bytes": 2039
+    },
+    "live-application/cases/claude-opus-5/S06/resources.json": {
+      "sha256": "7c13f6abc8937bd9ffd5e27c751c01b5d2d96628996aa074b46a62882f2cf245",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S06/result.json": {
+      "sha256": "22cc202d532ab60a1e3756fd949491d6fc95fb917e2cb9a4cef7bc3f1642d423",
+      "bytes": 3864
+    },
+    "live-application/cases/claude-opus-5/S06/sdk.jsonl": {
+      "sha256": "14bdb1198eb9439b20b16d46fcddf337ee4718bb4a7ef438f3c7d0a7e40c4939",
+      "bytes": 20033
+    },
+    "live-application/cases/claude-opus-5/S06/transport.jsonl": {
+      "sha256": "802260c0554fe8792935bf5ea94bff3ec90d98fda6dbb1e17c0a6740ab31a6da",
+      "bytes": 55083
+    },
+    "live-application/cases/claude-opus-5/S07/case.json": {
+      "sha256": "3ad15245cc3dcc1340a5bbb169ce9d90b8e61939f129fea1cf5ce425e53325fc",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S07/controls.json": {
+      "sha256": "f089c0eda55176f407d156733f2c60b08738aa5cd37e9a28c27e2417fc450ab2",
+      "bytes": 2600
+    },
+    "live-application/cases/claude-opus-5/S07/native.jsonl": {
+      "sha256": "09c41ef08f6d58a5aec4fc888cb389422286f429fdc3e8c0ff84122db7dd4128",
+      "bytes": 31180
+    },
+    "live-application/cases/claude-opus-5/S07/observation.json": {
+      "sha256": "31efd384bd2026596338edaaa61ce269e6e4d95b5b13ae3dc61c54c8d55a29bf",
+      "bytes": 222740
+    },
+    "live-application/cases/claude-opus-5/S07/observation.partial.json": {
+      "sha256": "0ed56d865d3d1cc93d4015eeb2d4ac88001c5b1ffda6f9855361b90616675759",
+      "bytes": 221392
+    },
+    "live-application/cases/claude-opus-5/S07/oracle.json": {
+      "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+      "bytes": 2029
+    },
+    "live-application/cases/claude-opus-5/S07/resources.json": {
+      "sha256": "f3fa902d1559c9357a13c7e54d7436227890d59f59796802250be4db988a9254",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S07/result.json": {
+      "sha256": "f78475397371a432f69ebfc143f5a0bb2cde32ce7b95864a8f86e5d5648fc6f5",
+      "bytes": 3937
+    },
+    "live-application/cases/claude-opus-5/S07/sdk.jsonl": {
+      "sha256": "9c120a1e2c151ab2746a0cd91aa14c3f30453ede2f96c318a8b77fdd40ab05c8",
+      "bytes": 22783
+    },
+    "live-application/cases/claude-opus-5/S07/transport.jsonl": {
+      "sha256": "8873efcd6d376e34dbf8c3dd69cc964b565eef7777ec7c994529db7dae30ffcb",
+      "bytes": 94076
+    },
+    "live-application/cases/claude-opus-5/S08/case.json": {
+      "sha256": "ec2e681bef5c4bf1aa59c230c9106a452bc45a9fb1e54fade10f3444f7bb1d63",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S08/controls.json": {
+      "sha256": "0f4d0f66475ea957956052c2f151ce06506d23a935d1df367361e06cf541607d",
+      "bytes": 3356
+    },
+    "live-application/cases/claude-opus-5/S08/native.jsonl": {
+      "sha256": "46721bb987242e94cd53673dbcbd3ddc51762bd17385e05e5c0bfb802bf2a532",
+      "bytes": 23678
+    },
+    "live-application/cases/claude-opus-5/S08/observation.json": {
+      "sha256": "ec931447c6a5c38fd1a55fd8f2dc60dcbd87c4523234e703181359a5c6a70503",
+      "bytes": 179377
+    },
+    "live-application/cases/claude-opus-5/S08/observation.partial.json": {
+      "sha256": "8e3768d3e8cc509536997c7a2bd6818c4685889ca085489d28a22abdc62359ff",
+      "bytes": 177882
+    },
+    "live-application/cases/claude-opus-5/S08/oracle.json": {
+      "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+      "bytes": 2216
+    },
+    "live-application/cases/claude-opus-5/S08/resources.json": {
+      "sha256": "260b4587fff4dfbab3e2b97c49dc1306aa6b7ba7c1eb4d569d8eb5b370957d7a",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S08/result.json": {
+      "sha256": "d48fc38177eb6cb333f28b3281c1eeffdb57b6fdaa6c4a3913c1300320ebe517",
+      "bytes": 4041
+    },
+    "live-application/cases/claude-opus-5/S08/sdk.jsonl": {
+      "sha256": "749b23177c12ed0fc63e350e171af1de2e202ad17842e08b80b4f383ef8b3b3a",
+      "bytes": 19831
+    },
+    "live-application/cases/claude-opus-5/S08/transport.jsonl": {
+      "sha256": "bce563647a0d801a52c371292ba67e50b4bf0ee5207e42579f048d0660766200",
+      "bytes": 72801
+    },
+    "live-application/cases/claude-opus-5/S09/case.json": {
+      "sha256": "a326f057c51c51c769a0676d740ed6d54dee1c0bc1941cfadf2b50bdc4778c6d",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S09/controls.json": {
+      "sha256": "d5ceb9178ea4c9fe3d86d7ab651d96486b23061c85482bae26dad4dfd4656a6d",
+      "bytes": 2190
+    },
+    "live-application/cases/claude-opus-5/S09/native.jsonl": {
+      "sha256": "29ef8afeb70890451d7ab6935b57ead6f33c0a8f020bc8124173266d620a7af3",
+      "bytes": 29597
+    },
+    "live-application/cases/claude-opus-5/S09/observation.json": {
+      "sha256": "66951a96b73bdf609ff48d9593a2f37f25ff6abe63cd173e6e1c1b5fb7b41c7b",
+      "bytes": 197993
+    },
+    "live-application/cases/claude-opus-5/S09/observation.partial.json": {
+      "sha256": "2e67d9ee9a99de75f562f7ad6f4b5f599653f30de59fb3cd92d97912644b89a5",
+      "bytes": 180442
+    },
+    "live-application/cases/claude-opus-5/S09/oracle.json": {
+      "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+      "bytes": 2038
+    },
+    "live-application/cases/claude-opus-5/S09/resources.json": {
+      "sha256": "9f0c3cf9741ba3a64a5efa676c1586f98535655e8913b45ba53662151efd5dfc",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S09/result.json": {
+      "sha256": "d9d18c8daa5346107b11e7cf934066ddbaea741158b38f25f4d3549641a2b04a",
+      "bytes": 3863
+    },
+    "live-application/cases/claude-opus-5/S09/sdk.jsonl": {
+      "sha256": "8bbd6e0a4cd3e6bf739ed4d89d9dde787b86edd426d3508c6856f0ffba6d0f15",
+      "bytes": 23082
+    },
+    "live-application/cases/claude-opus-5/S09/transport.jsonl": {
+      "sha256": "d926e58ba9e09be224b6ebbe939657715cd69360d1dc6af6348268138574f79d",
+      "bytes": 79383
+    },
+    "live-application/cases/claude-opus-5/S10/case.json": {
+      "sha256": "a6dd3f0b00c51a6edaae81beec255cc00d8096e6adc44a84f84389660d5c6781",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S10/controls.json": {
+      "sha256": "7cdd697f5755072244c4a6d78fcd0a52bf42358d39d9e4b9875abe480d65e5a4",
+      "bytes": 867
+    },
+    "live-application/cases/claude-opus-5/S10/native.jsonl": {
+      "sha256": "89a2b5171c9f632339baa1849400a93c844511a83e45c743bb373fb3fc4f9815",
+      "bytes": 25828
+    },
+    "live-application/cases/claude-opus-5/S10/observation.json": {
+      "sha256": "68236bff3c0dd92dfae0894098aaaf05c963c8d44a03f398d0efe77b106ce3d0",
+      "bytes": 176139
+    },
+    "live-application/cases/claude-opus-5/S10/observation.partial.json": {
+      "sha256": "d6ce762889dac58798f9adf54dbb87e413bd18fb703298d2430a7386b1cdf587",
+      "bytes": 169473
+    },
+    "live-application/cases/claude-opus-5/S10/oracle.json": {
+      "sha256": "5c44a395a5ee51f36cdfc8f03943ae44214d1b6ece4e838014c9638c748efe23",
+      "bytes": 1851
+    },
+    "live-application/cases/claude-opus-5/S10/resources.json": {
+      "sha256": "928cf48226eb4f41fb59662e8dd11bf0394bba69d10996b2a7f9bc3237beccbf",
+      "bytes": 487
+    },
+    "live-application/cases/claude-opus-5/S10/result.json": {
+      "sha256": "7f35d76c5ed5e5861399af1a2e316135c40a10977baa23ce11254e8c384a121f",
+      "bytes": 3936
+    },
+    "live-application/cases/claude-opus-5/S10/sdk.jsonl": {
+      "sha256": "e63a3e6e67523ad68539d9570224a5a5a77a2b4ca71498a6f5f2314deb3625ff",
+      "bytes": 22029
+    },
+    "live-application/cases/claude-opus-5/S10/transport.jsonl": {
+      "sha256": "f93f6860cd2fa101f021d9b4ab7c58eba91b4fd04c5032646503f9a34fbb0853",
+      "bytes": 65337
+    },
+    "live-application/cases/claude-opus-5/S11/case.json": {
+      "sha256": "7922a6dcaac29f33de74de1ae5eeff13235e7d54e65aa5e9353be0791796d04e",
+      "bytes": 407
+    },
+    "live-application/cases/claude-opus-5/S11/controls.json": {
+      "sha256": "0605dd401a74277df21e391bdad9df7387ee30ebbe9ba75e9d9ca3a8df9d44ba",
+      "bytes": 867
+    },
+    "live-application/cases/claude-opus-5/S11/native.jsonl": {
+      "sha256": "5e3971f7e61df53458455b68223b86ed0a45488a16163479e9e8db937b625220",
+      "bytes": 19581
+    },
+    "live-application/cases/claude-opus-5/S11/observation.json": {
+      "sha256": "ead88c86755e8cb83877cda22917d790e5da075e8fc13871e6bf331b00c0f8ec",
+      "bytes": 149974
+    },
+    "live-application/cases/claude-opus-5/S11/observation.partial.json": {
+      "sha256": "6f5466352f9e125cc3707ec7909f46e7eb61682c4d6cec0248733938a934e471",
+      "bytes": 138736
+    },
+    "live-application/cases/claude-opus-5/S11/oracle.json": {
+      "sha256": "276a337af260aa268796c983d6f27460170fc14ef1d1b80917cdf756e7c7cfaf",
+      "bytes": 2039
+    },
+    "live-application/cases/claude-opus-5/S11/resources.json": {
+      "sha256": "d129884f7516d5d0191be68d1d6f7987a2acf58fee2632322041d77d3240aa5d",
+      "bytes": 296
+    },
+    "live-application/cases/claude-opus-5/S11/result.json": {
+      "sha256": "d000a0939c90b0b9723b144748094623b1085959fd2986a124553f16cf63a748",
+      "bytes": 4126
+    },
+    "live-application/cases/claude-opus-5/S11/sdk.jsonl": {
+      "sha256": "c88044e7a59f9e7b76aafb8e90d7888c98ec5da750143e9b1b27dfb6c869d869",
+      "bytes": 15770
+    },
+    "live-application/cases/claude-opus-5/S11/transport.jsonl": {
+      "sha256": "6cf59a8c1640627e4e6eb82a9b19b0a03d09600130aaba3fc1c23335dfbbbb14",
+      "bytes": 65179
+    },
+    "live-application/cases/claude-sonnet-5/S01/case.json": {
+      "sha256": "23fefe85cca08ec3a9e21526cee98e1161aa4cfb0d4d6422952d107d1b0ee09b",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S01/controls.json": {
+      "sha256": "4065daf87b53b24789f5e2ab544b61b55d5f8230e4f0370b4360b18b3137e4e2",
+      "bytes": 1147
+    },
+    "live-application/cases/claude-sonnet-5/S01/native.jsonl": {
+      "sha256": "adb09e964a734b6a5eaedf3bfe2a095cb6596da0a9c49f2113f7d4db2b7a1fba",
+      "bytes": 14550
+    },
+    "live-application/cases/claude-sonnet-5/S01/observation.json": {
+      "sha256": "8ae1d4a8acf59605d8ad090549c00762cc1f0df6882cdf20644e2cd37ac382b0",
+      "bytes": 99933
+    },
+    "live-application/cases/claude-sonnet-5/S01/observation.partial.json": {
+      "sha256": "6450dc13675c74a9bd1d49357a51513b6bb13e4b2b1630c02fef5e4f078595fa",
+      "bytes": 98585
+    },
+    "live-application/cases/claude-sonnet-5/S01/oracle.json": {
+      "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+      "bytes": 1932
+    },
+    "live-application/cases/claude-sonnet-5/S01/resources.json": {
+      "sha256": "a37a401514eeeac2e388c12570959b797d98506a7cb0e45708a9dc333249b7eb",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S01/result.json": {
+      "sha256": "e881eea142da3ddabe0f03e92f11e2071058ce6f5fe8e070c35dc5a9228b728e",
+      "bytes": 3753
+    },
+    "live-application/cases/claude-sonnet-5/S01/sdk.jsonl": {
+      "sha256": "80625c69b0d4b977354b5de850845b642061ea429fdf553834caedbeb0e055e4",
+      "bytes": 11568
+    },
+    "live-application/cases/claude-sonnet-5/S01/transport.jsonl": {
+      "sha256": "d649a8cbe9e501bd3bfc3765aa14bab2f5a7c110fd53ec86251c62079a7a4f89",
+      "bytes": 39171
+    },
+    "live-application/cases/claude-sonnet-5/S02/case.json": {
+      "sha256": "8c44f735e014e93650d111c9c1c3870b514905f4e94ff1d95b6a3d4b203bec7b",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S02/controls.json": {
+      "sha256": "ba6785afc11382bc6d06e873fd6acf501a0aa3bab026a4ff1bc944d1d577c9b0",
+      "bytes": 40135
+    },
+    "live-application/cases/claude-sonnet-5/S02/native.jsonl": {
+      "sha256": "4ad88eeb3a8e6c836192b73b45069ad84ae07e69f5d1fd2e81e2d2ca9a8fd0d5",
+      "bytes": 14569
+    },
+    "live-application/cases/claude-sonnet-5/S02/observation.json": {
+      "sha256": "0bbb471234923b345b86912e2cb73401976559d894ebc1b0c40a4d24b807e48c",
+      "bytes": 140120
+    },
+    "live-application/cases/claude-sonnet-5/S02/observation.partial.json": {
+      "sha256": "a6ac0d78918cf5bd4efd59eb7edd95df4b72ecd4f9d4a7b61a8b4c3df4ebbba3",
+      "bytes": 138625
+    },
+    "live-application/cases/claude-sonnet-5/S02/oracle.json": {
+      "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+      "bytes": 1986
+    },
+    "live-application/cases/claude-sonnet-5/S02/resources.json": {
+      "sha256": "56740bd95eaaeb79a9f327d98d3d4f038d999d4de90ac1bf3797f6d28b3d6b26",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S02/result.json": {
+      "sha256": "27879cb851caec5b30931a91c3ba191933f156c0f9018eeddaf9b7bc824cabaf",
+      "bytes": 3809
+    },
+    "live-application/cases/claude-sonnet-5/S02/sdk.jsonl": {
+      "sha256": "7a4a0c7bb5f10ac9c40ffa2cf9c909c83f494a786b7da40339a5ed134a1b9baf",
+      "bytes": 11565
+    },
+    "live-application/cases/claude-sonnet-5/S02/transport.jsonl": {
+      "sha256": "8473675079559039cd2594528409d66861720cb5599a41010ec84bf548690aad",
+      "bytes": 39194
+    },
+    "live-application/cases/claude-sonnet-5/S03/case.json": {
+      "sha256": "d99b7fdffff602d72a2ee8a7d8d0d8609b85695ca150a825b3af4b5b599434fe",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S03/controls.json": {
+      "sha256": "8f6d9eed44b54fbc436ccc935011a8ac8564b6c710173e9d863e82633c66ca43",
+      "bytes": 22435
+    },
+    "live-application/cases/claude-sonnet-5/S03/native.jsonl": {
+      "sha256": "fb50fce7d6d515803361678ced8ff59458f14a8679351f3685ca411a4cfbe939",
+      "bytes": 14569
+    },
+    "live-application/cases/claude-sonnet-5/S03/observation.json": {
+      "sha256": "1f51a1c8e6db848803db64e93658c68cc97ebcd4e5c0fb5520c7863bb59a8aec",
+      "bytes": 143938
+    },
+    "live-application/cases/claude-sonnet-5/S03/observation.partial.json": {
+      "sha256": "ee0f903cfcc5c7028edff3c1440b8373409a967098c3c875553792bd9453cc06",
+      "bytes": 142590
+    },
+    "live-application/cases/claude-sonnet-5/S03/oracle.json": {
+      "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+      "bytes": 2021
+    },
+    "live-application/cases/claude-sonnet-5/S03/resources.json": {
+      "sha256": "17e08a06b10c7717ea0528c441c4eaeee54ca979c4c135e55324fbb0e0267168",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S03/result.json": {
+      "sha256": "c6cd4879ebecb24febc7cf35b7ed91dd174c57f76782a562f99e742415f1dce7",
+      "bytes": 3844
+    },
+    "live-application/cases/claude-sonnet-5/S03/sdk.jsonl": {
+      "sha256": "19cc400218e8c910fae9e8422976bb3d86f07e6b87d7420aa103b10a7e38fbc7",
+      "bytes": 11579
+    },
+    "live-application/cases/claude-sonnet-5/S03/transport.jsonl": {
+      "sha256": "9440d083bc14e2e53e0240a089ec5a0bad1fa7884bdac619425ed9d31c45b057",
+      "bytes": 55056
+    },
+    "live-application/cases/claude-sonnet-5/S04/case.json": {
+      "sha256": "010dd064a109bf2850071b483d42c7abc635a3ec96e0ec8202261f7f10ea7e64",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S04/controls.json": {
+      "sha256": "4d65c15cd361cd178cbbf3d6d9766bf95333ac0c96312af323e7272fc2ddde90",
+      "bytes": 3645
+    },
+    "live-application/cases/claude-sonnet-5/S04/native.jsonl": {
+      "sha256": "50a244adbfcf29dce33a20bd5f9e880f63d003451612e5e5d88957a9e815b2dc",
+      "bytes": 14560
+    },
+    "live-application/cases/claude-sonnet-5/S04/observation.json": {
+      "sha256": "7cea0f80a5587ceac69198c25370920d66c22c17a412880d730d771c8b7c95ab",
+      "bytes": 128284
+    },
+    "live-application/cases/claude-sonnet-5/S04/observation.partial.json": {
+      "sha256": "adbcc41e9885f3de256a33438e9e191532b7b763504e42c2fd99bd9944c869b6",
+      "bytes": 126789
+    },
+    "live-application/cases/claude-sonnet-5/S04/oracle.json": {
+      "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+      "bytes": 2002
+    },
+    "live-application/cases/claude-sonnet-5/S04/resources.json": {
+      "sha256": "d834fbcde96c146dc5b428ba3836c073c9a82a323d87afd3fb0475825bc1ef4e",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S04/result.json": {
+      "sha256": "ea4b0871b84dd1233e975cd951a4ff71784e4d041235083f9495f5b6020792bf",
+      "bytes": 3824
+    },
+    "live-application/cases/claude-sonnet-5/S04/sdk.jsonl": {
+      "sha256": "ec21a693ff9f062f3338ca7b617c6ee3a47b7f7aae368e659270b1bada3ea083",
+      "bytes": 12511
+    },
+    "live-application/cases/claude-sonnet-5/S04/transport.jsonl": {
+      "sha256": "ab1ea65bc5396117fc5ff55e90159c8edab29c13a8bba3c16253b76eae8ec0c0",
+      "bytes": 58324
+    },
+    "live-application/cases/claude-sonnet-5/S05/case.json": {
+      "sha256": "b01a86062d1708b84eedf6cb03c1298662607a26ee3a9593987c2ba07529af1b",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S05/controls.json": {
+      "sha256": "7b05285e63f93767f2872e29257c37e73b0ae211bd0e25d007f78e3123cc030e",
+      "bytes": 2548
+    },
+    "live-application/cases/claude-sonnet-5/S05/native.jsonl": {
+      "sha256": "30d4407bb12e2e99952384d5c96ab5dc3775dfeeab49fe9ed8f7c2bbac3f0fb4",
+      "bytes": 14572
+    },
+    "live-application/cases/claude-sonnet-5/S05/observation.json": {
+      "sha256": "9b1d666ce5b928d53f5e29ca50724fcb5fe013d4ba9bbe93f102d1a26481274b",
+      "bytes": 122498
+    },
+    "live-application/cases/claude-sonnet-5/S05/observation.partial.json": {
+      "sha256": "e26300e41f47ad6fb7b056804bb5d9226ed3a80d0507bade3597867435cce3fe",
+      "bytes": 101793
+    },
+    "live-application/cases/claude-sonnet-5/S05/oracle.json": {
+      "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+      "bytes": 2007
+    },
+    "live-application/cases/claude-sonnet-5/S05/resources.json": {
+      "sha256": "24b6945a0517aa2b2a45fd935c9cf4bde6b078b1c4bd224e3407f2f606bade75",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S05/result.json": {
+      "sha256": "05f2247f90f9cfeda8297ed96e3ed0a73233ad8fd9b138894574000ef1f03f06",
+      "bytes": 3829
+    },
+    "live-application/cases/claude-sonnet-5/S05/sdk.jsonl": {
+      "sha256": "af56f8027493df84ccd0d8a851c4294dfb616ed575f0eb19dd2e1e4f226fa7a4",
+      "bytes": 12499
+    },
+    "live-application/cases/claude-sonnet-5/S05/transport.jsonl": {
+      "sha256": "a950aade9d875757362e0c23d5571a4c37d68a23f6689564f0925885cc54be9f",
+      "bytes": 54143
+    },
+    "live-application/cases/claude-sonnet-5/S06/case.json": {
+      "sha256": "d5e17dcbc679deac612151f7127edbdebdd240226c1dfe6211ef8f977137065b",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S06/controls.json": {
+      "sha256": "f44cbf04650e60232c4f5284bb44f40fe7109ac9cbb7e8d1e01913731fcc7ae9",
+      "bytes": 1956
+    },
+    "live-application/cases/claude-sonnet-5/S06/native.jsonl": {
+      "sha256": "c4d2f8f2d97ed4ee03ae88ad52b158fc8e3c1127165f2d9b00532e3f74eae866",
+      "bytes": 21837
+    },
+    "live-application/cases/claude-sonnet-5/S06/observation.json": {
+      "sha256": "c064f1824396065d785085d19e33f737f8d05d6e48a6dfe075a345d15d24e7bc",
+      "bytes": 151014
+    },
+    "live-application/cases/claude-sonnet-5/S06/observation.partial.json": {
+      "sha256": "efbef6ee66a1de8cbbc0f7aafa090ef8aae9ec452c5f62d184f7f74913791e00",
+      "bytes": 149666
+    },
+    "live-application/cases/claude-sonnet-5/S06/oracle.json": {
+      "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+      "bytes": 2039
+    },
+    "live-application/cases/claude-sonnet-5/S06/resources.json": {
+      "sha256": "30d0b7243b19c2f15e818e4a28a3b37af7d0f3fa510c877a66df9f0b1426fe53",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S06/result.json": {
+      "sha256": "06a0a1fef51b710b8b6ddf019e9266df7d76bc969cf487a4c5d9479eb10e6008",
+      "bytes": 3866
+    },
+    "live-application/cases/claude-sonnet-5/S06/sdk.jsonl": {
+      "sha256": "7fab77323f277f5c0cbb8f064d1904e2eb2c06dba197a13a6ae186cc65d675e2",
+      "bytes": 20091
+    },
+    "live-application/cases/claude-sonnet-5/S06/transport.jsonl": {
+      "sha256": "c162b5cabb08c093393d28ae55d13fc0ef4e81ce26e2f09a040e7d2ae03e8f8e",
+      "bytes": 55107
+    },
+    "live-application/cases/claude-sonnet-5/S07/case.json": {
+      "sha256": "bf3134805d6f9512dfaed80de800451896626a29be555849f0ab4afd681ada47",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S07/controls.json": {
+      "sha256": "17c54a3c26e7e2694dd9f7b3d557cd7b3ff5a0ba2967b51ad541bd0ba9efd545",
+      "bytes": 2602
+    },
+    "live-application/cases/claude-sonnet-5/S07/native.jsonl": {
+      "sha256": "1fc35a79e66b767ca4f6efa87bdf99962640fd46b642eb8b7e97698ea9fb61ea",
+      "bytes": 31213
+    },
+    "live-application/cases/claude-sonnet-5/S07/observation.json": {
+      "sha256": "858c168f6d1ea870853b98cd331943b87ed8866bc783f9fda6ee63099d7d3fd7",
+      "bytes": 223993
+    },
+    "live-application/cases/claude-sonnet-5/S07/observation.partial.json": {
+      "sha256": "7a40b9686510e2429621ba11087adea0010df289f44222f166e7bfb5d2f68e5b",
+      "bytes": 222645
+    },
+    "live-application/cases/claude-sonnet-5/S07/oracle.json": {
+      "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+      "bytes": 2029
+    },
+    "live-application/cases/claude-sonnet-5/S07/resources.json": {
+      "sha256": "0c7a27ded79f66f4ced2e90ead822cb62e8af0b1f67d825cb1c335e6d35afab8",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S07/result.json": {
+      "sha256": "20b1c3655aa4d8dc793bcfce868a270d32a39db186c5a13c73f7f617681828ca",
+      "bytes": 3939
+    },
+    "live-application/cases/claude-sonnet-5/S07/sdk.jsonl": {
+      "sha256": "55b23cc333e8ea33d6f35d1d7964d24121461aecca56c03b416c684b36979d0a",
+      "bytes": 23810
+    },
+    "live-application/cases/claude-sonnet-5/S07/transport.jsonl": {
+      "sha256": "a13ad26d2da116de74fa997e73d3f9fa631456beae373c9e182e3ffdf8fc04a5",
+      "bytes": 94103
+    },
+    "live-application/cases/claude-sonnet-5/S08/case.json": {
+      "sha256": "eb57c466bb2d29821301b237c9e403e71e15d3f50bf8037db169bb319485205f",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S08/controls.json": {
+      "sha256": "01aa1a3cff491fb999b156ad6eeb063bee54871ef63b2be146cebe0b30977e59",
+      "bytes": 3358
+    },
+    "live-application/cases/claude-sonnet-5/S08/native.jsonl": {
+      "sha256": "467f62f98921898ad55b0adf61d79b2d0b1b42ccdc16f1723f21de95eba8d3aa",
+      "bytes": 24304
+    },
+    "live-application/cases/claude-sonnet-5/S08/observation.json": {
+      "sha256": "82712b126c10b820409d950de5aa38264e55a94b5389cd76719ca2cc6dc49c75",
+      "bytes": 180860
+    },
+    "live-application/cases/claude-sonnet-5/S08/observation.partial.json": {
+      "sha256": "717c000cca451ec70d58afcfa3e5b13181da6b0c2061d602c901f1897cca16e8",
+      "bytes": 179365
+    },
+    "live-application/cases/claude-sonnet-5/S08/oracle.json": {
+      "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+      "bytes": 2216
+    },
+    "live-application/cases/claude-sonnet-5/S08/resources.json": {
+      "sha256": "b18d236eb7157c4efd7cd34d0c6978af731080f5c7da8ed2688aa53865f68d4a",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S08/result.json": {
+      "sha256": "58d0064e01677ab4cd6a563c47f53d174eb6b2b10054cafe56dde97e76d0fe36",
+      "bytes": 4043
+    },
+    "live-application/cases/claude-sonnet-5/S08/sdk.jsonl": {
+      "sha256": "48e73981fd52ab52a3c84377405b3c52ca716f2d0cee60d7b51977dbd679ddda",
+      "bytes": 19876
+    },
+    "live-application/cases/claude-sonnet-5/S08/transport.jsonl": {
+      "sha256": "fd3e4a9f688d7e42f770efed3f9bac974120a74a60690f503948ed0c3d7d9e3c",
+      "bytes": 73321
+    },
+    "live-application/cases/claude-sonnet-5/S09/case.json": {
+      "sha256": "9b8c31985aa54be1111d67bb8ce48e6cac19757e9a7ea7c9acff9f30430252bf",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S09/controls.json": {
+      "sha256": "aedf98ee6aed6c6ea5b0282f2ce9b63de6f177f0626f0f46315a1d1353071b76",
+      "bytes": 2190
+    },
+    "live-application/cases/claude-sonnet-5/S09/native.jsonl": {
+      "sha256": "bbba3eedcf7ad6c80ed9a9ae95e97f28f66b643294e448356dd832ae25793d80",
+      "bytes": 28215
+    },
+    "live-application/cases/claude-sonnet-5/S09/observation.json": {
+      "sha256": "38ad92d2553481397d7eab20c0c32ff080663f7823b18656a9093358277f1ec8",
+      "bytes": 193350
+    },
+    "live-application/cases/claude-sonnet-5/S09/observation.partial.json": {
+      "sha256": "ef3716352189cdf67b50df304d685934cc0feb646ad984fb589dc4a2aab9f5bc",
+      "bytes": 177126
+    },
+    "live-application/cases/claude-sonnet-5/S09/oracle.json": {
+      "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+      "bytes": 2038
+    },
+    "live-application/cases/claude-sonnet-5/S09/resources.json": {
+      "sha256": "be9944d2b3cf996900c9764dedf5078ed30d203d2d3b4d2d3f55a110bb9f12ec",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S09/result.json": {
+      "sha256": "eb88b46ac447b937a7388eb681a150303b3d157188388c1c24227c80407753b1",
+      "bytes": 3865
+    },
+    "live-application/cases/claude-sonnet-5/S09/sdk.jsonl": {
+      "sha256": "719e906aac22d11171dca3e76610cc8e7502e5055b4d9cb20e26f7170993caa5",
+      "bytes": 23086
+    },
+    "live-application/cases/claude-sonnet-5/S09/transport.jsonl": {
+      "sha256": "a2dff342da4be6b2489ceded1efbc8a2b529e3f1b349e50efc4332053ec023d3",
+      "bytes": 76985
+    },
+    "live-application/cases/claude-sonnet-5/S10/case.json": {
+      "sha256": "6afdcad11d171f99fed2202b2dd01b705c99182474f59df91c809306fc93a4ac",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S10/controls.json": {
+      "sha256": "757b031357c98f60ff2969301ea17a244c9fa223bb24f8222c826acccac944ac",
+      "bytes": 1371
+    },
+    "live-application/cases/claude-sonnet-5/S10/native.jsonl": {
+      "sha256": "85390ee3d01ff4f46fb878a83364fa11582123aa13df999e390fd07c50f39d16",
+      "bytes": 28377
+    },
+    "live-application/cases/claude-sonnet-5/S10/observation.json": {
+      "sha256": "0a68f9d74872357d418ae7a7906d6cd253270deb3f3fad7dc372575f06276d72",
+      "bytes": 185587
+    },
+    "live-application/cases/claude-sonnet-5/S10/observation.partial.json": {
+      "sha256": "47c2d9781997e411c7ea384f84185e51fcacc99b34a28aaa34925b61cc934616",
+      "bytes": 183881
+    },
+    "live-application/cases/claude-sonnet-5/S10/oracle.json": {
+      "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+      "bytes": 1848
+    },
+    "live-application/cases/claude-sonnet-5/S10/resources.json": {
+      "sha256": "b99a5093d4de5dbcb4d10a4e58f308f18fc1cba2625efaaf746adb154fe9709a",
+      "bytes": 487
+    },
+    "live-application/cases/claude-sonnet-5/S10/result.json": {
+      "sha256": "03ae5caa5cc7ba0c7c8237d2a28cf131a03ad255f8e8b2180e68935ed9f85a4a",
+      "bytes": 3753
+    },
+    "live-application/cases/claude-sonnet-5/S10/sdk.jsonl": {
+      "sha256": "97ff693583b39f72d346b4db10a39d20311ba8e3f1218e3e5bd36652d63a57ff",
+      "bytes": 23119
+    },
+    "live-application/cases/claude-sonnet-5/S10/transport.jsonl": {
+      "sha256": "13763d3fad839dd2335fae40b7c495a62dc55debc0c7de0405c91e68bbdc17f8",
+      "bytes": 69475
+    },
+    "live-application/cases/claude-sonnet-5/S11/case.json": {
+      "sha256": "c97f6d801a1563643541fe6931ec6ad16901b7f4bcb8131d1c274d1ae0fbc824",
+      "bytes": 409
+    },
+    "live-application/cases/claude-sonnet-5/S11/controls.json": {
+      "sha256": "a00197d170f4c6ec05d5296e847bc1a5c2925910e5158b687ba10bfe95a33250",
+      "bytes": 4060
+    },
+    "live-application/cases/claude-sonnet-5/S11/native.jsonl": {
+      "sha256": "39631e728350e3ba9b071e486f3eebd282b96c21508fdf394dc0cdd6445b2a77",
+      "bytes": 123631
+    },
+    "live-application/cases/claude-sonnet-5/S11/observation.json": {
+      "sha256": "d45f53f5320fd1868f26b8c9b92cdb804bf7960a074c1501b18d94b8bec84d82",
+      "bytes": 866135
+    },
+    "live-application/cases/claude-sonnet-5/S11/observation.partial.json": {
+      "sha256": "d541552c15cd7f085fc775c4fe7617f02537b2ca6ec588f0a7c5ca10d09a7613",
+      "bytes": 864640
+    },
+    "live-application/cases/claude-sonnet-5/S11/oracle.json": {
+      "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+      "bytes": 2034
+    },
+    "live-application/cases/claude-sonnet-5/S11/resources.json": {
+      "sha256": "88c0f0d222d72d002b171d594ab03e33a844596f5e903ac9ee3d2a14fecbc3f9",
+      "bytes": 296
+    },
+    "live-application/cases/claude-sonnet-5/S11/result.json": {
+      "sha256": "2b314e56dbdd2ef0034a5d93d529bb02323f585be3724120e2985a81afc7b15d",
+      "bytes": 4341
+    },
+    "live-application/cases/claude-sonnet-5/S11/sdk.jsonl": {
+      "sha256": "d0f89e204abd508727c5377f16d6e2dac681a4986ee8cb211e0c4230002a1c5e",
+      "bytes": 63476
+    },
+    "live-application/cases/claude-sonnet-5/S11/transport.jsonl": {
+      "sha256": "ab7edb4c438c419131646596136513956eadd9cf909a5076c278a542fbe9d3da",
+      "bytes": 437412
+    },
+    "live-application/cases/gpt-5.6-luna/S01/case.json": {
+      "sha256": "7d85054fa39824205f829a02626bf7eae8a8d09eb07241283ab0ee82941de5af",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S01/controls.json": {
+      "sha256": "bdd46e36302e23b23492027962435da363d5f56e7a19fbcd23737fcd073ec096",
+      "bytes": 1147
+    },
+    "live-application/cases/gpt-5.6-luna/S01/native.jsonl": {
+      "sha256": "7c296874234771624d58acf4b900d9c9973f08d88f7060de69beb1c8ad7ef619",
+      "bytes": 24534
+    },
+    "live-application/cases/gpt-5.6-luna/S01/observation.json": {
+      "sha256": "d169e05506dfea2201489d23b94ad91d57f4718d4bdc2ba339c74f33bf7db16c",
+      "bytes": 150671
+    },
+    "live-application/cases/gpt-5.6-luna/S01/observation.partial.json": {
+      "sha256": "13c59b599a82a91b7020c856b5e9ea7d3361eea0812e988918b90f8d511ea50f",
+      "bytes": 149323
+    },
+    "live-application/cases/gpt-5.6-luna/S01/oracle.json": {
+      "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+      "bytes": 1932
+    },
+    "live-application/cases/gpt-5.6-luna/S01/resources.json": {
+      "sha256": "3f7a5e4606cdb74702883dd1a61cb7cc3f8c8cab1202b432a848640323ec1792",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S01/result.json": {
+      "sha256": "695dfc176a8c410c2e5680170f1d64d2915ceb0434c8880644c651b269fb3265",
+      "bytes": 3752
+    },
+    "live-application/cases/gpt-5.6-luna/S01/sdk.jsonl": {
+      "sha256": "1fbd4ea91e5688f369f63a47984316071c079b9cb09da9f8260eec6320bec70e",
+      "bytes": 39414
+    },
+    "live-application/cases/gpt-5.6-luna/S01/transport.jsonl": {
+      "sha256": "c97fd389ce093f76655a39565552ada7de7266786a0a4198791f7c6497e90a65",
+      "bytes": 47265
+    },
+    "live-application/cases/gpt-5.6-luna/S02/case.json": {
+      "sha256": "49a49f4d9c608b036a749e4551e32a473acdca252c43f49765d63cf80da37151",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S02/controls.json": {
+      "sha256": "3a8c4092651c8eed6fc8e95c5bd057bd95f034bd06b1a3373896d76f72abb456",
+      "bytes": 40101
+    },
+    "live-application/cases/gpt-5.6-luna/S02/native.jsonl": {
+      "sha256": "42d7a8d1eb2be90efc7966ec301a23fe92eba8079d974eb3de08512093bb845c",
+      "bytes": 23389
+    },
+    "live-application/cases/gpt-5.6-luna/S02/observation.json": {
+      "sha256": "72e4944b10e4ea0d98295ddb227d4de6aca112584185c721717ae10348c55223",
+      "bytes": 186975
+    },
+    "live-application/cases/gpt-5.6-luna/S02/observation.partial.json": {
+      "sha256": "bd2a29914f52e5e84954eabb5b374498c13e2364abeba5e6e9eecbc9b33eb1f7",
+      "bytes": 185627
+    },
+    "live-application/cases/gpt-5.6-luna/S02/oracle.json": {
+      "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+      "bytes": 1986
+    },
+    "live-application/cases/gpt-5.6-luna/S02/resources.json": {
+      "sha256": "1b15d74c380a26e401177384a7663ed94e496dee1aae7df89aa83b35c88844ab",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S02/result.json": {
+      "sha256": "393e41072ec7f4056e968b602462dfd28c960026b8d61caa261a245d778c01b8",
+      "bytes": 3807
+    },
+    "live-application/cases/gpt-5.6-luna/S02/sdk.jsonl": {
+      "sha256": "339eae7f7cd637c3e12e275d2623aa3713d2006074efb2058af4d31515baa768",
+      "bytes": 38194
+    },
+    "live-application/cases/gpt-5.6-luna/S02/transport.jsonl": {
+      "sha256": "d4c21754d721dfd20150fb465dc98903b27bcc8853d98dcbccb96f339de6768f",
+      "bytes": 46336
+    },
+    "live-application/cases/gpt-5.6-luna/S03/case.json": {
+      "sha256": "b06b8ad8089328da165d855dd3df907c0f26c0238b529961120270ea6c7376ad",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S03/controls.json": {
+      "sha256": "6d10d74e427ff40ed541129edf0b6e046cbc4a007c5910de212aee944749ce84",
+      "bytes": 22418
+    },
+    "live-application/cases/gpt-5.6-luna/S03/native.jsonl": {
+      "sha256": "0da8f1713735c905d7549cfd7459c59dc20808b82716e42c3291e22c23ae6623",
+      "bytes": 24248
+    },
+    "live-application/cases/gpt-5.6-luna/S03/observation.json": {
+      "sha256": "c8b085a11062f5db23930c28fb9edb8fc55fb9e6dea88c7a200428f24404f168",
+      "bytes": 194778
+    },
+    "live-application/cases/gpt-5.6-luna/S03/observation.partial.json": {
+      "sha256": "f29f4ea557d41e0b1b39cf61a8025f95698e23640d5e320aa8edd1b58546dda0",
+      "bytes": 193430
+    },
+    "live-application/cases/gpt-5.6-luna/S03/oracle.json": {
+      "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+      "bytes": 2021
+    },
+    "live-application/cases/gpt-5.6-luna/S03/resources.json": {
+      "sha256": "617e664d9deb202e3dcfee36a1b72638227d15545cac9de92963fc1fca9c06a8",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S03/result.json": {
+      "sha256": "d0db933eec28a6ab76c3d282df57274426799988c5904d05add046bf6af775a2",
+      "bytes": 3842
+    },
+    "live-application/cases/gpt-5.6-luna/S03/sdk.jsonl": {
+      "sha256": "479f990c759cf6987509260c89fa36e305d99768f8733370e7c6cbde651254fb",
+      "bytes": 40253
+    },
+    "live-application/cases/gpt-5.6-luna/S03/transport.jsonl": {
+      "sha256": "b6a6750376c1df74f2a6142db86dcadc15fb57ec7b94c44610580ffc6f8b94d6",
+      "bytes": 62878
+    },
+    "live-application/cases/gpt-5.6-luna/S04/case.json": {
+      "sha256": "b42460c6f82e26dcdcd638306315006e0938525b0441aa5da4f8ee79131c8516",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S04/controls.json": {
+      "sha256": "b210db2364ad5dfe07e7213fc0bccc172ec6f24ce7b3370a9019cee0bce303e1",
+      "bytes": 3653
+    },
+    "live-application/cases/gpt-5.6-luna/S04/native.jsonl": {
+      "sha256": "f9740b856d0a6782c69eb7786f5c032ba52a9d369d29b091b24f3061ce6b0b16",
+      "bytes": 24248
+    },
+    "live-application/cases/gpt-5.6-luna/S04/observation.json": {
+      "sha256": "c193c622b6689bd891f9067ac9f0ef432128aa734e2e3ac8282b518b441027e7",
+      "bytes": 177579
+    },
+    "live-application/cases/gpt-5.6-luna/S04/observation.partial.json": {
+      "sha256": "b314af72a1d4c3d8200198f46354d822aa143f0af8b3f1e82be36c555afee440",
+      "bytes": 176084
+    },
+    "live-application/cases/gpt-5.6-luna/S04/oracle.json": {
+      "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+      "bytes": 2002
+    },
+    "live-application/cases/gpt-5.6-luna/S04/resources.json": {
+      "sha256": "c81bcea0b1ca2e54d6d698bd3025e22cb17da298a1eecfb5848840b9fa9ed3fa",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S04/result.json": {
+      "sha256": "f79b8c62e645e9e92c4b9c12996a808aee44327f1b6eb9f73fc4436af7621711",
+      "bytes": 3822
+    },
+    "live-application/cases/gpt-5.6-luna/S04/sdk.jsonl": {
+      "sha256": "735c5c52eb9f1006649bcc208c815e795a14bb405a87e00da73c6603fe31ffee",
+      "bytes": 39707
+    },
+    "live-application/cases/gpt-5.6-luna/S04/transport.jsonl": {
+      "sha256": "100f3770653aff25b0d08c99e1b7005eacfce10fc1195d49376c20040e3794b2",
+      "bytes": 66179
+    },
+    "live-application/cases/gpt-5.6-luna/S05/case.json": {
+      "sha256": "aefb08404194152f77a1e64e634e94d3b7071002fc2ffe66657308de93fc0555",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S05/controls.json": {
+      "sha256": "29b011e59c9fc7cb343631584856896399b83aa742ad38523d0ea658fa04aa77",
+      "bytes": 2548
+    },
+    "live-application/cases/gpt-5.6-luna/S05/native.jsonl": {
+      "sha256": "ad6ca3cc77ecf4d70787c6007b2d1fb43bbfe2bb5e13d599befdcae48efe4764",
+      "bytes": 23388
+    },
+    "live-application/cases/gpt-5.6-luna/S05/observation.json": {
+      "sha256": "77fb1d03458e718f866262ece5b047a2de4b2562917613db9589e9c1ad3a8cc1",
+      "bytes": 167585
+    },
+    "live-application/cases/gpt-5.6-luna/S05/observation.partial.json": {
+      "sha256": "cbcbd1aff3643bde8a86ddea63dbf41f629c9aae2dc09071eb450ad83270f296",
+      "bytes": 166941
+    },
+    "live-application/cases/gpt-5.6-luna/S05/oracle.json": {
+      "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+      "bytes": 2007
+    },
+    "live-application/cases/gpt-5.6-luna/S05/resources.json": {
+      "sha256": "46f14aa4a7408c69d37d149a8c74d385658c8ce5ad242b4896e3826e13f71ebb",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S05/result.json": {
+      "sha256": "8d47f3d60297092b2d4e5a21d93c5ba108b4dea3633f22611f52ddc0bde029ff",
+      "bytes": 3827
+    },
+    "live-application/cases/gpt-5.6-luna/S05/sdk.jsonl": {
+      "sha256": "cbd1984ea1edba6f74b13fb365a005f81caf92ad0156ae76bba604bbcb872852",
+      "bytes": 37481
+    },
+    "live-application/cases/gpt-5.6-luna/S05/transport.jsonl": {
+      "sha256": "f3bd89bea51ada445232d713e835aab3832ebf354dafb329383d34b1ceeeeea9",
+      "bytes": 61272
+    },
+    "live-application/cases/gpt-5.6-luna/S06/case.json": {
+      "sha256": "20bb314b082d74c948a793886c111d18d9fc89ce9bba2fefb7151fea665ede25",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S06/controls.json": {
+      "sha256": "63d816b5bd3e99e67d81b6d361c735fe0b113b393b18b3bc3355b8b8acafbf70",
+      "bytes": 1956
+    },
+    "live-application/cases/gpt-5.6-luna/S06/native.jsonl": {
+      "sha256": "323e3581b83121de6f5d7c2614b90f10a6010820d9bc6a6152f39a912a6213c2",
+      "bytes": 30879
+    },
+    "live-application/cases/gpt-5.6-luna/S06/observation.json": {
+      "sha256": "56ec4539aa4833b5ee26d8e878a15e28cc1c8d84dd915519ef3aba77b45e7171",
+      "bytes": 196901
+    },
+    "live-application/cases/gpt-5.6-luna/S06/observation.partial.json": {
+      "sha256": "0ab18da511807ead435d03afc7db707d1902b095261599cefaae0b5fa9215a3e",
+      "bytes": 167584
+    },
+    "live-application/cases/gpt-5.6-luna/S06/oracle.json": {
+      "sha256": "71bbcd0a6efae2cc8445fc5a295a67dfb9c50af7a240269111f34d4f5b6dcb5f",
+      "bytes": 2040
+    },
+    "live-application/cases/gpt-5.6-luna/S06/resources.json": {
+      "sha256": "3eee8229cd6be0212582ed6cef748f2a9b264710faa088de95aef57e61926161",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S06/result.json": {
+      "sha256": "111156c09d87d64102b3f13d861e212065f1dbe8f283bcae7b29b95e4408a912",
+      "bytes": 3874
+    },
+    "live-application/cases/gpt-5.6-luna/S06/sdk.jsonl": {
+      "sha256": "89ef51f934d2822c11ba80c957ee1f0d76029dc8a7f9aeea94bcf8dacf901dca",
+      "bytes": 45276
+    },
+    "live-application/cases/gpt-5.6-luna/S06/transport.jsonl": {
+      "sha256": "9d6d11334a2836704c11bee4b3a9cfa4e10063c4abbcec23d80ee6c5db51c29a",
+      "bytes": 62411
+    },
+    "live-application/cases/gpt-5.6-luna/S07/case.json": {
+      "sha256": "2644c5e14fd066f04671331d8945d409e223f7954a290d4600d71f7683ab9ec7",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S07/controls.json": {
+      "sha256": "bf0997a403696a352ebe45428558fe7559ed0d5af9c9b0f00f3a0923d75ec0fc",
+      "bytes": 2599
+    },
+    "live-application/cases/gpt-5.6-luna/S07/native.jsonl": {
+      "sha256": "6675ae8e7e31ef3cfb1fee4e726fb494a620d05adf82440ef20e0b7742bd28e4",
+      "bytes": 49985
+    },
+    "live-application/cases/gpt-5.6-luna/S07/observation.json": {
+      "sha256": "56ca4cdd9f858c15433cae8ca3f108e1848d3d2ac7131003848832a8a62d9709",
+      "bytes": 317597
+    },
+    "live-application/cases/gpt-5.6-luna/S07/observation.partial.json": {
+      "sha256": "dd91ae40b8ea569ae3ee7da95d35fabc7771fbf7f370cd62ceb52028b98c8dd9",
+      "bytes": 265953
+    },
+    "live-application/cases/gpt-5.6-luna/S07/oracle.json": {
+      "sha256": "cd5041d78ba9a830214ca68d0bb749ef7dbf719d28efc38c72b83002962213ad",
+      "bytes": 2030
+    },
+    "live-application/cases/gpt-5.6-luna/S07/resources.json": {
+      "sha256": "69cdaea7657f5efb5fa338356178bda7306b88a7bb60836a8456d679d8d4b6c8",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S07/result.json": {
+      "sha256": "8a21ad98bea2fa4b8452c6dc91f227bdf4f7da56114a8853108f72b1dc19d6df",
+      "bytes": 3948
+    },
+    "live-application/cases/gpt-5.6-luna/S07/sdk.jsonl": {
+      "sha256": "82005b5f4a434f97b3a0b7fdc571ccd2840a5baddb15edf8c9772bf09f7525c0",
+      "bytes": 74514
+    },
+    "live-application/cases/gpt-5.6-luna/S07/transport.jsonl": {
+      "sha256": "a54214e2a177d525effe9bc14392c95d98dc713dc49e5c141fb3b2481b1813af",
+      "bytes": 109260
+    },
+    "live-application/cases/gpt-5.6-luna/S08/case.json": {
+      "sha256": "60b3067b1897ed454ef1e5cdbac42e601ed6bf41f83b663c3e946db8cb20c3f2",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S08/controls.json": {
+      "sha256": "4d078856028b5434c0737645146be1c7c641a0bf4bc32a74e08fbe1ed0ac465c",
+      "bytes": 3355
+    },
+    "live-application/cases/gpt-5.6-luna/S08/native.jsonl": {
+      "sha256": "f00d5b049fff0cb63b9b9fd7a9a0f55d7a4931a36133594f8ec116b0b85e2f88",
+      "bytes": 32467
+    },
+    "live-application/cases/gpt-5.6-luna/S08/observation.json": {
+      "sha256": "5641e1035d541abb28f9410d0a0ea8176d3858eaf7613e877e6ab9e8edff96f8",
+      "bytes": 224803
+    },
+    "live-application/cases/gpt-5.6-luna/S08/observation.partial.json": {
+      "sha256": "46a3dc3b9495d4adfdfdbbc132cf236e0b78cb440eaa5a1d02f1b29134e02239",
+      "bytes": 223308
+    },
+    "live-application/cases/gpt-5.6-luna/S08/oracle.json": {
+      "sha256": "a12126df6f734cb195052ccf2290489be10a25d56526779fdb6c553a5f5c2075",
+      "bytes": 2217
+    },
+    "live-application/cases/gpt-5.6-luna/S08/resources.json": {
+      "sha256": "92afea5656e21ceb31ac7a9e2cb9072f1a1d97e01ab36a3fa84722f5872f28b7",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S08/result.json": {
+      "sha256": "5f38e1b880c9dec9d5ae93e0f94e78856e7d1025a4ed76fd797e466fdb25d3d2",
+      "bytes": 4051
+    },
+    "live-application/cases/gpt-5.6-luna/S08/sdk.jsonl": {
+      "sha256": "d2c7f4db6a97b2f5f41a5ccfe3a661a133adb2ff100a60f5fd3ba8fe6bb35ef1",
+      "bytes": 45130
+    },
+    "live-application/cases/gpt-5.6-luna/S08/transport.jsonl": {
+      "sha256": "dd7616c48ea2a7f981cb217ed745cf93b539e08f40fe4deaec60933b3305e6f0",
+      "bytes": 79884
+    },
+    "live-application/cases/gpt-5.6-luna/S09/case.json": {
+      "sha256": "f6712835bb8ac9dc877b9c51dc3f4e6dd5fbcb44998a39d1c8ed197707edba96",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S09/controls.json": {
+      "sha256": "8f991f4e84f7fe862db6dba029547fdf4ac868af241a12303505d31cb9a66e54",
+      "bytes": 2190
+    },
+    "live-application/cases/gpt-5.6-luna/S09/native.jsonl": {
+      "sha256": "f37d8d7e1d38a9cd7b252150eae87002875e721455dbb597e44cb65241691b38",
+      "bytes": 46956
+    },
+    "live-application/cases/gpt-5.6-luna/S09/observation.json": {
+      "sha256": "29f0f0b525d1acbbb2604fbb5ff5703161e205fe070ac7919581c0d6bdc721b9",
+      "bytes": 285601
+    },
+    "live-application/cases/gpt-5.6-luna/S09/observation.partial.json": {
+      "sha256": "b472623ddaafb9ab909ecdbaeb336714e9a10d2f9cc80adcdbd24b62d86ed11c",
+      "bytes": 284253
+    },
+    "live-application/cases/gpt-5.6-luna/S09/oracle.json": {
+      "sha256": "d991df9b4f061a5318361fa26998e499ee56d3963c1c8985ce9cf7df366b89ac",
+      "bytes": 2039
+    },
+    "live-application/cases/gpt-5.6-luna/S09/resources.json": {
+      "sha256": "666d640a5a694f1a8362781706bfd45f55dfd043c59770e4c59f9fc772d62580",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S09/result.json": {
+      "sha256": "df92e258e55f0efcc0e76cf56922c1aa0c47f9d56c9804db67b95e24c9ac9e3d",
+      "bytes": 3873
+    },
+    "live-application/cases/gpt-5.6-luna/S09/sdk.jsonl": {
+      "sha256": "4aa1bc28dfb6e731530c0b0357cacde5da100b8c245d74957a7819b0e241f1d0",
+      "bytes": 72354
+    },
+    "live-application/cases/gpt-5.6-luna/S09/transport.jsonl": {
+      "sha256": "3571e83e7498f047a0512dcc1ea241f5b5ee342d066982dd318ccb9c334a5499",
+      "bytes": 92123
+    },
+    "live-application/cases/gpt-5.6-luna/S10/case.json": {
+      "sha256": "d612c3ae4937b173dcfeb18b2fae68019b0a14ba416d73e052231a236a69e56f",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S10/controls.json": {
+      "sha256": "4c74636c3bb58f73cb17c374c92c2c69d0f6c712c8bc87a1b821efb9bc33930a",
+      "bytes": 1371
+    },
+    "live-application/cases/gpt-5.6-luna/S10/native.jsonl": {
+      "sha256": "afd74bc4d77b27643eeba9e456da3e5814db120b5a31581ddbfb969fd0b163b7",
+      "bytes": 45923
+    },
+    "live-application/cases/gpt-5.6-luna/S10/observation.json": {
+      "sha256": "c1926b224b1c6fb3e7e9ec07184ce3d1ec2c3eb158190ca72110038336f02fc7",
+      "bytes": 249847
+    },
+    "live-application/cases/gpt-5.6-luna/S10/observation.partial.json": {
+      "sha256": "0162cffd24008e8bfb89967b1dc9ed49b8c92fe257a5fcd97b0b5f3eb30269d8",
+      "bytes": 248141
+    },
+    "live-application/cases/gpt-5.6-luna/S10/oracle.json": {
+      "sha256": "931073f0253d2b03b59c8a0efbf5b583ef03b7745b9b48548df720c0cbac4cec",
+      "bytes": 1849
+    },
+    "live-application/cases/gpt-5.6-luna/S10/resources.json": {
+      "sha256": "c32510329006240917a84dbd15feec71930c285cf24ef9a3710cbc3d35417b30",
+      "bytes": 487
+    },
+    "live-application/cases/gpt-5.6-luna/S10/result.json": {
+      "sha256": "79a11b1302ea03ffa4f92cc3677ffa6805a9e432487a710a738c418af2383cbf",
+      "bytes": 3761
+    },
+    "live-application/cases/gpt-5.6-luna/S10/sdk.jsonl": {
+      "sha256": "bbc5943f5bde89c83f08781611cde381e334616b73f8ed11301e17bebf54c691",
+      "bytes": 47603
+    },
+    "live-application/cases/gpt-5.6-luna/S10/transport.jsonl": {
+      "sha256": "6ef2ebbfca13c3a51b8c065e2cfe9328a382b583b4fe95c9463c373f64fae198",
+      "bytes": 83628
+    },
+    "live-application/cases/gpt-5.6-luna/S11/case.json": {
+      "sha256": "f1305e2ff8b3a9f0e64443896cccc315dba2c8ddb63a7e43b0471ed329987180",
+      "bytes": 406
+    },
+    "live-application/cases/gpt-5.6-luna/S11/controls.json": {
+      "sha256": "754c6ed3f05ba3f7036f2cb50367fdc152bc65bc7a1184e1a19b90d98faa24ed",
+      "bytes": 4060
+    },
+    "live-application/cases/gpt-5.6-luna/S11/native.jsonl": {
+      "sha256": "f7e9ce7d47959943e6ea9b5e69cd62f88ab525001523a9f9a91cd08283438089",
+      "bytes": 189571
+    },
+    "live-application/cases/gpt-5.6-luna/S11/observation.json": {
+      "sha256": "6ee50eb2d2db668b89af9b95880d4a377a6c2704bde618acf76508f99dd44c2b",
+      "bytes": 1088146
+    },
+    "live-application/cases/gpt-5.6-luna/S11/observation.partial.json": {
+      "sha256": "d406efe9fab90f2e20f460edd0705dcee204da4133cd7b1ce99140cddfe30afd",
+      "bytes": 1086651
+    },
+    "live-application/cases/gpt-5.6-luna/S11/oracle.json": {
+      "sha256": "346aae2e25689e3ffc633bce3c5655eaa3fa64353b4b259e34095d5704468cac",
+      "bytes": 2035
+    },
+    "live-application/cases/gpt-5.6-luna/S11/resources.json": {
+      "sha256": "9363c36446693febad198a3f9ec67b847926361edb9fd749cd638bcd418f5c0b",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-luna/S11/result.json": {
+      "sha256": "6b80490af43cf62ad0682207ea2e9219eb9fe6db6ff2846d1fa632d881dc087a",
+      "bytes": 4351
+    },
+    "live-application/cases/gpt-5.6-luna/S11/sdk.jsonl": {
+      "sha256": "54063195737eda4f15e803877c3913e7b9867fb88dc8c120a79c8c2dfe308265",
+      "bytes": 120734
+    },
+    "live-application/cases/gpt-5.6-luna/S11/transport.jsonl": {
+      "sha256": "939c4b047203b2ebf1a9bfc61e8daf23c35836c7fc81324788f848fa788c7de9",
+      "bytes": 505936
+    },
+    "live-application/cases/gpt-5.6-sol/S01/case.json": {
+      "sha256": "7e4aa8f18b7610da66e9002acb482c686830f8d4c4fa975884e50469501250aa",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S01/controls.json": {
+      "sha256": "40f5f02c57de087636903f85205e5c1ee1be7a8d8aa927f74de524bad1084c58",
+      "bytes": 1147
+    },
+    "live-application/cases/gpt-5.6-sol/S01/native.jsonl": {
+      "sha256": "368972e72310a76e51e1fb713dd66dfd66fbead547c1966818ccd98eca80bc44",
+      "bytes": 24517
+    },
+    "live-application/cases/gpt-5.6-sol/S01/observation.json": {
+      "sha256": "eda9a42217b39a873377b153d26a1eb72fcff261646a173e0a7f2666fba478e1",
+      "bytes": 147770
+    },
+    "live-application/cases/gpt-5.6-sol/S01/observation.partial.json": {
+      "sha256": "f68cab2f9c6652b77b8adcf34549794ea1648184d37f370befe90759e31718c7",
+      "bytes": 115356
+    },
+    "live-application/cases/gpt-5.6-sol/S01/oracle.json": {
+      "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+      "bytes": 1932
+    },
+    "live-application/cases/gpt-5.6-sol/S01/resources.json": {
+      "sha256": "10a452ae752ed7abee9707bd97fafe421c15f6f75aac8340b71ddf31374764d0",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S01/result.json": {
+      "sha256": "b9ffee274e4f6ec1acaf22201bf65d57fc908f836fbb0fb8de6c2718708cb272",
+      "bytes": 3751
+    },
+    "live-application/cases/gpt-5.6-sol/S01/sdk.jsonl": {
+      "sha256": "f4afed138bf89697b08dbc5848242b980f1d319298a2de1960642914159ce878",
+      "bytes": 36557
+    },
+    "live-application/cases/gpt-5.6-sol/S01/transport.jsonl": {
+      "sha256": "3e362a5babf5ee736c42baa0c8dd942542a6e36892191385a7633f91e1661508",
+      "bytes": 47248
+    },
+    "live-application/cases/gpt-5.6-sol/S02/case.json": {
+      "sha256": "4db924dafb6b069aa8b1969d882326a46cfd8cd96fa82631ae255fb7996888f3",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S02/controls.json": {
+      "sha256": "2859b43201c156cfd4fb0c2d01b9f868e25f5895d3f4b1609dc90231dc610830",
+      "bytes": 40091
+    },
+    "live-application/cases/gpt-5.6-sol/S02/native.jsonl": {
+      "sha256": "866e35617eabccb696aea3df28874f85db0fdf8207120edc24d201cf0770120a",
+      "bytes": 23373
+    },
+    "live-application/cases/gpt-5.6-sol/S02/observation.json": {
+      "sha256": "9a8d548116760e46aa2b83c8cd644800db19a1927a445d3297eec0414effa7fb",
+      "bytes": 185781
+    },
+    "live-application/cases/gpt-5.6-sol/S02/observation.partial.json": {
+      "sha256": "7cd3bc1359abcfd7e4df608a4413674411fded9d8efc882a27c433f9a9c7cd6c",
+      "bytes": 141903
+    },
+    "live-application/cases/gpt-5.6-sol/S02/oracle.json": {
+      "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+      "bytes": 1986
+    },
+    "live-application/cases/gpt-5.6-sol/S02/resources.json": {
+      "sha256": "9e91ec58a1c32a46f88a5df9c36e82e8c9d65252367b447b996bd15dc063fbe9",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S02/result.json": {
+      "sha256": "85f959574eab0bef10b05d8fe17d047e00ff2cc52d6b2f4e377853027977b7f4",
+      "bytes": 3806
+    },
+    "live-application/cases/gpt-5.6-sol/S02/sdk.jsonl": {
+      "sha256": "eb5729502cd69ca2403b145527689e18b4a8e08d2ff56dd584c8b32cd93879bf",
+      "bytes": 37052
+    },
+    "live-application/cases/gpt-5.6-sol/S02/transport.jsonl": {
+      "sha256": "f391cde3d2c94b194f96c1983e332dd4a0fef5dbd411ecb064ec9965a5bfc9bd",
+      "bytes": 46320
+    },
+    "live-application/cases/gpt-5.6-sol/S03/case.json": {
+      "sha256": "ebc15cbccc412cb095a39b929f7030148b20d1b3c79e06bc05ae31a61ae3f5b0",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S03/controls.json": {
+      "sha256": "957116c3231dcfd29c957ac717eb4e7fb29592271ead4581df7ed988d96bb3f2",
+      "bytes": 22413
+    },
+    "live-application/cases/gpt-5.6-sol/S03/native.jsonl": {
+      "sha256": "740f6235cd7bbcda8ebf0e3e542ac26ff373558feb9b4b10e1074d735ded9955",
+      "bytes": 24231
+    },
+    "live-application/cases/gpt-5.6-sol/S03/observation.json": {
+      "sha256": "69ab661660eccd24697b12d29ced18df4128f45cf8dd301d2be95c93b1918ac4",
+      "bytes": 191466
+    },
+    "live-application/cases/gpt-5.6-sol/S03/observation.partial.json": {
+      "sha256": "0ab53128ec206d1c96f03f8a5fa8e22a0cd8a79a319cb01c8f4623d48f44693a",
+      "bytes": 190118
+    },
+    "live-application/cases/gpt-5.6-sol/S03/oracle.json": {
+      "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+      "bytes": 2021
+    },
+    "live-application/cases/gpt-5.6-sol/S03/resources.json": {
+      "sha256": "46bfa60d621b878310b69672f44739d68aee195904669df87dd195ada4317ca5",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S03/result.json": {
+      "sha256": "2a1a27c37773ae8a01aacca0c7faf6081194f716f946d63da8529ebaf5dcfc62",
+      "bytes": 3841
+    },
+    "live-application/cases/gpt-5.6-sol/S03/sdk.jsonl": {
+      "sha256": "43c19f362a3330ecf2163e14e4e6c86639a6d69c8faec852a87fbf1082a4c3b0",
+      "bytes": 36995
+    },
+    "live-application/cases/gpt-5.6-sol/S03/transport.jsonl": {
+      "sha256": "70d7ca7838dbe1241894edd68b32dc90ed177bc1cd251a044b3ea1a7f47e7c15",
+      "bytes": 62856
+    },
+    "live-application/cases/gpt-5.6-sol/S04/case.json": {
+      "sha256": "f72e0ce78bf986ba52ce7bc9cf0c422d1e2604f74b175ef9fca9f4061ea04382",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S04/controls.json": {
+      "sha256": "53484b7c306f715fa82e17008e88fe5dd12f62b067270186f7be0399c4bb4f9e",
+      "bytes": 3653
+    },
+    "live-application/cases/gpt-5.6-sol/S04/native.jsonl": {
+      "sha256": "75fc86d051be7fc4c4918770bd75bbfbb1e2848747fbcecdd72907ce5de1e6cb",
+      "bytes": 28911
+    },
+    "live-application/cases/gpt-5.6-sol/S04/observation.json": {
+      "sha256": "13a90fac273a69b5fb94aa634b32f9e70b547755e2985f66e3704e8de994e117",
+      "bytes": 187334
+    },
+    "live-application/cases/gpt-5.6-sol/S04/observation.partial.json": {
+      "sha256": "258b9b28fa6a5a8b7b47870c4c75f83da9cb69653af667d5ff0261367d9214ba",
+      "bytes": 185986
+    },
+    "live-application/cases/gpt-5.6-sol/S04/oracle.json": {
+      "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+      "bytes": 2002
+    },
+    "live-application/cases/gpt-5.6-sol/S04/resources.json": {
+      "sha256": "3b0e055b3bffb3b089a57f4e453ac4b61b2e345a486e8d588d2982de1115f11b",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S04/result.json": {
+      "sha256": "c0a67d67feecf7df576a9269e661c48d1acc6b47d23132a7ea227869518e653a",
+      "bytes": 3821
+    },
+    "live-application/cases/gpt-5.6-sol/S04/sdk.jsonl": {
+      "sha256": "d3c2cf001f000d859322f88fc3ccc0dac41663e410ad7276fa55fe41c00e3805",
+      "bytes": 36802
+    },
+    "live-application/cases/gpt-5.6-sol/S04/transport.jsonl": {
+      "sha256": "c6e4c49b60a8033267ee0f4908acfda14076cf6ed4550e874c3cda554a8e2000",
+      "bytes": 71686
+    },
+    "live-application/cases/gpt-5.6-sol/S05/case.json": {
+      "sha256": "8016d22a325da9046594f24283d42455293d8eb6001668b2297ca643771c9b7c",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S05/controls.json": {
+      "sha256": "b889338b6d32a6b7b4301483072d189b2f44b5af384ad1d654bbc344730fae36",
+      "bytes": 2548
+    },
+    "live-application/cases/gpt-5.6-sol/S05/native.jsonl": {
+      "sha256": "852b8dd748e9e5bccbe81216c92b96d6368c9f675a2633c8597529e4b1900b6a",
+      "bytes": 23374
+    },
+    "live-application/cases/gpt-5.6-sol/S05/observation.json": {
+      "sha256": "900036825195559c473d39d225e0a596f196f87c710935233ff3054e4496531b",
+      "bytes": 166547
+    },
+    "live-application/cases/gpt-5.6-sol/S05/observation.partial.json": {
+      "sha256": "fa9efe1acb64c766e9bb1a9c9fd6eeb3ae13f527038241efec10c8d295fbfc54",
+      "bytes": 165052
+    },
+    "live-application/cases/gpt-5.6-sol/S05/oracle.json": {
+      "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+      "bytes": 2007
+    },
+    "live-application/cases/gpt-5.6-sol/S05/resources.json": {
+      "sha256": "b17cea121078b750848b2fd334f7cbd322f296d093e23f5333d249f927c9e3f4",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S05/result.json": {
+      "sha256": "07e66f2c5602d04f55a7875753f66295825ed1400c7b8f12b0f7370d5f524022",
+      "bytes": 3826
+    },
+    "live-application/cases/gpt-5.6-sol/S05/sdk.jsonl": {
+      "sha256": "ad4b2f60a533c2387574571639c5e3b461c130057e01280a29306dabcfc83ed1",
+      "bytes": 36486
+    },
+    "live-application/cases/gpt-5.6-sol/S05/transport.jsonl": {
+      "sha256": "a5897310c47ae3e15bb02102a5d0650be69969de0a9ef7f9aeff2e8ed49f6268",
+      "bytes": 61252
+    },
+    "live-application/cases/gpt-5.6-sol/S06/case.json": {
+      "sha256": "b4ae6bb99e6b9fa1adf0f054e937a3e13cf99362abed9e155639b69d45445b9d",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S06/controls.json": {
+      "sha256": "b0bfdd1ed444ff8712e92082693ccc831f925d453b7a72f6235639b334f51155",
+      "bytes": 1956
+    },
+    "live-application/cases/gpt-5.6-sol/S06/native.jsonl": {
+      "sha256": "06080852c7860c92d09ea2fb8005341be53d7cbb306381d269697bfdc9e8f693",
+      "bytes": 31467
+    },
+    "live-application/cases/gpt-5.6-sol/S06/observation.json": {
+      "sha256": "e9fb1c67c7ef0efd19a62401614ca5c0b78a1192bd985fafff7829a75896f419",
+      "bytes": 199031
+    },
+    "live-application/cases/gpt-5.6-sol/S06/observation.partial.json": {
+      "sha256": "7dc7b3f48e35007840bb846ee9661f233f4d49e3e9f602211d666ef6b7a67428",
+      "bytes": 197536
+    },
+    "live-application/cases/gpt-5.6-sol/S06/oracle.json": {
+      "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+      "bytes": 2039
+    },
+    "live-application/cases/gpt-5.6-sol/S06/resources.json": {
+      "sha256": "dd2f5f5ab2eccbbd16555166fa81e233096565031d441b88a094378e0fc9cf2e",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S06/result.json": {
+      "sha256": "504be8d64ed6e4a3bee34c5a3579f2367195f07c6bb3bcb1a35dc0ec36454724",
+      "bytes": 3862
+    },
+    "live-application/cases/gpt-5.6-sol/S06/sdk.jsonl": {
+      "sha256": "4d82a44b1cac49ea973b68470340201dccc3be627566e2ab009f28243f1baa1d",
+      "bytes": 46012
+    },
+    "live-application/cases/gpt-5.6-sol/S06/transport.jsonl": {
+      "sha256": "c0e6b666999c0ec72c0ea7655e55f0431937087172ef0fb676596172b1088c6e",
+      "bytes": 62924
+    },
+    "live-application/cases/gpt-5.6-sol/S07/case.json": {
+      "sha256": "2ac17d4735324897d0703751a94e7499bb6cf5b67a0c21748d230315fc1f5033",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S07/controls.json": {
+      "sha256": "4be91c7d0974226c28445cf8f5d6bd3466faee67dd1a0cf436097af05c078739",
+      "bytes": 2598
+    },
+    "live-application/cases/gpt-5.6-sol/S07/native.jsonl": {
+      "sha256": "78d6166f58f4a9aaf547639e4fc0ad03d59a588f61e6785f79b8a20a98413476",
+      "bytes": 50570
+    },
+    "live-application/cases/gpt-5.6-sol/S07/observation.json": {
+      "sha256": "97aed6a5356b811909ae89a6321064291e105d437f036dd412c2159107049faf",
+      "bytes": 318062
+    },
+    "live-application/cases/gpt-5.6-sol/S07/observation.partial.json": {
+      "sha256": "c7bc751d62462c724393069a6fd5f1a57f5ff02bea5915a3832c65bfab866cc2",
+      "bytes": 316567
+    },
+    "live-application/cases/gpt-5.6-sol/S07/oracle.json": {
+      "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+      "bytes": 2029
+    },
+    "live-application/cases/gpt-5.6-sol/S07/resources.json": {
+      "sha256": "e2c911b152844575b68489f6112db6a0f50c2cbd6b729d6d6f197561f74b698a",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S07/result.json": {
+      "sha256": "f22abbcb9efbc22460ccaf34c9ae9186f04772a0052facf8eee9f68be9861aa4",
+      "bytes": 3936
+    },
+    "live-application/cases/gpt-5.6-sol/S07/sdk.jsonl": {
+      "sha256": "932c1184ced84195c35a2c26a77a80433ca1ef6cf57ad43638bbc0ce5755fa22",
+      "bytes": 73630
+    },
+    "live-application/cases/gpt-5.6-sol/S07/transport.jsonl": {
+      "sha256": "82d81d236056f8e7172fb00cce82032f9ceaa048d2904606fa96812cf5555a4c",
+      "bytes": 109772
+    },
+    "live-application/cases/gpt-5.6-sol/S08/case.json": {
+      "sha256": "b6ca95f8bd516733019948138bfa201a46717933e4d0b7ff9fc7483ac4763cfd",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S08/controls.json": {
+      "sha256": "2475580da57b7b5e3b080f45960bba3057f243cbe4c312c5e9b5a4c88f9f1d0b",
+      "bytes": 3354
+    },
+    "live-application/cases/gpt-5.6-sol/S08/native.jsonl": {
+      "sha256": "a7c372bc7ab7a198958846da4a7b8b0b23fc8a5974d701c447af03da979571d8",
+      "bytes": 33057
+    },
+    "live-application/cases/gpt-5.6-sol/S08/observation.json": {
+      "sha256": "51ce2e02eb74c54a43fdfe37d8baced12af6970485123298288562b41d089390",
+      "bytes": 238984
+    },
+    "live-application/cases/gpt-5.6-sol/S08/observation.partial.json": {
+      "sha256": "575adec187950d67d0c251c93086724f812da0ac4213f89fe435d31bd5973b9e",
+      "bytes": 237489
+    },
+    "live-application/cases/gpt-5.6-sol/S08/oracle.json": {
+      "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+      "bytes": 2216
+    },
+    "live-application/cases/gpt-5.6-sol/S08/resources.json": {
+      "sha256": "11d224ab3d72a5407494e9f7ddbf13e02428c864aa9963540fd86748366953b7",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S08/result.json": {
+      "sha256": "0429e1d762d427c8840f048ca73ece6098a813d73f561358e5cef144e88aaed4",
+      "bytes": 4039
+    },
+    "live-application/cases/gpt-5.6-sol/S08/sdk.jsonl": {
+      "sha256": "4c8e19ebc7c5f5d5c04f7d752911f4652eee85aff2ed3c230906cc40fc704cf7",
+      "bytes": 57771
+    },
+    "live-application/cases/gpt-5.6-sol/S08/transport.jsonl": {
+      "sha256": "bc00936192f5b5c321619e2f7ec0613a3cf051f253f8bef935c750bf439a4fd8",
+      "bytes": 80391
+    },
+    "live-application/cases/gpt-5.6-sol/S09/case.json": {
+      "sha256": "c179db7877aad8a5be3578006c46742ef6113a75bd3191fdbd96274cee798a81",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S09/controls.json": {
+      "sha256": "aea9fac7662ba945d317448790f710a09deed4f3d8f4f72bdd7689eb1e2fbbf4",
+      "bytes": 2190
+    },
+    "live-application/cases/gpt-5.6-sol/S09/native.jsonl": {
+      "sha256": "e29f9337706b523d2e9bceb1b85c5f32f880c3ae608ff95267ba881e660ced67",
+      "bytes": 47836
+    },
+    "live-application/cases/gpt-5.6-sol/S09/observation.json": {
+      "sha256": "edd1c81aa1e333120eaddc1dab5a42fac798efd905bc818e7d25940d4298cabe",
+      "bytes": 291458
+    },
+    "live-application/cases/gpt-5.6-sol/S09/observation.partial.json": {
+      "sha256": "e6a63a9c40f3280bd6882f28ff1809f6d6f9e8ba33e7778597a461fe3414e1c5",
+      "bytes": 290110
+    },
+    "live-application/cases/gpt-5.6-sol/S09/oracle.json": {
+      "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+      "bytes": 2038
+    },
+    "live-application/cases/gpt-5.6-sol/S09/resources.json": {
+      "sha256": "21d25b34ba7a2cd92222246637d32afc07b5d35f4cdde60a155ba2f4a303349f",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S09/result.json": {
+      "sha256": "224bccb9a96d93dd4dde543c94dacbf2f0fd958c7cd74415b6b1624f8ce0ae82",
+      "bytes": 3861
+    },
+    "live-application/cases/gpt-5.6-sol/S09/sdk.jsonl": {
+      "sha256": "dc0cd588477d6fa87061043eb8add8215992259a70d6703c95624a395b8934bc",
+      "bytes": 76201
+    },
+    "live-application/cases/gpt-5.6-sol/S09/transport.jsonl": {
+      "sha256": "a716d99ab975d21d297e587f41c1a955a80ebedbf55fc70cfb867a83aa3a7bb7",
+      "bytes": 92871
+    },
+    "live-application/cases/gpt-5.6-sol/S10/case.json": {
+      "sha256": "e6457a01d1460eb8bda9046979341444319aad7f7eea1708854e1c2b59108d56",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S10/controls.json": {
+      "sha256": "709e5c6c7f93e9df8ab66953aa7b7059f626d348a66509aab962ce72ea081eed",
+      "bytes": 1371
+    },
+    "live-application/cases/gpt-5.6-sol/S10/native.jsonl": {
+      "sha256": "1d8257a3722b620f43f812478986071d9f617edebe8f8118a59aa88350500310",
+      "bytes": 47139
+    },
+    "live-application/cases/gpt-5.6-sol/S10/observation.json": {
+      "sha256": "a270e27a8e9d72da6533cfa0fc4563f424d43cefe4ddbead84438d07edf57323",
+      "bytes": 241923
+    },
+    "live-application/cases/gpt-5.6-sol/S10/observation.partial.json": {
+      "sha256": "62a58440efbdcf7735b313af2019dafa32098cf8ca33d0d0d414483f38831196",
+      "bytes": 240364
+    },
+    "live-application/cases/gpt-5.6-sol/S10/oracle.json": {
+      "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+      "bytes": 1848
+    },
+    "live-application/cases/gpt-5.6-sol/S10/resources.json": {
+      "sha256": "edc6107dc76a2a510152933b5f552a56e54451818ba08d944962a6eb58840457",
+      "bytes": 487
+    },
+    "live-application/cases/gpt-5.6-sol/S10/result.json": {
+      "sha256": "399a0c846b0cf5396c660c3fb51c53773f3fcbb992bf44ba88dc1088de607b32",
+      "bytes": 3749
+    },
+    "live-application/cases/gpt-5.6-sol/S10/sdk.jsonl": {
+      "sha256": "cd3a03de01f40c747416a6bba82ab832f7f9c241b5331d946ff30dfc943004b7",
+      "bytes": 37020
+    },
+    "live-application/cases/gpt-5.6-sol/S10/transport.jsonl": {
+      "sha256": "ae2ea0760fae967fc4f965c5c808f38c848c56641513bb05c3c04518dd5417db",
+      "bytes": 84686
+    },
+    "live-application/cases/gpt-5.6-sol/S11/case.json": {
+      "sha256": "755f1b683ab1ef9c22bec97b836ed22c505c2de84ed250ef9b7fa8346a10f3e3",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-5.6-sol/S11/controls.json": {
+      "sha256": "002eb5603d730b9f7aaf417b45fcf01944a9f4086c3ed39a53a8e4ef46028165",
+      "bytes": 4060
+    },
+    "live-application/cases/gpt-5.6-sol/S11/native.jsonl": {
+      "sha256": "7883caddb5aafec3589e83df8c469855171f1bb1d71f0a452dd53dc9ce6d57bc",
+      "bytes": 193831
+    },
+    "live-application/cases/gpt-5.6-sol/S11/observation.json": {
+      "sha256": "8ee06b1422ceb0114da6e7ad59ed352f5967ea4a7216d65df9684f4d0b2c4aed",
+      "bytes": 1057345
+    },
+    "live-application/cases/gpt-5.6-sol/S11/observation.partial.json": {
+      "sha256": "be7e77f29240edc9e157f6c2021cf3861db749fe9c3c488c82bbb64cfeeb3b25",
+      "bytes": 1055997
+    },
+    "live-application/cases/gpt-5.6-sol/S11/oracle.json": {
+      "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+      "bytes": 2034
+    },
+    "live-application/cases/gpt-5.6-sol/S11/resources.json": {
+      "sha256": "f6af3c39d0693958fe3d25d98dd417a2d4a3b13fa949b483b3ebb807c381f14d",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-sol/S11/result.json": {
+      "sha256": "99cd7b80d9528275ecc16c53f52340cd9eaef53864c1cae853028355e86a04c6",
+      "bytes": 4338
+    },
+    "live-application/cases/gpt-5.6-sol/S11/sdk.jsonl": {
+      "sha256": "bd5176555740e6d29f532b87925a3bac10c5e6b53c8196af895926b424616dc6",
+      "bytes": 75874
+    },
+    "live-application/cases/gpt-5.6-sol/S11/transport.jsonl": {
+      "sha256": "74aa36c4eb2d497d3dff308c63591df09bbfabc4e8ba2ee16ad9813547a1f11e",
+      "bytes": 514534
+    },
+    "live-application/cases/gpt-5.6-terra/S01/case.json": {
+      "sha256": "462945afb0e1240b129e96f6085e3773610fe801138bdf346c893965d98f53f7",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S01/controls.json": {
+      "sha256": "eb2a660be00b4d2abb0fdfd18d5a391f3a672721d5f0d8d3a3f1a13c605ccad1",
+      "bytes": 1147
+    },
+    "live-application/cases/gpt-5.6-terra/S01/native.jsonl": {
+      "sha256": "15bb81a6eef71d0c15b03d2b000682a6700d5f5295aafcae164471da2ee99b7f",
+      "bytes": 23930
+    },
+    "live-application/cases/gpt-5.6-terra/S01/observation.json": {
+      "sha256": "0cae3357619b6a8d1f6fc640eec71b198c3ed97023ad1d62e60c1f380ea9356d",
+      "bytes": 134795
+    },
+    "live-application/cases/gpt-5.6-terra/S01/observation.partial.json": {
+      "sha256": "1c5e1a7fa55267cc51dc88df5939e457b4c85c345cc90a9bd6ee3d7c07b9254e",
+      "bytes": 133300
+    },
+    "live-application/cases/gpt-5.6-terra/S01/oracle.json": {
+      "sha256": "7f5c1bab4a7df7a733b64e7e0420e6c87978356e54e60ab6f57773f817e62975",
+      "bytes": 1933
+    },
+    "live-application/cases/gpt-5.6-terra/S01/resources.json": {
+      "sha256": "eccf3c989725e348ad079cf6f24c5eaafb0ef95c58eb8b144a63a58fcba2f713",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S01/result.json": {
+      "sha256": "4da912d07b236a47607cf443103b07b27101ec96b82c0684fc32165b090ff37a",
+      "bytes": 3764
+    },
+    "live-application/cases/gpt-5.6-terra/S01/sdk.jsonl": {
+      "sha256": "a293691b9f6656a7f8c255b983930f4d0362ee14ce5a38e4a91dd799338e3b37",
+      "bytes": 25114
+    },
+    "live-application/cases/gpt-5.6-terra/S01/transport.jsonl": {
+      "sha256": "5888468b865b2a9e3b8c2a3ba615344b5c93389da55112f54606d8d2ba912bee",
+      "bytes": 46743
+    },
+    "live-application/cases/gpt-5.6-terra/S02/case.json": {
+      "sha256": "df7932bf6c107db0266dde81d3b6486aa9a0f5de54d911626e491e6c3e15da29",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S02/controls.json": {
+      "sha256": "64a9da83c172ef5ba1578a492813c198fce4d516af418f4941c6b565e5983e70",
+      "bytes": 40855
+    },
+    "live-application/cases/gpt-5.6-terra/S02/native.jsonl": {
+      "sha256": "d019770b03abfc96073126bc7f025aa4612d4a5ae411951c27e1685348da1512",
+      "bytes": 27750
+    },
+    "live-application/cases/gpt-5.6-terra/S02/observation.json": {
+      "sha256": "46df731cf9730e9284fddeb8a08794c07ca219386f457f712f8e608e4c429b34",
+      "bytes": 185831
+    },
+    "live-application/cases/gpt-5.6-terra/S02/observation.partial.json": {
+      "sha256": "3cf33e3ef41f15ec5479b69f104b0ba54f938c84a69e43880d5f9f20be286687",
+      "bytes": 184336
+    },
+    "live-application/cases/gpt-5.6-terra/S02/oracle.json": {
+      "sha256": "ccc535751d4694e19df8c3b25deaaef900aeca602e44072f148fdd1b129d5935",
+      "bytes": 1987
+    },
+    "live-application/cases/gpt-5.6-terra/S02/resources.json": {
+      "sha256": "92c3b300caca8d5f5e4aa24f16e1a79ac838151a6cea7371c51127d059016beb",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S02/result.json": {
+      "sha256": "362ef464ab566bf45fc09130d3a59695b3e2449dc721b13be56c5fac8ca47b51",
+      "bytes": 3818
+    },
+    "live-application/cases/gpt-5.6-terra/S02/sdk.jsonl": {
+      "sha256": "57c8cb64edf84d5221d5b20db2dd03210e38af73af6076f3cd6e6a4361788837",
+      "bytes": 24867
+    },
+    "live-application/cases/gpt-5.6-terra/S02/transport.jsonl": {
+      "sha256": "abb143b8180c22277227f710e74dfe7c3ae22c67344902e124e314896b5077d5",
+      "bytes": 51349
+    },
+    "live-application/cases/gpt-5.6-terra/S03/case.json": {
+      "sha256": "0b43e45b53b35bd302f3a7d7f28ecef1bcd1647c6368fd83c465b179badd0f16",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S03/controls.json": {
+      "sha256": "44a37c07793d8ff0b6005e1f71faa2f8c06fac335fd601ad72cbfd4db34dbafe",
+      "bytes": 22423
+    },
+    "live-application/cases/gpt-5.6-terra/S03/native.jsonl": {
+      "sha256": "b0a2f3124ae33d2a1a561c1fbc24f788ed2a1751659590007a33ba47b666bca6",
+      "bytes": 23644
+    },
+    "live-application/cases/gpt-5.6-terra/S03/observation.json": {
+      "sha256": "70a2f9b590c7a78c6e08783cec4f7f13a06ff0e25bec13d018fc6c89fb3ddeeb",
+      "bytes": 178084
+    },
+    "live-application/cases/gpt-5.6-terra/S03/observation.partial.json": {
+      "sha256": "1e44c1ba661ad30d7ec1bf1c7f6f3067c8b21a8d60b25e9da0a80e04bf53ea1b",
+      "bytes": 176589
+    },
+    "live-application/cases/gpt-5.6-terra/S03/oracle.json": {
+      "sha256": "a63c01518ff3f91ec533351a406c69218eaa82fa0d20d3233ea19ba664b46892",
+      "bytes": 2022
+    },
+    "live-application/cases/gpt-5.6-terra/S03/resources.json": {
+      "sha256": "b9b9380f477c5d229d04c4cacf7b778e526a5d58ab197901db7a5667c23dc305",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S03/result.json": {
+      "sha256": "707374d1014a46501934bfb74e37eb23e660c4cda63f2237a6561bd3d7e52143",
+      "bytes": 3854
+    },
+    "live-application/cases/gpt-5.6-terra/S03/sdk.jsonl": {
+      "sha256": "f4a7843abc56dc0ea0294e2cd267da6b326a18283678da438beb1e127e56511d",
+      "bytes": 25125
+    },
+    "live-application/cases/gpt-5.6-terra/S03/transport.jsonl": {
+      "sha256": "e4559c5b5f08cbfa27ff7e5a3eff745043454eb1be8e0cccfe7e6fefcf8ba76a",
+      "bytes": 62361
+    },
+    "live-application/cases/gpt-5.6-terra/S04/case.json": {
+      "sha256": "3f368921c3b237270343ecac0dc5c9a1ef7ba7b6a5a0fa366f0d98a319e4b94e",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S04/controls.json": {
+      "sha256": "f2f795f244100e1400c9ad26f3b1bd098c44f3fa1be0dc2e45f1089db3df4ed8",
+      "bytes": 3653
+    },
+    "live-application/cases/gpt-5.6-terra/S04/native.jsonl": {
+      "sha256": "a00a9d9a934ff12ec711d3c32f03f62bd16083650566983c6d7ea3615fcb521b",
+      "bytes": 29233
+    },
+    "live-application/cases/gpt-5.6-terra/S04/observation.json": {
+      "sha256": "c5b5ce7f3991d69299092387c906bb3100bb164c03c7c17d9c9841044346ef23",
+      "bytes": 188964
+    },
+    "live-application/cases/gpt-5.6-terra/S04/observation.partial.json": {
+      "sha256": "fc5dbd253756f36fdb3b6a89349b1c2e30ca6c38d6f41c7d7f8f83ce7cbcd2d1",
+      "bytes": 187469
+    },
+    "live-application/cases/gpt-5.6-terra/S04/oracle.json": {
+      "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+      "bytes": 2002
+    },
+    "live-application/cases/gpt-5.6-terra/S04/resources.json": {
+      "sha256": "8ceea7a1d35649114871a8ae2d2338396cb61d5c4fa82243cd086b0be2e22378",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S04/result.json": {
+      "sha256": "16b872d9ebe5f0b3807caecdf2354a7e50b4b86bd93cbc0ea73edb04af040ae4",
+      "bytes": 3823
+    },
+    "live-application/cases/gpt-5.6-terra/S04/sdk.jsonl": {
+      "sha256": "ec0b6988bce84892898def7c47a5df09bd9235e049042c912a2e2ac37c2d1a23",
+      "bytes": 37656
+    },
+    "live-application/cases/gpt-5.6-terra/S04/transport.jsonl": {
+      "sha256": "bb74e5c22b72d64440f32c36d18a0f58869e0984408b87c01eeef552b521c411",
+      "bytes": 71992
+    },
+    "live-application/cases/gpt-5.6-terra/S05/case.json": {
+      "sha256": "238dff2c3e0599a1aa2a01dc347b8b4d274d5c6c49396c1f7a30e113d97f86f1",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S05/controls.json": {
+      "sha256": "da2d1ab86b02c291de824f0ecdc0524850dce7051a0c28a0cbe7704bb507da64",
+      "bytes": 2548
+    },
+    "live-application/cases/gpt-5.6-terra/S05/native.jsonl": {
+      "sha256": "2d6212c77416af1734b5c196c7a427c5fbf024009c290cc0656e6afd8d0e0b99",
+      "bytes": 22785
+    },
+    "live-application/cases/gpt-5.6-terra/S05/observation.json": {
+      "sha256": "7d6f5c60725e7a1bb05977a163a7e40d267222068ece265e27256816edfcc871",
+      "bytes": 153308
+    },
+    "live-application/cases/gpt-5.6-terra/S05/observation.partial.json": {
+      "sha256": "d8be37f61d17e5ee6cf2a79ccb0d71a0e37122e3d0de7b07c8dd98efd355713b",
+      "bytes": 128521
+    },
+    "live-application/cases/gpt-5.6-terra/S05/oracle.json": {
+      "sha256": "81440f5c0f2d8930cd015cc7ab1f7b6e82f708461016b3591d3437f65239c2d4",
+      "bytes": 2008
+    },
+    "live-application/cases/gpt-5.6-terra/S05/resources.json": {
+      "sha256": "588d39b78aa40430222376496344a0b6ba7ca6399d6beba0e2014e69fc45605d",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S05/result.json": {
+      "sha256": "9c892e0afa3ab6d23a71babfff9561361348386ca06d73998fa49c73585829be",
+      "bytes": 3839
+    },
+    "live-application/cases/gpt-5.6-terra/S05/sdk.jsonl": {
+      "sha256": "94bac7021f3b73e396807788074f376b9122ca49ed4d65671b5e29fc659ba723",
+      "bytes": 24774
+    },
+    "live-application/cases/gpt-5.6-terra/S05/transport.jsonl": {
+      "sha256": "e4d78d6fb1142e4131c0043cc92686802a3811e04b53f76161aab0db95037e6c",
+      "bytes": 60755
+    },
+    "live-application/cases/gpt-5.6-terra/S06/case.json": {
+      "sha256": "1badb44b7614f972e7281c57f9d18668e16f70ff0d10d5d03a15f768e6b0a536",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S06/controls.json": {
+      "sha256": "afe52db779fd3d6267197aee5915d5115d7202c3e529e7ab2703540010326b91",
+      "bytes": 1956
+    },
+    "live-application/cases/gpt-5.6-terra/S06/native.jsonl": {
+      "sha256": "f4993c7c81b6ea334958abd449c2b1b4512e705a5ce6ad4b2e7df91fb09a83d9",
+      "bytes": 30906
+    },
+    "live-application/cases/gpt-5.6-terra/S06/observation.json": {
+      "sha256": "80032673543553da45935d484db28b3b94c34c3caae9056bffc61370192af8b7",
+      "bytes": 197361
+    },
+    "live-application/cases/gpt-5.6-terra/S06/observation.partial.json": {
+      "sha256": "0603cca35218151ae87ba58082f6ccacae5169c9c901697352f4b1ae993b59af",
+      "bytes": 196013
+    },
+    "live-application/cases/gpt-5.6-terra/S06/oracle.json": {
+      "sha256": "71bbcd0a6efae2cc8445fc5a295a67dfb9c50af7a240269111f34d4f5b6dcb5f",
+      "bytes": 2040
+    },
+    "live-application/cases/gpt-5.6-terra/S06/resources.json": {
+      "sha256": "78c8cc661ffef7c9fc906f70716f813d6276b01424de13b9a66aa0ecd370d5ed",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S06/result.json": {
+      "sha256": "922842f1c485a5a60f1f607c9c499bb8ef5c7edd20093eecf41340a73fb4f93e",
+      "bytes": 3875
+    },
+    "live-application/cases/gpt-5.6-terra/S06/sdk.jsonl": {
+      "sha256": "a449dbde0d7caec27925176822e2ef596b93286b001cc8ed426bdd84a223a9a4",
+      "bytes": 45671
+    },
+    "live-application/cases/gpt-5.6-terra/S06/transport.jsonl": {
+      "sha256": "aae04c3ba57e0506d5b59fd830c1d258aa09189fc134d72b0b08986e8d403b97",
+      "bytes": 62433
+    },
+    "live-application/cases/gpt-5.6-terra/S07/case.json": {
+      "sha256": "3b3efb429700b65e518390c3e49f1e9f1d2ef01a2ae67cd1c22846e1200b6bde",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S07/controls.json": {
+      "sha256": "7d1462257a6235554a4c621d75c9d8d8d6e2bafc9879383b8baa2f94b725f578",
+      "bytes": 2600
+    },
+    "live-application/cases/gpt-5.6-terra/S07/native.jsonl": {
+      "sha256": "591eff11ec23585b57750fdf090e3d0ae742fc2f1f4d2b9b4e9b0f37d5cc9698",
+      "bytes": 54985
+    },
+    "live-application/cases/gpt-5.6-terra/S07/observation.json": {
+      "sha256": "befdaff46fae5f9ba064d18cf79a4c67175bdd75f6130143c2c767d19e577ed0",
+      "bytes": 305547
+    },
+    "live-application/cases/gpt-5.6-terra/S07/observation.partial.json": {
+      "sha256": "30fc9ecf0ace32edef1b61dfb2c7f5de1e8409d761170f9ec8271b198913ce4f",
+      "bytes": 304052
+    },
+    "live-application/cases/gpt-5.6-terra/S07/oracle.json": {
+      "sha256": "cd5041d78ba9a830214ca68d0bb749ef7dbf719d28efc38c72b83002962213ad",
+      "bytes": 2030
+    },
+    "live-application/cases/gpt-5.6-terra/S07/resources.json": {
+      "sha256": "7e492799ae4deda22affae184d0b5ed0fef883ad2d2e3c87786af9b1b26ad1a6",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S07/result.json": {
+      "sha256": "80b419e1edd0bef40572b339c16df371a7250718057891602720612fb1eb9eae",
+      "bytes": 3949
+    },
+    "live-application/cases/gpt-5.6-terra/S07/sdk.jsonl": {
+      "sha256": "4e1cc82e099f2e0f16a73a8765c5a601a6923e9ef2014d684bfcb73e6c8a4bfa",
+      "bytes": 49748
+    },
+    "live-application/cases/gpt-5.6-terra/S07/transport.jsonl": {
+      "sha256": "a3b761fe2f078de190a7fc66462fab23d1d21cb53d29d0f0c7d660ef550e047e",
+      "bytes": 114881
+    },
+    "live-application/cases/gpt-5.6-terra/S08/case.json": {
+      "sha256": "c8d3ef593de3d5fe71cd92044c474e74f788b8a1d1684b237ce9545d6c31381a",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S08/controls.json": {
+      "sha256": "65c7035ef3133a79df2c54c9a8167aff0c0a2ffa059d7545fd599f960b60ef40",
+      "bytes": 3356
+    },
+    "live-application/cases/gpt-5.6-terra/S08/native.jsonl": {
+      "sha256": "c2d14e1caa0a4064208abcd229dcf5f73a84855148f3759e801d1cbf4bb9f6e7",
+      "bytes": 42470
+    },
+    "live-application/cases/gpt-5.6-terra/S08/observation.json": {
+      "sha256": "ecd88499f57442aef7944aaafb28f7431ea6cc8b127b5afe37f48cb998807c09",
+      "bytes": 265243
+    },
+    "live-application/cases/gpt-5.6-terra/S08/observation.partial.json": {
+      "sha256": "856a1d5d0efa920f96049acab927983410a0c58663e297639dcf62edc4f110f4",
+      "bytes": 263895
+    },
+    "live-application/cases/gpt-5.6-terra/S08/oracle.json": {
+      "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+      "bytes": 2216
+    },
+    "live-application/cases/gpt-5.6-terra/S08/resources.json": {
+      "sha256": "4d5e2423d83618e8215c3c1757af4186aa58a7bb5b8527533a9b422890baeeb3",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S08/result.json": {
+      "sha256": "f9790bb240699f8073949165afa29a6ac71e41f2427a22053b74cea810e78246",
+      "bytes": 4041
+    },
+    "live-application/cases/gpt-5.6-terra/S08/sdk.jsonl": {
+      "sha256": "67b38c617cba4168c43cbec8ca86a9f2c236e49f54302a3cc9d55bd7335dc7a9",
+      "bytes": 59256
+    },
+    "live-application/cases/gpt-5.6-terra/S08/transport.jsonl": {
+      "sha256": "cead3637e2af8a0cbba03d5a4c12f94f7a3dfe5a9c3e40000762625179243d07",
+      "bytes": 91058
+    },
+    "live-application/cases/gpt-5.6-terra/S09/case.json": {
+      "sha256": "4b964a045c7f5ddc731fda1703869df5b783deca38e0cd8ff672a2f08d0255a1",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S09/controls.json": {
+      "sha256": "3be374baa369ee3de7dcf3502e98cf367651784eafaf0d1620af5c5bd117c146",
+      "bytes": 2190
+    },
+    "live-application/cases/gpt-5.6-terra/S09/native.jsonl": {
+      "sha256": "d7bd762a4b1716db277cb474ef3774481af082543bf7427ddf774a156078e9b6",
+      "bytes": 51656
+    },
+    "live-application/cases/gpt-5.6-terra/S09/observation.json": {
+      "sha256": "3ecf523a753fa34c68c48745e89f355e1920c62078677bf2889e5b7472eac65c",
+      "bytes": 275141
+    },
+    "live-application/cases/gpt-5.6-terra/S09/observation.partial.json": {
+      "sha256": "8fc76dd72f9e47278f4e17945a182fd2da22a91a258de9f0724f9482a18ea1a3",
+      "bytes": 273646
+    },
+    "live-application/cases/gpt-5.6-terra/S09/oracle.json": {
+      "sha256": "d991df9b4f061a5318361fa26998e499ee56d3963c1c8985ce9cf7df366b89ac",
+      "bytes": 2039
+    },
+    "live-application/cases/gpt-5.6-terra/S09/resources.json": {
+      "sha256": "72244ae537a3c9a7f1dd005befa2058fd3ecbf234976813c968129e11c39a797",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S09/result.json": {
+      "sha256": "1eb6babb3c10493de86c2d40cc07a579209bc7f0a18a7bfb847efb5b077ff7e7",
+      "bytes": 3874
+    },
+    "live-application/cases/gpt-5.6-terra/S09/sdk.jsonl": {
+      "sha256": "aec7284feb9b67b8cde22091bfcc5acb6eda090944685120324017a3a6bd4e45",
+      "bytes": 49901
+    },
+    "live-application/cases/gpt-5.6-terra/S09/transport.jsonl": {
+      "sha256": "9189530e2392c159dd4291ed9ee99bd07b9a05a166263494d229ea98ccf1a024",
+      "bytes": 97450
+    },
+    "live-application/cases/gpt-5.6-terra/S10/case.json": {
+      "sha256": "9857fd69a7b4f039d349348c3d95dffc4899d1c7926eb548aa9db2654da9d57a",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S10/controls.json": {
+      "sha256": "e616d4eb85446f0d3539d18f6f2eb3f0807da4fe3c7123e453f57f1e282fa1eb",
+      "bytes": 1371
+    },
+    "live-application/cases/gpt-5.6-terra/S10/native.jsonl": {
+      "sha256": "11a22fe029997dc93fc28a09105997dd5ec967ef080ea95f83cbc504c12ab055",
+      "bytes": 45949
+    },
+    "live-application/cases/gpt-5.6-terra/S10/observation.json": {
+      "sha256": "ce6e27286658af862c0f1d871fe81fbecc81f87e0106a40b1fc992caa857efe7",
+      "bytes": 238268
+    },
+    "live-application/cases/gpt-5.6-terra/S10/observation.partial.json": {
+      "sha256": "1c75878fdc8b672906a01ea9240b227ed437921624796f40e777a09c94b51530",
+      "bytes": 236562
+    },
+    "live-application/cases/gpt-5.6-terra/S10/oracle.json": {
+      "sha256": "931073f0253d2b03b59c8a0efbf5b583ef03b7745b9b48548df720c0cbac4cec",
+      "bytes": 1849
+    },
+    "live-application/cases/gpt-5.6-terra/S10/resources.json": {
+      "sha256": "7e3b6bf3da929c4833ab4436a1246d765021abd61a9c6e8e3159f35ba57e1aec",
+      "bytes": 487
+    },
+    "live-application/cases/gpt-5.6-terra/S10/result.json": {
+      "sha256": "16aa61ed6805adf87d016d7766297ab683734471735f07b3a22343c0849a762c",
+      "bytes": 3762
+    },
+    "live-application/cases/gpt-5.6-terra/S10/sdk.jsonl": {
+      "sha256": "dded97128a014c4438bf6bae72db9c755b23a46b327ab7d6e162e29892e82992",
+      "bytes": 36146
+    },
+    "live-application/cases/gpt-5.6-terra/S10/transport.jsonl": {
+      "sha256": "dd89902256066c448b668d86b18e4702fb1dee1badc94dfd077b2b2827d2303d",
+      "bytes": 83650
+    },
+    "live-application/cases/gpt-5.6-terra/S11/case.json": {
+      "sha256": "33153cef8f3e1d953ec7b63507a4777dbffba1e63e4aca4e57281fff85334c7d",
+      "bytes": 407
+    },
+    "live-application/cases/gpt-5.6-terra/S11/controls.json": {
+      "sha256": "cc6b77852aa61c9f58fdc1d2f4d32fe252561bb0d59459771a49326748c98b11",
+      "bytes": 4060
+    },
+    "live-application/cases/gpt-5.6-terra/S11/native.jsonl": {
+      "sha256": "fdcdd2523327ff89f7868a9f99ed833d595fe0d910d94a26dcfb92abc15a0e60",
+      "bytes": 189585
+    },
+    "live-application/cases/gpt-5.6-terra/S11/observation.json": {
+      "sha256": "9edf340e23227521c978420dd6f44b1e260250d5f03a509f7da4b14b0b0aeb3f",
+      "bytes": 1148618
+    },
+    "live-application/cases/gpt-5.6-terra/S11/observation.partial.json": {
+      "sha256": "0356251280076fbeae4834c589d94be5d77322012858f0e01ede697aa7920b37",
+      "bytes": 1119934
+    },
+    "live-application/cases/gpt-5.6-terra/S11/oracle.json": {
+      "sha256": "346aae2e25689e3ffc633bce3c5655eaa3fa64353b4b259e34095d5704468cac",
+      "bytes": 2035
+    },
+    "live-application/cases/gpt-5.6-terra/S11/resources.json": {
+      "sha256": "35b2dbc3bbe933f5df033d71a42582d5a53b9c9e29c2cbfd9efb44bc9efe5dd8",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-5.6-terra/S11/result.json": {
+      "sha256": "5f496f720ddefe91746a3d91f1e4cdc3f6323251ac3b46a0ede6bd9e58bc6b36",
+      "bytes": 4352
+    },
+    "live-application/cases/gpt-5.6-terra/S11/sdk.jsonl": {
+      "sha256": "0d3853e10d9bca2a9d72bc533cc9919f2410d8b481565ef39f27e30b68b51081",
+      "bytes": 143903
+    },
+    "live-application/cases/gpt-5.6-terra/S11/transport.jsonl": {
+      "sha256": "ef8540a4715571d8cff386e07ee5416a240832c41ca16c76e89d459645b92b49",
+      "bytes": 542957
+    },
+    "live-application/cases/gpt-6-astra/S01/case.json": {
+      "sha256": "19df85b8ea82983d4909af3e014deb3b4da1a6fd65398a548d2c114cf941dbeb",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S01/controls.json": {
+      "sha256": "b0a5af5302b997dbd1de3cf3580a178bff70c28f2141c5800a5ffc42346b9b48",
+      "bytes": 1147
+    },
+    "live-application/cases/gpt-6-astra/S01/native.jsonl": {
+      "sha256": "f4f24f8a72f64102b6f85550c68f3f26880a38149e462506e5a6be9314a49241",
+      "bytes": 24515
+    },
+    "live-application/cases/gpt-6-astra/S01/observation.json": {
+      "sha256": "8c0e8105aab59db990b473f1f41a990ade49ee654d299cfe207ac2daa38863b2",
+      "bytes": 124238
+    },
+    "live-application/cases/gpt-6-astra/S01/observation.partial.json": {
+      "sha256": "6bbd2011ac28591a58ee21ab2898091d7e34287823f6f6adfacec631a4a669c2",
+      "bytes": 122743
+    },
+    "live-application/cases/gpt-6-astra/S01/oracle.json": {
+      "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+      "bytes": 1932
+    },
+    "live-application/cases/gpt-6-astra/S01/resources.json": {
+      "sha256": "9a14c0f270bfaa3e48ca0a95c84176f27832bafeb03e76015f08d322cd814c3b",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S01/result.json": {
+      "sha256": "0f5f68a179f5ca287ca8a332ae7c43dcd9bb1b0c3a139c8de6f774eb66fa0c0c",
+      "bytes": 3751
+    },
+    "live-application/cases/gpt-6-astra/S01/sdk.jsonl": {
+      "sha256": "20053f10e78aa4441fbccf112f26087b754584c39a5c16f3558e1e59018450cc",
+      "bytes": 13367
+    },
+    "live-application/cases/gpt-6-astra/S01/transport.jsonl": {
+      "sha256": "ff6dc18221894c917878940b515c6907b439c3e77ecefe8b9bd05da3a1807294",
+      "bytes": 47246
+    },
+    "live-application/cases/gpt-6-astra/S02/case.json": {
+      "sha256": "54f1880c4bc0e31f662beaab24255ed94f3790989e2983fd63096280516f941f",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S02/controls.json": {
+      "sha256": "b9d3a7c9527fcf18a8577ab924cd1924ebc7905b6f3d13d63487ddd27ba5c775",
+      "bytes": 40091
+    },
+    "live-application/cases/gpt-6-astra/S02/native.jsonl": {
+      "sha256": "2a32d73b4ab45c5d22746949ede0266634485c28796be6ab6d0e57562d486149",
+      "bytes": 23370
+    },
+    "live-application/cases/gpt-6-astra/S02/observation.json": {
+      "sha256": "6821aa878f935d93d7215805f0dfcc62f7a4d39068933c28f2eb8347a2780d24",
+      "bytes": 161761
+    },
+    "live-application/cases/gpt-6-astra/S02/observation.partial.json": {
+      "sha256": "b43dffb57f9eec9f4c980a0dafe3b3065bc8cc4c69adee883a9e4b1fbc415f35",
+      "bytes": 160266
+    },
+    "live-application/cases/gpt-6-astra/S02/oracle.json": {
+      "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+      "bytes": 1986
+    },
+    "live-application/cases/gpt-6-astra/S02/resources.json": {
+      "sha256": "380e1b97e304d4c0df469b702b59226dae100749d615727d93c47373cca9e428",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S02/result.json": {
+      "sha256": "c9b251d01b2fe8531c9a4ac9e1541b94a8b381fbda3037306a65ac4617946229",
+      "bytes": 3806
+    },
+    "live-application/cases/gpt-6-astra/S02/sdk.jsonl": {
+      "sha256": "6eaa6807adc493319699de17f905f7757ff436f580cec4b9548bbec3eeeddb24",
+      "bytes": 13376
+    },
+    "live-application/cases/gpt-6-astra/S02/transport.jsonl": {
+      "sha256": "cd3dfc46be6fa844e6b27ebd9f9bc2d10c34598563ea8526d81d4ef6c6676a89",
+      "bytes": 46318
+    },
+    "live-application/cases/gpt-6-astra/S03/case.json": {
+      "sha256": "b0eb727182d43bb843ba8d4c04d81ddf6637a31c920585e127c933df60e8fd8d",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S03/controls.json": {
+      "sha256": "51cc54961d5e245b7168bbd4ecd8d12f696e3585f0ff31c30e5301fa8efc6e55",
+      "bytes": 22413
+    },
+    "live-application/cases/gpt-6-astra/S03/native.jsonl": {
+      "sha256": "4aa316cf3df4c3fcb52a298c0ddb8e00b3615d9fb96e02f7ffe8d672094868b1",
+      "bytes": 24228
+    },
+    "live-application/cases/gpt-6-astra/S03/observation.json": {
+      "sha256": "3651dabf73443a27571941b57682e062d9ac0c45472fc95c7f3b5ce0be0092c1",
+      "bytes": 167496
+    },
+    "live-application/cases/gpt-6-astra/S03/observation.partial.json": {
+      "sha256": "9718f2f0556824934cb90cdbd39528390ef71ed0ca43a4a05abab927a6c1e3ea",
+      "bytes": 153011
+    },
+    "live-application/cases/gpt-6-astra/S03/oracle.json": {
+      "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+      "bytes": 2021
+    },
+    "live-application/cases/gpt-6-astra/S03/resources.json": {
+      "sha256": "c411ac5f1f247dd3df9af1a1fd1105b8ee6b6c24ad2bad1a296f2cc6efa52ec3",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S03/result.json": {
+      "sha256": "3cf52bc520f03a0d1466b5bb52c051eb975490d7cbc2db197c40db8a00308ae0",
+      "bytes": 3841
+    },
+    "live-application/cases/gpt-6-astra/S03/sdk.jsonl": {
+      "sha256": "8223ad15052e8750c5f5cacf84eb5acb20f7458b4fed325fa22c351bb6e18e12",
+      "bytes": 13369
+    },
+    "live-application/cases/gpt-6-astra/S03/transport.jsonl": {
+      "sha256": "e579bdad9411ac808c61793fecf9e1363f09a4713ed4f283e2768f16efe566b3",
+      "bytes": 62854
+    },
+    "live-application/cases/gpt-6-astra/S04/case.json": {
+      "sha256": "38201d82d7cdb069bc6bfa3f2e6bdd87f6588a3b7db6b1786742a6aab097bd01",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S04/controls.json": {
+      "sha256": "c22fbb6527422614cdb29e0a844bcb80f216d9d8fc85a7cd1053e4ca45703961",
+      "bytes": 3653
+    },
+    "live-application/cases/gpt-6-astra/S04/native.jsonl": {
+      "sha256": "75f7a770a26073832c54b144e91fea666d6dcb05644751314dfb5d067ddf1a3a",
+      "bytes": 24228
+    },
+    "live-application/cases/gpt-6-astra/S04/observation.json": {
+      "sha256": "c76743c1e6506268bb6599970d3f2098055c40ef8013c839489c01ab23a9216f",
+      "bytes": 150834
+    },
+    "live-application/cases/gpt-6-astra/S04/observation.partial.json": {
+      "sha256": "73c4361d0eb95e594ee6937c5e4285c919b6f919057bdf418c771c0d7b20a695",
+      "bytes": 90575
+    },
+    "live-application/cases/gpt-6-astra/S04/oracle.json": {
+      "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+      "bytes": 2002
+    },
+    "live-application/cases/gpt-6-astra/S04/resources.json": {
+      "sha256": "f38de3e4668124819152fb614ac7c699c13e86bb05f20300dc2a4d44e50c720a",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S04/result.json": {
+      "sha256": "5639feba72d0fd19ede616b8c701f1c3b739559d8974976ba764c0ccda82c1d0",
+      "bytes": 3821
+    },
+    "live-application/cases/gpt-6-astra/S04/sdk.jsonl": {
+      "sha256": "5e762f318c914340cb266262f302d8e0dce972ae8932ed705fe9ecd293a6c4ec",
+      "bytes": 13361
+    },
+    "live-application/cases/gpt-6-astra/S04/transport.jsonl": {
+      "sha256": "5d84379ab3eaf922dc29279e55c08d026d06f957586f4038f7da22e4a06f7be1",
+      "bytes": 66149
+    },
+    "live-application/cases/gpt-6-astra/S05/case.json": {
+      "sha256": "0bc89d65d3ff755bc079afd681d34dfa42abe55e37431f3ca699a8922338ec36",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S05/controls.json": {
+      "sha256": "f442ce28a0ff1accd016a0b3fbcbc9f1cd265318794be9bf91fd394d8ee670e1",
+      "bytes": 2548
+    },
+    "live-application/cases/gpt-6-astra/S05/native.jsonl": {
+      "sha256": "c4b14f31b2f0edb161058ab85537c382b726ccf04a796efa25502ec6dfc66a41",
+      "bytes": 23370
+    },
+    "live-application/cases/gpt-6-astra/S05/observation.json": {
+      "sha256": "caf59e2cac54675065a5c5ac17ff52366b8e4b5ad685b4ede992b3608b0fbd76",
+      "bytes": 143074
+    },
+    "live-application/cases/gpt-6-astra/S05/observation.partial.json": {
+      "sha256": "7f3d3c5779c14121bdbeac4d6671050dbc913e9bc734d33765b07f4099d35a9a",
+      "bytes": 141579
+    },
+    "live-application/cases/gpt-6-astra/S05/oracle.json": {
+      "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+      "bytes": 2007
+    },
+    "live-application/cases/gpt-6-astra/S05/resources.json": {
+      "sha256": "fc80a9df0661babdb8ad164c25a3c7c9b625ba7732293f98287686eeccf2796e",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S05/result.json": {
+      "sha256": "f5befbc7619438e06ad143a9d589ff666c5178905de94c2b3bbb3ee573bac5c2",
+      "bytes": 3826
+    },
+    "live-application/cases/gpt-6-astra/S05/sdk.jsonl": {
+      "sha256": "4b808e0f5d5c06eb213651b68112a7fa8f48634d79e3ac472889272e5d788495",
+      "bytes": 13359
+    },
+    "live-application/cases/gpt-6-astra/S05/transport.jsonl": {
+      "sha256": "b59a388794648b9c8c944b82896835335e2580d36b21b88a5daf89179dbb5807",
+      "bytes": 61250
+    },
+    "live-application/cases/gpt-6-astra/S06/case.json": {
+      "sha256": "e4e90398235392721d0d2c98cbe04d426df6df058234fba0e4417d2b8f717676",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S06/controls.json": {
+      "sha256": "581142de800485a3b0c198d4edfa56a52437fa12e84941aec902018d8fc4a450",
+      "bytes": 1956
+    },
+    "live-application/cases/gpt-6-astra/S06/native.jsonl": {
+      "sha256": "043f340ff2f4af3af3921112aa8eeae4bf59d566b39a70c1d2ac599112818b7c",
+      "bytes": 31464
+    },
+    "live-application/cases/gpt-6-astra/S06/observation.json": {
+      "sha256": "b605385c500468f2798702c9ec5c0ef4fd1ee963d70a4df09d2f6cd2926f713b",
+      "bytes": 175426
+    },
+    "live-application/cases/gpt-6-astra/S06/observation.partial.json": {
+      "sha256": "43021d8fc050ea035b308711e6e0ffa022ce08534426807edb25f44073767fba",
+      "bytes": 173931
+    },
+    "live-application/cases/gpt-6-astra/S06/oracle.json": {
+      "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+      "bytes": 2039
+    },
+    "live-application/cases/gpt-6-astra/S06/resources.json": {
+      "sha256": "1a8d79782f871b05d6616e485d6187f7fa90b2383df8eb20e9dac4a26e8d0e9b",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S06/result.json": {
+      "sha256": "33b7999d3f02faebc4c6813bb225b8a943021091eddf58a0723a7852ccfc0e46",
+      "bytes": 3862
+    },
+    "live-application/cases/gpt-6-astra/S06/sdk.jsonl": {
+      "sha256": "0c018cf67d5813690bf05db9de67920459411d46924b0436026819bf17ac6ab7",
+      "bytes": 22751
+    },
+    "live-application/cases/gpt-6-astra/S06/transport.jsonl": {
+      "sha256": "2d124bb891320cb1e93f233abc6bae68a2711e12a10626798822d97641583615",
+      "bytes": 62922
+    },
+    "live-application/cases/gpt-6-astra/S07/case.json": {
+      "sha256": "fc88fd717890df94570cbbff776a86b49105f75fb1917f55f39c911ab7b680cd",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S07/controls.json": {
+      "sha256": "5af20aa74c6f0bcc18c9b0dc053fade8433df549b4dc1d962fe52aab330ac26a",
+      "bytes": 2598
+    },
+    "live-application/cases/gpt-6-astra/S07/native.jsonl": {
+      "sha256": "e9146f893d9215143f66661261dd16883ee510165ee456249ba1179c69353ba1",
+      "bytes": 50563
+    },
+    "live-application/cases/gpt-6-astra/S07/observation.json": {
+      "sha256": "7d4082b04c503727d5b18fbf543ef2d34208bedbb67953bc988631770e5e11d7",
+      "bytes": 270197
+    },
+    "live-application/cases/gpt-6-astra/S07/observation.partial.json": {
+      "sha256": "4618835089ea71fac8d9947b281c7e96ba560639cc21023a51a8df18ee5536f7",
+      "bytes": 268849
+    },
+    "live-application/cases/gpt-6-astra/S07/oracle.json": {
+      "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+      "bytes": 2029
+    },
+    "live-application/cases/gpt-6-astra/S07/resources.json": {
+      "sha256": "e301b759ca0a966fa655ec6b432e768528a8c8bb2f0424ee31c54a6514be416c",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S07/result.json": {
+      "sha256": "95ef5e807f10cde80a68d2f78329ed6e0bf70071844f96300ddc177ba2b11590",
+      "bytes": 3936
+    },
+    "live-application/cases/gpt-6-astra/S07/sdk.jsonl": {
+      "sha256": "ce4cc5cfd47d43df470130b3455e56fdd4b6ce1ec21d64fa4d084f3cc68f0930",
+      "bytes": 26455
+    },
+    "live-application/cases/gpt-6-astra/S07/transport.jsonl": {
+      "sha256": "15d4f8d01df3eb9d77a46f087f393afe3bf04c81a93cffd0f61e3c3ef42d7da6",
+      "bytes": 109767
+    },
+    "live-application/cases/gpt-6-astra/S08/case.json": {
+      "sha256": "cd950aac717885c0572b19d81d7b4c21f9f823c97044c0947d6617666612c169",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S08/controls.json": {
+      "sha256": "7cc128f5e69b5d76b753d4f0ffaaae5decd0edcedcd38e196892d155e6b27d94",
+      "bytes": 3354
+    },
+    "live-application/cases/gpt-6-astra/S08/native.jsonl": {
+      "sha256": "c2654d5f2974c9f23b0adc905ea7d1dc76f52e8ae18ef9454f990f022d5daba7",
+      "bytes": 33052
+    },
+    "live-application/cases/gpt-6-astra/S08/observation.json": {
+      "sha256": "90d275a8f48aec1f825dc575693a9a6b1d8e6694c922f647c7adcceba3b32a4f",
+      "bytes": 203252
+    },
+    "live-application/cases/gpt-6-astra/S08/observation.partial.json": {
+      "sha256": "ddae0533eda8ba4ca5107bb96227190f079563e2332abae64bc014f30cba3c69",
+      "bytes": 201757
+    },
+    "live-application/cases/gpt-6-astra/S08/oracle.json": {
+      "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+      "bytes": 2216
+    },
+    "live-application/cases/gpt-6-astra/S08/resources.json": {
+      "sha256": "2efe8ee0b6dd0b7feceed54cb83d34dc731aa9d325cd1c9dd4e4116659a43be5",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S08/result.json": {
+      "sha256": "d8f98f47699f0def31fcf0519ed13191c4ac39ea314fb3aee0aea5728fbe2c7b",
+      "bytes": 4039
+    },
+    "live-application/cases/gpt-6-astra/S08/sdk.jsonl": {
+      "sha256": "bd8d97d85c9175c7889f0072dfdc281359bfbcab085019852306fb9b94c15746",
+      "bytes": 22536
+    },
+    "live-application/cases/gpt-6-astra/S08/transport.jsonl": {
+      "sha256": "9ecc17bfc7be3ddd8ee018d84b8ceb4216d5d15eb1e83a84acc72faebc33a13a",
+      "bytes": 80388
+    },
+    "live-application/cases/gpt-6-astra/S09/case.json": {
+      "sha256": "7c5f6d48f73749fded50968b02d9a290fda3ec8884d90906d45df6ef6d95723f",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S09/controls.json": {
+      "sha256": "e8c80bb13fc2840f923f48340d5b6d4786008d59d8c8cadbfb7d40b2ac3e50a4",
+      "bytes": 2190
+    },
+    "live-application/cases/gpt-6-astra/S09/native.jsonl": {
+      "sha256": "a0bb97616daaf752d903c55e843e4d287dbefdafb498a15b231ae9680d6415c3",
+      "bytes": 47831
+    },
+    "live-application/cases/gpt-6-astra/S09/observation.json": {
+      "sha256": "a87eda640a2507b9659b2da12f2a8c9d18c45d1a8520aacc9d9823f5a1ddbdba",
+      "bytes": 241244
+    },
+    "live-application/cases/gpt-6-astra/S09/observation.partial.json": {
+      "sha256": "9e086afe97e199863239201abafe7042a910f980ed9b50720654a7058a1e6078",
+      "bytes": 239749
+    },
+    "live-application/cases/gpt-6-astra/S09/oracle.json": {
+      "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+      "bytes": 2038
+    },
+    "live-application/cases/gpt-6-astra/S09/resources.json": {
+      "sha256": "f0b42a1db81a81809729f454946927b7132887b0769f1b91b5369047cee8fb23",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S09/result.json": {
+      "sha256": "e064f2162b65c80492aacf3d8f8f442565478bffbffe81178ac7904d3304239c",
+      "bytes": 3861
+    },
+    "live-application/cases/gpt-6-astra/S09/sdk.jsonl": {
+      "sha256": "295c99849b4f738caf8916175b6a6c0cca1e1000af0cc128fc46dcc704dabd07",
+      "bytes": 26673
+    },
+    "live-application/cases/gpt-6-astra/S09/transport.jsonl": {
+      "sha256": "64166e955867bf23a37645870d51b7762e3a49369951e397ed124f87230215c1",
+      "bytes": 92868
+    },
+    "live-application/cases/gpt-6-astra/S10/case.json": {
+      "sha256": "a82a53021a2667cd0067d132d79f181a5359c939f36b1348813d4368030a8738",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S10/controls.json": {
+      "sha256": "6099fff39738fae50b4e1683de8fc1504ffdf5736e1c5034e1a4506d7f3d3a7a",
+      "bytes": 1371
+    },
+    "live-application/cases/gpt-6-astra/S10/native.jsonl": {
+      "sha256": "6c3efc4b49fc09fc9c07e5569687e2b829020e5200ce5000d0ef599b61049d74",
+      "bytes": 47137
+    },
+    "live-application/cases/gpt-6-astra/S10/observation.json": {
+      "sha256": "5b5cf1b3a49f48654af00d1c3c1da26dac112cc475cab27651100b9e025d0458",
+      "bytes": 229748
+    },
+    "live-application/cases/gpt-6-astra/S10/observation.partial.json": {
+      "sha256": "b7efdeac3b910b6e388987e951e2568d07674780a69012fccc446cac76b2b662",
+      "bytes": 228042
+    },
+    "live-application/cases/gpt-6-astra/S10/oracle.json": {
+      "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+      "bytes": 1848
+    },
+    "live-application/cases/gpt-6-astra/S10/resources.json": {
+      "sha256": "1553fcb14c13f3cd6d530da520a18b52b265e6cee1301e18a850d158b41a38ef",
+      "bytes": 487
+    },
+    "live-application/cases/gpt-6-astra/S10/result.json": {
+      "sha256": "5d83042a487f919903863f5218e869d97aefddc656cb5afc2d5cf3ce5c582d08",
+      "bytes": 3749
+    },
+    "live-application/cases/gpt-6-astra/S10/sdk.jsonl": {
+      "sha256": "f33bafec921a240f19b2ffd3bc38a31191aec85d500039ce798eb413802ae806",
+      "bytes": 25027
+    },
+    "live-application/cases/gpt-6-astra/S10/transport.jsonl": {
+      "sha256": "b93206c6fd38d32de4fbf316b7573786c5cf87fd99b8678b8a7c4086add1dc59",
+      "bytes": 84695
+    },
+    "live-application/cases/gpt-6-astra/S11/case.json": {
+      "sha256": "1b8283efc41f3d95839926867018bf32022ae1dfd024f205f8a649a1fa106669",
+      "bytes": 405
+    },
+    "live-application/cases/gpt-6-astra/S11/controls.json": {
+      "sha256": "48776e91137d4ab2ecea852be28baec5caba94a6246a1d1f4ccab842157b4f55",
+      "bytes": 4060
+    },
+    "live-application/cases/gpt-6-astra/S11/native.jsonl": {
+      "sha256": "7b1b1bbd72b9e8ed9083d641ed3d31d1494ffab322479da541aabf95dfc5c8f7",
+      "bytes": 193848
+    },
+    "live-application/cases/gpt-6-astra/S11/observation.json": {
+      "sha256": "efa142b660a1866e47f67d7a74d5ca866ad6ccc66e71ea62a15e670f8eee9e48",
+      "bytes": 1055697
+    },
+    "live-application/cases/gpt-6-astra/S11/observation.partial.json": {
+      "sha256": "0b981c9545ef9c6dd9145735f9de352ebc1d5bfe610793ea87d36fbe77805f01",
+      "bytes": 1054202
+    },
+    "live-application/cases/gpt-6-astra/S11/oracle.json": {
+      "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+      "bytes": 2034
+    },
+    "live-application/cases/gpt-6-astra/S11/resources.json": {
+      "sha256": "048f32b3be532c8e4d9a56c76df401a82e6105900394d9a517f643ebdd3d61e8",
+      "bytes": 296
+    },
+    "live-application/cases/gpt-6-astra/S11/result.json": {
+      "sha256": "d9fb2637bd819bb66218fa55193b5afeb31b7940334111468babe2019e567659",
+      "bytes": 4338
+    },
+    "live-application/cases/gpt-6-astra/S11/sdk.jsonl": {
+      "sha256": "abdbfc3d549f57c1b0ac4aeb2057f924e318ca3965cbb16f7859962e389e51d9",
+      "bytes": 76394
+    },
+    "live-application/cases/gpt-6-astra/S11/transport.jsonl": {
+      "sha256": "3af418cbc60e2b02a9eb1a9ae8236573436de5dd82cff3fcf99814736f36a407",
+      "bytes": 512349
+    },
+    "live-application/freeze.json": {
+      "sha256": "ddbbf59b4cce6509a2894afb8dfe1fc9cac0b2cd33403c8b753d0baea93989e0",
+      "bytes": 35848
+    },
+    "live-application/preflight/preflight.json": {
+      "sha256": "b634818c16eeb60224e54eab141795433220e04bf1ab6c9b129c40c752862a9f",
+      "bytes": 672
+    },
+    "live-application/report.json": {
+      "sha256": "2760baf3f71d5fc2eb48925f22162ac0e19e3a78d79433afc40757434381f9f0",
+      "bytes": 80778
+    },
+    "live-application/report.md": {
+      "sha256": "800d9215954f04c356bf1620d6f5366488454404ce867504daa54a159ac15776",
+      "bytes": 3975
+    },
+    "probe-host-boundary.mjs": {
+      "sha256": "c089180ca2d112fdc7fd3c6925f00934c5136169e230b66208489b9ae4b241ac",
+      "bytes": 4610
+    },
+    "probe-task-contract.mjs": {
+      "sha256": "1920b60f3c2d217c2a25fdbbed08aaa1a80c04c438d7177424a7adf062c4721e",
+      "bytes": 5370
+    },
+    "profile-baseline.json": {
+      "sha256": "85764650e32b322bf064908b67d647613df87f63edd645b61b48d3eca90faa67",
+      "bytes": 3266
+    },
+    "runtime-application/cases/gpt-6-astra/S01/case.json": {
+      "sha256": "2a2b84d03c35c11447599adb6a0102f63f358728dc80b0ba6c0e40ed98ac4824",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S01/controls.json": {
+      "sha256": "e979073e0cadf3fec37e9e41b6e0313387156082d4c59029ac6d9861258729c0",
+      "bytes": 1147
+    },
+    "runtime-application/cases/gpt-6-astra/S01/native.jsonl": {
+      "sha256": "a3ab2e239051a936b5354acb57625d7a5cfe514c22f90f84c8aa200a993729b6",
+      "bytes": 11620
+    },
+    "runtime-application/cases/gpt-6-astra/S01/observation.json": {
+      "sha256": "ed28a42bcb3561fe0349e621cea37f3916817a4f79bb6b8b40ef8f224f58bde9",
+      "bytes": 85383
+    },
+    "runtime-application/cases/gpt-6-astra/S01/oracle.json": {
+      "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+      "bytes": 1932
+    },
+    "runtime-application/cases/gpt-6-astra/S01/resources.json": {
+      "sha256": "046c97603b6acddb14e6a9b2bb1143be7f35534ba1d439ade4410250f1e48983",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S01/result.json": {
+      "sha256": "d49f58f13eab45ca752d02fe2bb6af0f4dfc4ef9c10135cd5c3c1a575a951df2",
+      "bytes": 3759
+    },
+    "runtime-application/cases/gpt-6-astra/S01/sdk.jsonl": {
+      "sha256": "ce23382b56fe5e9e75df702a4f456e0ca6f8d7832ea15fdd0cb2ba530b0ca083",
+      "bytes": 6434
+    },
+    "runtime-application/cases/gpt-6-astra/S01/transport.jsonl": {
+      "sha256": "96b9b7ead06281c818f6f0ee8e060eb7aa49263718a43f41c684515f46da8ec9",
+      "bytes": 36825
+    },
+    "runtime-application/cases/gpt-6-astra/S02/case.json": {
+      "sha256": "290560aeb2c73d4852ed1928c437bad6bee4a55405976669f8e9b8015cb240a8",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S02/controls.json": {
+      "sha256": "29611499e055f5c434570b664ba4b7984c083a6ad0c8503c93eca2ff3d41753e",
+      "bytes": 39653
+    },
+    "runtime-application/cases/gpt-6-astra/S02/native.jsonl": {
+      "sha256": "3ced46df3f3ae20e3f020bc984ccd42a0249175ca785ef854ddb9b43823547e3",
+      "bytes": 11620
+    },
+    "runtime-application/cases/gpt-6-astra/S02/observation.json": {
+      "sha256": "04239ed203f7abb200890ff15f415a978a1dc4f399109dd6988e062eb6493f69",
+      "bytes": 125045
+    },
+    "runtime-application/cases/gpt-6-astra/S02/oracle.json": {
+      "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+      "bytes": 1986
+    },
+    "runtime-application/cases/gpt-6-astra/S02/resources.json": {
+      "sha256": "d28a60c043d5c75d040b0b04510531ee37bbd19e5f4bd2c38104ab8e452a092d",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S02/result.json": {
+      "sha256": "fb5beef5057c91cea6fb2f3f34bf97d481eebbd1423596b6c18d95326bdfb633",
+      "bytes": 3815
+    },
+    "runtime-application/cases/gpt-6-astra/S02/sdk.jsonl": {
+      "sha256": "2e7d9a5dcf9a0812482ede79c648302f2847173b5f1d8455e956e9522ff7e30c",
+      "bytes": 6434
+    },
+    "runtime-application/cases/gpt-6-astra/S02/transport.jsonl": {
+      "sha256": "dd1a9ec95c3cd1dd336298df19e23711d03fddd95212f4bea7a77597d77d493a",
+      "bytes": 36825
+    },
+    "runtime-application/cases/gpt-6-astra/S03/case.json": {
+      "sha256": "604da745c3edbdd6c2179cc74084b5a4edcba48a2a6269041755c097f1f1a98f",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S03/controls.json": {
+      "sha256": "b78fd683aa9e7db898e8ee9643b43c642d4fcc69f57683a0e9982a6baedba143",
+      "bytes": 22194
+    },
+    "runtime-application/cases/gpt-6-astra/S03/native.jsonl": {
+      "sha256": "5f4432ccef65f3e00852705794f2b78fb8a40acd852c22a11572d244758e54ce",
+      "bytes": 11620
+    },
+    "runtime-application/cases/gpt-6-astra/S03/observation.json": {
+      "sha256": "423b52a842729b04aabac244372ef7d43177aace92ae8987a12315ef9b31b7ec",
+      "bytes": 128849
+    },
+    "runtime-application/cases/gpt-6-astra/S03/oracle.json": {
+      "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+      "bytes": 2021
+    },
+    "runtime-application/cases/gpt-6-astra/S03/resources.json": {
+      "sha256": "522ddb5b1626da6b5345d52baa30456daa9a0e0fdd0dff1c2125eeda04a59e5f",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S03/result.json": {
+      "sha256": "e5083371277c0e6c67d05bbb8c815b745d1324329dbef9d81ff312591af8fd89",
+      "bytes": 3850
+    },
+    "runtime-application/cases/gpt-6-astra/S03/sdk.jsonl": {
+      "sha256": "e7bfb7be252dd0e4146b819707858d2d48e62b219c070d7d6324f25679bcbb61",
+      "bytes": 6434
+    },
+    "runtime-application/cases/gpt-6-astra/S03/transport.jsonl": {
+      "sha256": "9bac821d742b4217b9351bf980cf308440b8070503ef30b9f156c0d8be74875b",
+      "bytes": 52446
+    },
+    "runtime-application/cases/gpt-6-astra/S04/case.json": {
+      "sha256": "83f8d9e10f3ad771e4251467740fd71100a9ca7e600a8b72bdc987c7c6719b37",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S04/controls.json": {
+      "sha256": "f29d6cdda388235b19da819243b8d791524ba3edca2aefaf45113b63fc547d03",
+      "bytes": 3625
+    },
+    "runtime-application/cases/gpt-6-astra/S04/native.jsonl": {
+      "sha256": "0ede3a96c1e56debe00ec7b5150b17983a55e6ca0944e90db12b8b96cf0d2cb2",
+      "bytes": 11620
+    },
+    "runtime-application/cases/gpt-6-astra/S04/observation.json": {
+      "sha256": "916c9430456fa07a1b638c8931f5a5f5149d6d7a0adca9996986b250172a7e4a",
+      "bytes": 112298
+    },
+    "runtime-application/cases/gpt-6-astra/S04/oracle.json": {
+      "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+      "bytes": 2002
+    },
+    "runtime-application/cases/gpt-6-astra/S04/resources.json": {
+      "sha256": "f1a5f7805598b47fd49bd74b0015e91fd26692cea5f318c95cea1f3edc4969c4",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S04/result.json": {
+      "sha256": "66c752694eff799a4fc3431fdf8931c03a09515e8470a4c4edca4b0adf6152da",
+      "bytes": 3830
+    },
+    "runtime-application/cases/gpt-6-astra/S04/sdk.jsonl": {
+      "sha256": "b61ef610978765804f11a8002322019acda2362dc7374a24b3a56cda5a6ba4d5",
+      "bytes": 6434
+    },
+    "runtime-application/cases/gpt-6-astra/S04/transport.jsonl": {
+      "sha256": "8eefe80eed657e9a74f4f42b95d441e208944081ba3dc42d3c036b374ece7def",
+      "bytes": 55653
+    },
+    "runtime-application/cases/gpt-6-astra/S05/case.json": {
+      "sha256": "beaacc5bd7a9c4e43e7f29f941d4e9d54dedcc14914f1405ddf8e08976845d6d",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S05/controls.json": {
+      "sha256": "a12f727f6da64d9c033321bf3700abe9d5d366f5db6808d72c500eca6394c546",
+      "bytes": 2548
+    },
+    "runtime-application/cases/gpt-6-astra/S05/native.jsonl": {
+      "sha256": "d69cb59f48d78f8d1ee1801e8da33309949909fcc4b7e203da60d3e498cc3f0d",
+      "bytes": 11620
+    },
+    "runtime-application/cases/gpt-6-astra/S05/observation.json": {
+      "sha256": "56b678023ade3cfc29fb32a230f0d8abc2202e92f9b83c3e0c2dae013deaed4e",
+      "bytes": 106813
+    },
+    "runtime-application/cases/gpt-6-astra/S05/oracle.json": {
+      "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+      "bytes": 2007
+    },
+    "runtime-application/cases/gpt-6-astra/S05/resources.json": {
+      "sha256": "294b359f64f083e8f2ac7521d3a0071318e04bac40ff43016fbf3145fcfa78be",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S05/result.json": {
+      "sha256": "cf9d857cd4660943c6fbedfc12515a8ad9d68ebefda544c292967d2e2c0bac1b",
+      "bytes": 3835
+    },
+    "runtime-application/cases/gpt-6-astra/S05/sdk.jsonl": {
+      "sha256": "fdbff039b0d2ba023894cd950aab8349188a8526a6ee769c6b00439b6ef02cb6",
+      "bytes": 6434
+    },
+    "runtime-application/cases/gpt-6-astra/S05/transport.jsonl": {
+      "sha256": "4886ca33cc63b8ab66d0d2aa6d1fe1a440ba588afffb666336f0b7b48ca16fa1",
+      "bytes": 51757
+    },
+    "runtime-application/cases/gpt-6-astra/S06/case.json": {
+      "sha256": "f7402718db4a514e0aebf026743943d748d971c1b30b67d0e5867dfbe3c7c33d",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S06/controls.json": {
+      "sha256": "ac862050c560ac93c49e78a2b8aa1fb0027ba2c5df82057677bda5b74fe257c9",
+      "bytes": 1956
+    },
+    "runtime-application/cases/gpt-6-astra/S06/native.jsonl": {
+      "sha256": "e7ae5ad8258e4bbb99c1f16963902cf07a682c693762926e9ce6718fe8b20f30",
+      "bytes": 19135
+    },
+    "runtime-application/cases/gpt-6-astra/S06/observation.json": {
+      "sha256": "bf3bfd37944f527fe68c98e58576cb13b114e09c5c12d6427032e3527182649b",
+      "bytes": 132843
+    },
+    "runtime-application/cases/gpt-6-astra/S06/observation.partial.json": {
+      "sha256": "990a1962a8b4fc09d68f5c3c63ed69237c4c05d87481a87c7c077013498ba116",
+      "bytes": 46903
+    },
+    "runtime-application/cases/gpt-6-astra/S06/oracle.json": {
+      "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+      "bytes": 2039
+    },
+    "runtime-application/cases/gpt-6-astra/S06/resources.json": {
+      "sha256": "8d09645f05320d185d46053e252e2abc7afbf8376df5d911176938df1feef370",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S06/result.json": {
+      "sha256": "d3ae13ab049e4b0163b45d6c7c8ebf7da07e42f889cc471a1c55036069966e5d",
+      "bytes": 3874
+    },
+    "runtime-application/cases/gpt-6-astra/S06/sdk.jsonl": {
+      "sha256": "6932cd270c2a56a22b837081d3d3c3a29a1d5927f3af62066d8e914b288d3d8f",
+      "bytes": 12221
+    },
+    "runtime-application/cases/gpt-6-astra/S06/transport.jsonl": {
+      "sha256": "c00a9ca2f006edd7e6f951dc60a1c0ff44a4cdf5ec06c75b2a6b4570b03b7011",
+      "bytes": 52962
+    },
+    "runtime-application/cases/gpt-6-astra/S07/case.json": {
+      "sha256": "959c5be4b0c22a04f4a6898f71438df6597885762a5833a52cca62fb117886c8",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S07/controls.json": {
+      "sha256": "d71cdad41af53d326187bf49bf9a63de4eb3ac5f68288f24ea2740f20e0dc045",
+      "bytes": 2598
+    },
+    "runtime-application/cases/gpt-6-astra/S07/native.jsonl": {
+      "sha256": "70bce57cc9a7dfe01ba5360c6ebe008499268cad8ac0df594669a102148a764d",
+      "bytes": 25910
+    },
+    "runtime-application/cases/gpt-6-astra/S07/observation.json": {
+      "sha256": "95ea535d24812766792e898eeb7b23d5f1a5b41746d7ce71db3a91421382641b",
+      "bytes": 195048
+    },
+    "runtime-application/cases/gpt-6-astra/S07/oracle.json": {
+      "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+      "bytes": 2029
+    },
+    "runtime-application/cases/gpt-6-astra/S07/resources.json": {
+      "sha256": "13b1e6a40431655a388d128bd0a0e7f2f76d71966d17d98310ec5d415b607fae",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S07/result.json": {
+      "sha256": "094cf78e6dc9778974a3ef078b1f352cf03ac936086e7e89ae44ed2da4c74b2f",
+      "bytes": 3944
+    },
+    "runtime-application/cases/gpt-6-astra/S07/sdk.jsonl": {
+      "sha256": "54eb29193da7689d47b361df09ce7875c8afd01a370bb287b351b8b466a1d4b4",
+      "bytes": 12590
+    },
+    "runtime-application/cases/gpt-6-astra/S07/transport.jsonl": {
+      "sha256": "dbf5918e7e7d9e6d1104a7797b724cb5d38ad033cf1708154c1d619b9bed2778",
+      "bytes": 89850
+    },
+    "runtime-application/cases/gpt-6-astra/S08/case.json": {
+      "sha256": "df0d7b895b84df18dbd11adbfa4277b56d0569d56f28885a30e9cd6afe23406e",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S08/controls.json": {
+      "sha256": "b55a0f94a207b2cbfea7648df96e2014d68ca801298899bcdf1bc0e10b624fd0",
+      "bytes": 3354
+    },
+    "runtime-application/cases/gpt-6-astra/S08/native.jsonl": {
+      "sha256": "0c142f06a4236e56270834f44974d1e2dd835ddfb9cfb86e3dd2f76db9003ac5",
+      "bytes": 20762
+    },
+    "runtime-application/cases/gpt-6-astra/S08/observation.json": {
+      "sha256": "e1b2a341ffc282a7e174650dee4a8b3edc62a806af65257f11d69c4155932215",
+      "bytes": 160667
+    },
+    "runtime-application/cases/gpt-6-astra/S08/oracle.json": {
+      "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+      "bytes": 2216
+    },
+    "runtime-application/cases/gpt-6-astra/S08/resources.json": {
+      "sha256": "122ac5186829309550fb0bc62324dea4ea0f13524da0b9d420a8c104aa6a9248",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S08/result.json": {
+      "sha256": "cc3db72ea57c0dcb47d965cbc45fad07622230314a7774a64b36ba9a1c6a0f93",
+      "bytes": 4049
+    },
+    "runtime-application/cases/gpt-6-astra/S08/sdk.jsonl": {
+      "sha256": "df7521e9631425218d06f49ac582916b5dbcf2de3b791bfd64ea8cfc2ca3d401",
+      "bytes": 11985
+    },
+    "runtime-application/cases/gpt-6-astra/S08/transport.jsonl": {
+      "sha256": "3cc995cb36f3d45d5b938624299a729db1882e0e9c675368413cb8a168bdd7a7",
+      "bytes": 70534
+    },
+    "runtime-application/cases/gpt-6-astra/S09/case.json": {
+      "sha256": "1e60ba28068cbaf60e214334f8103523a1b1a3aa3f322959788e3fcf86a8b598",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S09/controls.json": {
+      "sha256": "f6cc5dc79ba381360b6dbd78cfa8ee6c28ac0ed473706c3cc11ed2ba2f87db2a",
+      "bytes": 2190
+    },
+    "runtime-application/cases/gpt-6-astra/S09/native.jsonl": {
+      "sha256": "9d5b2b12024648959d8cc0b56a10741ec1f30523c06946a0f2726233b14680c0",
+      "bytes": 21707
+    },
+    "runtime-application/cases/gpt-6-astra/S09/observation.json": {
+      "sha256": "649b504794b60f6a83bf9b09e4c9b7d47e5b339f772172cd5256b672db534e62",
+      "bytes": 162601
+    },
+    "runtime-application/cases/gpt-6-astra/S09/oracle.json": {
+      "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+      "bytes": 2038
+    },
+    "runtime-application/cases/gpt-6-astra/S09/resources.json": {
+      "sha256": "450b56795c51aa8bc557a34a8b4ead35f12f8ef7021ee265a061160112a89817",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S09/result.json": {
+      "sha256": "9478240e8fbda680bf78dcab06e848275eec909ef4306fe50d0ec9e77628f148",
+      "bytes": 3871
+    },
+    "runtime-application/cases/gpt-6-astra/S09/sdk.jsonl": {
+      "sha256": "6ae44830f76fdd0959ce7fe98ab224a33c1e07299c10ece859701fd1c98d8d0f",
+      "bytes": 12826
+    },
+    "runtime-application/cases/gpt-6-astra/S09/transport.jsonl": {
+      "sha256": "980b4f2575a4e18b62e009fdac391300bdf8c18bd24920d6d50549e1eb4e5298",
+      "bytes": 71775
+    },
+    "runtime-application/cases/gpt-6-astra/S10/case.json": {
+      "sha256": "59af3f46d66a48c2df9bdc51a7194804c90f130e1d0a69f7f9070822bdd01078",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S10/controls.json": {
+      "sha256": "c509d165411f16555369b3ef88b013b48b6f1bf845bec6070ff972fdbaa339ae",
+      "bytes": 1371
+    },
+    "runtime-application/cases/gpt-6-astra/S10/native.jsonl": {
+      "sha256": "860c9d1a84c5e3d90ab07a112c00ed97ed0a3df3912b19d55dfdab306e436522",
+      "bytes": 23565
+    },
+    "runtime-application/cases/gpt-6-astra/S10/observation.json": {
+      "sha256": "0592364fb45fe857afdb533d1950d1e4e66ec0974736523ea667e66f406345c7",
+      "bytes": 162242
+    },
+    "runtime-application/cases/gpt-6-astra/S10/oracle.json": {
+      "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+      "bytes": 1848
+    },
+    "runtime-application/cases/gpt-6-astra/S10/resources.json": {
+      "sha256": "a1eb833f9adc66069896568a9f8711ff60a4d04b0fc9d1ca89d7efbced69fb98",
+      "bytes": 487
+    },
+    "runtime-application/cases/gpt-6-astra/S10/result.json": {
+      "sha256": "114dbde9582487051f8c1c036d142632e2e5f18a0df484e33ed94728c1050589",
+      "bytes": 3758
+    },
+    "runtime-application/cases/gpt-6-astra/S10/sdk.jsonl": {
+      "sha256": "e500b347fd7a1761e45187b46052c46d4d516f4f678f6c72f521a0418888e14b",
+      "bytes": 14631
+    },
+    "runtime-application/cases/gpt-6-astra/S10/transport.jsonl": {
+      "sha256": "49d48c586af3834b88bba6f1d0860b4be354a265aaaca3e3982a92593dafb2df",
+      "bytes": 65826
+    },
+    "runtime-application/cases/gpt-6-astra/S11/case.json": {
+      "sha256": "7976cc3cf3ef86f5b81b4d7b03e056073796becb94d9b1048f668d935d85b948",
+      "bytes": 418
+    },
+    "runtime-application/cases/gpt-6-astra/S11/controls.json": {
+      "sha256": "4d2045fc582eef39f0a9a6be79e493b1236ad0326c3badfefae84689cdb43a6c",
+      "bytes": 4060
+    },
+    "runtime-application/cases/gpt-6-astra/S11/native.jsonl": {
+      "sha256": "8d9699941d4154c98a8f19eecc86f564e42957c4162aa91bf9516fa5cb81b494",
+      "bytes": 108682
+    },
+    "runtime-application/cases/gpt-6-astra/S11/observation.json": {
+      "sha256": "0b9421c6b68794802e97be885fd385c264cf3e5f37e90dce997d4db7b56e72c0",
+      "bytes": 743380
+    },
+    "runtime-application/cases/gpt-6-astra/S11/oracle.json": {
+      "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+      "bytes": 2034
+    },
+    "runtime-application/cases/gpt-6-astra/S11/resources.json": {
+      "sha256": "3c38d15f74b3746b7b3a28ccf47165ac2b58da7bbb13d88733aeba639a2498ff",
+      "bytes": 296
+    },
+    "runtime-application/cases/gpt-6-astra/S11/result.json": {
+      "sha256": "3b62dec5175b62d55acc4051a83b086784b864099d7e874dc825793a7fb328ac",
+      "bytes": 4341
+    },
+    "runtime-application/cases/gpt-6-astra/S11/sdk.jsonl": {
+      "sha256": "3c8f9d0c70ee3bcc9dd29b768e7589750ba03b8e07acce4c97cc156cdd943bd4",
+      "bytes": 23600
+    },
+    "runtime-application/cases/gpt-6-astra/S11/transport.jsonl": {
+      "sha256": "fbcc7ea4e6844b2b14537060dce6fff65429311b49d6b062315ec25a03f1295d",
+      "bytes": 396284
+    },
+    "runtime-application/freeze.json": {
+      "sha256": "4daf8bb24918335e0a78850bd62a9b305d52948c35785f438edb40cb44b778ad",
+      "bytes": 35861
+    },
+    "runtime-application/preflight/preflight.json": {
+      "sha256": "a0c5d0e31f94ade0e91e6ec39946e766bd5dd3ab26555e9fddb9f0dac8da0546",
+      "bytes": 230
+    },
+    "runtime-application/report.json": {
+      "sha256": "37476b64e7f6d9e6ed5895d5d6279a76a470461ae8248b75556a74024e94c2fb",
+      "bytes": 12600
+    },
+    "runtime-application/report.md": {
+      "sha256": "bf19a0e5b525dcf81f5d0c8422c80e6ffcc82e675862d7ddef06c0b30c150ab4",
+      "bytes": 819
+    },
+    "runtime-prompt-inspection.json": {
+      "sha256": "80d4b0cca7a6656181785fb9f651dbaa45bb8a279329f079e0bedb70b042afe4",
+      "bytes": 1596
+    },
+    "task-contract.json": {
+      "sha256": "3aaedcd5061e94e26447788e115d67ffac40e49000a3dfd0eab6af6cbb79dbb7",
+      "bytes": 26406
+    }
+  }
+}

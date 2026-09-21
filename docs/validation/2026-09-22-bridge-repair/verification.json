@@ -1,0 +1,196 @@
+{
+  "runtime": {
+    "current": {
+      "evidenceIntegrity": true,
+      "totalCases": 11,
+      "counts": {
+        "passed": 11,
+        "failed": 0,
+        "blocked": 0,
+        "unsupported": 0,
+        "timed-out": 0,
+        "not-run": 0
+      },
+      "passed": 11,
+      "percent": 100,
+      "fullMatrixPassed": false,
+      "offlineHarnessPassed": true,
+      "perModel": [
+        {
+          "model": "gpt-6-astra",
+          "passed": 11,
+          "total": 11,
+          "verdict": "not-established"
+        }
+      ],
+      "realModelCalls": 0,
+      "faultInjectionLabelled": true,
+      "hoursLongSoakCertified": false,
+      "measuredProductCoverage": null,
+      "historicalV4Regraded": false
+    },
+    "frozen": {
+      "evidenceIntegrity": true,
+      "totalCases": 11,
+      "counts": {
+        "passed": 11,
+        "failed": 0,
+        "blocked": 0,
+        "unsupported": 0,
+        "timed-out": 0,
+        "not-run": 0
+      },
+      "passed": 11,
+      "percent": 100,
+      "fullMatrixPassed": false,
+      "offlineHarnessPassed": true,
+      "perModel": [
+        {
+          "model": "gpt-6-astra",
+          "passed": 11,
+          "total": 11,
+          "verdict": "not-established"
+        }
+      ],
+      "realModelCalls": 0,
+      "faultInjectionLabelled": true,
+      "hoursLongSoakCertified": false,
+      "measuredProductCoverage": null,
+      "historicalV4Regraded": false
+    },
+    "equal": true
+  },
+  "live": {
+    "current": {
+      "evidenceIntegrity": true,
+      "totalCases": 77,
+      "counts": {
+        "passed": 66,
+        "failed": 11,
+        "blocked": 0,
+        "unsupported": 0,
+        "timed-out": 0,
+        "not-run": 0
+      },
+      "passed": 66,
+      "percent": 85.71428571428571,
+      "fullMatrixPassed": false,
+      "offlineHarnessPassed": false,
+      "perModel": [
+        {
+          "model": "gpt-5.6-sol",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "gpt-5.6-terra",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "gpt-5.6-luna",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "gpt-6-astra",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "claude-opus-5",
+          "passed": 0,
+          "total": 11,
+          "verdict": "not-established"
+        },
+        {
+          "model": "claude-sonnet-5",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "claude-haiku-4.5",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        }
+      ],
+      "realModelCalls": null,
+      "faultInjectionLabelled": true,
+      "hoursLongSoakCertified": false,
+      "measuredProductCoverage": null,
+      "historicalV4Regraded": false
+    },
+    "frozen": {
+      "evidenceIntegrity": true,
+      "totalCases": 77,
+      "counts": {
+        "passed": 66,
+        "failed": 11,
+        "blocked": 0,
+        "unsupported": 0,
+        "timed-out": 0,
+        "not-run": 0
+      },
+      "passed": 66,
+      "percent": 85.71428571428571,
+      "fullMatrixPassed": false,
+      "offlineHarnessPassed": false,
+      "perModel": [
+        {
+          "model": "gpt-5.6-sol",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "gpt-5.6-terra",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "gpt-5.6-luna",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "gpt-6-astra",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "claude-opus-5",
+          "passed": 0,
+          "total": 11,
+          "verdict": "not-established"
+        },
+        {
+          "model": "claude-sonnet-5",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        },
+        {
+          "model": "claude-haiku-4.5",
+          "passed": 11,
+          "total": 11,
+          "verdict": "codex-ghcp-stability-11-v3-passed"
+        }
+      ],
+      "realModelCalls": null,
+      "faultInjectionLabelled": true,
+      "hoursLongSoakCertified": false,
+      "measuredProductCoverage": null,
+      "historicalV4Regraded": false
+    },
+    "equal": true
+  }
+}

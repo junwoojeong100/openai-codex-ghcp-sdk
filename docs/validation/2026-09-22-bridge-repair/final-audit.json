@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-09-21T18:52:26.799Z",
+  "liveRunId": "79fb9993-3fa1-4346-a8df-09dfbd67ab4a",
+  "implementationHash": "9d261cf6bef109968c8c72586b421fbd964f785c24eeef85af8af7389bbb1379",
+  "sourceFrozenAndCurrentEqual": true,
+  "publishedSummaryMatchesRaw": true,
+  "currentAndFrozenVerificationMatch": true,
+  "acceptanceFilesUnchanged": true,
+  "matrixCells": 77,
+  "passed": 66,
+  "failed": 11,
+  "targetMet": false,
+  "hashedEvidenceFiles": 798,
+  "confirmedFilterReferences": 14,
+  "preliminaryTimeoutPreserved": true,
+  "checkedMarkdownLinks": 88,
+  "whitespaceCheckPassed": true,
+  "additionalModelCalls": 0
+}

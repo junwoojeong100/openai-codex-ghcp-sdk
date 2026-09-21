@@ -186,3 +186,39 @@ for (const mode of ["json", "sse", "partial-sse"]) test(`explicit SDK content fi
   assert.equal(diagnostics.filter(d => d.event === "bridge.upstream_content_filter").length, 1);
   assert.ok(!text.includes("must not be reported as completed"));
 });
+
+for (const stream of [false, true]) test(`a late Opus filter blocks pending-result HTTP continuation (stream=${stream})`, async t => {
+  const opus = "claude-opus-5";
+  const initial = { model: opus, input: "Use lookup", tools: [tool] };
+  const callName = normalizeRequest(initial).tools[0].name;
+  const client = new FakeClient({ models: [{ id: opus }],
+    onSend: s => s.toolCalls([{ toolCallId: "late-opus-call", name: callName, arguments: {} }]),
+    onSubmit: s => s.reply("must not resume a filtered turn"),
+  });
+  const { post, manager, diagnostics } = await setup(t, { client });
+  const first = await post(initial);
+  assert.equal(first.status, 200);
+  const result = await first.json();
+  assert.equal(result.output[0].call_id, "late-opus-call");
+  client.sessions[0].emit("assistant.usage", { model: opus, finishReason: "content_filter", inputTokens: 3768, outputTokens: 0 });
+  const continuation = { model: opus, stream, previous_response_id: result.id,
+    input: [{ type: "function_call_output", call_id: "late-opus-call", output: "private-result" }] };
+  const response = await post(continuation);
+  assert.equal(response.status, 422, "fail before SSE headers or cached success can be sent");
+  assert.equal((await response.json()).error.code, "upstream_content_filter");
+  await manager.queue.drain();
+  assert.equal(client.sessions[0].submitted.length, 0);
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(client.sessions.length, 1);
+  assert.equal(manager.responses.size, 0);
+  assert.equal(manager.callStates.size, 0);
+  const filter = diagnostics.filter(d => d.event === "bridge.upstream_content_filter");
+  assert.equal(filter.length, 1);
+  assert.equal(filter[0].phase, "tool_handoff");
+  assert.equal(filter[0].pendingToolCalls, 1);
+  assert.equal(filter[0].toolResultSubmissions, 0);
+  const duplicate = await post(continuation);
+  assert.equal(duplicate.status, 404);
+  assert.equal((await duplicate.json()).error.code, "response_not_found");
+  assert.equal(client.sessions.length, 1);
+});

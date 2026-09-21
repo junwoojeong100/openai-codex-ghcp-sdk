@@ -1,0 +1,183 @@
+{
+  "baseline": {
+    "tests": 223,
+    "pass": 223,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "afterFix": {
+    "tests": 248,
+    "pass": 248,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "newFailingTestsBeforeFix": [
+    {
+      "tests": 6,
+      "pass": 1,
+      "fail": 5,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  ],
+  "nativeCompatibility": {
+    "executionKind": "offline-self-test",
+    "realModelCalls": 0,
+    "liveCompatibilityVerified": false,
+    "passed": true,
+    "cases": [
+      {
+        "id": "C01",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C02",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C03",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C04",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C05",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C06",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C07",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C08",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C09",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C10",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C11",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C12",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C13",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C14",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C15",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C16",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C17",
+        "passed": true,
+        "failedChecks": []
+      },
+      {
+        "id": "C18",
+        "passed": true,
+        "failedChecks": []
+      }
+    ]
+  },
+  "nativeStability": {
+    "evidenceIntegrity": true,
+    "totalCases": 11,
+    "counts": {
+      "passed": 11,
+      "failed": 0,
+      "blocked": 0,
+      "unsupported": 0,
+      "timed-out": 0,
+      "not-run": 0
+    },
+    "passed": 11,
+    "percent": 100,
+    "fullMatrixPassed": false,
+    "offlineHarnessPassed": true,
+    "perModel": [
+      {
+        "model": "gpt-6-astra",
+        "passed": 11,
+        "total": 11,
+        "verdict": "not-established"
+      }
+    ],
+    "realModelCalls": 0,
+    "faultInjectionLabelled": true,
+    "hoursLongSoakCertified": false,
+    "measuredProductCoverage": null,
+    "historicalV4Regraded": false
+  },
+  "offlineStress": {
+    "executionKind": "offline-stress",
+    "realModelCalls": 0,
+    "passed": true,
+    "cycles": 100,
+    "toolResults": 100,
+    "exactResultRetries": 100,
+    "cancelledWaiters": 10,
+    "recoveredGenerations": 10,
+    "maximumResidentStates": 8,
+    "finalQueue": 0,
+    "finalStates": 0,
+    "listenersRemaining": 0,
+    "durationMs": 59,
+    "hoursLongSoakCertified": false
+  },
+  "diagnosticUnitTests": {
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "diagnosticsExcludedFromMatrix": true
+}

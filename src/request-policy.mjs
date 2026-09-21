@@ -80,7 +80,11 @@ export function canonicalItem(item) {
       if (!["user", "assistant", "system", "developer"].includes(item.role)) {
         throw new BridgeRequestError("Message role must be user, assistant, system, or developer.");
       }
-      return { type: "message", role: item.role, content: textContent(item.content, "Message content") };
+      if (item.phase != null && (item.role !== "assistant" || !["commentary", "final_answer"].includes(item.phase))) {
+        throw new BridgeRequestError("Message phase must be commentary or final_answer on an assistant message.");
+      }
+      return { type: "message", role: item.role, content: textContent(item.content, "Message content"),
+        ...(item.phase != null ? { phase: item.phase } : {}) };
     }
     case "function_call":
       keys(item, ["type", "id", "status", "name", "namespace", "call_id", "arguments"], "function_call");

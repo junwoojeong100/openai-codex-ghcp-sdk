@@ -1,0 +1,876 @@
+{
+  "denominator": 77,
+  "statusesUnchanged": true,
+  "failed": 27,
+  "explicitFilterCases": 2,
+  "observedFilterCalls": 2,
+  "literalOutputMismatchCases": 25,
+  "failures": [
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S01",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 12520,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S02",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9562,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S03",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 10470,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S05",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 10990,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S06",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 55276,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S07",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 19649,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "before-loss",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "lost-conversation",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 2
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S09",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 17422,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 2
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S10",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 18500,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "remember",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "recall",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 48934,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "repeat-1",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-2",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-3",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-4",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-5",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-6",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "padding",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "recall",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 6,
+      "resultSubmissions": 6
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S06",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 65063,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S07",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 19094,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "before-loss",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "lost-conversation",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 2
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S08",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16739,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S09",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16342,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 2
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S10",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16418,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "remember",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "recall",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 35952,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "repeat-1",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-2",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-3",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-4",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-5",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-6",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "padding",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "recall",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 6,
+      "resultSubmissions": 6
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "turns",
+        "transport-outcomes",
+        "readiness"
+      ],
+      "durationMs": 16567,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "explicit-upstream-filter",
+      "sdkFilters": [
+        {
+          "reference": "live-application/cases/claude-opus-5/S10/observation.json#/sdk/14",
+          "contentFilterTriggered": true,
+          "finishReason": "content_filter",
+          "inputTokens": 10139,
+          "outputTokens": 0
+        }
+      ],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "remember",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "recall",
+          "expected": "completed",
+          "observed": "failed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "turns",
+        "transport-outcomes",
+        "readiness",
+        "S11.compaction",
+        "S11.repetition"
+      ],
+      "durationMs": 10955,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "explicit-upstream-filter",
+      "sdkFilters": [
+        {
+          "reference": "live-application/cases/claude-opus-5/S11/observation.json#/sdk/9",
+          "contentFilterTriggered": true,
+          "finishReason": "content_filter",
+          "inputTokens": 10089,
+          "outputTokens": 0
+        }
+      ],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "repeat-1",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-2",
+          "expected": "completed",
+          "observed": "failed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S01",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9416,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S02",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9427,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S03",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9630,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S04",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9349,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S05",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 9247,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "read",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S06",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 55439,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 1,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S07",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 17556,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "before-loss",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "lost-conversation",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S08",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 16201,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S09",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 15951,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "fault",
+          "expected": "failed",
+          "observed": "failed"
+        },
+        {
+          "label": "recovery",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 2,
+      "resultSubmissions": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "status": "failed",
+      "observedStatus": "failed",
+      "failedChecks": [
+        "final-values"
+      ],
+      "durationMs": 50967,
+      "processGroupGone": true,
+      "resourcesCleaned": true,
+      "category": "literal-output-mismatch",
+      "sdkFilters": [],
+      "nativeRefusalCategory": null,
+      "phases": [
+        {
+          "label": "repeat-1",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-2",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-3",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-4",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-5",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "repeat-6",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "padding",
+          "expected": "completed",
+          "observed": "completed"
+        },
+        {
+          "label": "recall",
+          "expected": "completed",
+          "observed": "completed"
+        }
+      ],
+      "toolCalls": 6,
+      "resultSubmissions": 6
+    }
+  ],
+  "limitation": "Native refusal category is not collected by this scored run. reasoning_extraction was observed in earlier, separate diagnostics; it is not retroactively assigned to these cells."
+}

@@ -114,7 +114,7 @@ test("canonical history preserves tool namespace and raw custom input without wi
   const wire = outputItems(messages, tools);
   const canonical = wire.map(canonicalItem);
   assert.deepEqual(normalizeRequest({ input: wire }).input, canonical);
-  assert.deepEqual(canonical[0], { type: "message", role: "assistant", content: "Using tools" });
+  assert.deepEqual(canonical[0], { type: "message", role: "assistant", content: "Using tools", phase: "commentary" });
   assert.deepEqual(canonical[1], { type: "function_call", name: "read_file", namespace: "functions", call_id: "call_one", arguments: { path: "file.txt" } });
   assert.equal(canonical[2].input, patch);
   assert.equal(canonical[2].namespace, "functions");
@@ -160,4 +160,13 @@ test("malformed input, non-text modalities, and unknown item fields fail before 
     { tools: [{ ...functionTool, parameters: [] }] },
   ]) rejects(extra);
   assert.throws(() => normalizeRequest(null), BridgeRequestError);
+});
+
+test("assistant phase is semantic history, unlike response IDs and status", () => {
+  for (const phase of ["commentary", "final_answer"]) {
+    const item = canonicalItem({ role: "assistant", content: "reply", id: "ignored", status: "completed", phase });
+    assert.deepEqual(item, { type: "message", role: "assistant", content: "reply", phase });
+  }
+  rejects({ input: [{ role: "assistant", content: "reply", phase: "unknown" }] }, /phase/);
+  rejects({ input: [{ role: "user", content: "request", phase: "final_answer" }] }, /phase/);
 });

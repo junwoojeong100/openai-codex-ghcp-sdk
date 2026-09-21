@@ -1,0 +1,2310 @@
+{
+  "final": {
+    "kind": "unscored-opus-wire-diagnostic",
+    "schemaVersion": 1,
+    "model": "claude-opus-5",
+    "sdkVersion": "1.0.14",
+    "startedAt": "2026-09-21T22:23:57.670Z",
+    "catalogHash": "bcb5958d066a1628552f059aecd6e4fb04808acab0d0443ec70075df6e1b23fd",
+    "implementationHash": "7cb34838fe930672c375fcf6a68e5c6bafb1ef07ddc253c6cb77f870f5a82402",
+    "sdkFoundationPreserved": true,
+    "wireBytesUnmodified": true,
+    "automaticRetries": 0,
+    "safetyPolicyChanges": false,
+    "promptChangesAreDiagnosticOnly": true,
+    "cases": [
+      {
+        "id": "sdk-exact-fixture",
+        "route": "sdk",
+        "prompt": "exact",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:23:57.690Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "0f90a6e8675b28bbe32a975ecaff6433eafe706b4d626975b9297732696f9259",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10999,
+              "sha256": "70c3c470a180273ecc8dad0f7cf2e104de910ed782925c365ff546a185d9d622",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1783,
+              "sha256": "d970e97beaeea8fe2190f6a44eb7ec2efcf8fc3eea9b62cfa5231ae324e246ab",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3773,
+              "outputTokens": 0,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 84,
+        "answerHash": "31130c844282d2a2456c1a539ac9578e542924ab00606fbc7fa9429c5c9484f4",
+        "exactFixture": false,
+        "fixtureValuesPreserved": false,
+        "finishedAt": "2026-09-21T22:24:04.969Z",
+        "wireBlockObserved": true,
+        "observedInferenceRequests": 1
+      },
+      {
+        "id": "bridge-exact-fixture",
+        "route": "bridge",
+        "prompt": "exact",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:24:04.971Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "234d3d1ab5f0bd1f5dd7f5db21aaf2f3fcde8179fb428f363d6671c4496a4ea0",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11051,
+              "sha256": "923de4647447179a25821de4a115f8898d788c5ffccc4b8022b571e709965821",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1769,
+              "sha256": "30f720d5208a738bc6b2d2fcfccdad267e53a963e89f7e5ef1ddb91e79f72866",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3768,
+              "outputTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 3766,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_f5fec281-2d98-4650-a222-9be7e4301558",
+            "familyHash": "e075e657263af09c3217cafe662d9b2040e6a9f1d91d4a3b899c7b865eed92b1",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5",
+            "phase": "prompt",
+            "pendingToolCalls": 0,
+            "toolResultSubmissions": 0,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3768,
+            "outputTokens": 0
+          }
+        ],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "errorCode": "upstream_content_filter",
+        "finishedAt": "2026-09-21T22:24:10.206Z",
+        "wireBlockObserved": true,
+        "observedInferenceRequests": 1
+      },
+      {
+        "id": "sdk-exact-nonstreaming",
+        "route": "sdk",
+        "prompt": "exact",
+        "streaming": false,
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:24:10.207Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "d5cbbac1e818b3a85ed38e5cce5b186f62e2036e9400ebe53a0f4e90692af164",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10999,
+              "sha256": "7cd4818a332ee528f3c42a4fa38dcbf1237ff8d897c27bdccea6949bb53f1ce7",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1783,
+              "sha256": "d4b7ecdc1e551cd4c43fbac95c8bbae783e2baaf79ce9dd15af662affd9e4439",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3773,
+              "outputTokens": 0,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 84,
+        "answerHash": "31130c844282d2a2456c1a539ac9578e542924ab00606fbc7fa9429c5c9484f4",
+        "exactFixture": false,
+        "fixtureValuesPreserved": false,
+        "finishedAt": "2026-09-21T22:24:15.112Z",
+        "wireBlockObserved": true,
+        "observedInferenceRequests": 1
+      },
+      {
+        "id": "sdk-exact-default-summary",
+        "route": "sdk",
+        "prompt": "exact",
+        "defaultSummary": true,
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:24:15.113Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "3fef3c469e2912ebaa289669cd30605caaa3fe224297fb1d6a1f63c831ed528a",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11002,
+              "sha256": "8949bd9e74459659cd2347a0f1a32056665a966f5659a044cf2a7539ab492b42",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1783,
+              "sha256": "1e76668e5184ba1207b171d0d8095619e27fb6693120eaada65aedaf6d33d129",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": true,
+              "refusalCategories": [
+                "reasoning_extraction"
+              ],
+              "finishReasons": [],
+              "stopReasons": [
+                "refusal"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3773,
+              "outputTokens": 0,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 270,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": true,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 84,
+        "answerHash": "31130c844282d2a2456c1a539ac9578e542924ab00606fbc7fa9429c5c9484f4",
+        "exactFixture": false,
+        "fixtureValuesPreserved": false,
+        "finishedAt": "2026-09-21T22:24:19.691Z",
+        "wireBlockObserved": true,
+        "observedInferenceRequests": 1
+      },
+      {
+        "id": "sdk-simple-tool-control",
+        "route": "sdk",
+        "prompt": "simple",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:24:19.691Z",
+        "promptHash": "91f78d17bf40653374d646b582435f735312a808b43326a113bec4f0f42e9fc0",
+        "fixtureHash": "a8db06cc63672888531c346eccfad0331b5c6f2b6e47b0d4dc4196c5744981fd",
+        "status": "mismatch",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10474,
+              "sha256": "2a64a659de2c4665d0e3a5967d589faab038644fc2fb8a0a0fdfe8354da34e00",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2260,
+              "sha256": "c5fce7bfb36833ffc6442b3b23c1786cf8e04e0b0547abefba6c64c3d9518333",
+              "parsedChunks": 11,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3582,
+              "outputTokens": 38,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 118,
+              "textBytes": 22,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10831,
+              "sha256": "723b19cd84d70f6749b6f321e8d1b7987b1c9c1c57349bb13525035ddecfba6a",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2854,
+              "sha256": "d074aa8eacfd9c6db76a8b028e75055ac945621bb1eb67e493ad35f99a1b1d27",
+              "parsedChunks": 16,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3668,
+              "outputTokens": 62,
+              "cacheReadTokens": 3580,
+              "cacheWriteTokens": 86,
+              "textBytes": 108,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls"
+          },
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "stop"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 1,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 108,
+        "answerHash": "f654f2d7814a0e95560cf8cf7bce0c39ab4ae60d86fb174ac5e780c333d1afd2",
+        "exactFixture": false,
+        "fixtureValuesPreserved": true,
+        "finishedAt": "2026-09-21T22:24:26.584Z",
+        "wireBlockObserved": false,
+        "observedInferenceRequests": 2
+      },
+      {
+        "id": "bridge-simple-tool-control",
+        "route": "bridge",
+        "prompt": "simple",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:24:26.585Z",
+        "promptHash": "91f78d17bf40653374d646b582435f735312a808b43326a113bec4f0f42e9fc0",
+        "fixtureHash": "09e10c342d116c0641576ebc6e0e1f545a076acecd2721d9293f5e0e61c24139",
+        "status": "mismatch",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10526,
+              "sha256": "ee3477a07fe33e260f4ec08b294688ed3374c8e15c64904307268eb096805a56",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2281,
+              "sha256": "4a766be507c5a2248fd6d2bce0eca880c411f6cf0bfe23727715a015ff4ac4b3",
+              "parsedChunks": 11,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "tool_use"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3616,
+              "outputTokens": 60,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 3614,
+              "textBytes": 22,
+              "toolCallDeltas": 1,
+              "explicitBlock": false,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10908,
+              "sha256": "11fc333d7120079ab4e767091e6bb82f6cab135d299caff3587a10067cb8d73a",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2983,
+              "sha256": "2430d644b231acea0ad2d912f16f731700248d08d82fbd9083fa0a8d9dd52d30",
+              "parsedChunks": 17,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3725,
+              "outputTokens": 68,
+              "cacheReadTokens": 3614,
+              "cacheWriteTokens": 109,
+              "textBytes": 118,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls"
+          },
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "stop"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_a9d1a977-f44d-45e7-8f54-532e7bd9376a",
+            "familyHash": "8c2c2c57d50f1f4e1889c1ac143865b2c5875290636ba32cd683fe901c17514c",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_cc0bb4c885a74c4fadc73d199dd194a9",
+            "familyHash": "8c2c2c57d50f1f4e1889c1ac143865b2c5875290636ba32cd683fe901c17514c",
+            "queueWaitMs": 1
+          }
+        ],
+        "submissions": 1,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 118,
+        "answerHash": "7bfa98c2885a8fe13b4a88647f507d7986f2a8001c45b673adeaaec49e441446",
+        "exactFixture": false,
+        "fixtureValuesPreserved": true,
+        "finishedAt": "2026-09-21T22:24:34.324Z",
+        "wireBlockObserved": false,
+        "observedInferenceRequests": 2
+      },
+      {
+        "id": "sdk-arithmetic-control",
+        "route": "sdk",
+        "prompt": "arithmetic",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:24:34.326Z",
+        "promptHash": "b39bf4a44d7a6fe59db35e3d3f86e865691e7726c3070ad3c6cd04b41adaeea5",
+        "fixtureHash": "9273a7940fdd0ccff4825bb2fea5a27f773805c2226a245712f6b670367088d6",
+        "status": "completed",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "protocols": [],
+              "done": false,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "cacheReadTokens": null,
+              "cacheWriteTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "explicitBlock": null,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10450,
+              "sha256": "749b877540d610baa2213748a40592a8157409aa8324e2988ef81ad222d8f7a9",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1715,
+              "sha256": "3414545a1cf9cec33db77df4ffc9c919b8a611e51724dedcf7319207dd64b259",
+              "parsedChunks": 7,
+              "invalidChunks": 0,
+              "protocols": [
+                "anthropic-messages"
+              ],
+              "done": true,
+              "contentFilter": false,
+              "nativeRefusal": false,
+              "refusalCategories": [],
+              "finishReasons": [],
+              "stopReasons": [
+                "end_turn"
+              ],
+              "modelMatches": true,
+              "inputTokens": 3576,
+              "outputTokens": 5,
+              "cacheReadTokens": 3462,
+              "cacheWriteTokens": 112,
+              "textBytes": 5,
+              "toolCallDeltas": 0,
+              "explicitBlock": false,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "stop"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 5,
+        "answerHash": "2f7820a5325de01510971fb541180d3730df116b28942068bb1e5a7040528833",
+        "exactFixture": false,
+        "fixtureValuesPreserved": false,
+        "finishedAt": "2026-09-21T22:24:39.114Z",
+        "wireBlockObserved": false,
+        "observedInferenceRequests": 1
+      }
+    ],
+    "interrupted": false,
+    "finishedAt": "2026-09-21T22:24:39.115Z",
+    "implementationUnchanged": true,
+    "observedHttpRequests": 16,
+    "observedInferenceRequests": 9
+  },
+  "preliminary": {
+    "kind": "unscored-opus-wire-diagnostic",
+    "schemaVersion": 1,
+    "model": "claude-opus-5",
+    "sdkVersion": "1.0.14",
+    "startedAt": "2026-09-21T22:18:08.562Z",
+    "catalogHash": "bcb5958d066a1628552f059aecd6e4fb04808acab0d0443ec70075df6e1b23fd",
+    "implementationHash": "fe46b517b3fa1ced331c1b4d6345ec67b169f83bab22290be4c1ed1e7514a75e",
+    "sdkFoundationPreserved": true,
+    "wireBytesUnmodified": true,
+    "automaticRetries": 0,
+    "safetyPolicyChanges": false,
+    "promptChangesAreDiagnosticOnly": true,
+    "cases": [
+      {
+        "id": "sdk-exact-fixture",
+        "route": "sdk",
+        "prompt": "exact",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:18:08.575Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "f8f82deed850760c449d44136df00fbc1cf9a068ad0be8dcff050a9a5d1b85fe",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "done": false,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10999,
+              "sha256": "918662d97621b7257c661ee7eae1105d75b8e9e9c1b1a2f0c787f00703165642",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1779,
+              "sha256": "ae0aa3b154cc8f7afea1a9fa1049a32c50a21be0efea05531eb9668c2a4f918c",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 84,
+        "exactFixture": false,
+        "finishedAt": "2026-09-21T22:18:14.282Z",
+        "wireFilterObserved": false
+      },
+      {
+        "id": "bridge-exact-fixture",
+        "route": "bridge",
+        "prompt": "exact",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:18:14.283Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "057f7f80684b3a7c7b16ff027724cbeb8d081d2a28d533cc05be9b240e0fe694",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "done": false,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11051,
+              "sha256": "021b893f56ab8f68f2e4cb47f48482a78d7092ceb8029d98e5b96bdd863be02c",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1769,
+              "sha256": "7400e0292f750454d8a45b535f52e7b6886e78cd4df4b5c151701e97d2d364ec",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_98894909-de88-4580-8308-b2f759f45acc",
+            "familyHash": "6f0e7d69d825e58cdd6812d2ec0039247c61257fd7a67b94da3232a57acc438c",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5",
+            "phase": "prompt",
+            "pendingToolCalls": 0,
+            "toolResultSubmissions": 0,
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter",
+            "inputTokens": 3768,
+            "outputTokens": 0
+          }
+        ],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "errorCode": "upstream_content_filter",
+        "finishedAt": "2026-09-21T22:18:19.456Z",
+        "wireFilterObserved": false
+      },
+      {
+        "id": "sdk-exact-nonstreaming",
+        "route": "sdk",
+        "prompt": "exact",
+        "streaming": false,
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:18:19.457Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "a4045ba93b357c3ff127538c075f3f5dd3003a1d5e3cefcd8bdaba119d5aace1",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "done": false,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10999,
+              "sha256": "b34fe8bbd6716b2c86150ac27583dbe422ee0003f9c48b3e0f60bb3fb4c9bc88",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1779,
+              "sha256": "892b92b3357304004858fbd3f0783b0410d9e3bec77eaa6c37eeb59340355822",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 84,
+        "exactFixture": false,
+        "finishedAt": "2026-09-21T22:18:24.062Z",
+        "wireFilterObserved": false
+      },
+      {
+        "id": "sdk-exact-default-summary",
+        "route": "sdk",
+        "prompt": "exact",
+        "defaultSummary": true,
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:18:24.063Z",
+        "promptHash": "47c23a1d69ec88309918d9ffbc9b435aa73729e8e93865026a6c39005ad10c4f",
+        "fixtureHash": "6b06355e23d81b52146eadecfbbbc5684aa7ee00a33f6ceff5c9407c06683daf",
+        "status": "filtered",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "done": false,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 11002,
+              "sha256": "db1b9af1c2e4f40d1acbd848058abefc0c8800df7f83b457c4220f6355e47397",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1779,
+              "sha256": "cab5f87e55327dbae66ae0f6d1907c1523eb7cc07cc1181ba4546f016781c6b2",
+              "parsedChunks": 3,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": true,
+            "finishReason": "content_filter"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 84,
+        "exactFixture": false,
+        "finishedAt": "2026-09-21T22:18:28.919Z",
+        "wireFilterObserved": false
+      },
+      {
+        "id": "sdk-simple-tool-control",
+        "route": "sdk",
+        "prompt": "simple",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:18:28.920Z",
+        "promptHash": "91f78d17bf40653374d646b582435f735312a808b43326a113bec4f0f42e9fc0",
+        "fixtureHash": "cf27707a8f01bbd89cb250eaae0f0d07cecab3b65f373aad7f2593b3b90fc056",
+        "status": "mismatch",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "done": false,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10474,
+              "sha256": "3ec179796fcc1c51e8a7abf748c7a53f73070749364f9c25be118ca78d5314ec",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2256,
+              "sha256": "7116537d118a1f183d720c9f1de1a9368a0ddf635303b15a80e14e7438cf46fe",
+              "parsedChunks": 11,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10831,
+              "sha256": "6faad8731b210554ce448c65c5455b8abfd77870a9a2fe5864015439d85aae20",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2969,
+              "sha256": "b023f14a09d64fdcac59995497473c456ac70e15d79d01471431ddbc64032a17",
+              "parsedChunks": 17,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls"
+          },
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "stop"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 1,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 108,
+        "exactFixture": false,
+        "finishedAt": "2026-09-21T22:18:35.997Z",
+        "wireFilterObserved": false
+      },
+      {
+        "id": "bridge-simple-tool-control",
+        "route": "bridge",
+        "prompt": "simple",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:18:35.998Z",
+        "promptHash": "91f78d17bf40653374d646b582435f735312a808b43326a113bec4f0f42e9fc0",
+        "fixtureHash": "07d1e39ed465c864a6b8c42b88a62f7a79872329ed77f3b838c72535f5672f10",
+        "status": "mismatch",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "done": false,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10526,
+              "sha256": "5b35760ea032da99d4200f34ec69acc453b6882a27d1c842e771e0d876783473",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2281,
+              "sha256": "b3055a6593b583be3f97a8b4f5388e3c58ad22e334e347a122c5db696808f7b6",
+              "parsedChunks": 11,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10908,
+              "sha256": "ce7e0cc5a02e7910eab5bdf8d878db9a7b41f3b9c3b1f6004ffeae237159b6de",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 3,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 2739,
+              "sha256": "4199a657d7251047d11d4f222b69d275d7b22bf07f30b2817881fba56085e10b",
+              "parsedChunks": 15,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "tool_calls"
+          },
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "stop"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_4ac2f680-fb3b-4125-9cf5-4b2393c385f6",
+            "familyHash": "545fa49546f67d8d719ffd6f434971b670aa045e199c9dc46dffe434bf7ef33e",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_4f874025bc464799b15826db2bd4a72c",
+            "familyHash": "545fa49546f67d8d719ffd6f434971b670aa045e199c9dc46dffe434bf7ef33e",
+            "queueWaitMs": 1
+          }
+        ],
+        "submissions": 1,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "manager.stop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 104,
+        "exactFixture": false,
+        "finishedAt": "2026-09-21T22:18:43.322Z",
+        "wireFilterObserved": false
+      },
+      {
+        "id": "sdk-arithmetic-control",
+        "route": "sdk",
+        "prompt": "arithmetic",
+        "model": "claude-opus-5",
+        "startedAt": "2026-09-21T22:18:43.323Z",
+        "promptHash": "b39bf4a44d7a6fe59db35e3d3f86e865691e7726c3070ad3c6cd04b41adaeea5",
+        "fixtureHash": "58db2077225cd4c3ce341edddc008d4183660dfd4cb740415d014dbf6484d7dd",
+        "status": "completed",
+        "wire": [
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "parsed": false,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 40325,
+              "sha256": "1d20b82a0bb65ae2a510f210b4761d42cdd1b35980eeda171f9d4d15d6db07c6",
+              "parsedChunks": 1,
+              "invalidChunks": 0,
+              "done": false,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          },
+          {
+            "transport": "http",
+            "request": {
+              "bytes": 10450,
+              "sha256": "744656bc23ccd91a99921941e274c0fd43e8d4f61855d4142ea60fb72862b78d",
+              "parsed": true,
+              "modelMatches": true,
+              "messageCount": 1,
+              "toolCount": 1,
+              "streaming": true,
+              "complete": true
+            },
+            "status": 200,
+            "response": {
+              "bytes": 1711,
+              "sha256": "495a34286076fd7f816a41164ce0b0c66cd2d2b81fc63b58e3d6141ca9af2808",
+              "parsedChunks": 7,
+              "invalidChunks": 0,
+              "done": true,
+              "contentFilter": false,
+              "finishReasons": [],
+              "modelMatches": null,
+              "inputTokens": null,
+              "outputTokens": null,
+              "textBytes": 0,
+              "toolCallDeltas": 0,
+              "complete": true
+            }
+          }
+        ],
+        "usage": [
+          {
+            "contentFilterTriggered": false,
+            "finishReason": "stop"
+          }
+        ],
+        "diagnostics": [],
+        "submissions": 0,
+        "permissionRequests": 0,
+        "cleanup": [
+          {
+            "operation": "session.abort",
+            "passed": true
+          },
+          {
+            "operation": "session.disconnect",
+            "passed": true
+          },
+          {
+            "operation": "session.delete",
+            "passed": true
+          },
+          {
+            "operation": "client.stop",
+            "passed": true
+          },
+          {
+            "operation": "client.forceStop",
+            "passed": true
+          },
+          {
+            "operation": "observer.drain",
+            "passed": true
+          }
+        ],
+        "answerBytes": 1,
+        "exactFixture": false,
+        "finishedAt": "2026-09-21T22:18:48.602Z",
+        "wireFilterObserved": false
+      }
+    ],
+    "interrupted": false,
+    "finishedAt": "2026-09-21T22:18:48.603Z",
+    "implementationUnchanged": true,
+    "observedHttpRequests": 16
+  },
+  "preliminaryLimit": "The first observer understood only Chat Completions. Anthropic frames were parsed as JSON but their stop_reason/stop_details were not projected. Its missing wire evidence and literal control mismatches are preserved, not regraded.",
+  "nameMappingProbe": {
+    "kind": "unscored-tool-identity-diagnostic",
+    "startedAt": "2026-09-21T22:06:21.475Z",
+    "source": ".runtime/bridge-repair-20260922/live-final/cases/claude-opus-5/S01/transport.jsonl",
+    "exactModel": "claude-opus-5",
+    "sdkFoundationPreserved": true,
+    "automaticRetries": false,
+    "permissionsRejected": true,
+    "fixture": "value:N_0123456789abcdef0123_한글\nreceipt:N_456789abcdef01234567_한글",
+    "cases": [
+      {
+        "id": "full-hashed",
+        "requestHash": "1b23a12f588b5204affbcc03b80b5a018bf51e135bde6332f481c39a4ac56a45",
+        "startedAt": "2026-09-21T22:06:21.476Z",
+        "usage": [
+          {
+            "model": "claude-opus-5",
+            "inputTokens": 8942,
+            "outputTokens": 0,
+            "finishReason": "content_filter",
+            "contentFilterTriggered": true
+          }
+        ],
+        "events": [
+          {
+            "type": "assistant.message",
+            "content": "The model returned no content because the response was blocked by content filtering.",
+            "toolNames": []
+          },
+          {
+            "type": "session.idle"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.unsupported_hints",
+            "fields": [
+              "reasoning.encrypted_content",
+              "prompt_cache_key",
+              "client_metadata"
+            ]
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_full-hashed",
+            "familyHash": "d2cac607cfd81e073aa5b6c1a14b00cd6a3fbf74e803366c7615d6167f0b8385",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5"
+          }
+        ],
+        "submittedResults": 0,
+        "systemHash": "ccba70abfaf1669318be2340a769a4787dd4ebbc036ae8538cd1d2a95c6a23c7",
+        "names": [
+          [
+            "ghcp_d4ea5c989ec1abc73f5fcebce9d3e9d3",
+            "ghcp_d4ea5c989ec1abc73f5fcebce9d3e9d3"
+          ],
+          [
+            "ghcp_41e09e24f45db34c29f504b6b9ff94ff",
+            "ghcp_41e09e24f45db34c29f504b6b9ff94ff"
+          ],
+          [
+            "ghcp_8ed7d95c3f3d94eada4230ead3735848",
+            "ghcp_8ed7d95c3f3d94eada4230ead3735848"
+          ],
+          [
+            "ghcp_2b37591e29f9e8fc08994f99640c86ed",
+            "ghcp_2b37591e29f9e8fc08994f99640c86ed"
+          ],
+          [
+            "ghcp_98fe99abebf9f4634951937456a9e865",
+            "ghcp_98fe99abebf9f4634951937456a9e865"
+          ],
+          [
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d",
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d"
+          ],
+          [
+            "ghcp_35aee0a13b783e5125eb0f23675e8755",
+            "ghcp_35aee0a13b783e5125eb0f23675e8755"
+          ]
+        ],
+        "wireConfigHash": "26239b58f1ae160b17331c647037f70b55ceb912dff460da21387ac14e550248",
+        "status": "failed",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter",
+          "message": "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried."
+        },
+        "cleanup": {
+          "states": 0,
+          "queue": 0,
+          "sdk": "stopped"
+        },
+        "explicitFilter": true,
+        "finishedAt": "2026-09-21T22:06:28.465Z"
+      },
+      {
+        "id": "full-original",
+        "requestHash": "1b23a12f588b5204affbcc03b80b5a018bf51e135bde6332f481c39a4ac56a45",
+        "startedAt": "2026-09-21T22:06:28.466Z",
+        "usage": [
+          {
+            "model": "claude-opus-5",
+            "inputTokens": 8808,
+            "outputTokens": 0,
+            "finishReason": "content_filter",
+            "contentFilterTriggered": true
+          }
+        ],
+        "events": [
+          {
+            "type": "assistant.message",
+            "content": "The model returned no content because the response was blocked by content filtering.",
+            "toolNames": []
+          },
+          {
+            "type": "session.idle"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.unsupported_hints",
+            "fields": [
+              "reasoning.encrypted_content",
+              "prompt_cache_key",
+              "client_metadata"
+            ]
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_full-original",
+            "familyHash": "f6b08071e47e77ea88bd7d426ad821c4ee02e533fc1dacd9e173c924d89f13bc",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5"
+          }
+        ],
+        "submittedResults": 0,
+        "systemHash": "ccba70abfaf1669318be2340a769a4787dd4ebbc036ae8538cd1d2a95c6a23c7",
+        "names": [
+          [
+            "ghcp_d4ea5c989ec1abc73f5fcebce9d3e9d3",
+            "exec_command"
+          ],
+          [
+            "ghcp_41e09e24f45db34c29f504b6b9ff94ff",
+            "write_stdin"
+          ],
+          [
+            "ghcp_8ed7d95c3f3d94eada4230ead3735848",
+            "request_user_input"
+          ],
+          [
+            "ghcp_2b37591e29f9e8fc08994f99640c86ed",
+            "apply_patch"
+          ],
+          [
+            "ghcp_98fe99abebf9f4634951937456a9e865",
+            "view_image"
+          ],
+          [
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d",
+            "read_fixture"
+          ],
+          [
+            "ghcp_35aee0a13b783e5125eb0f23675e8755",
+            "unused_fixture"
+          ]
+        ],
+        "wireConfigHash": "10086710b8c3a17a123fa5a0428e90502cb1f86cfc331859ab1b17a10b16d1a9",
+        "status": "failed",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter",
+          "message": "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried."
+        },
+        "cleanup": {
+          "states": 0,
+          "queue": 0,
+          "sdk": "stopped"
+        },
+        "explicitFilter": true,
+        "finishedAt": "2026-09-21T22:06:34.544Z"
+      },
+      {
+        "id": "reduced-hashed",
+        "requestHash": "b065ca1298f9052d016f6efdcd5f1faf4940178d1bbb587056717f660746d102",
+        "startedAt": "2026-09-21T22:06:34.545Z",
+        "usage": [
+          {
+            "model": "claude-opus-5",
+            "inputTokens": 3768,
+            "outputTokens": 0,
+            "finishReason": "content_filter",
+            "contentFilterTriggered": true
+          }
+        ],
+        "events": [
+          {
+            "type": "assistant.message",
+            "content": "The model returned no content because the response was blocked by content filtering.",
+            "toolNames": []
+          },
+          {
+            "type": "session.idle"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_reduced-hashed",
+            "familyHash": "a0a58eec0305c65be9b984ef8aa5d18e8df7c31dd053c4d129f0cd5262d7b607",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5"
+          }
+        ],
+        "submittedResults": 0,
+        "systemHash": "b40bc23ba7050af12e1687e96a84d12d8a2cd83b16e03d34f4ae4a9f066b42e6",
+        "names": [
+          [
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d",
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d"
+          ]
+        ],
+        "wireConfigHash": "681dfbaaf52ce207b60e21010b97b036eb4d6a8e4a077ce66976fcc19f87b50e",
+        "status": "failed",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter",
+          "message": "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried."
+        },
+        "cleanup": {
+          "states": 0,
+          "queue": 0,
+          "sdk": "stopped"
+        },
+        "explicitFilter": true,
+        "finishedAt": "2026-09-21T22:06:40.775Z"
+      },
+      {
+        "id": "reduced-original",
+        "requestHash": "b065ca1298f9052d016f6efdcd5f1faf4940178d1bbb587056717f660746d102",
+        "startedAt": "2026-09-21T22:06:40.776Z",
+        "usage": [
+          {
+            "model": "claude-opus-5",
+            "inputTokens": 3746,
+            "outputTokens": 0,
+            "finishReason": "content_filter",
+            "contentFilterTriggered": true
+          }
+        ],
+        "events": [
+          {
+            "type": "assistant.message",
+            "content": "The model returned no content because the response was blocked by content filtering.",
+            "toolNames": []
+          },
+          {
+            "type": "session.idle"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_reduced-original",
+            "familyHash": "3ddc7fbdd6e93b59c3c5eae71d1ae134c6e9595cb9b093025121ab38ac3273f2",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5"
+          }
+        ],
+        "submittedResults": 0,
+        "systemHash": "b40bc23ba7050af12e1687e96a84d12d8a2cd83b16e03d34f4ae4a9f066b42e6",
+        "names": [
+          [
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d",
+            "read_fixture"
+          ]
+        ],
+        "wireConfigHash": "cb41cbd06d79edb71989ab61ba442f90e645e7e0d051cb3ded8b7aefcf8f8d11",
+        "status": "failed",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter",
+          "message": "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried."
+        },
+        "cleanup": {
+          "states": 0,
+          "queue": 0,
+          "sdk": "stopped"
+        },
+        "explicitFilter": true,
+        "finishedAt": "2026-09-21T22:06:46.999Z"
+      },
+      {
+        "id": "full-original-repeat",
+        "requestHash": "1b23a12f588b5204affbcc03b80b5a018bf51e135bde6332f481c39a4ac56a45",
+        "startedAt": "2026-09-21T22:06:47.001Z",
+        "usage": [
+          {
+            "model": "claude-opus-5",
+            "inputTokens": 8808,
+            "outputTokens": 0,
+            "finishReason": "content_filter",
+            "contentFilterTriggered": true
+          }
+        ],
+        "events": [
+          {
+            "type": "assistant.message",
+            "content": "The model returned no content because the response was blocked by content filtering.",
+            "toolNames": []
+          },
+          {
+            "type": "session.idle"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.unsupported_hints",
+            "fields": [
+              "reasoning.encrypted_content",
+              "prompt_cache_key",
+              "client_metadata"
+            ]
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_full-original-repeat",
+            "familyHash": "73541ef59006678dd9092989e76cc5247e5a29df6d923e2130d32b58f23a75b5",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5"
+          }
+        ],
+        "submittedResults": 0,
+        "systemHash": "ccba70abfaf1669318be2340a769a4787dd4ebbc036ae8538cd1d2a95c6a23c7",
+        "names": [
+          [
+            "ghcp_d4ea5c989ec1abc73f5fcebce9d3e9d3",
+            "exec_command"
+          ],
+          [
+            "ghcp_41e09e24f45db34c29f504b6b9ff94ff",
+            "write_stdin"
+          ],
+          [
+            "ghcp_8ed7d95c3f3d94eada4230ead3735848",
+            "request_user_input"
+          ],
+          [
+            "ghcp_2b37591e29f9e8fc08994f99640c86ed",
+            "apply_patch"
+          ],
+          [
+            "ghcp_98fe99abebf9f4634951937456a9e865",
+            "view_image"
+          ],
+          [
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d",
+            "read_fixture"
+          ],
+          [
+            "ghcp_35aee0a13b783e5125eb0f23675e8755",
+            "unused_fixture"
+          ]
+        ],
+        "wireConfigHash": "10086710b8c3a17a123fa5a0428e90502cb1f86cfc331859ab1b17a10b16d1a9",
+        "status": "failed",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter",
+          "message": "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried."
+        },
+        "cleanup": {
+          "states": 0,
+          "queue": 0,
+          "sdk": "stopped"
+        },
+        "explicitFilter": true,
+        "finishedAt": "2026-09-21T22:06:53.066Z"
+      },
+      {
+        "id": "full-hashed-repeat",
+        "requestHash": "1b23a12f588b5204affbcc03b80b5a018bf51e135bde6332f481c39a4ac56a45",
+        "startedAt": "2026-09-21T22:06:53.067Z",
+        "usage": [
+          {
+            "model": "claude-opus-5",
+            "inputTokens": 8942,
+            "outputTokens": 0,
+            "finishReason": "content_filter",
+            "contentFilterTriggered": true
+          }
+        ],
+        "events": [
+          {
+            "type": "assistant.message",
+            "content": "The model returned no content because the response was blocked by content filtering.",
+            "toolNames": []
+          },
+          {
+            "type": "session.idle"
+          }
+        ],
+        "diagnostics": [
+          {
+            "event": "bridge.unsupported_hints",
+            "fields": [
+              "reasoning.encrypted_content",
+              "prompt_cache_key",
+              "client_metadata"
+            ]
+          },
+          {
+            "event": "bridge.request_started",
+            "requestId": "resp_full-hashed-repeat",
+            "familyHash": "78f96c1f769abb1cad466ca1206bd7e73d689ec487c24f0d9120a592d07b0b17",
+            "queueWaitMs": 1
+          },
+          {
+            "event": "bridge.upstream_content_filter",
+            "model": "claude-opus-5"
+          }
+        ],
+        "submittedResults": 0,
+        "systemHash": "ccba70abfaf1669318be2340a769a4787dd4ebbc036ae8538cd1d2a95c6a23c7",
+        "names": [
+          [
+            "ghcp_d4ea5c989ec1abc73f5fcebce9d3e9d3",
+            "ghcp_d4ea5c989ec1abc73f5fcebce9d3e9d3"
+          ],
+          [
+            "ghcp_41e09e24f45db34c29f504b6b9ff94ff",
+            "ghcp_41e09e24f45db34c29f504b6b9ff94ff"
+          ],
+          [
+            "ghcp_8ed7d95c3f3d94eada4230ead3735848",
+            "ghcp_8ed7d95c3f3d94eada4230ead3735848"
+          ],
+          [
+            "ghcp_2b37591e29f9e8fc08994f99640c86ed",
+            "ghcp_2b37591e29f9e8fc08994f99640c86ed"
+          ],
+          [
+            "ghcp_98fe99abebf9f4634951937456a9e865",
+            "ghcp_98fe99abebf9f4634951937456a9e865"
+          ],
+          [
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d",
+            "ghcp_24239901ba9c7340b8a978f82d5b7a1d"
+          ],
+          [
+            "ghcp_35aee0a13b783e5125eb0f23675e8755",
+            "ghcp_35aee0a13b783e5125eb0f23675e8755"
+          ]
+        ],
+        "wireConfigHash": "26239b58f1ae160b17331c647037f70b55ceb912dff460da21387ac14e550248",
+        "status": "failed",
+        "error": {
+          "name": "BridgeRequestError",
+          "code": "upstream_content_filter",
+          "message": "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried."
+        },
+        "cleanup": {
+          "states": 0,
+          "queue": 0,
+          "sdk": "stopped"
+        },
+        "explicitFilter": true,
+        "finishedAt": "2026-09-21T22:06:59.285Z"
+      }
+    ],
+    "finishedAt": "2026-09-21T22:06:59.286Z"
+  }
+}

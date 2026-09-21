@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
-import { CATALOG, SCENARIOS, catalogHash } from "./catalog.mjs";
+import { SCENARIOS } from "./catalog.mjs";
+import { profileForRecord } from "./profiles.mjs";
 import { StabilityExecutor } from "./execute.mjs";
 import { evaluate, metrics } from "./oracles.mjs";
 import { artifacts, implementationHash } from "./report.mjs";
@@ -11,7 +12,8 @@ import { safeRead, writeJson, mkdir, sha, scrubber, statusFor, run } from "../co
 async function main() {
   const config = JSON.parse(safeRead(process.argv[2], 32768)), started = performance.now();
   if (!["live", "offline-self-test"].includes(config.executionKind)) throw new Error("Invalid execution kind");
-  if (config.catalogHash !== catalogHash() || config.implementationHash !== implementationHash()) throw new Error("Worker source/contract differs from frozen run");
+  const selected = profileForRecord(config), CATALOG = selected.catalog;
+  if (config.implementationHash !== implementationHash()) throw new Error("Worker source/contract differs from frozen run");
   const signal = AbortSignal.timeout(Math.max(1, config.timeoutMs - CATALOG.cleanupReserveSeconds * 1000));
   if (config.action === "preflight") {
     let result;
@@ -43,8 +45,9 @@ async function main() {
     error ??= failure; evidence = executor.observation; evidence.resources = { cleaned: false, errors: [failure.message] };
   } finally { clearInterval(partial); }
   evidence = scrubber(process.env, [executor.token])(evidence);
-  const checks = evaluate(scenario, evidence), status = error ? statusFor(error) : checks.every(c => c.passed) ? "passed" : "failed";
+  const checks = evaluate(scenario, evidence, selected.name), status = error ? statusFor(error) : checks.every(c => c.passed) ? "passed" : "failed";
   const manifest = { runId: config.runId, scenarioId: scenario.id, model: config.model,
+    profile: selected.name, catalogId: selected.catalog.id,
     executionKind: config.executionKind, catalogHash: config.catalogHash, implementationHash: config.implementationHash,
     durationMs: Math.ceil(performance.now() - started), status, error: error ? scrubber()(error.message) : null,
     category: error?.category ?? (status === "passed" ? null : "undetermined"), checks, metrics: metrics(evidence), files: {} };

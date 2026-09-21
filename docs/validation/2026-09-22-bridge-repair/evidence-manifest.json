@@ -1,0 +1,3843 @@
+{
+  "localRoot": ".runtime/bridge-repair-20260922",
+  "files": {
+    "live-final/report.json": {
+      "sha256": "b34120ff9449a58c2a2b9ca13dfcf2d42f4662049244f5118e611e4b10244d6b",
+      "bytes": 82630
+    },
+    "live-final/freeze.json": {
+      "sha256": "968abce74f5c6598cd49d8daf8f38581de186eb0b6bdde9cb89ec54e18f6f342",
+      "bytes": 35809
+    }
+  },
+  "logs": [
+    {
+      "file": "checks/final-source-audit.json",
+      "sha256": "75bac753ebd1b3b3897011e337c3b2de50c48ec55a0673656d0ee2790bec6d9a",
+      "bytes": 717
+    },
+    {
+      "file": "checks/first-live-verification.json",
+      "sha256": "15846c0c0904541d32ff388b5e9e21d837ef7d9227431b1571a0998646f6d8f5",
+      "bytes": 3099
+    },
+    {
+      "file": "checks/live-final.log",
+      "sha256": "7ab00906b95bb8a0ed4f59fd0e2b14ff67f5194b488e7a3636697f56c18ef282",
+      "bytes": 3499
+    },
+    {
+      "file": "checks/live.log",
+      "sha256": "f215f8b851b8ee52c0d217daf80d8f346edb16d3348410c5566a84e0c20a5fe7",
+      "bytes": 3477
+    },
+    {
+      "file": "checks/mechanical-steering-before.log",
+      "sha256": "31bc38379e76fc3b38948e4d91270e2723c1473626bebdbc91e5826a2e670b24",
+      "bytes": 1938
+    },
+    {
+      "file": "checks/native-compatibility-final.log",
+      "sha256": "89003376ba55480a0ecd20e28d5b3d3dde3c8f771a275e0f667484e38f3cb4a6",
+      "bytes": 2477
+    },
+    {
+      "file": "checks/native-compatibility.log",
+      "sha256": "0aecf2b8d91d19b41d0367abe3ddff29d6ecd3be2c528c24ab4d3233deef18fa",
+      "bytes": 2976
+    },
+    {
+      "file": "checks/native-context-diagnostic.log",
+      "sha256": "adbe0d66e38ce8d87ad43bb7cb06c4603ce2b20d91e03ddd6993c7762e0a5e41",
+      "bytes": 4754
+    },
+    {
+      "file": "checks/native-context-prototype.log",
+      "sha256": "6271d5ea63a3b35f5280fc83d4a53c0aaf7ba462b1a34ed3d206cc060ac28d3e",
+      "bytes": 4600
+    },
+    {
+      "file": "checks/native-stability-final.log",
+      "sha256": "d40d841ab4bb35c0262a017006652e087b6ccf229a711f1e4cc7c15a63d77887",
+      "bytes": 922
+    },
+    {
+      "file": "checks/native-stability.log",
+      "sha256": "20272602d85f438e151196cb29677d2c7d368f00fd00045228b25ac0c87e7080",
+      "bytes": 916
+    },
+    {
+      "file": "checks/opus-components-probe.log",
+      "sha256": "a3279422f12488a1e8629fd2b257e404f136b7d9bd96d2eb466de88b943edba7",
+      "bytes": 2768
+    },
+    {
+      "file": "checks/opus-isolation-probe.log",
+      "sha256": "626bfab9076844f48db81c680b5f21dcfa474dbebf5a2ec1c01fafab23053f51",
+      "bytes": 1853
+    },
+    {
+      "file": "checks/regressions-before.log",
+      "sha256": "3b45e6591da82c2a993e5cbd4b9e8ef521e44cd2818168a6a2101eb27a396442",
+      "bytes": 28708
+    },
+    {
+      "file": "checks/runtime-verification-current.json",
+      "sha256": "3f1f0f6e82b3b5110a223a9f525d0d20610586656753994ee1c29a69d6aeb05e",
+      "bytes": 575
+    },
+    {
+      "file": "checks/scenario-docs-final.log",
+      "sha256": "44cf778bd5062d8794d5cf7edc499c98b4c924cbc72172597811f7284fa1347b",
+      "bytes": 142
+    },
+    {
+      "file": "checks/scenario-docs.log",
+      "sha256": "44cf778bd5062d8794d5cf7edc499c98b4c924cbc72172597811f7284fa1347b",
+      "bytes": 142
+    },
+    {
+      "file": "checks/scenarios-final.log",
+      "sha256": "a207629bb469cb19cf6e8476374291187f460681e7e253f1cfa4feea8c7303e8",
+      "bytes": 1411
+    },
+    {
+      "file": "checks/scenarios.log",
+      "sha256": "a207629bb469cb19cf6e8476374291187f460681e7e253f1cfa4feea8c7303e8",
+      "bytes": 1411
+    },
+    {
+      "file": "checks/sdk-cleanup-probe.log",
+      "sha256": "b1cc121a8ee0c52f72c2542de9e88512100268d6a4c14c42ea4bbaf2697172b4",
+      "bytes": 1495
+    },
+    {
+      "file": "checks/stress-final.log",
+      "sha256": "8b83a6f25db32377e1b5746171eee3813eef395c38beaecdad4bfa06a4fc23c7",
+      "bytes": 452
+    },
+    {
+      "file": "checks/stress.log",
+      "sha256": "03a38bd8707a0bfc908539076e11df8f31c194922af2a1d4754dd02d0bff95c8",
+      "bytes": 452
+    },
+    {
+      "file": "checks/tool-context-probe.log",
+      "sha256": "4c345ba5088fe80a5571fd8b21cc22e1381b6df4be57808bf55cc91f9a66be70",
+      "bytes": 1638
+    },
+    {
+      "file": "checks/unit-baseline.log",
+      "sha256": "2973eb67827e4b4226619353521f3c1bd7fbf2f97ac76da711fba6fae4852d93",
+      "bytes": 51175
+    },
+    {
+      "file": "checks/unit-final.log",
+      "sha256": "4396e38cff9cf99935af032f253e7a2349e041a3e97aa3d61d17b89e57517e65",
+      "bytes": 51614
+    },
+    {
+      "file": "checks/unit.log",
+      "sha256": "65d2cc9283c4a8b7067ce54c23edf441c390b288fc7780e6b5d191d459b795d5",
+      "bytes": 51087
+    }
+  ],
+  "cases": [
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S01",
+      "artifactPath": "cases/gpt-5.6-sol/S01",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "99c305a93dae7b9f491c8d37a9422ae2e82b6bcf465132ce01f4376606c9ee93",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "6158d6e9c69d8df767afb33aeca3c07d47677864cf35e4da031101b5e023c162",
+          "bytes": 1147
+        },
+        "native.jsonl": {
+          "sha256": "a2b648ae7c10368551cfc0408725287a1f2d9314ea2d91144ad81c6417bbabfa",
+          "bytes": 24110
+        },
+        "observation.json": {
+          "sha256": "8fe253f6daf668a84486215e07029dbe005556e02a08d94a457f9b094212f049",
+          "bytes": 123462
+        },
+        "observation.partial.json": {
+          "sha256": "c4d10ad0a1cbc88b93792ffa3f509305eca0771a256f74ede8611bfe21b46fd3",
+          "bytes": 95918
+        },
+        "oracle.json": {
+          "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+          "bytes": 1932
+        },
+        "resources.json": {
+          "sha256": "ac0b1610d00c2269b26baad48634f1a0f5578b17d3fe6539c499442f5c99595c",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "980a7fc188d4b1939a89ddec9931d6fd34f71cc0262ad7b24e250e348d9b2a98",
+          "bytes": 3653
+        },
+        "sdk.jsonl": {
+          "sha256": "6b9009848057fc7d42d51a9a484036467b504a648da412045cfe80231433b9bb",
+          "bytes": 13441
+        },
+        "transport.jsonl": {
+          "sha256": "d2e50916e6b35012e40197f0b878345b3ac5498886718b4c259832a867d80137",
+          "bytes": 46730
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S02",
+      "artifactPath": "cases/gpt-5.6-sol/S02",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "950e86061890b4a745f45f2402bef1c4e5be90d7b1bf7d2bb5c05e28784a5460",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "77a873286a0f0aaee99c40a60e778b5c679484eb7a70eb208643f5beca8a32ff",
+          "bytes": 40967
+        },
+        "native.jsonl": {
+          "sha256": "78f4925f25251f502d509c517f8d57047bcb2f1ae33d302efb7207c4a216c2f4",
+          "bytes": 24110
+        },
+        "observation.json": {
+          "sha256": "67a80f568f734f4c1da67f560c6a1d5c368a25123f13b1e325eb578d353904b1",
+          "bytes": 164431
+        },
+        "observation.partial.json": {
+          "sha256": "9cf5eda24bef829121b4e86f9643c0417471b3febfafb351fc1be5b7afe464f1",
+          "bytes": 149919
+        },
+        "oracle.json": {
+          "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+          "bytes": 1986
+        },
+        "resources.json": {
+          "sha256": "8686e59fe6e678c65b40e6b9f4a7a010d623337de9462fe0993ed20e14e1ac09",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "3aec020c0c9598cffee4a155524a37ff9446516a792c4d6b8a00a1f5a3d1fce9",
+          "bytes": 3708
+        },
+        "sdk.jsonl": {
+          "sha256": "d367ec34ed417b3a0e6a5dde34f5ca32bdf1fabdad8c3e7a6438b006e2353ef6",
+          "bytes": 13434
+        },
+        "transport.jsonl": {
+          "sha256": "5a774dba692062ca52a3088b76281546870f44116aac10821c90087331a2600f",
+          "bytes": 46730
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S03",
+      "artifactPath": "cases/gpt-5.6-sol/S03",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "c66234270650dc25e54913bfb063c9a085833cf53e4ca9857012f42a53466ad6",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "47fdc9c3b8e6236a5317c81a0c9a1e7432193913b0e47ea25dd223e5e140339c",
+          "bytes": 22851
+        },
+        "native.jsonl": {
+          "sha256": "711c6faa036384c32bdcea511b7913bea62f42f7bae62ac94204e008a95edac7",
+          "bytes": 23538
+        },
+        "observation.json": {
+          "sha256": "411e9ba1627bbac0fc1dbe491d623b09de5b327d0252aa83868831dce932b0e3",
+          "bytes": 166937
+        },
+        "observation.partial.json": {
+          "sha256": "b755d16e597fd983fd403b5837a1bf11a551f03ffdecdfd42928b0c13ef8e24a",
+          "bytes": 165589
+        },
+        "oracle.json": {
+          "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+          "bytes": 2021
+        },
+        "resources.json": {
+          "sha256": "316337dd87eb8170157612b8fe7ddd8b5f25cb68b77568cb6c1cb4c52bfb8b72",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "0f07d554fcd28f55537c9d5eaa687de3225983c2ca52c9d03261e9f447a79448",
+          "bytes": 3743
+        },
+        "sdk.jsonl": {
+          "sha256": "a1e74b639d0d928f7000fcb3b13d51f4a20f885205b4587c5703aa58084199de",
+          "bytes": 13428
+        },
+        "transport.jsonl": {
+          "sha256": "b2dbbbcc0de21634d6feee345b03e832da65bef3b65545c70174c2bfb6bccb76",
+          "bytes": 62544
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S04",
+      "artifactPath": "cases/gpt-5.6-sol/S04",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "68a26f1a238918ac26ed400fca02259b005de0f9c26063511dc4139a6fc9c5ac",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "318a20cd509446481e8b0664efdebeb8f2413c18e4075d7d0219f9dc2939727e",
+          "bytes": 3653
+        },
+        "native.jsonl": {
+          "sha256": "38975dfaaae1e5f60eab4989ab3a85780102aa3243e1cbed09c841a7c09a9272",
+          "bytes": 24111
+        },
+        "observation.json": {
+          "sha256": "a4789277ae1a04833eefbfb87f5accfc4d36c01eb5a2ac57955eb6983cb59b4b",
+          "bytes": 151153
+        },
+        "observation.partial.json": {
+          "sha256": "3d812fc3c39a9f0d7817042770e1cbb200450aa45cf663ceb80590540f848d88",
+          "bytes": 149658
+        },
+        "oracle.json": {
+          "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+          "bytes": 2002
+        },
+        "resources.json": {
+          "sha256": "25cce280a110509426e42901a19debc0ac00f1d5a0c0f8855cad70bb5fb86797",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "fcf6d91f889abd3eca67d2ee4e403eab738623ec4231ed41618e10c6c833220e",
+          "bytes": 3723
+        },
+        "sdk.jsonl": {
+          "sha256": "9448d9c2213e567a685b3a462ff697775353da34f810c617f1c0f2284bee6a53",
+          "bytes": 13442
+        },
+        "transport.jsonl": {
+          "sha256": "94319fd215074be48fbbc3bbae5897d1fc92d1c6e197720f468092ef3bcf59ac",
+          "bytes": 66303
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S05",
+      "artifactPath": "cases/gpt-5.6-sol/S05",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "cb9d963626d586fb4c433c6d8ea3f3958cd2da7f54dde25ecb7ba4e1c30c40e0",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "3552bd413806613d2b92b31a03a468dc80dcb06ea78a2e1ba66d49baee8fffe5",
+          "bytes": 2548
+        },
+        "native.jsonl": {
+          "sha256": "95826d79bd1b1c7e55eeb520ec97541877a4f3b673b22d856364a7218a1daba1",
+          "bytes": 23824
+        },
+        "observation.json": {
+          "sha256": "60d9d5e776dfee36c8622e26c87cb38f04e18cc886ed389937095b26a59ca6aa",
+          "bytes": 144670
+        },
+        "observation.partial.json": {
+          "sha256": "d637aae5df3774e1d2a66bf4634ea454ebf3c88979556558fd4cbcbfb71e93bd",
+          "bytes": 143175
+        },
+        "oracle.json": {
+          "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+          "bytes": 2007
+        },
+        "resources.json": {
+          "sha256": "aa47b158a5e69816e1f7b72f8d14c9c6576e170415c94c6ae7e308780fbc944c",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "63bdc1f5c77452f07f787584846da91be4e83283dfe5fb3f5a91b3c14e53f15a",
+          "bytes": 3728
+        },
+        "sdk.jsonl": {
+          "sha256": "5d1fcdb9221ae4e27e268ea07628e64e4e37a5a97205dcff93a9334123436806",
+          "bytes": 13427
+        },
+        "transport.jsonl": {
+          "sha256": "2568830796491ac4d7db5121a5f8b24ae2ac783482b3516d02753f89e1a6122a",
+          "bytes": 61868
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S06",
+      "artifactPath": "cases/gpt-5.6-sol/S06",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "d8078add85fdfb0a120d254609f4351ef1d1cfcdb80ea382b82a3321714e6668",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "f53fe51203b91ec200933d9c9101bc288fec34dd7052d2ff9a3c5576cdff4949",
+          "bytes": 1956
+        },
+        "native.jsonl": {
+          "sha256": "5ca856b9c470e5cd1925227a08b913bff9fed275facb5b84041956aead6d3af9",
+          "bytes": 32374
+        },
+        "observation.json": {
+          "sha256": "d13fcd51afd0db5d69bc283cd277c23d53c1e2c13d04ece3976f9cca98d5815e",
+          "bytes": 177314
+        },
+        "observation.partial.json": {
+          "sha256": "7eab22a3ab786e15b6a8c43fbc25622cb9ddedd71b25559e36714007aed7ee90",
+          "bytes": 162800
+        },
+        "oracle.json": {
+          "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+          "bytes": 2039
+        },
+        "resources.json": {
+          "sha256": "c2a555eff60c8c8d854e244f98b54bd2302cdb91214b1f3ef302704dfd1bf738",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "20f93b519713f447c830c8434b6a00eb3dcdaff89721c01499dfb9f478efabe9",
+          "bytes": 3764
+        },
+        "sdk.jsonl": {
+          "sha256": "b57941eeb5a4ae1f06c1490999fe91263c7557537ccc8dc3908709af8717e626",
+          "bytes": 22859
+        },
+        "transport.jsonl": {
+          "sha256": "ee8e091dcee4a5930491aaacfd570abb24bcf60245e04a46ad3303ca250e1cc2",
+          "bytes": 62844
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S07",
+      "artifactPath": "cases/gpt-5.6-sol/S07",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "9143e8283e607d254f040839ea278dce8d746f432519632b1e59155cfeadb1a3",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "d8d7d2320fb4444a5bd4ee4b980d2e657a3c70807f793b1da64706f869ac3f25",
+          "bytes": 2598
+        },
+        "native.jsonl": {
+          "sha256": "f61be1f422b842045c5450023afdebaaba4bf3b95e11f36260b4aa7dcaa1c723",
+          "bytes": 51122
+        },
+        "observation.json": {
+          "sha256": "c51aa5f9967798e4cc124bdc8f3d9aea51e3b937ae759601e9a3f3ca98533747",
+          "bytes": 271992
+        },
+        "observation.partial.json": {
+          "sha256": "9b7e3bb4c8beb5e4a79362f47b250c4fd494a5bcc775582d356c71d77b7b6add",
+          "bytes": 270644
+        },
+        "oracle.json": {
+          "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+          "bytes": 2029
+        },
+        "resources.json": {
+          "sha256": "7f23e9d84a83ec464389cc3bc5aaad8cfa9e89b9c99e35b16d24679ba6422702",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "cf7e1868bfc87c4a94b6ec0261fcd145131f4d30473c230546928f7d2df1a1aa",
+          "bytes": 3838
+        },
+        "sdk.jsonl": {
+          "sha256": "57a9d820453b0fab1d9fd9ef0c7ce9a2773617169c5b0751daf7f7190de6630c",
+          "bytes": 26590
+        },
+        "transport.jsonl": {
+          "sha256": "cf98ff8a53d507117954bc2881aa8a07f9ef6b16fb6f3bede3fc6485d68c4a57",
+          "bytes": 109902
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S08",
+      "artifactPath": "cases/gpt-5.6-sol/S08",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "65a3def9731a4275330a0ee1b16bb77e42258aa064f1d04b691a953b0ebc7daa",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "86afe75f1a6359f3373f80ae5c7a665c2643019449351f211cfe7ea942fa176a",
+          "bytes": 3354
+        },
+        "native.jsonl": {
+          "sha256": "531e2176f6d6652aa54acf831749be61466e55c80e16b6775ec81b16315cd22f",
+          "bytes": 34820
+        },
+        "observation.json": {
+          "sha256": "212d7fad70f45f746f6e29302350b7ce84060b90102f5c4bf2c8aa2401d3a421",
+          "bytes": 207495
+        },
+        "observation.partial.json": {
+          "sha256": "b0ba477286fa7ef745654a2075ccefc0f158848912b64d6a4b22cd186f04960b",
+          "bytes": 206147
+        },
+        "oracle.json": {
+          "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+          "bytes": 2216
+        },
+        "resources.json": {
+          "sha256": "c50851e5fdfb8f1085775043132ae8a42571db027648224e721b2805705a9416",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "631e1c46c6b60c76f76766e37878cec6d2bbab524194e4e35e339b0ca03e5ba7",
+          "bytes": 3941
+        },
+        "sdk.jsonl": {
+          "sha256": "f2933eb6a387fc9fc7c222d02da1c6ac33b1b6a9ea04f63f83092bd0ef9d3615",
+          "bytes": 22622
+        },
+        "transport.jsonl": {
+          "sha256": "77e2484c62f451edb4e6e74dff4d2c815e7010338b8d33790d5c717150f18ea3",
+          "bytes": 81444
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S09",
+      "artifactPath": "cases/gpt-5.6-sol/S09",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "4af835498e9a79741427ab88d0dcb658e4e69cde1cf85290f2b0e94427efd370",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "ed8b54c18868bd7f9e552122c6a26e4b57132d529a75d8e49c7fbdb83b777144",
+          "bytes": 2190
+        },
+        "native.jsonl": {
+          "sha256": "8ad0493851950a416d3e84f69cce2145656274bcf0560e374ed89a9e35269b7c",
+          "bytes": 47594
+        },
+        "observation.json": {
+          "sha256": "614b316a7b66db2b9d5de7888d93cc90633aa44e10388c421074176c26704863",
+          "bytes": 241030
+        },
+        "observation.partial.json": {
+          "sha256": "a52f757814e61f9e8121b35843ac90b2ca99c27d63245b34f72df684bb102ba6",
+          "bytes": 216733
+        },
+        "oracle.json": {
+          "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+          "bytes": 2038
+        },
+        "resources.json": {
+          "sha256": "d692e16d00de574fe23eb3d3423ff21a1e516a3fc2e6a6296cfb776deb429cdf",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "ebcf0285d0b41c3f9d2b9b33fc009c658d28e943d34bd574279f8185fde693a2",
+          "bytes": 3763
+        },
+        "sdk.jsonl": {
+          "sha256": "9662e2de44455a8ece80df800200d84b57469d1d713f13e514ec065af6b2e834",
+          "bytes": 26829
+        },
+        "transport.jsonl": {
+          "sha256": "41a0bd4f88afe06f327128872ccb9345e23a758db5c81ca9bb78f28128a6ce93",
+          "bytes": 92300
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S10",
+      "artifactPath": "cases/gpt-5.6-sol/S10",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "5efe49f974898af9747c95db4b7ea082300f9604febf602ab8eea8cc69567a4a",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "a8ecbe5e335ddb7632ae95805fcb4d70f8b614f433335a0af50154b66934acf5",
+          "bytes": 1371
+        },
+        "native.jsonl": {
+          "sha256": "43d92f82b401b22ae1e6f50f8b90c403b3fa72914e5600a00dd95ad300ccbcfb",
+          "bytes": 47293
+        },
+        "observation.json": {
+          "sha256": "a5eed744c33d390d85770b1f17387256c637dc9375e339c12ce9a61c20556371",
+          "bytes": 230138
+        },
+        "observation.partial.json": {
+          "sha256": "0d53702be5f498709d0f7d32a1d376bffa4054bb5aa135f28fbb6161b6858ad3",
+          "bytes": 215414
+        },
+        "oracle.json": {
+          "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+          "bytes": 1848
+        },
+        "resources.json": {
+          "sha256": "44d52067c9d1eae7cc5f00129a1b752d80910f67ce770b851a68e5c9242f82ae",
+          "bytes": 487
+        },
+        "result.json": {
+          "sha256": "63d3c12710fb4e2a56a84c925dce76d3215e5c53c13ecd5f9ebb14e6768bc139",
+          "bytes": 3651
+        },
+        "sdk.jsonl": {
+          "sha256": "fe39d0f45bd8d66b99f4b37bcfe5bf3767347c0c569a9d0dc61d97a3fd7ac3b9",
+          "bytes": 24994
+        },
+        "transport.jsonl": {
+          "sha256": "4adc3b03d704f2c04f16abd3f503fdc92138c7ff2c36e7633237b52dc5ba1956",
+          "bytes": 83965
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S11",
+      "artifactPath": "cases/gpt-5.6-sol/S11",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "6c7dc8e46f6b86378cebe28a52039bd2a2a7c66c8988de7852acb23ae967e427",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "a761308007d7e97d45898055abbbebc2578ae75dfe7289267bbc943c04be8dcb",
+          "bytes": 4060
+        },
+        "native.jsonl": {
+          "sha256": "540a1c93e044c89e37d5ca2514f5123123b50c7587effc9a88f2a87bf70854e0",
+          "bytes": 188637
+        },
+        "observation.json": {
+          "sha256": "c24eeccc308b3befb4f7fc231552decd7902a3b39216175607644aad2fb2b63c",
+          "bytes": 1042141
+        },
+        "observation.partial.json": {
+          "sha256": "2597675824449d290862c547ae93b980185360cf9b769b631639e13a73b4c156",
+          "bytes": 1040646
+        },
+        "oracle.json": {
+          "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+          "bytes": 2034
+        },
+        "resources.json": {
+          "sha256": "1f2eea7f72d186ffcd9f5bf1f5148022b442216bdeb480212904a7442c3f62cd",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "9bfa6e8aa4dca18f9e35fb5e38e4b1d87dff0dd6fbfa5271d25fb25d06ffa32d",
+          "bytes": 4240
+        },
+        "sdk.jsonl": {
+          "sha256": "0582d354c7179293bdf459bd78557d01cf922fd88b15e2e74c3e4a0009df8825",
+          "bytes": 76181
+        },
+        "transport.jsonl": {
+          "sha256": "28dcd467582dd92f197061b3028c2aeb5a422bd16c7549016bc6d9a6d85d5e06",
+          "bytes": 504643
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S01",
+      "artifactPath": "cases/gpt-5.6-terra/S01",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "8ed1a3c1bd83b735c724712d42fac4eb9d5588b77fa75d0714492a5fe5fdedd9",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "38f4d34196823fdab8c63c0d8230086dad68a9e929192b82ec6b49a7d74bf51c",
+          "bytes": 1147
+        },
+        "native.jsonl": {
+          "sha256": "af4815c9ef5b2d891a613a195cf258e980d5819a841cc1c11c18098615846da7",
+          "bytes": 25858
+        },
+        "observation.json": {
+          "sha256": "1dde954dd72f2d78d3125559e5bdbecd3117571bd177baa9086ef1ff7bfa2f7d",
+          "bytes": 139094
+        },
+        "observation.partial.json": {
+          "sha256": "eecfc3964fe26673ff9a1af3925707c9fd8963e92a8a3faa29ca314c2d920c9a",
+          "bytes": 105748
+        },
+        "oracle.json": {
+          "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+          "bytes": 1932
+        },
+        "resources.json": {
+          "sha256": "83681eb492a9731313fab6bc20c6f37bb9188b56307b2f382e4a96ce748dea94",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "06f460075234f84dc86de1e566a9952018bd35664204081f787de09c0e63bebc",
+          "bytes": 3655
+        },
+        "sdk.jsonl": {
+          "sha256": "3834d137975865a78dd2923300cd0de4e8000e74f8522504925bd76e86efd9e7",
+          "bytes": 24965
+        },
+        "transport.jsonl": {
+          "sha256": "e6f3e6265ec0c7cc6ef53af5a9c1779b7892ae20a9c58342bd4fb382d5217d50",
+          "bytes": 48153
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S02",
+      "artifactPath": "cases/gpt-5.6-terra/S02",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "974398bd5a39c50e2de76b3d11bd5fd05fa0077c9068ea63d29daa74404781c2",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "3b3bf399abe35359e83b618e19bdb6e85fa028b98bf09a1ac40160bc486445f0",
+          "bytes": 40987
+        },
+        "native.jsonl": {
+          "sha256": "75b0d5acf6f955a83926e9245c6398848cc0c92e3402d229ae348846caa54db1",
+          "bytes": 25572
+        },
+        "observation.json": {
+          "sha256": "1593e4ae127642cb310bb187d0629c4bf659ce565c1c6ca8f7c78b824177cc8f",
+          "bytes": 179252
+        },
+        "observation.partial.json": {
+          "sha256": "32a81580a90df45d7a2f12a3f86ffeed2e2b6574722f5e31e03a77398cd505f7",
+          "bytes": 177757
+        },
+        "oracle.json": {
+          "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+          "bytes": 1986
+        },
+        "resources.json": {
+          "sha256": "3064ba23e31be31fb3cbb4d16c7d16e9d7c31ebc0e72cf8d7665ca3b771f08fb",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "45229a1790108e45a4bd95f9e7a635454f89df7d55b3a9ae99b9a640ec1332d7",
+          "bytes": 3710
+        },
+        "sdk.jsonl": {
+          "sha256": "f26269c4873d721906ff7a1ea7eb1c2650bd35b7c7a9e0770839b1f5ce9e9a7f",
+          "bytes": 24773
+        },
+        "transport.jsonl": {
+          "sha256": "1ecdef282a23e1b2c5903d08ab207072fea498cb0474b143d2d808973a167787",
+          "bytes": 47921
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S03",
+      "artifactPath": "cases/gpt-5.6-terra/S03",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "6d940a1dd546a74f821f4acdb3474edd638c535940bc52e0e5b212d102a4e3dc",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "d9f45c49693948c72b9dfa42c94d57c619c3fcb1928adee9cef04883f74566cb",
+          "bytes": 22861
+        },
+        "native.jsonl": {
+          "sha256": "390fd67fec61d4356eeca3ad8c23570931a63f68abc6b4fe20cfb03c94280158",
+          "bytes": 24713
+        },
+        "observation.json": {
+          "sha256": "858a31407e368144ed5265522355e75bbb968d894533ec5599469fac19802753",
+          "bytes": 181062
+        },
+        "observation.partial.json": {
+          "sha256": "ec923f5f4c65503ff222d7289691b68d7c26adbab0ce0e5374fccf4220acedf5",
+          "bytes": 163311
+        },
+        "oracle.json": {
+          "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+          "bytes": 2021
+        },
+        "resources.json": {
+          "sha256": "076a0c8d68ed0ce55cef0793bbcef391c6d48d30a62da010aa2f2aa60d2917b6",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "5b00309a42aeeac403831bd660c1105bf44850e60196ff0eafb802218f305ebc",
+          "bytes": 3745
+        },
+        "sdk.jsonl": {
+          "sha256": "da4265f6ae372b818b830739c2f539c2b4b17299c120a316bbd11dce8c9d64cd",
+          "bytes": 24718
+        },
+        "transport.jsonl": {
+          "sha256": "a990a2b23cc4aa45ec6f2e80b4bd5e2d79d49f5f0e14a802aadd9d512d1cf111",
+          "bytes": 63513
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S04",
+      "artifactPath": "cases/gpt-5.6-terra/S04",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "58aa63793152a2f7b61f4b498a9d28542a098c62e396f2ee67c38b274c69e576",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "33ec203aa0e7efd70985dbfe1d422393291cf99965f0cf8c79757cecc0ef91d8",
+          "bytes": 3653
+        },
+        "native.jsonl": {
+          "sha256": "54a8af032c14723c00998ab6ede6a4a26a0846fee58b5e056ccba0bca645970c",
+          "bytes": 25857
+        },
+        "observation.json": {
+          "sha256": "ef729b3da70599620e27f75bc77ef07653b5b76f061cce0b420acbed247794a2",
+          "bytes": 166472
+        },
+        "observation.partial.json": {
+          "sha256": "12cdf2ec5fb2549d597f4c493551f610d8e42f2fba750fed8f5b960ab31bf775",
+          "bytes": 103695
+        },
+        "oracle.json": {
+          "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+          "bytes": 2002
+        },
+        "resources.json": {
+          "sha256": "68d6556502af252b3719a926339020743b32e4993ec446eb3f3be8365dd27ef3",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "d11fb9fe33113f2c6fadf67356ac6ef1ebb4e7c052f9c3f44bd0f64f8d36458a",
+          "bytes": 3724
+        },
+        "sdk.jsonl": {
+          "sha256": "d433c0ba7f97135ab9eba8f2169c52549fd41891c70fdb2d7130b7951bdd75f6",
+          "bytes": 24640
+        },
+        "transport.jsonl": {
+          "sha256": "959d5638430b185e9aa5e0e553b369d3bf5254410ce16aafbd871f02297ca202",
+          "bytes": 67742
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S05",
+      "artifactPath": "cases/gpt-5.6-terra/S05",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "50d360989fe70a4b53bc0e4252ba300258137cb486bffd28221bd0c425fd0f2b",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "eaf11668b27b21c5913817ffd92eea6963cddcbc55a7b8ff536e97915381e74e",
+          "bytes": 2548
+        },
+        "native.jsonl": {
+          "sha256": "47da57fa12557283d7059ea04d83dba3a2cf6bff175e1d2592b72592d17e01c0",
+          "bytes": 25000
+        },
+        "observation.json": {
+          "sha256": "6f052dad36bf10933d8a30b429db970f6aeb80d2c1b0e31ba51fdd68e6fc9d1d",
+          "bytes": 158866
+        },
+        "observation.partial.json": {
+          "sha256": "e5eaab7b07191cb27fbc1738c6e2b41d2d4960acfbb2ffd630b81973a4129570",
+          "bytes": 157371
+        },
+        "oracle.json": {
+          "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+          "bytes": 2007
+        },
+        "resources.json": {
+          "sha256": "a36750771ee01d1dc62b91a304823a89191e0fc6f1a4af29f8bb53b2b74498b1",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "5967e8a7cd0446e3362edf15137b6e7e2bfe186755807d2c42e260f030fc4f3e",
+          "bytes": 3729
+        },
+        "sdk.jsonl": {
+          "sha256": "37bdfa514176815edf04a4eb987d2273137ba63459b2ee78e5571a232f62018b",
+          "bytes": 24799
+        },
+        "transport.jsonl": {
+          "sha256": "b19218d4e66e8680ffa62c71c5ce196b8f1f6975d7169371f0cc8c94c6ee03cb",
+          "bytes": 62835
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S06",
+      "artifactPath": "cases/gpt-5.6-terra/S06",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "7011508fa8544e7cb838353e1668439ac8d14eb1bee81d7024f83b3c7a6855b7",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "227e538d2d909f7c13f8ac9f480677909d87ef17db62c9f17bf685e1435491a1",
+          "bytes": 1956
+        },
+        "native.jsonl": {
+          "sha256": "181d71819113aff4b3082d0136929dd220ba155a524a1b4a9ae5de6f5fcee9b5",
+          "bytes": 33290
+        },
+        "observation.json": {
+          "sha256": "6db630b06b8fa33caa6162330114308bedccb4e2415f64ee363a5710436a3ad1",
+          "bytes": 202370
+        },
+        "observation.partial.json": {
+          "sha256": "b5db7621d293a75f66bb081c99a5819b33d3edfec65a7dee2a41147c2ab1c409",
+          "bytes": 185268
+        },
+        "oracle.json": {
+          "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+          "bytes": 2039
+        },
+        "resources.json": {
+          "sha256": "693fed62b85111c9d9d827c27ff815a759a17487dc5b426b90f9ebe7b8d24432",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "dd78c0e63ccdf4c99a87d61a2dd65efec5d7bf19ff26f505538ea220851292d7",
+          "bytes": 3766
+        },
+        "sdk.jsonl": {
+          "sha256": "7afaff4ed71af1e109e10387a0d3143f46c46cecd742e028d4e37b2f1a48d7b9",
+          "bytes": 45542
+        },
+        "transport.jsonl": {
+          "sha256": "cba4b825963a07f2474e311f4ae571163e4a71fd1cd0a38663efc4d0d92a8f0d",
+          "bytes": 63585
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S07",
+      "artifactPath": "cases/gpt-5.6-terra/S07",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "5343f1d547889cf3b3d8648dfdc0ea85c7860102dd076d82cd94ff8b4ee8a27d",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "19d7b41a8cf7190e3aeed6d64913534bdb69e97a0a91edc08b893af4d8bfeacb",
+          "bytes": 2600
+        },
+        "native.jsonl": {
+          "sha256": "0f3c45c250c377f7ab9551d9d20cb96a585ac4e7bf80d1fe34d7a12a76bf130c",
+          "bytes": 54044
+        },
+        "observation.json": {
+          "sha256": "b19858e200359a5aa11adc6ad7769a09a5c3cc257d53da9e2e59dd637e0b9a3c",
+          "bytes": 301938
+        },
+        "observation.partial.json": {
+          "sha256": "79164cbe804812c1a52dd906db44a885a4fec7ad68a19b195e5a5751cea0bca3",
+          "bytes": 269227
+        },
+        "oracle.json": {
+          "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+          "bytes": 2029
+        },
+        "resources.json": {
+          "sha256": "73cd397e27e55cff477b9fb862e6e01d77f702bc37cb3da2f0adc7aef6782b2c",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "f042c387d38da57f4f6ee01bd20b73920dda8a6cd40cb5929fa29cc920a3394e",
+          "bytes": 3840
+        },
+        "sdk.jsonl": {
+          "sha256": "0492acd24f9e0dc139576bc39bd3421c67b107264ac819b8288873ba3482448f",
+          "bytes": 49608
+        },
+        "transport.jsonl": {
+          "sha256": "ac58ab04c3244ffa233dd0a09eda5d3d563695610a04e67c22343bacc5b348e4",
+          "bytes": 112294
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S08",
+      "artifactPath": "cases/gpt-5.6-terra/S08",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "a668593590e638524d07b04664dcd1714ef6e7720da3e7d77a3e39d31112db22",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "95b7779e1e48159762b926a186660b5c2a0e522d6dd7244fbc1be73686548bfe",
+          "bytes": 3356
+        },
+        "native.jsonl": {
+          "sha256": "eaa41a3e3e4564411aa09137ac89589a213ab5638f779287006d02a9b58ad7a7",
+          "bytes": 36022
+        },
+        "observation.json": {
+          "sha256": "c8d57c7d80013ed68760bbef76f603d7f627b2b4591471b5b86b67061c172630",
+          "bytes": 233294
+        },
+        "observation.partial.json": {
+          "sha256": "af9540d9f7b591defe5469790638054c0cb65f6bbb6409d97ea07bce1995b1a9",
+          "bytes": 231799
+        },
+        "oracle.json": {
+          "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+          "bytes": 2216
+        },
+        "resources.json": {
+          "sha256": "4d30cb14a528c9ec55ae8bad808100faffc6d881c3aaf9f0a8911b8b5c749781",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "dbb995c0cffb369a49d32c44eb0bddcc04cc8558caa417dae6237e6067a608f8",
+          "bytes": 3943
+        },
+        "sdk.jsonl": {
+          "sha256": "7a709904c920da04a07e67e87f5b1f4cdfe224e5aff299f4f7716580e1672185",
+          "bytes": 45388
+        },
+        "transport.jsonl": {
+          "sha256": "e81850cc25a9c9ff1c72e40a7a5acdc52d051043002711f6a7c5b4f07f0a511c",
+          "bytes": 82430
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S09",
+      "artifactPath": "cases/gpt-5.6-terra/S09",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "635d6bdbb3b08e2940aaf07b30bbddd8fa23388bfc1ed3708d918d0fbad3986c",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "bb1056ac6bc8bb90455c6e10f75652deedeac4338209764ca8a37c82c4cfa21c",
+          "bytes": 2190
+        },
+        "native.jsonl": {
+          "sha256": "42aa0ece407c55dd547100078a74dcfe01dc049e671ffc48f664d5beddb0c060",
+          "bytes": 50515
+        },
+        "observation.json": {
+          "sha256": "55d7884f152ce0ed36cc15daddbb666beabaed32da63f0f9595703746a165bf6",
+          "bytes": 270676
+        },
+        "observation.partial.json": {
+          "sha256": "3c4cdab6beb700ad290c3e2059e6089bd1efcf08b10062a9c304ff1d4607b111",
+          "bytes": 269328
+        },
+        "oracle.json": {
+          "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+          "bytes": 2038
+        },
+        "resources.json": {
+          "sha256": "3e2d7b656378eda783bb7950e8977a0f8609d6a2a5d4667c636be6d464fedb64",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "ef12a97f411d4af1e7cc379c249309ae21575a6a85aa34dd08d853c3566cac39",
+          "bytes": 3765
+        },
+        "sdk.jsonl": {
+          "sha256": "32cd5e53743ec05fe122bd4c984ff8482d5f84f4981a461843627d01221be182",
+          "bytes": 49560
+        },
+        "transport.jsonl": {
+          "sha256": "165640f530978cc45065a23f886ee1dad6a00779544dcab44a10de9b062a1525",
+          "bytes": 94682
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S10",
+      "artifactPath": "cases/gpt-5.6-terra/S10",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "3ceffc5639eeb38c0df47df039f9dd02b36ee7ea461d70c26c31d7424c815f48",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "a8b8869231453526160ee7fd65cf2872dc872f4064aacae774f365b05ada85e6",
+          "bytes": 1371
+        },
+        "native.jsonl": {
+          "sha256": "e83ccf9b8bddbf0b3db6c8c7b923bff20ad129866ea6e9c0fa7e1a63fa93689c",
+          "bytes": 55118
+        },
+        "observation.json": {
+          "sha256": "e909427197929c27381b4ddf71c1bb3b49f47488133b23145e4777c58dd11905",
+          "bytes": 261972
+        },
+        "observation.partial.json": {
+          "sha256": "9d655b3ab8adaa4addef9362f4e7145abfd0c03329fdd7ddb05543ff7eb43245",
+          "bytes": 260266
+        },
+        "oracle.json": {
+          "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+          "bytes": 1848
+        },
+        "resources.json": {
+          "sha256": "e5382c8d77740660038b56a7c1afbd424851ee2374f5f55a5b490ad3ea9b30b9",
+          "bytes": 487
+        },
+        "result.json": {
+          "sha256": "b57f2116cd96b362b396a726ce7150601254a4604af91e9d6123111c73ed7f7f",
+          "bytes": 3653
+        },
+        "sdk.jsonl": {
+          "sha256": "73c9d03b1f8948f07cea7941b06a63ab67f819c1cb6aa8b87b429cd276f7c386",
+          "bytes": 36564
+        },
+        "transport.jsonl": {
+          "sha256": "3579d57b4092b4675d323f47288038186f9b05e74eace09ca677d7e72827e8bd",
+          "bytes": 91841
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S11",
+      "artifactPath": "cases/gpt-5.6-terra/S11",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "f9aa6f10c17fd3ceeb854f0963024337aba49953acc9aa47ffc9ec6eaf80f03e",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "6048b283acb1a52c05bd938cc565b4bccbd1361ea91300439e43304738fe76c4",
+          "bytes": 4060
+        },
+        "native.jsonl": {
+          "sha256": "2357cd89ccd96ad783ba38849481604894d36cbdc7abf4bf4985db59609ddb43",
+          "bytes": 194699
+        },
+        "observation.json": {
+          "sha256": "f45076c202684ae8afee0c0d2afaab708ce1c19883c891c73e75ac26f4025b5b",
+          "bytes": 1180759
+        },
+        "observation.partial.json": {
+          "sha256": "3b78520ba634ad341add0d2e678f8cf0584f86eddbe9b5813c237b1cbcba3442",
+          "bytes": 1179264
+        },
+        "oracle.json": {
+          "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+          "bytes": 2034
+        },
+        "resources.json": {
+          "sha256": "38f67cf6f8370b3fee9c8451e5fede3ae954806a938db559ca49c96a63dbea07",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "5b9869be93f56cbbef9c4bbe0a8f15de93a824d4eca7e01b3f93da0d2044e360",
+          "bytes": 4243
+        },
+        "sdk.jsonl": {
+          "sha256": "70197aee80f3161ef43336cb9dd5e7c3ca14879e6fd2055bf63be8ebc7652e6a",
+          "bytes": 165814
+        },
+        "transport.jsonl": {
+          "sha256": "796f55fc984cc1f3660f212345733c7aab9a7e492253ed480ec2bacb8e4c6060",
+          "bytes": 543582
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S01",
+      "artifactPath": "cases/gpt-5.6-luna/S01",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "bcbaa39905fb94f825057dc95f46ed42424be9bc6faecd6ca065cd51bbe34cc5",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "7a715a6673a7cbd3397682f1869fbb40ecd9b832e774378fab95768ed6f8f515",
+          "bytes": 1147
+        },
+        "native.jsonl": {
+          "sha256": "57e43cfc4b994de85fc0ac3696724dab6a13e5851571845e4834db5fe1233060",
+          "bytes": 25844
+        },
+        "observation.json": {
+          "sha256": "1401305462d5b6b63fc08c3604e1264bc683c5b04ce995adcd6739bce91f5f75",
+          "bytes": 138840
+        },
+        "observation.partial.json": {
+          "sha256": "71e7d9d0c575dbf1deb4cccf5d5aae6223a3a0eb483a90d024a775c033811874",
+          "bytes": 137492
+        },
+        "oracle.json": {
+          "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+          "bytes": 1932
+        },
+        "resources.json": {
+          "sha256": "f4d0ac4f6a7486d6115438403789d9c2b5ca69b5544b375971ec7d2658c4bdfc",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "d04d61c525ca457a9f9a8b20eb0e8b5530570f266ce3b904f64b6faa0bd4fb33",
+          "bytes": 3653
+        },
+        "sdk.jsonl": {
+          "sha256": "86f64d00b01a3e9f7a300705a0e4a75c58f472351d6a360adfa6977ec6664b53",
+          "bytes": 24750
+        },
+        "transport.jsonl": {
+          "sha256": "a0e5b605a32eea71fc49e155e071c7ede57a1cc5dad80eb1b67bbf512d0ae4e4",
+          "bytes": 48138
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S02",
+      "artifactPath": "cases/gpt-5.6-luna/S02",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "a0fa72c2df5656ae8cb82c64f31eb2e8a1e80a87bd2e43326afbd160bc43b44b",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "e33f34cb8f452949bc91e366c78f7c8f68bdb3d310f1fbd1cfc90a7a85285ea7",
+          "bytes": 40977
+        },
+        "native.jsonl": {
+          "sha256": "df37e162aa95e995bb4222bbb9c31546a17267dcc15f1c87f75c85ed77970420",
+          "bytes": 25558
+        },
+        "observation.json": {
+          "sha256": "05b4c60c1dae873f90c83497dd780fd08d3a5fd00c51bbcc41d6bc78420046f0",
+          "bytes": 179184
+        },
+        "observation.partial.json": {
+          "sha256": "61a880cde9f02672b3676bafbde18f01e8538fe8cf51c3fb62bb7bde08a1659a",
+          "bytes": 163401
+        },
+        "oracle.json": {
+          "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+          "bytes": 1986
+        },
+        "resources.json": {
+          "sha256": "6d1ea5a6349329424bcf65b72dce544709bcf35526815a704224ab8cdb8760d4",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "c98e8241388404d3e66d53072875a94104579bd3abb1d69cdcbc2e9a81009f65",
+          "bytes": 3708
+        },
+        "sdk.jsonl": {
+          "sha256": "32d7a8fc63b5d501193302621448890ae2920baded78240b6a016b4dc5d28968",
+          "bytes": 24754
+        },
+        "transport.jsonl": {
+          "sha256": "4d527eded7b796e8c57e0bab6acbb548100adc4e0fd13b9752dff5b4bcc33f4f",
+          "bytes": 47906
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S03",
+      "artifactPath": "cases/gpt-5.6-luna/S03",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "bc278c7f2ee51d96279e3035fbb2a86bbc1faade93867cfea85137c920c023cc",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "144fef4cbe86dd4dde7870029c090e8b4ff2f1f1c84c4c84fb95362f15a295cc",
+          "bytes": 22856
+        },
+        "native.jsonl": {
+          "sha256": "44fc7cb8ae53372a73235b96206a924ee7ce603368e91da9016a19a58ed1072b",
+          "bytes": 24698
+        },
+        "observation.json": {
+          "sha256": "0066b18326e172d1e8c77f216071f4d97f8e072645cefe9854422cd22751d928",
+          "bytes": 181029
+        },
+        "observation.partial.json": {
+          "sha256": "1e0556b294fd4137f7fb3f91efceeee802195387f21e69020233598a024c0edd",
+          "bytes": 127820
+        },
+        "oracle.json": {
+          "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+          "bytes": 2021
+        },
+        "resources.json": {
+          "sha256": "55939e1ea6e368cdef6777310d5df81cb23eff353c7e7ae019b0bdeadcc22ec0",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "d52245a6d6714f55267458e7a15b1d98c64e389eab2bebd6b369130c5c45519a",
+          "bytes": 3743
+        },
+        "sdk.jsonl": {
+          "sha256": "a7f168ea5c8fdda8d7d266997ff6dc6f9cf7c97dac9b9c64a8f89a17af322904",
+          "bytes": 24694
+        },
+        "transport.jsonl": {
+          "sha256": "2bd942a63f9c8bc1878969932e04229a21f8abc3b6463f169c32c4db5a682277",
+          "bytes": 63493
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S04",
+      "artifactPath": "cases/gpt-5.6-luna/S04",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "6188667cc46d61adcd50281c8435ca4091eca3f573e11bc903c1538dde6d845d",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "d64042615eb900fc92f9faa401fcf343b46ac4b4b905ef9ca6f7abe70931e929",
+          "bytes": 3653
+        },
+        "native.jsonl": {
+          "sha256": "fe11c3fb9a47c50044aa2b14cf531796794a5d3cd536cdc70bc0fefc12357981",
+          "bytes": 25844
+        },
+        "observation.json": {
+          "sha256": "6a752d528b7ffc2766d14fe6a67e66878c2989134c4eece5c715e1c0c6ecef68",
+          "bytes": 166495
+        },
+        "observation.partial.json": {
+          "sha256": "6e44788c5dafe137d70389b88b5bce9b559394ab0f50d50c98ae7d76bb69fc8e",
+          "bytes": 165851
+        },
+        "oracle.json": {
+          "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+          "bytes": 2002
+        },
+        "resources.json": {
+          "sha256": "bec5349f34bcdec826551f234bb0857dc51ba7feaeae5d74d4feb5f6851b210a",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "48f8be4d44629a0d3572332bf9c1141d9f7789e482dc1ba208e753dab3db587e",
+          "bytes": 3724
+        },
+        "sdk.jsonl": {
+          "sha256": "c4be312f905a99c15f6ba6ee9ed7f7856aefe27e15ee5749d71bb1f668a92482",
+          "bytes": 24709
+        },
+        "transport.jsonl": {
+          "sha256": "1e29fac7be239a63f9ccab65310edf803c6b340e562f5d3739ae8faeb1728a6d",
+          "bytes": 67719
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S05",
+      "artifactPath": "cases/gpt-5.6-luna/S05",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "e6ebace623df21924091b28f9c58c962f2ac92ed90f357f5b64a176073b6f8a4",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "d704ec5540f2c90d4cec9e241ad37159d5ff80d5dd7deedd410b546dd3aa4ffc",
+          "bytes": 2548
+        },
+        "native.jsonl": {
+          "sha256": "3111038444677ea1fb8df5a68354ddbf6e9dfa07305093ba0765cee76b732aa5",
+          "bytes": 24986
+        },
+        "observation.json": {
+          "sha256": "48f229bcbdbdda0043469e9bf960796ec5ef046195d14e879cd4d8be46051e7f",
+          "bytes": 158735
+        },
+        "observation.partial.json": {
+          "sha256": "2768a823adf0cc794fb43e80ef79cc3e9f0d44e03c36bb853a1c95b16af0be43",
+          "bytes": 144250
+        },
+        "oracle.json": {
+          "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+          "bytes": 2007
+        },
+        "resources.json": {
+          "sha256": "3da7f237c20cd3bc93d4e85a685e3e87ee0955c7832e23a8f817d10fe935f9a5",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "1d5fa6451201a9012af7afceeaa4ec9e9463346bbecec36af80a3f7efe9a9eed",
+          "bytes": 3728
+        },
+        "sdk.jsonl": {
+          "sha256": "5af5f9ff70c8cef7baf657efc01be6a8c9e5360ba23681c3960226d1a405dc80",
+          "bytes": 24711
+        },
+        "transport.jsonl": {
+          "sha256": "292b94f25057fb0b82f272df5b4073067abd3b4b27c3748aef8a12e1bb2d24c0",
+          "bytes": 62816
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S06",
+      "artifactPath": "cases/gpt-5.6-luna/S06",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "067429da663802783f3003d3f3a632fe179d51b56325ec6e42ff6a0fd033f9d9",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "702bda12d1c9a02e078337d665e69e841bbac80ad6f6b56987d56beaee5bba9e",
+          "bytes": 1956
+        },
+        "native.jsonl": {
+          "sha256": "de2e98831aab430c34759f7687c31be016d8e58df086479f7e46e1d6d155dcee",
+          "bytes": 33262
+        },
+        "observation.json": {
+          "sha256": "5091d4fd36b73e25a931fee125958da6523039de9c405cf41b0b8087cfbaa0a0",
+          "bytes": 202162
+        },
+        "observation.partial.json": {
+          "sha256": "6b002ed1a4dea07ca4069d5435639bbdebd9fa3bcbfd95fc729de17e2b0c21de",
+          "bytes": 187673
+        },
+        "oracle.json": {
+          "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+          "bytes": 2039
+        },
+        "resources.json": {
+          "sha256": "6f98e3f933df7c738ecb08b083ac1620a9c76bf1543642cfbb096ffdaeea426f",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "7a7f61a5d7dbe0376f2e2482eb3f4ca1c75614e1620266642d042ba6f56a2fb1",
+          "bytes": 3765
+        },
+        "sdk.jsonl": {
+          "sha256": "c5f1ba0c72a5960d987b69bedbc20391da4109253cd38eae59dfff22c5f1bd5d",
+          "bytes": 45401
+        },
+        "transport.jsonl": {
+          "sha256": "25f5b1991ac992e84dbe03519c639efaf81410b29bd11d6b49a0dc131ae757fd",
+          "bytes": 63563
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S07",
+      "artifactPath": "cases/gpt-5.6-luna/S07",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "e81aa212a1a1c8bd5df3e7f022095c6fbf8d8ea9265b380b41ef5c28cd8953e9",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "ef3a17629611241a7de68720f93d824225c5966be94267301933f67bae5e7e81",
+          "bytes": 2599
+        },
+        "native.jsonl": {
+          "sha256": "bc552d3a7009cecf60fc191f11209d143f1e76b276f1661bfe284e6ac5829df4",
+          "bytes": 54017
+        },
+        "observation.json": {
+          "sha256": "edec1091f0b9a5a17be05f88b2ca50497866e76a314f50babb8f42da8e951b40",
+          "bytes": 301421
+        },
+        "observation.partial.json": {
+          "sha256": "1df674f03d44bb4bbe66636148f03f7ec90af4a870bee3efe5b7f6895a22dd44",
+          "bytes": 258425
+        },
+        "oracle.json": {
+          "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+          "bytes": 2029
+        },
+        "resources.json": {
+          "sha256": "f9091ef3dd67d8fa7fdb7496f112ae7571795fa35900280cc04f543794bcdb38",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "e0e0392d555e04f674c80cc6a2f138271975753bb4bd074113ca384716dc233b",
+          "bytes": 3839
+        },
+        "sdk.jsonl": {
+          "sha256": "23884e7e8e03f4b1596000753559a03c125fc7cdde750f8e7801785c36e9034f",
+          "bytes": 49171
+        },
+        "transport.jsonl": {
+          "sha256": "0b5d44336fc086e861f833b1242caf148204ba6879113741cbc9d5053fdf0bcb",
+          "bytes": 112259
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S08",
+      "artifactPath": "cases/gpt-5.6-luna/S08",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "34bafc4808c421614cf97e55cb852f80be2b0b150b6de0f30d5eaf63684f289b",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "beb80e1e63e521f13a91c0a7760f5dedbe664f03a995c9ef7bda028b5cf951e8",
+          "bytes": 3355
+        },
+        "native.jsonl": {
+          "sha256": "e8d54356b3712b748e22e643fbc5186077d1e5692b0cfee8a65bb079c2b1fc77",
+          "bytes": 35996
+        },
+        "observation.json": {
+          "sha256": "02a9882ff6b3478d8ef4fa8fb889b6a5c7afe5262fd52545b7fff5def3084b0f",
+          "bytes": 233178
+        },
+        "observation.partial.json": {
+          "sha256": "74db078dc28f44d6fe6999e80e8b1c54e4a7ebb23e10cf50ab8c22d526d9e0e2",
+          "bytes": 190841
+        },
+        "oracle.json": {
+          "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+          "bytes": 2216
+        },
+        "resources.json": {
+          "sha256": "a9aa6227b69b9dc0a2776282ba6e0505c2d53c470cabb8b704371b85fdfcd088",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "d362c299fd3c003158ac5f6ab6f1b286cbb60706af3be10e082508c970edb940",
+          "bytes": 3942
+        },
+        "sdk.jsonl": {
+          "sha256": "42b8f44c0cc502bf3bab8cbef5639cf0ef6ee3a0a1c86d85e9f25d8e0b4a5bd2",
+          "bytes": 45344
+        },
+        "transport.jsonl": {
+          "sha256": "d6cbe09c11df31bdb831161308dcfbf1b4b2fb9c85ed27a6e28b4a37fe79b599",
+          "bytes": 82402
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S09",
+      "artifactPath": "cases/gpt-5.6-luna/S09",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "abaf0cb0def1d07d9acd07c389954a946748c94ca1a35b50c3e526499811bbb7",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "d287f11e35c6e889aba33c5d9509f98d149b4a6387274178eb5962dde1e67b2b",
+          "bytes": 2190
+        },
+        "native.jsonl": {
+          "sha256": "2291b2a76b25c10d1238e89811917208a9336411d62e9185ec58b75b6789b4ab",
+          "bytes": 50489
+        },
+        "observation.json": {
+          "sha256": "a5979f2041d80e11ee54dfaa09e38b807a411243961ad25922f8969958742d56",
+          "bytes": 270596
+        },
+        "observation.partial.json": {
+          "sha256": "2d08df7755ef32da71cc719556fa5d029a298d14d15c2100ea859535d446f530",
+          "bytes": 269101
+        },
+        "oracle.json": {
+          "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+          "bytes": 2038
+        },
+        "resources.json": {
+          "sha256": "6b3e3390cab00f5a3ccd1d185719ac27781e833b83e160e7fc00e80cc293e75c",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "63cf73c34ddfc9f9ef5bfe4cb5770709ab3090f26994e55677049718d6f95b68",
+          "bytes": 3764
+        },
+        "sdk.jsonl": {
+          "sha256": "52dfe1e3a2c02e9d5ffa66b26cae7a3811820d861d34407f58afbdba15aca7dd",
+          "bytes": 49553
+        },
+        "transport.jsonl": {
+          "sha256": "87c7b6bb822b525f71f312f1feecaa6d0889588ff6aafce8d3ff3b8fb2caf86b",
+          "bytes": 94652
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S10",
+      "artifactPath": "cases/gpt-5.6-luna/S10",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "b23e544bef5e4fd708a79504a983ffc0bf686b8896fb7e9cea8494ba1da3e7fd",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "f79f22a4dc9f6f638c9b1e4d6dbd2702ac74fb8f68fe343c64c21ec4fb3a024a",
+          "bytes": 1371
+        },
+        "native.jsonl": {
+          "sha256": "781b41b9d22594c3d3b42161bd853b638f021f0c5ce17a3635ce1c309748c6e7",
+          "bytes": 49620
+        },
+        "observation.json": {
+          "sha256": "862b6c600a190d6f2bc5c9e929ed1a943e06dbb7c53b8e7351bdac7e6fd5c0ba",
+          "bytes": 258466
+        },
+        "observation.partial.json": {
+          "sha256": "c71876bb107092a8d0817e2b29b862f91cf8a1c63c0c5fb761449326f7cd9d77",
+          "bytes": 256760
+        },
+        "oracle.json": {
+          "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+          "bytes": 1848
+        },
+        "resources.json": {
+          "sha256": "0080c8b26a42264a76bb578aaac1b8a916a887b7fb8b9c9b778c331111cade08",
+          "bytes": 487
+        },
+        "result.json": {
+          "sha256": "be537cd3b88f5cb5f2f7fdbc33a8cfdbd1fdb1aa32b0cd23ea6768000d69046e",
+          "bytes": 3652
+        },
+        "sdk.jsonl": {
+          "sha256": "9a6a90eaf920d879e89c0a4ac28f73314351f426dd81612ab9db5e41e7f223c5",
+          "bytes": 47728
+        },
+        "transport.jsonl": {
+          "sha256": "ca903c2af3af9d64f4c9373d015fe41913e57b47607dd8661768c3f880fbb8b9",
+          "bytes": 85849
+        }
+      }
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S11",
+      "artifactPath": "cases/gpt-5.6-luna/S11",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "8f207090fb2d2ed3f522bddba3d976b517e4fabfff45376654f892d19da47160",
+          "bytes": 308
+        },
+        "controls.json": {
+          "sha256": "66fad445bd3accdc7f1076de7f3de60fd2eda2bda20fae44c9582a1eb3363e68",
+          "bytes": 4060
+        },
+        "native.jsonl": {
+          "sha256": "79f53830222b8e470ae082a2d49212fd080e7ff6c13dbc01980c87da464d0258",
+          "bytes": 194684
+        },
+        "observation.json": {
+          "sha256": "b382855310cda9c3de9175c7d89be89683abdef3b32041cfda6f212dcb4951f2",
+          "bytes": 1131094
+        },
+        "observation.partial.json": {
+          "sha256": "b19729c7a1ea20388c950f6e6c97d0997d0e2997011e5adcf306ed5155934bbd",
+          "bytes": 1129746
+        },
+        "oracle.json": {
+          "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+          "bytes": 2034
+        },
+        "resources.json": {
+          "sha256": "6eafe9dd53053f2afa4a2be2e3e5851958a00e461a65d2b4c84604440394d7d0",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "3df68e4ca5a5b82175dd990f020dd689449762600dbd4300725b8fd11a5cd8a3",
+          "bytes": 4242
+        },
+        "sdk.jsonl": {
+          "sha256": "2ed9a1e285de06a08ad2dac4b7c33d4bcf67246e6705b2b2d954d4365f7b05ce",
+          "bytes": 131958
+        },
+        "transport.jsonl": {
+          "sha256": "7dd0f058c5249586aaff80b3b0378950b5ae68204dc91e0fed32dde3a2a7a9cb",
+          "bytes": 528246
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "artifactPath": "cases/gpt-6-astra/S01",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "cf34f9df157de9269fe724c20eccb6fc6c9a13384fd733b8f00f8953e4339b5c",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "a4d0bb0464b9e4f2e1f76c415a0a348e2f437941567c3fc9766e4bf35d03a4bf",
+          "bytes": 1147
+        },
+        "native.jsonl": {
+          "sha256": "7cb923c02abfa672b8851542a5652923fc28a22b79372efeb84df074041e67fc",
+          "bytes": 25828
+        },
+        "observation.json": {
+          "sha256": "5a3c0f0b31854ee81e0dc245d4b2631c8af191cfcc63749fe7bf778a49cc5263",
+          "bytes": 127267
+        },
+        "observation.partial.json": {
+          "sha256": "678fe070cf54fa679e2f44dc76369df5e235d049a80ddcdff95b33e488a3a8f6",
+          "bytes": 104347
+        },
+        "oracle.json": {
+          "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+          "bytes": 1932
+        },
+        "resources.json": {
+          "sha256": "545c42fb60de536d7e78b7967b547d47d5ced7bde86ddddaea3e3ead501a5993",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "c9572e96c72e414ce549077a3b0ae78b14d9582a15214b2116e2b5438d0d53d6",
+          "bytes": 3653
+        },
+        "sdk.jsonl": {
+          "sha256": "c6160d91a00fa37dd26a439f83d5173bd1e520d10ed659965ab0ba4d66700796",
+          "bytes": 13368
+        },
+        "transport.jsonl": {
+          "sha256": "8684f6ba646bee5b8e9287290b46255ba5d8deadfcc794c6b093747074aad0ab",
+          "bytes": 48122
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S02",
+      "artifactPath": "cases/gpt-6-astra/S02",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "2698c0b10cc62e4c1746abae183f215542f3535f935e552e564fca5c843bd97e",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "cbb169bb282dae550e9439a4f6be1ff33820aea679da65280f8b029593b36e5b",
+          "bytes": 40967
+        },
+        "native.jsonl": {
+          "sha256": "03e2882bb7327d6ef638322a4768927d8716c3eb5a013cf91f280db29b4aa23d",
+          "bytes": 25542
+        },
+        "observation.json": {
+          "sha256": "0f58da227ebe5e8ebd7b4f0bb8477a3c0e492d868a4a3296bd15a8f7e72f1dfa",
+          "bytes": 167596
+        },
+        "observation.partial.json": {
+          "sha256": "2bd505c59ca3302789cd1338a8813cd317da673a580a4c71eee2cf4f4f332886",
+          "bytes": 144672
+        },
+        "oracle.json": {
+          "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+          "bytes": 1986
+        },
+        "resources.json": {
+          "sha256": "3c6019bb9cf587b052e99026493dc08dbf6c7dadaac287188b60e04ebc5ee5be",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "29fcb5e703f13c49eba86925c3cc4c7ff34f1a6edef99cacb7f5e1697a6f1c3b",
+          "bytes": 3708
+        },
+        "sdk.jsonl": {
+          "sha256": "7c5d242b74ca3983077d7f71447719bc6ce34c049d4fc4d1342398cc72ef87c5",
+          "bytes": 13367
+        },
+        "transport.jsonl": {
+          "sha256": "32a26a619fef8db817f5f42fdb1726a21e577e3841855ca9e2025aececa28669",
+          "bytes": 47890
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S03",
+      "artifactPath": "cases/gpt-6-astra/S03",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "05d54318c63619a5f22d2acd174dbd86a92bd534ced42687ea358f46364e69ec",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "18849c34d73f2e682664ad6e9fef10bdbbe740b49cc973cb6835c08c5f0318e4",
+          "bytes": 22851
+        },
+        "native.jsonl": {
+          "sha256": "d136335f5fcbffc822a0dc1188d2d32267942b8869a17341f68ed07d6d657554",
+          "bytes": 24685
+        },
+        "observation.json": {
+          "sha256": "08492b9a921894a7a64492fc9b6e5690c51560bb378e40056b1bffe64308b468",
+          "bytes": 169466
+        },
+        "observation.partial.json": {
+          "sha256": "4d0d76e94d4c85a1bd3de29ddff552720a563827c1823e9b0e12dedfb9018b72",
+          "bytes": 153017
+        },
+        "oracle.json": {
+          "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+          "bytes": 2021
+        },
+        "resources.json": {
+          "sha256": "6750854ef19b628a21ca415f86c5b3d65ed9e6bcaa93da34c52ef9b42ee13b00",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "29bea84acafc1c2f5e42c5250d13242034c4044647542c1aebdc6ead60b7dfd7",
+          "bytes": 3743
+        },
+        "sdk.jsonl": {
+          "sha256": "7c7bc76855fd69e8300edc5b0ad84005be57d3989c8446c6ad69c4177caccac5",
+          "bytes": 13369
+        },
+        "transport.jsonl": {
+          "sha256": "bef96c66d0a231bf5a82817b85dce257e0a26324447bd46cdd450591400569a6",
+          "bytes": 63472
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S04",
+      "artifactPath": "cases/gpt-6-astra/S04",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "fff506ff5125014c2f9b07b9cc74411694843e1d1f8bed83a81cbe12c25bae85",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "a12a3c943324611b770d9514e722211257659f081f2f333863e1b4e9dca05709",
+          "bytes": 3653
+        },
+        "native.jsonl": {
+          "sha256": "24c45abfebb852d2ed59b00ddc263d00a273d10c23b0035c1ac765caa3422f11",
+          "bytes": 25829
+        },
+        "observation.json": {
+          "sha256": "4ec31872bca767941312148be5813120b0e29c086c18401d445534c2f8208588",
+          "bytes": 154963
+        },
+        "observation.partial.json": {
+          "sha256": "81ab0a0411084bc34d7aae16bf4decfb38380c741fc6056f975d33b1f6222618",
+          "bytes": 153615
+        },
+        "oracle.json": {
+          "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+          "bytes": 2002
+        },
+        "resources.json": {
+          "sha256": "705f9d1763f8a370ef7e145e022eb8f24d7c6bd53784f4acda0128ab8a48e8ab",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "d99e822df55f13e24969d11dc5041997c0fd61ebed87cefb5ab96d573a93b1e9",
+          "bytes": 3723
+        },
+        "sdk.jsonl": {
+          "sha256": "e35cae57dab09fc62ecf7b03bec5679f2038e9fbff66d79aea145cae081fd69a",
+          "bytes": 13364
+        },
+        "transport.jsonl": {
+          "sha256": "353a9c6190bd5a340b0ad62d98ae3d0c9e3904122fa59f6f824f35570077aef7",
+          "bytes": 67705
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S05",
+      "artifactPath": "cases/gpt-6-astra/S05",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "886cfb3a28af4940aa3c9c905df6095e87e689c69c991c14525c20df7daa64b1",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "56871513d321a1ffbc0865b586180dfc9333f019a24a585f4d5e330418027080",
+          "bytes": 2548
+        },
+        "native.jsonl": {
+          "sha256": "3a64ddc9954c62b25407a7fd75d006e37f6f2a522c846a8f5aaa4a3515e2e96c",
+          "bytes": 24971
+        },
+        "observation.json": {
+          "sha256": "c50b9a929d6856b6b5221dae507d9ca109cfa5d1adea2e4c56a1ddadc69d2343",
+          "bytes": 147193
+        },
+        "observation.partial.json": {
+          "sha256": "3d7cca7c50af090ba9f5adbc9c8ae425870fce5e114b691b142d633ac72cce05",
+          "bytes": 145845
+        },
+        "oracle.json": {
+          "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+          "bytes": 2007
+        },
+        "resources.json": {
+          "sha256": "35f2125d0279345d817b337105af715891c7a7c55de007302a86e11732bba07d",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "35eec1e2f2b3249c9ea3350ed8c11b5cdffcf59292ce62719c28181f7cba4aec",
+          "bytes": 3728
+        },
+        "sdk.jsonl": {
+          "sha256": "a99be69aaca903b942373358a7adf7b8ff115e30182ea1737dcb74e6a446f054",
+          "bytes": 13362
+        },
+        "transport.jsonl": {
+          "sha256": "d9e90313c944001c35fe274c1e729d05733d77d83171a1c4218353c0e9ee9104",
+          "bytes": 62796
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S06",
+      "artifactPath": "cases/gpt-6-astra/S06",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "281aa39ea1573a028d800edadfca16c65734205aa4b509d475d1f9302afc45be",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "7e8bac791de9413006a0c760e9a23907e15f6e6fc84fb3ff26b1f264bb475900",
+          "bytes": 1956
+        },
+        "native.jsonl": {
+          "sha256": "c3ed6f1cc7071e1fe44a563088fbf6439bcad20797532fc319c754a4c1792b13",
+          "bytes": 33234
+        },
+        "observation.json": {
+          "sha256": "d212f2dbb2350a0680ddf4b77c7d7b607f7a795f4c816a18d2c4edc201c5a65b",
+          "bytes": 179160
+        },
+        "observation.partial.json": {
+          "sha256": "a44768ab8d7d815436ce785ec2e50c048c761d85f64f5d0417da89c073507e42",
+          "bytes": 158169
+        },
+        "oracle.json": {
+          "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+          "bytes": 2039
+        },
+        "resources.json": {
+          "sha256": "fd18214728561b1e4d6cdf6154dc11dd3a4012f7190480b5c6cd6e7076ee3038",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "6d77c277ff5c189419f103a7333a244cbe50d4cc9243d57a13cf8e5c116d4158",
+          "bytes": 3764
+        },
+        "sdk.jsonl": {
+          "sha256": "f345b67801b6f16d1cc48663d28c04f6011ccd3ee4fb892e8dfbba462e4ad3f2",
+          "bytes": 22765
+        },
+        "transport.jsonl": {
+          "sha256": "de2d4fd72600bf0d2095e36c8133fb416ff23ae052d4d1f047c29f0eede40fe9",
+          "bytes": 63540
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S07",
+      "artifactPath": "cases/gpt-6-astra/S07",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "69529f38e366a6cb89d86a120438eeabf66b7b1a3a20712bbc9332504d8e9b71",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "9c8346f674ac370bf4e3250dab336bce71e4b03244c04a321b8b59750de448c8",
+          "bytes": 2598
+        },
+        "native.jsonl": {
+          "sha256": "33337296a69f087b394ff829fe4f8700f08ff99d8a15cf29262401337f0ad5fc",
+          "bytes": 53986
+        },
+        "observation.json": {
+          "sha256": "d3313cc0bd37d954cfcf691f214fcffa66c3bc4f1974b4b0de3bbc35a963c7fc",
+          "bytes": 278306
+        },
+        "observation.partial.json": {
+          "sha256": "a0b74a7feb71ad3417c76e6edf51f584efd62fe00641aa2a278b28a39c0c671d",
+          "bytes": 260571
+        },
+        "oracle.json": {
+          "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+          "bytes": 2029
+        },
+        "resources.json": {
+          "sha256": "c2e75ed459fbf6d1ab1d8d071a599c099c3eb44c7294eab1e803315679025fa4",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "29fc9b4c03bbd3ba5263127af022361bc213e87c76a6c92c2923621fbf3701d1",
+          "bytes": 3838
+        },
+        "sdk.jsonl": {
+          "sha256": "536c1e75142bc6bc216ddc16dfc991456f6339184751b4b607d039722159225a",
+          "bytes": 26440
+        },
+        "transport.jsonl": {
+          "sha256": "2c0bb29fa0cf7be90e33426206d86a563af30efb9e5f48c841bc0e5808964615",
+          "bytes": 112222
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S08",
+      "artifactPath": "cases/gpt-6-astra/S08",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "b861046df68252cd0db931b9dd6612b8d7a35d1fe8d944a925a128eda5e65603",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "966aba35792f688b6ec092d02c5ec0658d3e3b85e98ee2af36a38810514bf964",
+          "bytes": 3354
+        },
+        "native.jsonl": {
+          "sha256": "114c40486ebfc1b86df9b4b857506491961db6622576ff35e0e5b9a41f0dcbad",
+          "bytes": 35966
+        },
+        "observation.json": {
+          "sha256": "24c258a4a85963272774298ace63b91896fb05675cf10db62057422ecbe382aa",
+          "bytes": 209972
+        },
+        "observation.partial.json": {
+          "sha256": "27affa85ef205bbe3779259c81b4e7ec0bf672479e49b9bb37405600af566eef",
+          "bytes": 208477
+        },
+        "oracle.json": {
+          "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+          "bytes": 2216
+        },
+        "resources.json": {
+          "sha256": "597cd6caa6452f4dacc80e5a44b66869b8ac659261b387760f65997f89667879",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "5cf2cb637cbc6772fd285221ea656dec6b392c4f0eb21a37ffca0e7c2ac2fd86",
+          "bytes": 3941
+        },
+        "sdk.jsonl": {
+          "sha256": "c7f9d881574c9e866c28fc2473fb605bc4ce0ca3d3de10fe835b017ffbd82041",
+          "bytes": 22514
+        },
+        "transport.jsonl": {
+          "sha256": "8ee9da69d6195ee2416813b36f320e1af995218fa7d58b951c1b50bcaedec9b6",
+          "bytes": 82372
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S09",
+      "artifactPath": "cases/gpt-6-astra/S09",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "9a43e6fbc4edfb5ad4ba2de3ce3f5613dafe5867ea74b1f91c1cacf763051541",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "4523638164b751a9157d4df186545987e9337c5c5f8316d53eb375f6da41d11d",
+          "bytes": 2190
+        },
+        "native.jsonl": {
+          "sha256": "70240be49b9882924701c398ada2176c65539b84e81322258a8bad863a6eccc3",
+          "bytes": 50458
+        },
+        "observation.json": {
+          "sha256": "e411ceb6cf6f1666246b15060346c6c361eff96631e1901881a6d4740108938a",
+          "bytes": 247334
+        },
+        "observation.partial.json": {
+          "sha256": "17b2d2e9d019e588f3dd43510f0491bb8c71456fcdb9c534a3bfa9b3742538e9",
+          "bytes": 245986
+        },
+        "oracle.json": {
+          "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+          "bytes": 2038
+        },
+        "resources.json": {
+          "sha256": "d0e7a42099c3f4c62ec29f1b06fb09108ec63649754e5d6cefbd70fcbff2980f",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "305e42e7422424a06490d400e7152ccc32bbd427d0ee3ede6edf3f7172c77d91",
+          "bytes": 3763
+        },
+        "sdk.jsonl": {
+          "sha256": "d4206e97b40e75417096cf24a52470aaf53277578140ff587c253cdb4cc70473",
+          "bytes": 26669
+        },
+        "transport.jsonl": {
+          "sha256": "f4981bc99cc6c08ac15d197fe2d5257f49e20405a2e43b67e1a4cf5018f0050c",
+          "bytes": 94620
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S10",
+      "artifactPath": "cases/gpt-6-astra/S10",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "5afa560cfd36429b5d92c257a2047e460ea8d7ac3e6af251ab11a5339933226b",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "1b00801d257fcfb7915df60e9ab2031a4c4705b3b3af24022b05c82a75c8e595",
+          "bytes": 1371
+        },
+        "native.jsonl": {
+          "sha256": "4d21a2229d4f09343dac4bf6b8cb68775dcef5ab3b55e726d974fe1163a3f8ac",
+          "bytes": 49589
+        },
+        "observation.json": {
+          "sha256": "bba6bc77992a676897f0b1894fe256ac54dd6bbdc86a51dad1d78cbbafa7daf5",
+          "bytes": 235201
+        },
+        "observation.partial.json": {
+          "sha256": "aca5658714a73c521c14841a191e4620b48ee4b062b3b0a99a6c15fe9b534da4",
+          "bytes": 233495
+        },
+        "oracle.json": {
+          "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+          "bytes": 1848
+        },
+        "resources.json": {
+          "sha256": "e2ceb5dec4317cdfacddd3a4d4c720c06c03769ad795cf1f0c6e9eb66b85c094",
+          "bytes": 487
+        },
+        "result.json": {
+          "sha256": "bacb900ff84cb79e07872e62ed48aabd37c44c91c04773b1b948aee5c190a292",
+          "bytes": 3651
+        },
+        "sdk.jsonl": {
+          "sha256": "c1f53ea5192384f4dd863434be144671216366772849d69ee7d5866eab24da3d",
+          "bytes": 24878
+        },
+        "transport.jsonl": {
+          "sha256": "8229173f86811b6bb46160fcab6d8f236813b7b33f742aa08bc2012528ed1721",
+          "bytes": 85824
+        }
+      }
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S11",
+      "artifactPath": "cases/gpt-6-astra/S11",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "91b3489a84eb31c280937d3d721b97f7bdd4a9bd8e72aca026817b04a199896d",
+          "bytes": 307
+        },
+        "controls.json": {
+          "sha256": "38aab86aa0ce69e3d737f9ee60e864a17953cf8b663cc77ec6c3147c557b57b6",
+          "bytes": 4060
+        },
+        "native.jsonl": {
+          "sha256": "6623c1847c5c9f63dff09fee9a45b4d6e19852e26b7d99aab26c85e5e3ed2438",
+          "bytes": 194664
+        },
+        "observation.json": {
+          "sha256": "9904192341c61b16a5f905559da365f1857d1dead45c94052dff7ef91324ea76",
+          "bytes": 1093453
+        },
+        "observation.partial.json": {
+          "sha256": "bd7952ee81012e3e1b7c47ef52050dde613dbf076077547762aa31f21b62e95a",
+          "bytes": 1091958
+        },
+        "oracle.json": {
+          "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+          "bytes": 2034
+        },
+        "resources.json": {
+          "sha256": "2a384a0ed74223ed5ed48731d8dbb698cf9d286942e5ce77e5f1ef5a844c4940",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "0bf15ecb3157935eaf6eb6c59fc2a54359a9f6cee5626ab9c92025850d5d8f8a",
+          "bytes": 4240
+        },
+        "sdk.jsonl": {
+          "sha256": "6995dc110c5852f34c21b886bc776b060af6e8bdedd3788a8e2a269c330043a8",
+          "bytes": 75952
+        },
+        "transport.jsonl": {
+          "sha256": "1b54df7f9e8333b76a6ab55e91c0323666061d8c3e95b7a5985263a5eb570c1a",
+          "bytes": 547468
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "artifactPath": "cases/claude-opus-5/S01",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "09bc655d4940de79233899419cedf1539120517e14d096ffceb0534dd2deb4c2",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "e3d190491255809dc0503a685cb8f71f05df7a8b0f0b0226b7dcf0470175e688",
+          "bytes": 419
+        },
+        "native.jsonl": {
+          "sha256": "29be45d0c2397533827907d715782590c26ac424ae419c3562a3229ea73aeba3",
+          "bytes": 9840
+        },
+        "observation.json": {
+          "sha256": "ea54d41e17e3e1ee6ff7b14e29ce27a0cd81ba45795975d237c4257122c9d816",
+          "bytes": 58517
+        },
+        "observation.partial.json": {
+          "sha256": "4222b535e730d1edab9dbe6d15a7babc4ee9c7c1b73a97a7b988f3f0e3252ffc",
+          "bytes": 53009
+        },
+        "oracle.json": {
+          "sha256": "2951467c330e992fdf774bcfe4a266b00c4b688bec67a740b8d6b8bc73d2b03c",
+          "bytes": 1939
+        },
+        "resources.json": {
+          "sha256": "ac3fd2e2c8e7d568edb588b3545eee0448a0670a64556d82bbe3004bfb619c0a",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "924509dde69eb77eb23544a6a7020c8ceadcc240d935adab32e5e97f4863755a",
+          "bytes": 3836
+        },
+        "sdk.jsonl": {
+          "sha256": "92575f444c9e7844b3db6bb33b8c187a81e284e3e5e181cf91edd178fa466c44",
+          "bytes": 7891
+        },
+        "transport.jsonl": {
+          "sha256": "21babf13b303f305a8ea164f69a58d8fd5b075056d2bcde9734530d5765c09b5",
+          "bytes": 16974
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S02",
+      "artifactPath": "cases/claude-opus-5/S02",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "0f00c52c8025902f6388164790752afbc8d15da2ba0d0c04397c73b91f6479de",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "d72aec841be913ef039c8411bf9d0240d2c43edb66303950d68124c969b8b445",
+          "bytes": 419
+        },
+        "native.jsonl": {
+          "sha256": "0bed764ab353a36fd5391e0e7bdb23053cfaeb0b00531e9448a4ea07dbc009c8",
+          "bytes": 9840
+        },
+        "observation.json": {
+          "sha256": "27c8939ef308b879d02121965917812c0c48961679e2058c7df6d1a82210bfe9",
+          "bytes": 58511
+        },
+        "observation.partial.json": {
+          "sha256": "7b9d50c494a6eed2100a434d1ab5ff23f644aeda17ee6133fd5aa7ca3b789324",
+          "bytes": 48446
+        },
+        "oracle.json": {
+          "sha256": "2b2b8fd66147c3a6b6a6758dc78cfb5db017225f25b7febc219fea678ff32c07",
+          "bytes": 1994
+        },
+        "resources.json": {
+          "sha256": "592feb8ec87873449ed04f70cb6a142f25bc05fb4550348ad4c1dbf868abfbd4",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "b944ee1d65da0eb342e845390e3a124258ca0f705cd84a8b5991cd4f87ecea9d",
+          "bytes": 3891
+        },
+        "sdk.jsonl": {
+          "sha256": "c899ff096997d8650e54479711cf0a148f09237327ec1a91e5a7e0cc046bdddf",
+          "bytes": 7885
+        },
+        "transport.jsonl": {
+          "sha256": "aa015ed95c53731a48b5ba7a345212c5aa71a4bcba338aa226e29bc58baf87d5",
+          "bytes": 16974
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S03",
+      "artifactPath": "cases/claude-opus-5/S03",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "41b7aa41f50a8cec4b77d6bdea77392bf59ae1e4dce7157887971e0354465dd8",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "18be122ff16b9356bc12624360584c125fb6f11880957e97237fd554ef67e801",
+          "bytes": 419
+        },
+        "native.jsonl": {
+          "sha256": "c89bbd7169b8d61b637f78c6d5a0a87e4818cc5acd6c26f070b1d7cd0fb2b8b8",
+          "bytes": 9840
+        },
+        "observation.json": {
+          "sha256": "c39bd19741c24033b6ce2cd82b44461f61891bdeb3e6f70405e10b84265135c8",
+          "bytes": 58510
+        },
+        "observation.partial.json": {
+          "sha256": "f4eca9300333c2f2c8898a8bc8d85d3f81f73153167e1872448f47b618e119b8",
+          "bytes": 57866
+        },
+        "oracle.json": {
+          "sha256": "b0eab3fa67818dde769c92405c4062fb4c5454240b810b39f27c81d66a2da489",
+          "bytes": 2029
+        },
+        "resources.json": {
+          "sha256": "affc0d9910949fc7264df248e5d168575e3d737285a5ecd5b8cbbaed50cbc30c",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "318ce5d590392dc8b40d9aac2687d74631fb8152ff619994e089d759844006ee",
+          "bytes": 3926
+        },
+        "sdk.jsonl": {
+          "sha256": "691070421981777736094da1457fc33a234b044b94bfd8475468c78e95a5fe1e",
+          "bytes": 7884
+        },
+        "transport.jsonl": {
+          "sha256": "d2460b022dd500f24f3694c0251c29186adf7ac4aca14b2540e661975cf35ec1",
+          "bytes": 16974
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S04",
+      "artifactPath": "cases/claude-opus-5/S04",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "e5c749bdbfd68e877a4aa9e39e7e80273b1585be7631283a0f2ca2edf48f70b1",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "1d5c8903a5afd281740be39f59333b1ca5927e28c566b7ce9260c81c0a2c8d82",
+          "bytes": 419
+        },
+        "native.jsonl": {
+          "sha256": "e57a6b954c7f162ef20fbd9bf3275762de92aa65b15d9ede64274c3e5309ce09",
+          "bytes": 9840
+        },
+        "observation.json": {
+          "sha256": "5969a69b021322b6482b00ad7d9c5318e492226abf82934e40466bac054b8602",
+          "bytes": 58510
+        },
+        "observation.partial.json": {
+          "sha256": "166ff66cae2b0c410b57ac130d93792a0833b872ccdf515f4c8dad15cb27c8ad",
+          "bytes": 48446
+        },
+        "oracle.json": {
+          "sha256": "0b31581c807ca5e6c090960b5326c936ecd116f156f0ffee380f249551a065d8",
+          "bytes": 2010
+        },
+        "resources.json": {
+          "sha256": "7c840888d46da786fbeab44f293d0c554548e5cb93fff4bbe7558e9d23e1a320",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "1a2723eca4e130827b62f915f3533c9e5aa199fa01a7b589bada5836d6490ff4",
+          "bytes": 3907
+        },
+        "sdk.jsonl": {
+          "sha256": "6670f3c49e550c9ac97d00402e626a99e95529faea8b351e5f529679b7878367",
+          "bytes": 7884
+        },
+        "transport.jsonl": {
+          "sha256": "109638c1e9449878f208dc7702a66c02ea49a8b23447f8634b19c3c777faf876",
+          "bytes": 16974
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S05",
+      "artifactPath": "cases/claude-opus-5/S05",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "313e9a476c002932f35bac9244b7dfaff73786914469794c680f2de2076c8235",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "b03060ab5cdc5f7e48fefc468a9454ecb4739937659df53e95fe741b35b76c49",
+          "bytes": 1820
+        },
+        "native.jsonl": {
+          "sha256": "bd660854527e86785db2c183d89fe9761a953064759b444607f7d13873718886",
+          "bytes": 9840
+        },
+        "observation.json": {
+          "sha256": "37d7147146a293348352976395d36a90c1681b75f917e7c2c38b56906152bf46",
+          "bytes": 80387
+        },
+        "observation.partial.json": {
+          "sha256": "046420f6d8a0abfda70e5d4ee17cffde9852e12c5cc8129bea7c5818c67e699a",
+          "bytes": 74879
+        },
+        "oracle.json": {
+          "sha256": "ca72f3f353c5d5d43d13171d4424d2045292533fdf02194d561762e9b0644f93",
+          "bytes": 2014
+        },
+        "resources.json": {
+          "sha256": "92c4555d481c503b650e7a568f538e7c754e6d5c92c163313038ed92334c9e9a",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "d50afd05735ba610936f7c5826cdc791642751d6975c02cc05831508c516969c",
+          "bytes": 3912
+        },
+        "sdk.jsonl": {
+          "sha256": "f098cb9f9dd1438560fc689d237f5fb2bf4e44a688e96c89d3b437626b7a608b",
+          "bytes": 7885
+        },
+        "transport.jsonl": {
+          "sha256": "7dbd8cf0cc245efbef580147966ce60962c63b60e4d2589d24cb27552726dfd1",
+          "bytes": 32352
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S06",
+      "artifactPath": "cases/claude-opus-5/S06",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "9aa2f19b946f67257798b74eb40c8f517ee219fa0f3d33d10ce4084ba899685d",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "63ca795fce46d4f183fcadc326533abed83a40d7ceadda83a15677ab79d14fee",
+          "bytes": 1228
+        },
+        "native.jsonl": {
+          "sha256": "ab06852697ba0365382601295783c054d1018f52ab30b428a78b26dafab7a2a5",
+          "bytes": 18802
+        },
+        "observation.json": {
+          "sha256": "68cb9b09e08befcf03db73680368536d436f5ea15a2db505387c33cfc67fb1ff",
+          "bytes": 112197
+        },
+        "observation.partial.json": {
+          "sha256": "50a216cba62c53d7574d757997753e092587d83b29b6fb1d989f366d7fce9ed8",
+          "bytes": 106689
+        },
+        "oracle.json": {
+          "sha256": "a6de08094064707312e8caba461ff0127aaa51a850db2c6d8dc4f54701201850",
+          "bytes": 2047
+        },
+        "resources.json": {
+          "sha256": "658ea244b0ee20eaa2316b009473c89bd4827b35fc4d99e0d0fce77ecd4303c3",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "ebc2edfd167d9abf9e707b0faa8e6a223e79d973f2b2e5b0ce10b91963ebdc6f",
+          "bytes": 3953
+        },
+        "sdk.jsonl": {
+          "sha256": "1e2d4a0f5a50c46abfef23b7ea4e4cf1f83a63f563902edc3e66bcb65f18653a",
+          "bytes": 15727
+        },
+        "transport.jsonl": {
+          "sha256": "fb4119a3857759e965444fb37743aa3da1b969667f32b2b20a55fdb78f599a44",
+          "bytes": 33605
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S07",
+      "artifactPath": "cases/claude-opus-5/S07",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "3823e958b1d4482706a8bf7c40bf2da2e36cdd2308e5a594ffc5ad5ee3fe118b",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "7ea7d831a652847d029d1dc0a23e0eeb211593690ce1337253631cc2ea08f066",
+          "bytes": 419
+        },
+        "native.jsonl": {
+          "sha256": "8aa8855d06a2a5ffdda1fd5ad87c671f1ddb55505e695720ddc1fdffbbad20cf",
+          "bytes": 9840
+        },
+        "observation.json": {
+          "sha256": "ffaedc410edc08b65371f3e870e347240f6c2399a1942bc4e3eb4fbd39543487",
+          "bytes": 58518
+        },
+        "observation.partial.json": {
+          "sha256": "afa421bb10a8c59d15fae11d781c247a964cc431e169cb046c52a6359b4d3256",
+          "bytes": 53010
+        },
+        "oracle.json": {
+          "sha256": "c7b76286e1a985c6d0e7f93e4512eed688595f5b3a99d8f53e60aa666ee21674",
+          "bytes": 2037
+        },
+        "resources.json": {
+          "sha256": "369db356af503e2b29d5d3b4523289c437b1d4a1f43a3a085d2eda9e9705efec",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "59104253450286680f73b1f547cd084bc5ca6d99a9b549905d7d03099f13b30d",
+          "bytes": 3941
+        },
+        "sdk.jsonl": {
+          "sha256": "2e4cb25249e7c61d4c89b46fc338507ce7a44368907d5aa83a6e42c987803e54",
+          "bytes": 7885
+        },
+        "transport.jsonl": {
+          "sha256": "3072da850d0da8c138a0735679e92714e6673e1d4a3ca4977675af87f67cc0b8",
+          "bytes": 16974
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S08",
+      "artifactPath": "cases/claude-opus-5/S08",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "3edf2468827b397cb6c8b421310e4400d7cb9e85b0141fc6f4956c8ad78867ad",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "0ec92f7aa1010df0a46e93d8c941dae54e9c8ca22bb6cd73709ee2c47da77497",
+          "bytes": 962
+        },
+        "native.jsonl": {
+          "sha256": "fa17afb9cbd89934979b356ff853d9ae89af48d76fbd67476b3355b5b9f3c3d2",
+          "bytes": 18802
+        },
+        "observation.json": {
+          "sha256": "af513b3bcbb9de591868a63f49c1b00ea40c5ac3a9c4284995e924cfecf685b4",
+          "bytes": 111909
+        },
+        "observation.partial.json": {
+          "sha256": "a6153c79551f35193596b0280abb59708ab4564de73fbbd45360c22372c579d9",
+          "bytes": 106401
+        },
+        "oracle.json": {
+          "sha256": "6fc9585a79910a1c77f29b432b91db922cc74cfa3f62c52c004ac6dd77845d67",
+          "bytes": 2225
+        },
+        "resources.json": {
+          "sha256": "883ec84fce0383aea05158b1bf742c35e75e75208a48475c18931814b0e3bb1f",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "7e5cbf71eb6c9c6f8c384b8495f05e3ec059936b8e8d2b02a7d923a6df80975d",
+          "bytes": 4130
+        },
+        "sdk.jsonl": {
+          "sha256": "c703d01406e25645a29e1c8d1ed88bca4672fd438eaea727b9853b03b34b9e9b",
+          "bytes": 15725
+        },
+        "transport.jsonl": {
+          "sha256": "ec060b2ed1d2ac878406c200eb87cb34d5d74a9aedc8d96557d69bedaa63524a",
+          "bytes": 33605
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S09",
+      "artifactPath": "cases/claude-opus-5/S09",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "2c14caf6acba2fd2dc6e27584b1287aad010e9ecb7e41e6cc0469506cb50c487",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "5e3b9e4b9ff1d05f25334f192c27aea50329e60a92b624839a55285d3bdeeab7",
+          "bytes": 962
+        },
+        "native.jsonl": {
+          "sha256": "c7c157ce0a0b0a71f694e73bbfebfceccd30df83a334fd029d145809a88a7aae",
+          "bytes": 18802
+        },
+        "observation.json": {
+          "sha256": "ec45f5376361876649fef0dc5b1de110371a6abb7f04c37344b61f6d11a12a88",
+          "bytes": 111911
+        },
+        "observation.partial.json": {
+          "sha256": "93c7d6c5363682ca01696e86923a4aceeb771615180a600a56fec7b452b759a1",
+          "bytes": 110563
+        },
+        "oracle.json": {
+          "sha256": "49803fc35665f719caad71ddde711e40d97f648cba4c60ba8d3af4c2822ab915",
+          "bytes": 2046
+        },
+        "resources.json": {
+          "sha256": "9db568b91c654d9bc7178e12ed8d1bab8b7bccaa60f175c567bf50e5aa19ae0e",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "69eac1d5ac9a5a719ba58d374fb4e157476e5d4a49428d3e784b2563a5b21576",
+          "bytes": 3951
+        },
+        "sdk.jsonl": {
+          "sha256": "6c9b3e97e5339f5d3efd5e334fad5ff4016c8d84aa4a00fd6b4810d8a075b0d5",
+          "bytes": 15727
+        },
+        "transport.jsonl": {
+          "sha256": "abc6a193f6c5ca17b8edce68dda9658cb854b332b6a422e6155e93793f4ef309",
+          "bytes": 33605
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "artifactPath": "cases/claude-opus-5/S10",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "63019bbbfbddb1bd9c0135b9cdf3284344d84389abcf1df99b425b20ae8195f2",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "00f085b5eb0b91fba33173f9ad25d3c5b55184c9fbbf06a284f5ff042785b7f0",
+          "bytes": 867
+        },
+        "native.jsonl": {
+          "sha256": "4d10b539f5cb992358f68326d877fa163bcbd8cb2cd3a4ce92ef4cec91acdd13",
+          "bytes": 28287
+        },
+        "observation.json": {
+          "sha256": "1fe28c7170a7f6a5abbd3bcba637a82d1a2977fe865ec18787068f77e24dcb8b",
+          "bytes": 181544
+        },
+        "observation.partial.json": {
+          "sha256": "545a43faafc4edc68874ccb6c31df0f54060e445620c43ce817b6a0815c682ca",
+          "bytes": 175915
+        },
+        "oracle.json": {
+          "sha256": "5c44a395a5ee51f36cdfc8f03943ae44214d1b6ece4e838014c9638c748efe23",
+          "bytes": 1851
+        },
+        "resources.json": {
+          "sha256": "0d9bc8cbeeb1635b6cc46e46c8915c13604f7e0d68698c70d8b96f75c64344c7",
+          "bytes": 487
+        },
+        "result.json": {
+          "sha256": "c1cfc919776a2e3dbc0f6033721997c33ff9be00303c0badce9f2ea8407d7d00",
+          "bytes": 3838
+        },
+        "sdk.jsonl": {
+          "sha256": "ddd6457b4a08e2a84d3612e6a4d86d2cd0ea7bd4fb771d2dfa77fd7d8562f4b8",
+          "bytes": 22031
+        },
+        "transport.jsonl": {
+          "sha256": "2d57e8fd485fecbcb334ba80dc9a0dcd6fdc84dc58d17cb6fde99c9672909eef",
+          "bytes": 66478
+        }
+      }
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "artifactPath": "cases/claude-opus-5/S11",
+      "status": "failed",
+      "files": {
+        "case.json": {
+          "sha256": "cb0c92c31a2661fa486840bfd656eeb556f1e621de36c6c89dfc81080aa25e9d",
+          "bytes": 309
+        },
+        "controls.json": {
+          "sha256": "11c5195cebde9cfdee30dd296bfa7f369e1126a08c88950e1ce311545aaea807",
+          "bytes": 867
+        },
+        "native.jsonl": {
+          "sha256": "26b6616394cfa7041d94df74516eecb6134455a4b1bba81e5ec0dce7b3502df1",
+          "bytes": 21687
+        },
+        "observation.json": {
+          "sha256": "a0dae891be9a09c91c46b952d3abfaf8c1190733f43006b3a92f81394986009f",
+          "bytes": 154665
+        },
+        "observation.partial.json": {
+          "sha256": "69b09aa7b9208b4f128aa138c73258d5f8b6fd64e959557411d443753a35e06e",
+          "bytes": 143642
+        },
+        "oracle.json": {
+          "sha256": "276a337af260aa268796c983d6f27460170fc14ef1d1b80917cdf756e7c7cfaf",
+          "bytes": 2039
+        },
+        "resources.json": {
+          "sha256": "f4b6c3d430400e1520c1cd7723f71554d463ab6a2428e07aa917ee5d96735e1f",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "4cc9f76d033c0cebf15bd23692b564f60dcb95b107fa286652e5e36c05cfbaac",
+          "bytes": 4027
+        },
+        "sdk.jsonl": {
+          "sha256": "ab129b8590e06c0dc39ddc6362bc7a4596e1fd969a0e4edafdb8269b5c7efb72",
+          "bytes": 15760
+        },
+        "transport.jsonl": {
+          "sha256": "ff2763a1bcd10d4d57526bfbecbe02bb6022f2180582d3463bab7cb29c4210e9",
+          "bytes": 66501
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S01",
+      "artifactPath": "cases/claude-sonnet-5/S01",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "c29d0575885638b120f1d033459be41a6e77a876cf87e4db72d344c886b1b09a",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "ccd5c564ceabc749cf729415444bc68bce66d885d1f840b5640e0adde9454f54",
+          "bytes": 1147
+        },
+        "native.jsonl": {
+          "sha256": "a5bb2db80e9dd24ec87a5880df218e16563343fa9dc341aa02a9de63806c2995",
+          "bytes": 15578
+        },
+        "observation.json": {
+          "sha256": "4720108403871d134c8865b07ae84a38b6de36f3feb652c064f7b9b309fce129",
+          "bytes": 102320
+        },
+        "observation.partial.json": {
+          "sha256": "276f7e0c88103cf4a3c802fa5df7670349cfbc18987b04fa1b26dc145c8f9c1f",
+          "bytes": 100825
+        },
+        "oracle.json": {
+          "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+          "bytes": 1932
+        },
+        "resources.json": {
+          "sha256": "21569c40a7405d084bc78fbf282857e4e0446f84849acadae8bdb0f1369c96b9",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "ed4eb7e46fb50891703b96ec3bcc6d5d40dd510fab5d1f82025229bf3aa200f1",
+          "bytes": 3656
+        },
+        "sdk.jsonl": {
+          "sha256": "4ef98c48c82e8ec21bd41759b861db8b06dceddb6fb2069b08976eb56b78294c",
+          "bytes": 11571
+        },
+        "transport.jsonl": {
+          "sha256": "e82b74a972e81f45839a27b83364e13fb908482afc1d5d8590e311e50bab5bac",
+          "bytes": 39815
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S02",
+      "artifactPath": "cases/claude-sonnet-5/S02",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "225226e694006dde0fd6c09c5274323991c6a3e1f9d2cdc0d20b98921770aa18",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "9f2c642253afc49c403c9312e843ea1eb9c9ca1d547b0a0abfaa5ce5a46b2eed",
+          "bytes": 41011
+        },
+        "native.jsonl": {
+          "sha256": "7522fb3eea695c6acf9f8b8c4cae65ad257699fae4da59dd8e567ade34e5271c",
+          "bytes": 15584
+        },
+        "observation.json": {
+          "sha256": "db69af9f361d28bb100d73fb7d1b3997aa7d9bca0f88ea783d6e7c5fe6296ef6",
+          "bytes": 143349
+        },
+        "observation.partial.json": {
+          "sha256": "7d052cff8f5be1795bafecddb867fd5ed291126b50d5602b16ada2a5bb09754f",
+          "bytes": 123323
+        },
+        "oracle.json": {
+          "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+          "bytes": 1986
+        },
+        "resources.json": {
+          "sha256": "5dbce63333f4e2e0e679c1e6f5699a8dc20fb66a93abd6996d1900dac46600e0",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "e2a220adca292dcfac357ce2416625e49849d49ca20a37a5f12defae9f5a779c",
+          "bytes": 3711
+        },
+        "sdk.jsonl": {
+          "sha256": "bc1909f75abe677cdc1b6cf9d52d708e4234949b848c7bbae97fa3963c3714a0",
+          "bytes": 11571
+        },
+        "transport.jsonl": {
+          "sha256": "d7b8e84d3f4c6b957b1bacf44864fad2e82af510cb2c6d11194be47a54701662",
+          "bytes": 39818
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S03",
+      "artifactPath": "cases/claude-sonnet-5/S03",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "1a92724ee655a8ad3bec406de4ed39e3850096149482013ea610a25fd73a43f3",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "ee929440c3f67474c8d4ff3962580ae414dc9e213295b6310374e161ef167b42",
+          "bytes": 22873
+        },
+        "native.jsonl": {
+          "sha256": "632d2b1493464b3d3ae0577a54317522bc38125ce33998c35702e7191d13cf15",
+          "bytes": 15882
+        },
+        "observation.json": {
+          "sha256": "9ecdd90b21b13b240422c3c6a20aef61c6ccfb9a1b9e441a284c6446210ad658",
+          "bytes": 147826
+        },
+        "observation.partial.json": {
+          "sha256": "6a3fe112707dd04b590c65d655dbb6a2b81da7944f765c2237b2f71558c2b0ec",
+          "bytes": 132303
+        },
+        "oracle.json": {
+          "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+          "bytes": 2021
+        },
+        "resources.json": {
+          "sha256": "86c941a2132c27ce449b3925f1e4aa47de461f80845fbd96372fbe0e76d64ea1",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "f16dcec4001c594343bd81dd360567a77d7a03735c01e611f71a6f8e6c91c856",
+          "bytes": 3746
+        },
+        "sdk.jsonl": {
+          "sha256": "c5a167075a7247dad2c5addfc00719feffc9c7c4dc4f79bfe1aa0ece928ee613",
+          "bytes": 11562
+        },
+        "transport.jsonl": {
+          "sha256": "e716d67a0afa24f5a52ec7d9246053bb1cd244874c30242baf305db8e85335aa",
+          "bytes": 56370
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S04",
+      "artifactPath": "cases/claude-sonnet-5/S04",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "df75769cd301f647a7869512cf04deb4d087dcf8d9d0bb1d610b62f8a95a6612",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "8eb4586d66564fd539fef12452a4ff97649fbfabac963c7683efd32e41866658",
+          "bytes": 3645
+        },
+        "native.jsonl": {
+          "sha256": "6abe01bec7afa2994f02e572e30a3363288eda13eb9022c9430ae9733db5981d",
+          "bytes": 15585
+        },
+        "observation.json": {
+          "sha256": "19567a6544329607c2b8ea89497746312ea0c56e80ff2f6774fc520a83fc74cc",
+          "bytes": 130017
+        },
+        "observation.partial.json": {
+          "sha256": "2ec5d3db71f08bfe4f60a2269d47a4dce1af933ffddeaac7604f58cd2b875ffc",
+          "bytes": 128522
+        },
+        "oracle.json": {
+          "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+          "bytes": 2002
+        },
+        "resources.json": {
+          "sha256": "482596dcd84a533a2901207bebd3bc75ed65a77086c2fa4dfe19628d854f6ccc",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "781bca33041909c111fc4ce19a52bac41e6137e1ada90f26cadfeaa18a060f59",
+          "bytes": 3726
+        },
+        "sdk.jsonl": {
+          "sha256": "77bc6be21c42e0456e8e88b13dddc9f0f696e9adada04dedf86ac568ae7a06b1",
+          "bytes": 11564
+        },
+        "transport.jsonl": {
+          "sha256": "cdc8fddfcdbb1fd16d2e9e31c311063c493390867e86ab5118e633daff3336e9",
+          "bytes": 59405
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S05",
+      "artifactPath": "cases/claude-sonnet-5/S05",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "fddda360c70c5d1836d53463236d45eb919475546ddb02d07c4a3ae12f134dc2",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "9870c8a99e7e934791a12826a7f710dc155c0a817e04990c97a2647108f7ce8c",
+          "bytes": 2548
+        },
+        "native.jsonl": {
+          "sha256": "e4de3f3fb86c82f3af93262ffabc45407a8edf9756e100efc7728b19876a4784",
+          "bytes": 15883
+        },
+        "observation.json": {
+          "sha256": "241319baeac61f999897adca139f087907eeb01fa7fd605bd3d9910125039a1c",
+          "bytes": 124882
+        },
+        "observation.partial.json": {
+          "sha256": "7e3b56fb6b847d61405c28d40c3f3bcb949e47317cd0aebc4104b3ff131f2a13",
+          "bytes": 109349
+        },
+        "oracle.json": {
+          "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+          "bytes": 2007
+        },
+        "resources.json": {
+          "sha256": "cd732e0250c6206bffc60404b96601b27a2b3edbc71a6d0d4814afb94c0368cd",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "f9ff570c68e7ed894b79cf4a3e3036e29a0507dbf247d3d8f5f98e8db50c0c0a",
+          "bytes": 3731
+        },
+        "sdk.jsonl": {
+          "sha256": "a9732d03f9bb550e4d1140987c3e08b9edf221c82d4bc4da9be818dedefb0ebb",
+          "bytes": 11557
+        },
+        "transport.jsonl": {
+          "sha256": "ce3d1303552f05495fa398fe943c1acfdb14f6ad8c3bf21321cf34550e95e8e0",
+          "bytes": 55456
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S06",
+      "artifactPath": "cases/claude-sonnet-5/S06",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "5107441fbffb5c070e4a68e3dbf735b8829e7ede25678df62f5da4edfffa3f00",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "ace14e8c001d3a08c5f619bea34a6cc505e3d65db9e8609f49b5e2e62c777a8f",
+          "bytes": 1956
+        },
+        "native.jsonl": {
+          "sha256": "4b2fd8e2f056a5eae455988ee55d45690b89e97035150757bec22c7ecfb6277b",
+          "bytes": 24465
+        },
+        "observation.json": {
+          "sha256": "565379351002a8c7bc9697dfb3afd36d28fee2a750853cc7bcfed76f2aba9f34",
+          "bytes": 156647
+        },
+        "observation.partial.json": {
+          "sha256": "a7bc5fca11a593d4eb105d6b5cff86b4b91b0df10d720a72d5476a5d9d221134",
+          "bytes": 155152
+        },
+        "oracle.json": {
+          "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+          "bytes": 2039
+        },
+        "resources.json": {
+          "sha256": "0bfdef494a33446c619ad656256d5e459ebe9a8d2355ead18854fc542437d16a",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "29cf0bad74d507e517e98c3f27ecf0e00aceed106b464f7f15b54d73dc70413c",
+          "bytes": 3768
+        },
+        "sdk.jsonl": {
+          "sha256": "9b6658ebbc2c7adc8ece9f3e2e93bb85a772509ab16643f191cf4e0ff1fcfc22",
+          "bytes": 20066
+        },
+        "transport.jsonl": {
+          "sha256": "46ffa39bc4bb08650618e4a84d1af66d085af0ed0521672db5ff977015b04d65",
+          "bytes": 56421
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S07",
+      "artifactPath": "cases/claude-sonnet-5/S07",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "0220d965c890d1ac15150132f2cd0ea936cdd1ab976d366a17628d87bdf7db01",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "f649b12152685b656c8850d7fe2d656f5626e537659a8fdece09c5078a3f7d2a",
+          "bytes": 2602
+        },
+        "native.jsonl": {
+          "sha256": "6899e52c1a46d0e2707265169e1c7f422c6a18e74cb7672144f98ee442ac496c",
+          "bytes": 34633
+        },
+        "observation.json": {
+          "sha256": "09b5db63b8e90d57632806e1c1e83a6d3aa0e13155ff05946b89b8c9fccfe50b",
+          "bytes": 230999
+        },
+        "observation.partial.json": {
+          "sha256": "1f98962901d9b3aebe3a75608fd1967f2a8bfb92ebc5c9eceb7af54be8b817e2",
+          "bytes": 229504
+        },
+        "oracle.json": {
+          "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+          "bytes": 2029
+        },
+        "resources.json": {
+          "sha256": "40f6bb529fb2714d714cd454f725fa3356cb2a9f44a6e11c2d89d31b0c8cdb39",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "13f52f4b58e03cbd2331feb933109e9e744381e1dd2fa084b8f9fc60313cc424",
+          "bytes": 3841
+        },
+        "sdk.jsonl": {
+          "sha256": "84f10f5ab8b876700fa35c9487de3a78f404774ea9bb2fc76664dd9b5b420442",
+          "bytes": 22834
+        },
+        "transport.jsonl": {
+          "sha256": "c37fbce5983caddb7f09620d6fe40c2ee9df49d01edd853ceea9fc9bb137a798",
+          "bytes": 96557
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S08",
+      "artifactPath": "cases/claude-sonnet-5/S08",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "36fb7a1f20a7c4906b3d5e5715bb795989a2085fd2a4f29e3a3fb803fb55c175",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "c90e7dd10371e55ade49d7daaf071391cab2750d1abc64266171ccad51bbd323",
+          "bytes": 3358
+        },
+        "native.jsonl": {
+          "sha256": "7f065035ffacacdf55f36ec290afb98073c205f5b1e7c4e3a07c26c5093154a1",
+          "bytes": 26931
+        },
+        "observation.json": {
+          "sha256": "1eafcf9c0d1518d52e769c6a99c66e377584b479c3510131b0a17c19b043897f",
+          "bytes": 186931
+        },
+        "observation.partial.json": {
+          "sha256": "7ba9cfee8398c6fe3f60b17651b15a3ab656482b8c2adbd7175a4ae842b23d52",
+          "bytes": 171395
+        },
+        "oracle.json": {
+          "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+          "bytes": 2216
+        },
+        "resources.json": {
+          "sha256": "a195a1533f75f4f52c24d40d5a6c0f70200d67c73f56859309d4f47ea4afd04b",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "337c1d104db442ae4457c80c575d16618cbc33fd6c82beb09375e49c45947759",
+          "bytes": 3945
+        },
+        "sdk.jsonl": {
+          "sha256": "f1bea94e66bf431b507d30565e4961cf6feed513c08bc85456272ee355bd4498",
+          "bytes": 19852
+        },
+        "transport.jsonl": {
+          "sha256": "3b7212b3a219d17e7103c32bb38075745c69d9f874eb2807e53f02363bf32752",
+          "bytes": 75073
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S09",
+      "artifactPath": "cases/claude-sonnet-5/S09",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "abbfbc249cb505bd3cfac3a8dc95f73f5d92d9258aa5c064205527b95ab89bda",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "2dafc9e71b8ad5a8677fa1e6708d3b94618397cc5a708019e6bca259181a97c3",
+          "bytes": 2190
+        },
+        "native.jsonl": {
+          "sha256": "a340472ed1036a20638257bd142a48a5a3926bb9924ff0d71e6b2f066b3c3910",
+          "bytes": 30843
+        },
+        "observation.json": {
+          "sha256": "d2d637b1aa524a670777a15c53c50edc9bcf851533407b0dfa757b3f8503a792",
+          "bytes": 199435
+        },
+        "observation.partial.json": {
+          "sha256": "41e603fc6ed9a4dcbbada2fd28453434288b4582bc5cd84ebf9834a8c640ef33",
+          "bytes": 192359
+        },
+        "oracle.json": {
+          "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+          "bytes": 2038
+        },
+        "resources.json": {
+          "sha256": "d29fe5e1051ac820b1c0a0ab9a539567b6ab8da527b2e5d01294738a907d4045",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "20a87c0969ff40e81bf9f070ee87add640d9b38998525812f73fe0c409cd2cca",
+          "bytes": 3767
+        },
+        "sdk.jsonl": {
+          "sha256": "73a0b4f853f404331c00f567f7acdab9384b460069273a8552b4e55e038d93c2",
+          "bytes": 23075
+        },
+        "transport.jsonl": {
+          "sha256": "fb38ef170d601be7063fd86d63ae34236c137256f5677b4507a2a89a7135de90",
+          "bytes": 78737
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S10",
+      "artifactPath": "cases/claude-sonnet-5/S10",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "d049ec2538f131d4ca264988d6582cd30f67d051748052aa7f6d84f2aafff565",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "b03f35dedf1931f639aade3da5a832c24e49e0bfd9b90a8fd04f04c869d5baba",
+          "bytes": 1371
+        },
+        "native.jsonl": {
+          "sha256": "a17fbd7fb0b1902d2521306934f4e266edbe8ed2fe56fcc108107939d543c679",
+          "bytes": 31689
+        },
+        "observation.json": {
+          "sha256": "cd43794288d2383ef1e3044263978f34272d683451a74e074520c24863fd3026",
+          "bytes": 192028
+        },
+        "observation.partial.json": {
+          "sha256": "e6f564295f5ab1672ef6c67cf04fb568a344b06ca6896e94734b1300aca5a19a",
+          "bytes": 190322
+        },
+        "oracle.json": {
+          "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+          "bytes": 1848
+        },
+        "resources.json": {
+          "sha256": "0a82b693850323213ad6a2d69b149aa950e670498d7a6f8f7a5157f18003ca92",
+          "bytes": 487
+        },
+        "result.json": {
+          "sha256": "580cc68b461c30e46a9b8506eed2c96a76aa427880451506f6e6c1e83fe91f07",
+          "bytes": 3655
+        },
+        "sdk.jsonl": {
+          "sha256": "cce382ed6cd0599d0af2be646d50941ab3dbd290c5af177d851b7dcd3274269f",
+          "bytes": 22143
+        },
+        "transport.jsonl": {
+          "sha256": "92f0000f64935acb1a5c2909cf7ce554240c387be34152a9faf99129cae33526",
+          "bytes": 71312
+        }
+      }
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S11",
+      "artifactPath": "cases/claude-sonnet-5/S11",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "8fb906f99df5bd3987e13c08baf91bbc377dc3ea612c9e55ab1ac6782cc20aeb",
+          "bytes": 311
+        },
+        "controls.json": {
+          "sha256": "1f7ac0a30fce0131bcb4eed3142a05c56741f16ae71d73058dff030db7e48b7a",
+          "bytes": 4060
+        },
+        "native.jsonl": {
+          "sha256": "7a70ec2704a8d450c0c3a6939717a97c2c2d85e0f374dc3b47f2f28683d89f36",
+          "bytes": 129298
+        },
+        "observation.json": {
+          "sha256": "857acc34e8cbff858d39c0577d9433626a1381e1f059742b64a12ba13b096a28",
+          "bytes": 901865
+        },
+        "observation.partial.json": {
+          "sha256": "83067f7df4c0d5187e2aa37a2b951e47ea1432a5f3a3519031b6d5307a19dcfe",
+          "bytes": 900370
+        },
+        "oracle.json": {
+          "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+          "bytes": 2034
+        },
+        "resources.json": {
+          "sha256": "634e6b084dedf7f51a772a45784fdf19c95b9dd8e321aaa6f79364c63442f7b0",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "3bd99bd1af9d6463a6f5c4853921c72472255641c9c373083a0cac2667794d47",
+          "bytes": 4243
+        },
+        "sdk.jsonl": {
+          "sha256": "2e100b4fd866ac5eafcb0766d133acdd1254e259bf8d801312f9bc6a58795d8f",
+          "bytes": 62449
+        },
+        "transport.jsonl": {
+          "sha256": "8187075bc4561254cab35c27dad43646dc29426b0c0b920a8b31843aa2784c36",
+          "bytes": 464201
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S01",
+      "artifactPath": "cases/claude-haiku-4.5/S01",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "dd2c367995dfce713e2a3c3727855158a2231afd8b9c634ff511cef1f3688e16",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "b0c75f938fa5fca01bd3079c98f2dad621b5804dfe73aa08273c848a7da8e18f",
+          "bytes": 1147
+        },
+        "native.jsonl": {
+          "sha256": "fd095c3b4cdbabfffb1893c75d47b151a45e62f2d1d9b3390352263c1abebfcf",
+          "bytes": 16738
+        },
+        "observation.json": {
+          "sha256": "af6b5b73ced559b0b4d8780c10d32afbfe4892ba62859614c0356019d3720038",
+          "bytes": 108922
+        },
+        "observation.partial.json": {
+          "sha256": "24289b57a97183a46d3a99b0ce80528bc9a362aa42e234085433bbbbda7db160",
+          "bytes": 107427
+        },
+        "oracle.json": {
+          "sha256": "1c1703b76c046e41e9f229f7eb013a983f02d644074d8d41a42f0c8d71334efc",
+          "bytes": 1932
+        },
+        "resources.json": {
+          "sha256": "a9de3b4d65afcd69bd69506e882e4d0daa483241cd2668f26679c45eb22c875c",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "bbbfcc206fa506c028412664a1506e4fde33483ff2f6ebc962910d997edd44a4",
+          "bytes": 3657
+        },
+        "sdk.jsonl": {
+          "sha256": "3e0f6002d35f1c9e74f52a96e724218fc77aa8dfd6d17750add7d2e85df834b7",
+          "bytes": 15363
+        },
+        "transport.jsonl": {
+          "sha256": "70ff683def990c561eebd351dd8b57e30472695f414ed313445fbd24a505c3c4",
+          "bytes": 40732
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S02",
+      "artifactPath": "cases/claude-haiku-4.5/S02",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "19aa5a3ea57f551d801d31caf0ab479feb5aa6ebda39628752efc74746caef12",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "654a1a5ad11cf47ba1fb829ae80fe4efd243722765ed9de3491664c644c712c6",
+          "bytes": 40959
+        },
+        "native.jsonl": {
+          "sha256": "9cfcfc78bc41db4faa1f9fe395c052775dcfad0efff9d3b08c83780390658d64",
+          "bytes": 16741
+        },
+        "observation.json": {
+          "sha256": "ec50e3963b193c5fc550e9219fa07725140cc84f75cee504235d09628bf0bec8",
+          "bytes": 150213
+        },
+        "observation.partial.json": {
+          "sha256": "5201e3a17ec62be6ac0da99ce704d3239b00b73accfcbe1857184562a88f0049",
+          "bytes": 148865
+        },
+        "oracle.json": {
+          "sha256": "febcb8d67bfe578fe3fe0fa24acc17383a06909e7476ef14228aca5d7a0396aa",
+          "bytes": 1986
+        },
+        "resources.json": {
+          "sha256": "0cbb83c9f72f7e12b81fae05b4d0bcd743ccf12ce625c4636e0117745bf1d000",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "b7de9c59fc190585fadcfe32c16861a41f7af992150523e837ac4a42cbb3193d",
+          "bytes": 3712
+        },
+        "sdk.jsonl": {
+          "sha256": "aae2208a2fbef45478b261da5f928a3f26b1b31c54962b6db49707f6813ca361",
+          "bytes": 15690
+        },
+        "transport.jsonl": {
+          "sha256": "51819d3037308143c704ca5b900fe25f8b2d87d862eee95dce709465daae3d1f",
+          "bytes": 40733
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S03",
+      "artifactPath": "cases/claude-haiku-4.5/S03",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "3ed23817fbc81dd5621a217f378509cde7790df67a0d2e4295f02d8b095debdf",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "f60bf5a48aec6099131843e9305b6e94fffb47cdd8ee09420bbb05db3b6c023f",
+          "bytes": 22847
+        },
+        "native.jsonl": {
+          "sha256": "8a797d9b4a3b9c3cfd6ba6749ddf6e57b47ed3e86a8d3d99cd387d4f990a6937",
+          "bytes": 16738
+        },
+        "observation.json": {
+          "sha256": "90ca53516704054e7fcd46328e8a6bf535d375f378f0d8470fe10c695a58070f",
+          "bytes": 153510
+        },
+        "observation.partial.json": {
+          "sha256": "b8925dca143051faac8af8c02ca3b1dc3c37e058f0791e6087acf8413078f3a4",
+          "bytes": 152015
+        },
+        "oracle.json": {
+          "sha256": "37253e8cc248a3db21bd47e740a7c6a1742868fe1e0dc6a4b82be68ba556fa83",
+          "bytes": 2021
+        },
+        "resources.json": {
+          "sha256": "775698ff7133387e07d6faa1469cb8cea3f8cae242b5e11b67cbf541a85dad11",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "3200592ca6ad06f0614c73ed614610beea231ffaf4e39a405ae5014d9b20f07c",
+          "bytes": 3747
+        },
+        "sdk.jsonl": {
+          "sha256": "65b6c298c00dc507b3b6edf26c661e6234484543c38f8f98eca0a0e93976c932",
+          "bytes": 15187
+        },
+        "transport.jsonl": {
+          "sha256": "af812f6640e0c7217d3e4bd8018a5bac9411a108d7c977647010e47a57d0a1ad",
+          "bytes": 57023
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S04",
+      "artifactPath": "cases/claude-haiku-4.5/S04",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "6c8d45df53d28264ce9479f91b1a04960544976cee4a0ba160a47704ebec19bd",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "d718bc247a736ce6a3fc0c22910831911556e1d1439ef05c2d45731dd85eff11",
+          "bytes": 3645
+        },
+        "native.jsonl": {
+          "sha256": "e3e4f778a931c0282acf0828008e3910a65d3cd19f70971274cb19a830ae87c0",
+          "bytes": 16738
+        },
+        "observation.json": {
+          "sha256": "2fef75d42be6a4a4aecc7366347c821d5c826f9a196c78fcea350fc1f94894d9",
+          "bytes": 136159
+        },
+        "observation.partial.json": {
+          "sha256": "150cc4e951f9c1c9b8231933cac3f951ad99e38d220949dc64a68e4ebb8bc5ed",
+          "bytes": 134664
+        },
+        "oracle.json": {
+          "sha256": "3e973a15eda5a6a6438f41f9fb2c26e9eaf3d464a0642958e225b6e3bc94f54f",
+          "bytes": 2002
+        },
+        "resources.json": {
+          "sha256": "ec4468babe9affe6e6df6af27c60e252f6bf6e88210be0f3b7a32fe90546bbc4",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "7e0d3ff2a650dd1984af55c30cbc4b90518b0732da66f831aa111d9b7601669b",
+          "bytes": 3727
+        },
+        "sdk.jsonl": {
+          "sha256": "30cab7e7bf558fd04aaed032c37a14a280516d15f1869fb2f570afd0fc25477d",
+          "bytes": 14933
+        },
+        "transport.jsonl": {
+          "sha256": "5918ad8b8ff8f5e051ca520baf8dc471238762cdbca61359c3fe4d6b1d85e624",
+          "bytes": 60313
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S05",
+      "artifactPath": "cases/claude-haiku-4.5/S05",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "ba564c06751a67e890700ff43497a0eca72018762815a085eac87b34adc5874e",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "4579916f393401cb95e0ff508f2004ddb6dca7087598d80408d4c450c5367677",
+          "bytes": 2548
+        },
+        "native.jsonl": {
+          "sha256": "c9229aeadc8ff42fdf01be538b770a85e389cd655b17b9a0772dbe3b9d340070",
+          "bytes": 16738
+        },
+        "observation.json": {
+          "sha256": "334b05d5df1791f5336db5d43e1fd82faeeb99a53a4efd2022c22fe7847679ea",
+          "bytes": 130471
+        },
+        "observation.partial.json": {
+          "sha256": "4dc956a1e50dbcd29c1306998ce52692450c8893e229df3e73b2d94fd5965ae5",
+          "bytes": 128976
+        },
+        "oracle.json": {
+          "sha256": "aa234d568399e51ff5f7e5535bd931e3b905aee2d21eb34596f44e8be1907ce7",
+          "bytes": 2007
+        },
+        "resources.json": {
+          "sha256": "69e0aeeb14b92383bad94a89f4a766f9bee3a25acecc50ef4c9abcd47c97ce4a",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "34916ab687df7ad908b2cafebc2723b1264e2b07a53af46fc87f2a1fa8b16528",
+          "bytes": 3732
+        },
+        "sdk.jsonl": {
+          "sha256": "15bac9a22191e95b7cde2c20e0a582f78cc8ed0c06bd9591c8c75273951faeaf",
+          "bytes": 15059
+        },
+        "transport.jsonl": {
+          "sha256": "8bc4f0490b3a998b6de735a7f21ba74f6e199d3ceda82aacac4199814ecb71d9",
+          "bytes": 56108
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S06",
+      "artifactPath": "cases/claude-haiku-4.5/S06",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "9a564afb790ae0ac71fde8164bec4f51cfa341521ab26c23ce1bc744c66c6b58",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "cc1ea29e32287bb6f49b4a681d5b388d28a81a65068672d40422ac4bd2eff634",
+          "bytes": 1956
+        },
+        "native.jsonl": {
+          "sha256": "b50854c1ff23cf0e1ef3b285b275d20b03b0f14211e9486ffe89674fa1b5efdc",
+          "bytes": 25353
+        },
+        "observation.json": {
+          "sha256": "e5a8ed29e9bd9ec9aad6a1b335e7ded8416bc3d071622cb5237df41d85470b2e",
+          "bytes": 165628
+        },
+        "observation.partial.json": {
+          "sha256": "82f523d681ba9f803c7338d26ddc9951912c9f114f6edc9ace6f2db7f2f54374",
+          "bytes": 164280
+        },
+        "oracle.json": {
+          "sha256": "56e34a7a16d3b5db33152686798c44a274cbac37990dc1aade8596f9680d21dc",
+          "bytes": 2039
+        },
+        "resources.json": {
+          "sha256": "eb69af629c159ef354b4abb680872922c2e3b16449ffed5eb700ae8038d83131",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "b170113e91579ef3f1a36c85e1b869d0e37cc60b05786a4b04419af0fa2bc460",
+          "bytes": 3769
+        },
+        "sdk.jsonl": {
+          "sha256": "7359e7c1d8c38afe104ff6b35295b6c0047bba794e52791d8803ece877bfd9a0",
+          "bytes": 26763
+        },
+        "transport.jsonl": {
+          "sha256": "8a2ca50304498355f91647398a8f3d84a06a011d9b8d4a52632cd7fc1e1b5eff",
+          "bytes": 57100
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S07",
+      "artifactPath": "cases/claude-haiku-4.5/S07",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "30b648b1095ad79fcddb1ea18cfca8f1a8c254eac4ff9d51b3f7625aa7689494",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "cff0ddab59849ec913fcec6e9da48e489b8a7219d983bf462f45cb0fcddc40a9",
+          "bytes": 2603
+        },
+        "native.jsonl": {
+          "sha256": "6fbdc9af0c417295537b7a2a83d20c492a0c76139a45bda2e125d44339011683",
+          "bytes": 37246
+        },
+        "observation.json": {
+          "sha256": "e51811036e66a855a8c2ac51c849c7c2f8fed8cb88357ab62506674c5be4353b",
+          "bytes": 244665
+        },
+        "observation.partial.json": {
+          "sha256": "75a26ddedcbe4bfd2034e0ab307023c4c4b62c04c335dfc444cc4bdb8d9e6d07",
+          "bytes": 220968
+        },
+        "oracle.json": {
+          "sha256": "ad5122a02e5f26388c5362fb46fbfd92d46ab790328ea2d4f20bdf87e12bb22b",
+          "bytes": 2029
+        },
+        "resources.json": {
+          "sha256": "9fdc1763432988ee6ffaeebcd8246409ce6b2b12634e83090cb7b3eee2ece3c0",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "0968806902aa101be3ca110dd1cf1aae2473983d0f0848a542da80224729ab76",
+          "bytes": 3842
+        },
+        "sdk.jsonl": {
+          "sha256": "ae3da08ddd0ccbdbf4130ccb388a3b61b52c4690da99ee286d52b15a777bd24f",
+          "bytes": 30232
+        },
+        "transport.jsonl": {
+          "sha256": "08e596ee01b1fdaa94f9c65bf0f4883db2066fd1e4e909cc23c7228be30aae9a",
+          "bytes": 98636
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S08",
+      "artifactPath": "cases/claude-haiku-4.5/S08",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "448d2d32a7c1d553e1472a01d3dd1bf3d992fe96b1f368fc9e3a400593772fd4",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "bdacda6b6e077f0a52aec77279a98c599e454b28674126b9aa65a1bcbb0bea64",
+          "bytes": 3359
+        },
+        "native.jsonl": {
+          "sha256": "9ed9e5664f8069dd5a93d1142281bc0f0a87724aee790926828c02b1839abdc4",
+          "bytes": 28102
+        },
+        "observation.json": {
+          "sha256": "bd3f80424e044f90b8dc205f7fcc2c3faed2eb96cb266333286c75e5ab6446ac",
+          "bytes": 195719
+        },
+        "observation.partial.json": {
+          "sha256": "d4a3d093e08a065108c26001f933252bbeac8b6f80aa7f851c2e6b03e5712bb5",
+          "bytes": 170438
+        },
+        "oracle.json": {
+          "sha256": "9625c119efab987310027e7a23d5f44d8f13fa687b96abf5eeb51af38b9d1f5a",
+          "bytes": 2216
+        },
+        "resources.json": {
+          "sha256": "7219b23cbee41054ebce886779cb0ebeb548c9b0f1ab4afa6db73200b6395f4c",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "4e527de46da3344c1ae03a1df2b84058621207f7be6da1da7124b11219ca6793",
+          "bytes": 3946
+        },
+        "sdk.jsonl": {
+          "sha256": "8c1acb5076aea68e4ba8d2f4588378d95d11f4a68cfd6184cb8fdbc1fe2c39df",
+          "bytes": 25742
+        },
+        "transport.jsonl": {
+          "sha256": "34b630010ca54ca9d5a157a591669f63a6b411aea66c347d8ce1a1cb1c46fc7b",
+          "bytes": 75975
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S09",
+      "artifactPath": "cases/claude-haiku-4.5/S09",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "3ce6177e43a25ea362f569563a84997242502784094916bae059ff222085c8cd",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "05118d30bb87fa3e5cbab61f4d876bcc8db9bf0aaee40a9639a50deb1416612d",
+          "bytes": 2190
+        },
+        "native.jsonl": {
+          "sha256": "9ef48bf898a8899bc66a3a4a579893359a6d953ac4bf3a99f7a9f56d44e66763",
+          "bytes": 32858
+        },
+        "observation.json": {
+          "sha256": "d18021b936e99c5c7d5a758942ac6e0e0f0edf25b4cec354b5a02475fae02869",
+          "bytes": 211846
+        },
+        "observation.partial.json": {
+          "sha256": "70a60f4834178961d89e46d86cc056fcc6a17997bbaba32c23c4f1fa027c62e1",
+          "bytes": 210351
+        },
+        "oracle.json": {
+          "sha256": "7fce4efe29bbe75def018c5e18b75ee0451a0cee4a7f5f2fdaba68010f015ab9",
+          "bytes": 2038
+        },
+        "resources.json": {
+          "sha256": "455c2195521a5946aca320f2961f93efaadf05cb30227e9c462a093887f1a266",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "3e21119cde5a3b44a3ce267cf97965bcfed1b511dbee06718f5a799bfcc5d7fa",
+          "bytes": 3768
+        },
+        "sdk.jsonl": {
+          "sha256": "222b29d478b241164d9eeb73ae17f65ddd321092bafe994b393c4a425e30ca28",
+          "bytes": 30559
+        },
+        "transport.jsonl": {
+          "sha256": "789fdd5782c5a1ad0e3b8f5968a2d5bad56dbd798a8326674699143823c32272",
+          "bytes": 80317
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S10",
+      "artifactPath": "cases/claude-haiku-4.5/S10",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "695d0d88b60d562b28293200bac722df4b311296f84092121f53a80cbbb87f0a",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "9e37844f2ff28bab265851b17147b54421c3dc3fbade5aaff51f0c9eca4c7f72",
+          "bytes": 1371
+        },
+        "native.jsonl": {
+          "sha256": "0d79a9b8080db9405f3e633791a6cc7a89acfddf0ba31097ee7fabe6101acfb1",
+          "bytes": 33120
+        },
+        "observation.json": {
+          "sha256": "903172738907c81b179ebfd0ee22abdbcc51b34a3ab15a8373a9a0059909698a",
+          "bytes": 202046
+        },
+        "observation.partial.json": {
+          "sha256": "8eaed0e58bb2188280208e232f4541eaa16cd7d566f38e994069efd9dd55d5f5",
+          "bytes": 200487
+        },
+        "oracle.json": {
+          "sha256": "6e8af0f4c6fc09b40821bada1cec39b6481b93b0b24695d89d8f65becf2a2c27",
+          "bytes": 1848
+        },
+        "resources.json": {
+          "sha256": "d0ef8417a48ffb723a89c6ac7d1130ded75bc063a6d9dade5b26033741a409b4",
+          "bytes": 487
+        },
+        "result.json": {
+          "sha256": "40ab3e1e7326de8e947646564dee2384648d87b073f14a35eec85b3310d51551",
+          "bytes": 3656
+        },
+        "sdk.jsonl": {
+          "sha256": "798c188c7ec16653a634d91a8a5c66ed37e4661b829411f4d7f6a656a3173edb",
+          "bytes": 28668
+        },
+        "transport.jsonl": {
+          "sha256": "3046c104616f8bf35fa45a80897110fdcf227375c685cdaa1dcc2af976d0279b",
+          "bytes": 72410
+        }
+      }
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "artifactPath": "cases/claude-haiku-4.5/S11",
+      "status": "passed",
+      "files": {
+        "case.json": {
+          "sha256": "b1037ad78e7ec421f95fb0dce82f771262f4d82abaf78c916ccf649b811eec10",
+          "bytes": 312
+        },
+        "controls.json": {
+          "sha256": "77bea449b49dc4b26d3934b76626949a5737a306588f9110467cbbe00fb47c11",
+          "bytes": 4060
+        },
+        "native.jsonl": {
+          "sha256": "b6257827176bcd506b6b3df2d0351431d223857626ae49d1104948b376c50503",
+          "bytes": 141853
+        },
+        "observation.json": {
+          "sha256": "0a5ec5c4e38de5af7721912a0d9b1c9e8adca76b769541c8fc28a65eb1627363",
+          "bytes": 981157
+        },
+        "observation.partial.json": {
+          "sha256": "eff6c668f8e419fd730b283a294ad52828ffd2301544ab0bdfa4944508a65452",
+          "bytes": 979662
+        },
+        "oracle.json": {
+          "sha256": "798bfd71423cff9339f37a27b4797cb3c34f2f6c4d90eb709a54ba549a0a65a8",
+          "bytes": 2034
+        },
+        "resources.json": {
+          "sha256": "630c0d83adc880c267186d178e10469c371e23d04fe3960e685caa11a4941e53",
+          "bytes": 296
+        },
+        "result.json": {
+          "sha256": "d41ac338245740bc303b48708873c76737706338ce8f3cf8708ba4d303123ac0",
+          "bytes": 4244
+        },
+        "sdk.jsonl": {
+          "sha256": "a50362037aa12f5fe26d549de857b06cc894a7bbb76c1c48e92053edda31f85b",
+          "bytes": 91262
+        },
+        "transport.jsonl": {
+          "sha256": "face04f1053144f5f52ef095c4a750b356ac0c55eab47e554b62a10b53a7c031",
+          "bytes": 494929
+        }
+      }
+    }
+  ]
+}

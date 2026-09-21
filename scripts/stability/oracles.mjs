@@ -1,5 +1,6 @@
 import { isDeepStrictEqual as same } from "node:util";
-import { CATALOG, FLOW, PROMPTS } from "./catalog.mjs";
+import { CATALOG, FLOW } from "./catalog.mjs";
+import { getProfile, DEFAULT_PROFILE } from "./profiles.mjs";
 import { normalizeRequest } from "../../src/request-policy.mjs";
 import { sha } from "../compatibility/util.mjs";
 import { completedItems, answer, streamEvents, streamValid, wireOutputs } from "../compatibility/oracles.mjs";
@@ -24,7 +25,8 @@ export function metrics(e) {
     presentation: turns.filter(p => p.result?.status === "completed" && p.label !== "padding").map(p => ({ label: p.label,
       exactFixtureText: answer(phaseRecords(e, p)) === `${e.fixture?.expectedValue}\n${e.fixture?.expectedReceipt}` })) };
 }
-export function evaluate(scenario, e) {
+export function evaluate(scenario, e, profile = DEFAULT_PROFILE) {
+  const PROMPTS = getProfile(profile).catalog.prompts;
   const checks = [], check = (id, passed, detail) => checks.push({ id, passed: passed === true, detail });
   const native = e?.native ?? [], sdk = e?.sdk ?? [], transport = e?.transport ?? [], controls = e?.controls ?? [];
   const turns = (e?.phases ?? []).filter(p => p.kind === "turn"), threads = (e?.phases ?? []).filter(p => ["thread", "resume"].includes(p.kind));
@@ -42,7 +44,7 @@ export function evaluate(scenario, e) {
   const ledger = e?.toolLedger ?? [];
   const expected = `${e?.fixture?.expectedValue}\n${e?.fixture?.expectedReceipt}`;
   const expectedFlow = FLOW[scenario.id] ?? [];
-  check("identity", e?.scenarioId === scenario.id && e?.provider === "ghcp" && CATALOG.models.includes(e?.model) &&
+  check("identity", (e?.profile ?? DEFAULT_PROFILE) === profile && e?.scenarioId === scenario.id && e?.provider === "ghcp" && CATALOG.models.includes(e?.model) &&
     ["live", "offline-self-test"].includes(e?.executionKind) && /^value:N_[a-f0-9]{20}_한글$/.test(e?.fixture?.expectedValue ?? "") &&
     /^receipt:N_[a-f0-9]{20}_한글$/.test(e?.fixture?.expectedReceipt ?? ""), "Exact case, execution kind and hidden synthetic values");
   check("native-route", threads.length > 0 && threads.every(p => p.threadId && p.result?.thread?.id === p.threadId &&

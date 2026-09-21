@@ -4,7 +4,8 @@ import assert from "node:assert/strict";
 import { CaseExecutor } from "../compatibility/execute.mjs";
 import { tree, bounded, sha } from "../compatibility/util.mjs";
 import { StabilityBackend, waitUntil } from "./backend.mjs";
-import { CATALOG, PROMPTS } from "./catalog.mjs";
+import { CATALOG } from "./catalog.mjs";
+import { getProfile } from "./profiles.mjs";
 
 const tool = name => ({ name, description: name === "read_fixture"
   ? "Read the owned synthetic fixture once and return its complete literal value and receipt. No credentials or external data."
@@ -15,7 +16,10 @@ export class StabilityExecutor extends CaseExecutor {
   constructor(options) {
     const scenario = { ...options.scenario, timeoutSeconds: options.scenario.seconds,
       maxUserTurns: options.scenario.turns, maxToolCalls: CATALOG.maxNativeToolCalls };
-    super({ ...options, scenario });
+    super({ ...options, scenario, teardownTimeoutMs: CATALOG.cleanupReserveSeconds * 1000 });
+    this.profile = getProfile(options.profile);
+    this.prompts = this.profile.catalog.prompts;
+    this.observation.profile = this.profile.name;
     this.executionKind = options.executionKind ?? "live";
     this.observation.executionKind = this.executionKind;
     this.observation.controls = [];
@@ -105,6 +109,7 @@ export class StabilityExecutor extends CaseExecutor {
   }
 
   async execute() {
+    const PROMPTS = this.prompts;
     const id = this.scenario.id;
     await this.backend.control("/readyz");
     await this.newHost(); await this.startThread();
