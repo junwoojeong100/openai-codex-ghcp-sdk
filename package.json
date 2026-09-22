@@ -27,6 +27,7 @@
     "test:stability": "node scripts/stability.mjs",
     "test:stability:runtime": "node scripts/stability.mjs --runtime",
     "test:stability:stress": "node scripts/check-stability-stress.mjs",
+    "test:soak": "node scripts/soak.mjs",
     "diagnose:opus": "node scripts/diagnose-opus.mjs"
   },
   "dependencies": {

@@ -1,0 +1,537 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-22T04:54:40.092Z",
+  "publicationModelCalls": 0,
+  "currentWorktreeHashCompared": false,
+  "baselineFullReport": {
+    "source": ".runtime/runner-repair-20260922/live-01/source-snapshot",
+    "report": ".runtime/runner-repair-20260922/live-01/report.json",
+    "implementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+    "evidenceIntegrity": true,
+    "verifiedCases": 77,
+    "passed": 74,
+    "target77Met": false
+  },
+  "diagnosticFrozenSourcesVerified": 6,
+  "completeDiagnosticReadCasesVerified": 46,
+  "incompleteCasesNotVerifiedAsComplete": 1,
+  "originalStatusesAndChecksPreserved": true,
+  "prospectivePlansVerified": 6,
+  "counterchecks": [
+    {
+      "group": "active-request-framing",
+      "beforeLiveCalls": true,
+      "realModelCalls": 0,
+      "candidatePassed": true,
+      "baselineNegativeControlObserved": true,
+      "aNegativeControlObserved": false,
+      "originalAliasMappingAlreadyCorrect": false,
+      "baselineAndCandidateOutputMappingEqual": false,
+      "exactExistingFakeClassesReused": true,
+      "hash": "678df1a6a04ad400966aee0bc6ca503c09361dd92d23c9f9094e24f40c7f2cbf"
+    },
+    {
+      "group": "user-only-projection",
+      "beforeLiveCalls": true,
+      "realModelCalls": 0,
+      "candidatePassed": true,
+      "baselineNegativeControlObserved": true,
+      "aNegativeControlObserved": true,
+      "originalAliasMappingAlreadyCorrect": false,
+      "baselineAndCandidateOutputMappingEqual": false,
+      "exactExistingFakeClassesReused": true,
+      "hash": "3a506bade9466899559c3d69a3f614d5034fbfe742cdcfc1b7354095048e5c74"
+    },
+    {
+      "group": "readable-aliases",
+      "beforeLiveCalls": true,
+      "realModelCalls": 0,
+      "candidatePassed": true,
+      "baselineNegativeControlObserved": false,
+      "aNegativeControlObserved": false,
+      "originalAliasMappingAlreadyCorrect": true,
+      "baselineAndCandidateOutputMappingEqual": true,
+      "exactExistingFakeClassesReused": true,
+      "hash": "a2da08962f33f61765cbcbe299ca4a2e6c9cf4aa66367bab5000ee711bdbcef8"
+    }
+  ],
+  "cases": [
+    {
+      "group": "format-contract-probe",
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "b362ea1399ea73714cf05ff047a3c89009ee69ef236a2e3d936c54a88f181bd1",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "94046aaedcf7370dcf4a0c2084c8f78000afb7038a1f9f7cf79845e989bb0b07",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "d2867402e739e73028952468a653b65536e6673cf1af14bd179faa6781724005",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "9e44a5ef25fcb6e8bac3d5e8144911311e3002be272f01f50988f23a89917b27",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "6feb0bbf67661efd3a52b8abef8cf3aad1a1f9e0b99274009aa3bfdebc484da4",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "fffabee496446b984e1ac661e8c541dc3f2065b0e0d6a58942f6baa973d665b4",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "c061a27ea5db974171d17d9b930cb375c4c4d59efd81bcfe65c9faedb1e4fad2",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "e2c24e6292ddceb0219e20f6be5148fb99e9c576b39569338ed6e10b434e3d4e",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "eec87a07291dffd8b8a51ccc1baa122502b2340102294fa549e900882adf6ef8",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S05",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "1abcc4618d53877a28bbc2aead104546d0e7efab88c666585120eb70fc8a7d1c",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "format-contract-probe",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "f8c92767b6d17ba2a22cb88a8e38d0586fa13777e9f6d31492459dd5ccfeb547",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "7fe80219dc84104b13ccd3b14ff39c772b5f36cd404f5b3769a5737b389c691e",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "opus-wire",
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "aa6ce818b90b21361e1ef4e923e08358f57bdf79b7f7d258648351c73f432d2b",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "opus-wire",
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "765c8d26a436eea6325592b8c778993b93ddc36ea3956344ee72335623ff8118",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "318da1f0a1e053957ef8282302d394af7f2d5702c83dbd5e229ad31ffa48334a",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "50d696a048aced36a36c67b7265a62fe7dbc4360450c8f463788e28fee2f2e10",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "41d333fad66414ac93921778df170dc7e014ba2141dea5b96e448201159372ab",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "722568c652952250da22a90db116d522d6178f21957d4d37bc85fec0a764c5ae",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "080491cae959c94d2c75bfcb85dd3018d9f3cf9596b1eb3b1d6bdb539896267d",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "9d038617c0160cbfaf19e3f118e87e28f2c890fc6257fe9d993dc297f3e2de52",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "95feb3e33a8f57a809e46c91b79e27107fc774ee338683bc1bb37e8be621a573",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "72a760326e2af8801ef0181d5aae18aed9cb77344538d2ae09be9f6c301914d3",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "82a474bee7dcb06fa4952fa52494d9c103addd64878596864af9bb8d05ab278e",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S05",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "9bb0949f39790275693a849649d602817dfa944d390e43be6f11eb0d3832e764",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "active-request-framing",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "fa1e8fd73305d363b1b560c8629d293ff787f5841933b0f196af619a8c983443",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "d0947508f8380367d499cd8b4c0bf6bf8399ffd50b03447e0ea2c1533b74ddfc",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "f591aeccff69b85e1f1d5ad535244715cea1c1d114b77c2d73d00b2bd7778bda",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "01f5db298b7372b84092b8e235918831cb03f9ed11b0f4324d5c776ae41e3ba2",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "f1ea9d6236d60b7637b2fbfb791a68240ec7c6a3dc4c1e7f6a85639b3e198282",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "e9b676c90f3165b5d6d1f53a7f73eaa963ba04b803036e119abce4fe9472cbc7",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "6b398a1d60d18571339060304df572cbbd4253b7550fda0fce9ff3ed2c3f71e2",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "1c4f116ed4cb8ac8a0134c3ff64775cff3d61a645229d22cd8a2a6a01f2441a4",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "04fa7cedfc0278d2c5b4277ad7d8c292b9afdf0a7c99bd83631c698d1e631f00",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "e901cd6e333fe1e62b0787abde2531f3f47ae0c252e90eba401c63d4471c44a6",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "4c439ce3da71db56011c56518abb6da9ca761c0c7545ecb0a403eb4fc3f50bae",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S05",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "6d018ca0503fec38c07ebd7b4f3174da4b811d5523e0b15914fde05dc7a82f9b",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "user-only-projection",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "aeecb84fd5d985c23eb003aaf5c025e0f8ba846b447609726751062cb939260c",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "055d3b99a7597ca39299c4dac5922d37d07f2bad69a25c12ad46e7eea26066a4",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "readable-aliases",
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "bd48281043efb6faff55b08e818369f723612f44c8adfaddc603e50b0146b5c4",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "b5d7d05605c172ea508e488bd19bf048b4461188b44096c5ca8cde68c6d23c7b",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "readable-aliases",
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "bd48281043efb6faff55b08e818369f723612f44c8adfaddc603e50b0146b5c4",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "bd7c0d8d365ef21535eb00d3a954dc929f93b47391ec977fb6ad4ee64212924b",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "readable-aliases",
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "bd48281043efb6faff55b08e818369f723612f44c8adfaddc603e50b0146b5c4",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "df28c6fe6460bd6d9becd64c5154b0f4e86b8e938ed8844083ec0923f91d36d0",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "readable-aliases",
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "bd48281043efb6faff55b08e818369f723612f44c8adfaddc603e50b0146b5c4",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "71bad63524f1fb2f9581a4865778c5ba3450a5307dbd33bf22c90200dccb4816",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "readable-aliases",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S05",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "bd48281043efb6faff55b08e818369f723612f44c8adfaddc603e50b0146b5c4",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "f7b65e3feeb366d601d4d8b5ae9a14b58b6f9e9e0b49e649d49fbd591659c318",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "readable-aliases",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "bd48281043efb6faff55b08e818369f723612f44c8adfaddc603e50b0146b5c4",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "25103fcaf5b2600057654678ef93a1299afef9904d4da42e3292317c1b20cd81",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "workspace-alignment",
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "completeCaseRecord": false,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "not-possible-missing-final-manifest",
+      "resultHash": null,
+      "planPredatesExecution": true
+    },
+    {
+      "group": "workspace-alignment",
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "7e26e4a42efbbe2a6c4f2438fa7822eea63c20e9ba40903fd095ea46d7eda944",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "workspace-alignment",
+      "model": "claude-opus-5",
+      "scenarioId": "S10",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "96f32e59b7d4ec2fe50884712820b6180e297b5a115b6795be8bc945b751dc8d",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "workspace-alignment",
+      "model": "claude-opus-5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "2ca1d20a087f6bf2f39b5abb273bb88aad2baf150117d7d14041659d8b819b87",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "workspace-alignment",
+      "model": "claude-sonnet-5",
+      "scenarioId": "S05",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "7d416a65469da278747a02e2cf1484627735fc98a30f66fd0527cf97e2385263",
+      "planPredatesExecution": true
+    },
+    {
+      "group": "workspace-alignment",
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S11",
+      "completeCaseRecord": true,
+      "frozenImplementationHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+      "readCase": "passed-against-frozen-source",
+      "resultHash": "c9d2a8d320630a9d19c95cc35e7c0dcbe544629d0f1c8694d47cc9a5e82cbe6d",
+      "planPredatesExecution": true
+    }
+  ],
+  "limitations": [
+    "Astra workspace-alignment has no final result manifest or complete cleanup receipt.",
+    "SDK usage events and API identifiers do not establish an exact total billed model-call count.",
+    "Provider refusal categories are observable only in the four captured wire refusals.",
+    "Current soak development is not part of these historical frozen implementations.",
+    "No full 77-case score is synthesized from these diagnostics."
+  ]
+}

@@ -4,8 +4,13 @@ import { bounded } from "./util.mjs";
 
 // Owned stdio app-server transport. Unknown host callbacks are denied, never approved.
 export class NativeHost {
-  constructor({ bin, args, cwd, env, signal, onRequest = async () => undefined, records }) {
+  constructor({ bin, args, cwd, env, signal, onRequest = async () => undefined, records,
+    maxTranscriptBytes = 8 * 1024 * 1024, maxStderrBytes = 1024 * 1024 }) {
     Object.assign(this, { bin, args, cwd, env, signal, onRequest });
+    if (!Number.isSafeInteger(maxTranscriptBytes) || maxTranscriptBytes < 1) throw new Error("Invalid native transcript limit");
+    this.maxTranscriptBytes = maxTranscriptBytes;
+    if (!Number.isSafeInteger(maxStderrBytes) || maxStderrBytes < 1) throw new Error("Invalid native stderr limit");
+    this.maxStderrBytes = maxStderrBytes;
     this.records = records ?? []; this.events = new EventEmitter(); this.pending = new Map(); this.counter = 0;
   }
   async start() {
@@ -18,10 +23,10 @@ export class NativeHost {
     this.child.stdin.on("error", error => this.fail(error));
     this.stderr = ""; let buffer = "", bytes = 0;
     this.child.stdout.setEncoding("utf8"); this.child.stderr.setEncoding("utf8");
-    this.child.stderr.on("data", text => { this.stderr += text; if (Buffer.byteLength(this.stderr) > 1024 * 1024) { this.fail(new Error("Host stderr limit")); this.child.kill("SIGKILL"); } });
+    this.child.stderr.on("data", text => { this.stderr += text; if (Buffer.byteLength(this.stderr) > this.maxStderrBytes) { this.fail(new Error("Host stderr limit")); this.child.kill("SIGKILL"); } });
     this.child.stdout.on("data", text => {
       bytes += Buffer.byteLength(text);
-      if (bytes > 8 * 1024 * 1024) { this.fail(new Error("Host transcript limit")); this.child.kill("SIGKILL"); return; }
+      if (bytes > this.maxTranscriptBytes) { this.fail(new Error("Host transcript limit")); this.child.kill("SIGKILL"); return; }
       buffer += text;
       while (buffer.includes("\n")) {
         const end = buffer.indexOf("\n"), line = buffer.slice(0, end); buffer = buffer.slice(end + 1);
