@@ -6,11 +6,11 @@
 
 Previous results, logs and reports were deleted at the user’s request. A fresh full 11-scenario × 7-model (77-cell) run uses the v3 criteria frozen before each execution. Results are published in the [new verification records](validation/README.md); no old scores or selective failed-cell reruns are reused.
 
-## Optional application-data profile and final status
+## Optional application-data profile and current status
 
 `v3` remains the default. `--profile application-data-v1` explicitly selects shorter read/remember/recall task wording under a distinct catalog ID and hash. The seven models, 11 scenarios, fixtures, fault schedule, budgets, literal-output and cleanup checks stay the same. Production user requests are not rewritten. Reports, workers and artifacts carry profile identity; verification rejects cross-profile case substitution and cannot be overridden with `--profile`.
 
-The final optional-profile live run scored **50/77 (64.94%), Opus 9/11**. The original/default v3 result remains **66/77 (85.71%), Opus 0/11**. The original issue and ≥95% target remain unresolved; the optional profile is not a recommended fix or new default. Experiments stopped at the user's request. See the [closeout record](validation/2026-09-22-opus-closeout/README.md).
+After clarifying fixture-tool return-type metadata, a fresh full run scored **74/77 (96.10%), Opus 9/11**, **meeting the ≥95% target**. Model-visible tool metadata changed as documented below; user prompts, fixtures, oracles, models, budgets and the production bridge did not. Opus S10/S11 filtering and Sonnet S05 literal-label omission remain three failures, with `fullMatrixPassed=false` and exit code 1. Both earlier 50/77 runs and original/default v3's **66/77 (85.71%), Opus 0/11** remain separate. The default profile and historical failure statuses are unchanged. [Target-meeting run and change scope](validation/2026-09-22-runner-repair/README.md) · [Earlier follow-up](validation/2026-09-22-fidelity-followup/README.md).
 
 ```sh
 # Plan only; no model calls
@@ -44,6 +44,12 @@ Each passing live case requires native Codex app-server → the production Respo
 Successful read/recall answers must contain both complete literal `value:` and `receipt:` tokens. Added prose or fences are **presentation diagnostics**, not a stability failure. This policy is explicit before execution, differs from v4's exact-output checks, and cannot be used to revise v4 scores. Missing prefixes/values, unwanted tools, uncorrelated evidence and failed recovery still fail. Expected fault turns must actually fail with the specified error; a successful-looking answer alone cannot pass them.
 
 Every check and artifact is required. Failed, unsupported, blocked, timed-out and unrun cells remain in the **77** denominator. Maximum four model lanes, 30s cleanup reserve per case, and no global cutoff. Worst-case scheduling estimate: 90s preflight + two 1,470s waves = **50.5 minutes**, excluding OS/I/O overhead. A passing matrix is **not a multi-hour soak, a product support percentage, or proof that all historical freezes are resolved**.
+
+## Fixture tool return-type metadata
+
+The native `read_fixture` description identifies its actual return type: the entire unchanged UTF-8 file contents as plain text, not extracted field values. Labels and separators are part of those contents. Every model and both profiles receive this same tool metadata; the callback still returns the original file bytes as a native text result.
+
+This changes model-visible **tool-description text**, not the user prompts, fixture values, schemas, fault flows, budgets, acceptance checks or production bridge. The profile hashes remain unchanged, while the implementation hash and frozen source identify the revised description. Equal profile hashes therefore do not imply that all model-visible implementation metadata is identical. Only a fresh full run can measure the change; earlier cases retain their original descriptions and results in their source snapshots. The production bridge does not rewrite callers' tool descriptions or repair model output.
 
 ## SDK foundation preservation
 

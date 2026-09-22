@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { CATALOG, SCENARIOS, FLOW, PROMPTS, catalogHash } from "../scripts/stability/catalog.mjs";
+import { StabilityExecutor } from "../scripts/stability/execute.mjs";
 import { evaluate, metrics } from "../scripts/stability/oracles.mjs";
 import { parseArguments } from "../scripts/stability.mjs";
 import { newReport, summarize, artifacts, readCase, implementationHash } from "../scripts/stability/report.mjs";
@@ -18,6 +19,41 @@ test("stability has a distinct fixed 11-by-7 contract and deliberate live opt-in
   assert.equal(parseArguments([]).mode, "plan"); assert.equal(parseArguments(["--execute"]).mode, "execute");
   for (const args of [["--execute", "--runtime"], ["--plan", "--output", "x"], ["--models", "gpt-6-astra"], ["--retry"], ["--verify"], ["--execute", "--execute"]]) assert.throws(() => parseArguments(args));
 });
+
+test("native fixture metadata describes unchanged plain text for every model and profile", async t => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "stability-tool-text-test-"));
+  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  const content = "label:\uD55C\uAE00\nother:  exact  ";
+  const file = path.join(directory, "fixture-data.txt");
+  fs.writeFileSync(file, content);
+  const descriptions = new Set();
+  for (const profile of ["v3", "application-data-v1"]) for (const model of CATALOG.models) {
+    const executor = new StabilityExecutor({ model, profile, scenario: SCENARIOS[0] });
+    executor.fixture = { cwd: directory, workspace: directory };
+    let declaration;
+    executor.host = { child: { pid: 123 }, async request(method, params) {
+      assert.equal(method, "thread/start"); declaration = params;
+      return { model, modelProvider: "ghcp", thread: { id: `${profile}-${model}` } };
+    } };
+    const threadId = await executor.startThread();
+    assert.deepEqual(declaration.dynamicTools.map(tool => tool.name), ["read_fixture", "unused_fixture"]);
+    const tool = declaration.dynamicTools[0];
+    descriptions.add(tool.description);
+    assert.match(tool.description, /entire plain-text contents unchanged/);
+    assert.match(tool.description, /not a record of extracted field values/);
+    assert.match(tool.description, /labels and separators are part of the file content/);
+    assert.deepEqual(tool.inputSchema, { type: "object", properties: {}, additionalProperties: false });
+    assert.equal(tool.deferLoading, false);
+    const result = await executor.callback({ id: 1, method: "item/tool/call",
+      params: { tool: "read_fixture", arguments: {}, threadId, turnId: "turn", callId: "owned-call" } });
+    assert.deepEqual(result, { success: true, contentItems: [{ type: "inputText", text: content }] });
+    assert.equal(executor.observation.toolLedger.length, 1);
+    assert.equal(executor.observation.toolLedger[0].result, content);
+  }
+  assert.equal(descriptions.size, 1);
+  assert.equal(fs.readFileSync(file, "utf8"), content);
+});
+
 for (const scenario of SCENARIOS) test(`${scenario.id} requires genuine-shaped evidence and rejects altered identity, native flow, state, values and cleanup`, () => {
   const good = stabilityEvidence(scenario.id);
   assert.deepEqual(evaluate(scenario, good).filter(c => !c.passed), []);

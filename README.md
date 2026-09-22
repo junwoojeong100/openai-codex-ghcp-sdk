@@ -217,7 +217,7 @@ npm run test:stability -- --plan
 npm run test:stability -- --execute  # Consumes Copilot usage
 ```
 
-**Final live run (2026-09-22), separate `application-data-v1` profile: 50/77 (64.94%), Opus 9/11. The issue and ≥95% target remain unresolved; experiments stopped at the user’s request.** The original/default v3 result remains 66/77 (85.71%), Opus 0/11. Profiles differ in task wording; scores are not combined and the optional profile is not a production fix. See the [final report and evidence](docs/validation/2026-09-22-opus-closeout/README.md) and [verification index](docs/validation/README.md).
+**Latest full real-Codex run (2026-09-22), `application-data-v1`: 74/77 (96.10%), meeting the ≥95% target.** Fixture-tool metadata now clearly describes its full text result rather than extracted field values. User prompts, oracles and the production bridge are unchanged; model-visible tool metadata did change. Opus S10/S11 filtering and Sonnet S05 label omission remain three failed cases. Original/default v3's 66/77 and both earlier 50/77 runs stay separate, never combined. See the [repair, full result and evidence](docs/validation/2026-09-22-runner-repair/README.md) and [verification index](docs/validation/README.md).
 
 Archived verification documents were removed before this repair at the user’s request and have not been restored. Complete runs during this repair are recorded separately, including failures and timeouts; old cells are not reused as new scores. This is not hours-long or whole-product certification.
 

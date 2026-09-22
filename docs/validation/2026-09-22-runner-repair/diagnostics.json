@@ -1,0 +1,183 @@
+{
+  "scored": false,
+  "plan": {
+    "kind": "prospectively-declared-tool-return-type-metadata-probe",
+    "scored": false,
+    "profile": "application-data-v1",
+    "scenarioId": "S01",
+    "models": [
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-5.6-luna",
+      "gpt-6-astra",
+      "claude-opus-5",
+      "claude-sonnet-5",
+      "claude-haiku-4.5"
+    ],
+    "totalCases": 7,
+    "executionKind": "live",
+    "maxConcurrentCases": 3,
+    "automaticRetries": 0,
+    "baselineImplementationHash": "74a337f0e2c388707393ba51da9b1c539d4bb37b0979395651e6e1760eff549f",
+    "changedFile": "scripts/stability/execute.mjs",
+    "oldDescription": "Read the owned synthetic fixture once and return its complete literal value and receipt. No credentials or external data.",
+    "candidateDescription": "Read the owned UTF-8 fixture file once and return its entire plain-text contents unchanged. The result is text, not a record of extracted field values; labels and separators are part of the file content.",
+    "sourcePolicy": "Snapshot original main implementation once, then copy that baseline into an isolated source tree. Only the exact read_fixture description replacement is permitted.",
+    "unchangedSurfaces": [
+      "model-catalog base instructions",
+      "tool names and schemas",
+      "tool callback and fixture generation/file bytes",
+      "all application-data-v1 user prompts",
+      "literal-output oracle and all existing evaluate/readCase checks",
+      "SDK foundation, permissions and filters",
+      "models, budgets and scenario flow",
+      "main src/scripts/test files and pre-existing dirty documentation"
+    ],
+    "seedPolicy": "Use the prospectively generated run UUID unchanged as the seed for the existing fixture generator.",
+    "evaluationPolicy": "Run the frozen existing native worker through supervise. Preserve every original check and failed outcome. This seven-case diagnostic is not a matrix score.",
+    "stopPolicy": "Run exactly these seven S01 cases once, with no retries, additional candidates, source mutation, Opus S10/S11 filter searches, production promotion or 77-case score claim."
+  },
+  "implementationHash": "9e122f435065f874a091ea3adb2bf1bf9cd57cbdc461dc88b25258aa6d42c44e",
+  "declaredAt": "2026-09-22T01:15:15.603Z",
+  "startedAt": "2026-09-22T01:15:48.422Z",
+  "finishedAt": "2026-09-22T01:16:19.379Z",
+  "automaticRetries": 0,
+  "peakConcurrentCases": 3,
+  "evidenceIntegrity": true,
+  "descriptionReplacementOnly": true,
+  "cases": [
+    {
+      "model": "gpt-5.6-sol",
+      "scenarioId": "S01",
+      "status": "passed",
+      "checksPassed": 13,
+      "totalChecks": 13,
+      "failedChecks": [],
+      "actualUsageModels": [
+        "gpt-5.6-sol"
+      ],
+      "filterSignals": [],
+      "nativeDescriptionExact": true,
+      "exactToolResultBytes": 73,
+      "valuePreserved": true,
+      "receiptPreserved": true,
+      "SDKFinalMatchesNative": true,
+      "resourcesCleaned": true,
+      "processGroupGone": true
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "scenarioId": "S01",
+      "status": "passed",
+      "checksPassed": 13,
+      "totalChecks": 13,
+      "failedChecks": [],
+      "actualUsageModels": [
+        "gpt-5.6-terra"
+      ],
+      "filterSignals": [],
+      "nativeDescriptionExact": true,
+      "exactToolResultBytes": 73,
+      "valuePreserved": true,
+      "receiptPreserved": true,
+      "SDKFinalMatchesNative": true,
+      "resourcesCleaned": true,
+      "processGroupGone": true
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "scenarioId": "S01",
+      "status": "passed",
+      "checksPassed": 13,
+      "totalChecks": 13,
+      "failedChecks": [],
+      "actualUsageModels": [
+        "gpt-5.6-luna"
+      ],
+      "filterSignals": [],
+      "nativeDescriptionExact": true,
+      "exactToolResultBytes": 73,
+      "valuePreserved": true,
+      "receiptPreserved": true,
+      "SDKFinalMatchesNative": true,
+      "resourcesCleaned": true,
+      "processGroupGone": true
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "S01",
+      "status": "passed",
+      "checksPassed": 13,
+      "totalChecks": 13,
+      "failedChecks": [],
+      "actualUsageModels": [
+        "gpt-6-astra"
+      ],
+      "filterSignals": [],
+      "nativeDescriptionExact": true,
+      "exactToolResultBytes": 73,
+      "valuePreserved": true,
+      "receiptPreserved": true,
+      "SDKFinalMatchesNative": true,
+      "resourcesCleaned": true,
+      "processGroupGone": true
+    },
+    {
+      "model": "claude-opus-5",
+      "scenarioId": "S01",
+      "status": "passed",
+      "checksPassed": 13,
+      "totalChecks": 13,
+      "failedChecks": [],
+      "actualUsageModels": [
+        "claude-opus-5"
+      ],
+      "filterSignals": [],
+      "nativeDescriptionExact": true,
+      "exactToolResultBytes": 73,
+      "valuePreserved": true,
+      "receiptPreserved": true,
+      "SDKFinalMatchesNative": true,
+      "resourcesCleaned": true,
+      "processGroupGone": true
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "S01",
+      "status": "passed",
+      "checksPassed": 13,
+      "totalChecks": 13,
+      "failedChecks": [],
+      "actualUsageModels": [
+        "claude-sonnet-5"
+      ],
+      "filterSignals": [],
+      "nativeDescriptionExact": true,
+      "exactToolResultBytes": 73,
+      "valuePreserved": true,
+      "receiptPreserved": true,
+      "SDKFinalMatchesNative": true,
+      "resourcesCleaned": true,
+      "processGroupGone": true
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "S01",
+      "status": "passed",
+      "checksPassed": 13,
+      "totalChecks": 13,
+      "failedChecks": [],
+      "actualUsageModels": [
+        "claude-haiku-4.5"
+      ],
+      "filterSignals": [],
+      "nativeDescriptionExact": true,
+      "exactToolResultBytes": 73,
+      "valuePreserved": true,
+      "receiptPreserved": true,
+      "SDKFinalMatchesNative": true,
+      "resourcesCleaned": true,
+      "processGroupGone": true
+    }
+  ]
+}

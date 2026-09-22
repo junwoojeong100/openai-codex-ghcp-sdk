@@ -8,7 +8,7 @@ import { CATALOG } from "./catalog.mjs";
 import { getProfile } from "./profiles.mjs";
 
 const tool = name => ({ name, description: name === "read_fixture"
-  ? "Read the owned synthetic fixture once and return its complete literal value and receipt. No credentials or external data."
+  ? "Read the owned UTF-8 fixture file once and return its entire plain-text contents unchanged. The result is text, not a record of extracted field values; labels and separators are part of the file content."
   : "Unused fixture probe. Do not call this tool.",
   inputSchema: { type: "object", properties: {}, additionalProperties: false }, deferLoading: false });
 

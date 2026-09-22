@@ -1,0 +1,133 @@
+{
+  "sourceHash": "58405707a80c24da513f3db492ccdec845aecf81f3ed9f0c7374a713dd5f8384",
+  "realModelCalls": 0,
+  "allPassed": true,
+  "unit": {
+    "total": 267,
+    "passed": 267,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "compatibility": {
+    "total": 18,
+    "passed": 18
+  },
+  "stability": [
+    {
+      "profile": "application-data-v1",
+      "total": 11,
+      "passed": 11
+    },
+    {
+      "profile": "v3",
+      "total": 11,
+      "passed": 11
+    }
+  ],
+  "nativeMocksFinishedBeforeLiveRun": true,
+  "checks": [
+    {
+      "id": "unit",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "log": "checks/unit.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 2486,
+      "error": null
+    },
+    {
+      "id": "scenario-design",
+      "command": [
+        "npm",
+        "run",
+        "test:scenarios"
+      ],
+      "log": "checks/scenario-design.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 105,
+      "error": null
+    },
+    {
+      "id": "scenario-docs",
+      "command": [
+        "npm",
+        "run",
+        "docs:scenarios:check"
+      ],
+      "log": "checks/scenario-docs.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 110,
+      "error": null
+    },
+    {
+      "id": "stress",
+      "command": [
+        "npm",
+        "run",
+        "test:stability:stress"
+      ],
+      "log": "checks/stress.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 189,
+      "error": null
+    },
+    {
+      "id": "compatibility-runtime",
+      "command": [
+        "npm",
+        "run",
+        "test:compatibility:runtime"
+      ],
+      "log": "checks/compatibility-runtime.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 16999,
+      "error": null
+    },
+    {
+      "id": "stability-application",
+      "command": [
+        "npm",
+        "run",
+        "test:stability",
+        "--",
+        "--runtime",
+        "--profile",
+        "application-data-v1",
+        "--output",
+        ".runtime/runner-repair-20260922/runtime-application"
+      ],
+      "log": "checks/stability-application.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 51628,
+      "error": null
+    },
+    {
+      "id": "stability-v3",
+      "command": [
+        "npm",
+        "run",
+        "test:stability",
+        "--",
+        "--runtime",
+        "--profile",
+        "v3",
+        "--output",
+        ".runtime/runner-repair-20260922/runtime-v3"
+      ],
+      "log": "checks/stability-v3.log",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 51742,
+      "error": null
+    }
+  ]
+}

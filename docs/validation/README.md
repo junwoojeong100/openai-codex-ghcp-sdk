@@ -2,7 +2,27 @@
 
 [한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
 
-## Final: optional-profile validation and closeout — 2026-09-22
+## Latest: tool return-type metadata repair meets the ≥95% target — 2026-09-22
+
+[Change scope, fresh full run and original evidence](2026-09-22-runner-repair/README.md)
+
+- A new independent full `application-data-v1` run scored **74/77 (96.10%)**, meeting the target. It is not 77/77; three failures and exit code 1 remain.
+- All four GPT models and Haiku passed **11/11** each; Opus **9/11**, Sonnet **10/11**. Opus S10/S11 filtering and Sonnet S05 label omission remain unresolved.
+- The change is one fixture-tool description plus a regression. It declares the actual full UTF-8 text result; user prompts, fixtures, oracles and the production bridge are unchanged. The changed model-visible metadata is explicit.
+- Seven pre-matrix diagnostic cases and mechanical checks remain separate. Final checks: **267/267**, mechanical compatibility **18/18**, both mechanical stability profiles **11/11** each.
+- Neither earlier 50/77 run nor v3's 66/77 was regraded or combined. [Current/frozen verification](2026-09-22-runner-repair/verification.json) · [Change audit](2026-09-22-runner-repair/change-audit.json).
+
+## Earlier: further live validation and failure-boundary investigation — 2026-09-22
+
+[Fresh full run, separate diagnostics and unresolved findings](2026-09-22-fidelity-followup/README.md)
+
+- Fresh full `application-data-v1`: **50/77 (64.94%), Opus 9/11**. Its total matches the earlier result, but individual cells differ.
+- All 24 literal-output failures, two Opus filters and three cleanup RPC timeouts remain failures (two cases overlap output and cleanup).
+- Four agents worked in parallel, with 21 separate real native diagnostic cases. A Haiku wire sample retained the exact provider-bound tool text despite labels missing from its answer.
+- Three shared-instruction candidates were rolled back. Final production sources/contracts are unchanged and **the ≥95% target is unmet**.
+- Final directly recorded checks: **266/266**, mechanical compatibility **18/18**, mechanical stability **11/11**. [Current/frozen verification](2026-09-22-fidelity-followup/verification.json) · [Final audit](2026-09-22-fidelity-followup/final-audit.json).
+
+## Earlier: optional-profile validation and closeout — 2026-09-22
 
 [Final report, remaining failures and evidence](2026-09-22-opus-closeout/README.md)
 
