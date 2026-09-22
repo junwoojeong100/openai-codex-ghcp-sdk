@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
-import { codexEnvironment, codexProviderArgs, parseLauncherArgs, validateCodexArgs } from "../src/launcher.mjs";
-import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS } from "../src/model-map.mjs";
+import { codexEnvironment, codexProviderArgs, parseLauncherArgs, validateCodexArgs, writeCodexCatalog } from "../src/launcher.mjs";
+import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog } from "../src/model-map.mjs";
 
 test("launcher defaults and model selection stay within the seven allowed models", () => {
   const defaults = parseLauncherArgs([], {});
@@ -56,11 +59,49 @@ test("provider arguments use loopback Responses without deprecated web search ke
   assert.match(provider, /requires_openai_auth = false/);
   assert.match(provider, /env_key = "CODEX_GHCP_BRIDGE_TOKEN"/);
   assert.match(provider, /supports_websockets = false/);
+  assert.match(provider, /request_max_retries = 0/);
+  assert.match(provider, /stream_max_retries = 0/);
   assert.ok(settings.includes("features.enable_request_compression=false"));
   assert.ok(settings.includes("features.remote_compaction_v2=false"));
   assert.ok(!settings.some((setting) => /^features\.web_search(?:=|_)/.test(setting)));
   assert.doesNotMatch(args.join(" "), /dangerously|bypass|approval_policy|sandbox_mode/);
   assert.throws(() => codexProviderArgs({ model: DEFAULT_MODEL, port: 0 }), /Invalid/);
+});
+
+test("the launch-specific private catalog contains only account-enabled main models and context limits", t => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "ghcp catalog test-"));
+  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  const catalog = modelCatalog(SUPPORTED_MODEL_IDS.map(id => ({
+    id, capabilities: { limits: { max_context_window_tokens: 200_000, max_prompt_tokens: 136_000 } },
+    ...(id === "claude-haiku-4.5" ? { policy: { state: "disabled" } } : {}),
+  })).concat({ id: "unrelated-model" }));
+  const filename = writeCodexCatalog(catalog, directory);
+  const contents = JSON.parse(fs.readFileSync(filename, "utf8"));
+  assert.deepEqual(contents, { models: catalog.models });
+  assert.equal(contents.models.length, 6);
+  assert.ok(contents.models.every(entry => entry.context_window === 136_000 && entry.auto_compact_token_limit === 108_800));
+  assert.equal(fs.statSync(filename).mode & 0o777, 0o600);
+  const args = codexProviderArgs({ model: DEFAULT_MODEL, port: 4143, catalogPath: filename });
+  assert.ok(args.includes(`model_catalog_json=${JSON.stringify(filename)}`));
+  assert.throws(() => codexProviderArgs({ model: DEFAULT_MODEL, port: 4143, catalogPath: "relative.json" }), /absolute/);
+  assert.throws(() => writeCodexCatalog(catalog, directory), { code: "EEXIST" });
+});
+
+test("malformed or incomplete picker metadata fails before writing a fallback catalog", t => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-invalid-catalog-test-"));
+  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  const valid = modelCatalog([{ id: DEFAULT_MODEL, capabilities: { limits: { max_context_window_tokens: 200_000 } } }]);
+  for (const catalog of [
+    {}, { models: [] }, { models: [null] },
+    { models: [{ ...valid.models[0], slug: "unrelated-model" }] },
+    { models: [valid.models[0], valid.models[0]] },
+    modelCatalog([{ id: DEFAULT_MODEL }]),
+    { models: [{ ...valid.models[0], auto_compact_token_limit: 300_000 }] },
+    { models: [{ ...valid.models[0], max_context_window: 1_000_000 }] },
+  ]) {
+    assert.throws(() => writeCodexCatalog(catalog, directory), /catalog|context limits/);
+    assert.deepEqual(fs.readdirSync(directory), []);
+  }
 });
 
 test("Codex receives only the local bridge token, not Copilot token environment variables", () => {

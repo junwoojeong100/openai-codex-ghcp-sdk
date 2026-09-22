@@ -8,7 +8,9 @@ export class CoreScriptedSdk {
   constructor(scenarioId) { this.scenarioId = scenarioId; this.sessions = []; }
   async start() {}
   async ping() { return { message: "ready" }; }
-  async listModels() { return [{ id: "gpt-6-astra", supportedReasoningEfforts: ["low"], capabilities: { supports: { reasoningEffort: true } } }]; }
+  async listModels() { return [{ id: "gpt-6-astra", supportedReasoningEfforts: ["low"], capabilities: {
+    supports: { reasoningEffort: true }, limits: { max_context_window_tokens: 272000, max_prompt_tokens: 240000 },
+  } }]; }
   async createSession(config) { const s = new ScriptedSession(config, this.scenarioId); this.sessions.push(s); return s; }
   async deleteSession() {}
   async stop() { return []; }

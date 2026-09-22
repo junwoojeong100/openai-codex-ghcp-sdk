@@ -24,7 +24,7 @@ The bridge adapts protocols. It does not replace Codex's tool executor with Copi
 - `copilot-session-rpc.mjs`: narrow wrappers over SDK abort/disconnect/delete and pending-tool-result RPCs.
 - `model-map.mjs`: the seven allowed IDs, default selection, OpenAI/Codex catalog metadata and reasoning-effort checks. Model context limits and supported efforts come from the SDK catalog; there is no automatic model fallback.
 - `copilot-home.mjs` and `list-models.mjs`: existing Copilot home resolution and account-specific model listing.
-- Launcher/daemon modules and `bin/`: start a project-owned bridge, pass per-process Codex configuration, and manage optional background operation.
+- Launcher/daemon modules and `bin/`: start a project-owned bridge, pass per-process Codex configuration and a private temporary model catalog, and manage optional background operation. The catalog replaces bundled/cached picker entries and is removed on Codex exit.
 
 ## Tool handoff
 
@@ -48,7 +48,11 @@ All pending results from a turn must be returned together. Unknown, duplicate, w
 - An exact retry of the most recent normalized request returns its cached result without resending the prompt or tool results.
 - Model, tool, instruction or history changes cannot replace a session with unresolved calls. Codex's appended plugin-provenance sentence on a function tool is accepted as metadata only when its name, schema and original description still match. Once there are no pending calls, an incompatible full history can start a new SDK session.
 
+Local compaction has one explicit handoff boundary: a tool-less, full-history request may resolve all outstanding calls in its new suffix while retaining the exact prior history, model and instructions. The bridge validates every result, aborts the old SDK session without resubmitting those results, and replays the completed transcript into a tool-less summarization session. Missing, duplicate, wrong-type or rewritten results still fail before retiring the original session. This lets Codex compact immediately after executing tools without either a `pending_session_changed` loop or duplicate execution.
+
 The SDK's send interface is not a general Responses transcript-import API. Cold starts with historical messages serialize non-instruction history into context for a new user prompt, preserving assistant phases. Delimiter characters inside the JSON are escaped without changing the decoded text. This is an approximation, not native role-preserving replay or a guarantee of identical answers. Ordinary matching live turns do not use that replay path.
+
+SDK sessions use the default context tier with independent SDK compaction disabled. Catalog input budgets respect the default tier, prompt limits and output reservation; Codex starts local automatic compaction at 80% of that budget. Structured SDK context-limit failures retain the Responses `context_length_exceeded` code, allowing Codex to distinguish overflow from retryable transport failure. The launcher disables automatic HTTP/stream retries; exact client retries can still use the bridge's existing success cache.
 
 ## Lifetime and security boundaries
 

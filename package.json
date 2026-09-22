@@ -19,6 +19,7 @@
     "doctor": "node src/doctor.mjs",
     "models": "node src/list-models.mjs",
     "test": "node --test test/*.test.mjs",
+    "test:context:runtime": "node --test test/runtime/model-context.test.mjs",
     "test:scenarios": "node scripts/check-scenario-design.mjs",
     "test:compatibility": "node scripts/compatibility.mjs",
     "test:compatibility:runtime": "node scripts/check-compatibility-runtime.mjs",

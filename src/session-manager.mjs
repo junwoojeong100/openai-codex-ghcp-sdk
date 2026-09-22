@@ -61,6 +61,17 @@ function invalidUpstream(message) {
   return new BridgeRequestError(message, { status: 502, code: "invalid_upstream_response" });
 }
 
+function upstreamError(error) {
+  if ([error?.code, error?.errorCode, error?.errorType].some(code =>
+    ["context_limit", "context_length_exceeded", "max_prompt_tokens_exceeded"].includes(code))) {
+    return new BridgeRequestError(
+      "The conversation exceeds GitHub Copilot's active context limit. Run /compact or start a new conversation.",
+      { status: 400, code: "context_length_exceeded" },
+    );
+  }
+  return error instanceof Error ? error : new Error(error?.message || "GitHub Copilot session error.");
+}
+
 function headerFamily(headers) {
   const values = ["session-id", "thread-id"].map((name) => {
     const raw = headers[name];
@@ -379,20 +390,29 @@ export class SessionManager {
     const historyMatches = !state || historyStartsWith(input, state.history);
     if (state && (signature !== state.signature || !historyMatches)) {
       if (state.outstanding.size) {
-        // No raw instructions, tool descriptions, arguments, paths or family IDs.
-        const changed = [
-          ...(model !== state.model ? ["model"] : []),
-          ...(hash(system) !== state.systemHash ? ["instructions"] : []),
-          ...(!sameToolDefinitions(state.tools, tools) ? ["tools"] : []),
-          ...(!historyMatches ? ["history"] : []),
-        ];
-        this.onDiagnostic({ event: "bridge.pending_session_changed", familyHash: hash(family), changed,
-          pendingCalls: state.outstanding.size, suppliedResults: input.filter(isResult).length,
-          previousToolSetHash: hash(state.tools.map(t => t.name).sort()),
-          requestedToolSetHash: hash(tools.map(t => t.name).sort()) });
-        throw new BridgeRequestError("The model, tools, instructions or history changed while tools were pending. Return their results before changing the session.", {
-          status: 409, code: "pending_session_changed",
-        });
+        // Codex compacts without tools after executing a tool batch. Its full
+        // transcript must resolve every live call before retiring that session.
+        const completedHandoff = !delta && historyMatches && request.toolsProvided && !tools.length
+          && model === state.model && hash(system) === state.systemHash;
+        if (completedHandoff) {
+          const tail = input.slice(state.history.length);
+          this.#validateResults(state, tail.filter(isResult), tail.filter(item => !isResult(item)));
+        } else {
+          // No raw instructions, tool descriptions, arguments, paths or family IDs.
+          const changed = [
+            ...(model !== state.model ? ["model"] : []),
+            ...(hash(system) !== state.systemHash ? ["instructions"] : []),
+            ...(!sameToolDefinitions(state.tools, tools) ? ["tools"] : []),
+            ...(!historyMatches ? ["history"] : []),
+          ];
+          this.onDiagnostic({ event: "bridge.pending_session_changed", familyHash: hash(family), changed,
+            pendingCalls: state.outstanding.size, suppliedResults: input.filter(isResult).length,
+            previousToolSetHash: hash(state.tools.map(t => t.name).sort()),
+            requestedToolSetHash: hash(tools.map(t => t.name).sort()) });
+          throw new BridgeRequestError("The model, tools, instructions or history changed while tools were pending. Return their results before changing the session.", {
+            status: 409, code: "pending_session_changed",
+          });
+        }
       }
       validateReplay(input);
       await this.#evict(state);
@@ -424,7 +444,7 @@ export class SessionManager {
       assertNotAborted(signal);
       if (reasoningEffort !== state.reasoningEffort) {
         await withinDeadline(() => state.session.setModel(model, {
-          ...(reasoningEffort ? { reasoningEffort } : {}), reasoningSummary: "none",
+          ...(reasoningEffort ? { reasoningEffort } : {}), reasoningSummary: "none", contextTier: "default",
         }), this.turnTimeoutMs, signal);
         state.reasoningEffort = reasoningEffort;
       }
@@ -493,7 +513,7 @@ export class SessionManager {
       return state.lastResult;
     } catch (error) {
       await this.#evict(state);
-      throw error;
+      throw upstreamError(error);
     } finally {
       state.lastUsedAt = Date.now();
     }
@@ -568,6 +588,7 @@ export class SessionManager {
         // Match the launcher's disabled summaries at the SDK boundary too.
         // This does not change the requested reasoning effort or safety policy.
         reasoningSummary: "none",
+        contextTier: "default",
         availableTools: sdkTools.map((tool) => `custom:${tool.name}`),
         tools: sdkTools,
         toolSearch: { enabled: false },
@@ -645,7 +666,7 @@ export class SessionManager {
       }));
       state.unsubscribers.push(session.on("session.error", (event) => {
         if (!isRootEvent(event)) return;
-        state.fault ??= new Error(event.data?.message || "GitHub Copilot session error.");
+        state.fault ??= upstreamError(event.data);
         state.cancelActive?.(state.fault);
       }));
       for (const type of ["session.compaction_complete", "session.context_cleared", "session.snapshot_rewind", "session.truncation"]) {
@@ -660,7 +681,7 @@ export class SessionManager {
       return state;
     } catch (error) {
       await this.#evict(state);
-      throw error;
+      throw upstreamError(error);
     }
   }
 

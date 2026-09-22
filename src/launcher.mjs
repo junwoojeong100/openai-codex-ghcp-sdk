@@ -1,9 +1,10 @@
 import { spawn, spawnSync } from "node:child_process";
+import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { ensureDaemon, startBridge, stopChildBridge } from "./bridge-daemon.mjs";
+import { bridgeModelCatalog, ensureDaemon, startBridge, stopChildBridge } from "./bridge-daemon.mjs";
 import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS } from "./model-map.mjs";
 import { supportedNodeVersion, versionAtLeast } from "./version.mjs";
 
@@ -125,9 +126,31 @@ export function parseLauncherArgs(argv, env = process.env) {
   return options;
 }
 
-export function codexProviderArgs({ model, port }) {
+export function writeCodexCatalog(catalog, directory) {
+  if (!Array.isArray(catalog?.models) || !catalog.models.length
+      || new Set(catalog.models.map(entry => entry?.slug)).size !== catalog.models.length
+      || catalog.models.some(entry => !SUPPORTED_MODEL_IDS.includes(entry?.slug))) {
+    throw new Error("Invalid GHCP model picker catalog; expected only the supported Copilot models.");
+  }
+  for (const entry of catalog.models) {
+    if (!Number.isSafeInteger(entry.context_window) || entry.context_window < 1
+        || entry.max_context_window !== entry.context_window
+        || !Number.isSafeInteger(entry.auto_compact_token_limit) || entry.auto_compact_token_limit < 1
+        || entry.auto_compact_token_limit > entry.context_window) {
+      throw new Error(`Missing or invalid Copilot context limits for ${entry.slug}. Refusing to use Codex fallback limits.`);
+    }
+  }
+  const filename = path.join(directory, "models.json");
+  fs.writeFileSync(filename, JSON.stringify({ models: catalog.models }), { flag: "wx", mode: 0o600 });
+  return filename;
+}
+
+export function codexProviderArgs({ model, port, catalogPath }) {
   if (!SUPPORTED_MODEL_IDS.includes(model) || !Number.isSafeInteger(port) || port < 1 || port > 65_535) {
     throw new Error("Invalid model or bridge port.");
+  }
+  if (catalogPath !== undefined && (typeof catalogPath !== "string" || !path.isAbsolute(catalogPath))) {
+    throw new Error("The Codex model catalog path must be absolute.");
   }
   const provider = {
     name: "GitHub Copilot SDK",
@@ -137,12 +160,16 @@ export function codexProviderArgs({ model, port }) {
     supports_websockets: false,
     supports_standalone_web_search: false,
     env_key: "CODEX_GHCP_BRIDGE_TOKEN",
+    // A failed live session must not silently resubmit inference or tool results.
+    request_max_retries: 0,
+    stream_max_retries: 0,
   };
   const inlineTable = `{ ${Object.entries(provider).map(([key, value]) => `${key} = ${JSON.stringify(value)}`).join(", ")} }`;
   const settings = [
     `model=${JSON.stringify(model)}`,
     'model_provider="ghcp"',
     `model_providers.ghcp=${inlineTable}`,
+    ...(catalogPath ? [`model_catalog_json=${JSON.stringify(catalogPath)}`] : []),
     'web_search="disabled"',
     'model_reasoning_summary="none"',
     ...disabledFeatures.map((name) => `features.${name}=false`),
@@ -178,6 +205,7 @@ export async function launch(argv = process.argv.slice(2), env = process.env) {
   const controller = new AbortController();
   let bridge;
   let codex;
+  let catalogDirectory;
   let receivedSignal;
   let forceExitTimer;
   let bridgeFailed = false;
@@ -208,7 +236,14 @@ export async function launch(argv = process.argv.slice(2), env = process.env) {
     const bridgeOptions = { env, model: options.model, port: options.port, signal: controller.signal };
     bridge = await (options.background ? ensureDaemon(bridgeOptions) : startBridge(bridgeOptions));
     if (receivedSignal) return signalExitCode(receivedSignal);
-    const childArgs = [...codexProviderArgs({ model: options.model, port: bridge.port }), ...options.codexArgs];
+    const catalog = await bridgeModelCatalog(bridge, controller.signal);
+    if (!catalog.models.some(entry => entry?.slug === options.model)) {
+      throw new Error(`GitHub Copilot model is unavailable: ${options.model}. Run ./bin/ghcp-models.`);
+    }
+    catalogDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "codex-ghcp-models-"));
+    const catalogPath = writeCodexCatalog(catalog, catalogDirectory);
+    if (receivedSignal) return signalExitCode(receivedSignal);
+    const childArgs = [...codexProviderArgs({ model: options.model, port: bridge.port, catalogPath }), ...options.codexArgs];
     codex = spawn(codexBin, childArgs, { stdio: "inherit", env: codexEnvironment(env, bridge.token) });
     bridge.child?.once("exit", onBridgeExit);
     if (bridge.child && (bridge.child.exitCode !== null || bridge.child.signalCode !== null)) onBridgeExit();
@@ -223,9 +258,13 @@ export async function launch(argv = process.argv.slice(2), env = process.env) {
   } finally {
     clearTimeout(forceExitTimer);
     bridge?.child?.removeListener("exit", onBridgeExit);
-    if (!options.background) await stopChildBridge(bridge);
-    process.removeListener("SIGINT", onInterrupt);
-    process.removeListener("SIGTERM", onTerminate);
+    try {
+      if (!options.background) await stopChildBridge(bridge);
+    } finally {
+      if (catalogDirectory) fs.rmSync(catalogDirectory, { recursive: true, force: true });
+      process.removeListener("SIGINT", onInterrupt);
+      process.removeListener("SIGTERM", onTerminate);
+    }
   }
 }
 

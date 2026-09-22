@@ -109,7 +109,9 @@ The default is **`gpt-6-astra`**. Availability is checked against your account's
 ./bin/codex-ghcp --ghcp-model claude-sonnet-5
 ```
 
-A catalog entry is not a guarantee that every Codex feature works with that model. `/v1/models` returns both OpenAI-style IDs and Codex catalog metadata, using the account's SDK model information. Use `--ghcp-model` for a reproducible launch; interactive `/model` menu behavior has not been verified.
+A catalog entry is not a guarantee that every Codex feature works with that model. At launch, the authenticated `/v1/models` catalog is written to a private, temporary `model_catalog_json` file. Codex's `/model` picker uses only the account-enabled models above, including Claude, rather than bundled OpenAI models or an unrelated cached catalog. Use `--ghcp-model` to choose the initial model; relaunch to refresh account availability. The catalog is removed when that Codex process exits, including when using a background bridge.
+
+The catalog also supplies **the active default-tier input budget**, not an unsupported long-context maximum. It accounts for prompt/output limits and the standard tier advertised by Copilot, pins SDK sessions to `contextTier: "default"`, and starts Codex's local automatic compaction at **80%** of that budget. Missing context metadata fails at launch instead of falling back to unrelated Codex limits. SDK-side automatic compaction remains disabled so Codex owns the conversation history.
 
 ## Run Codex
 
@@ -176,21 +178,27 @@ See [Compatibility](docs/COMPATIBILITY.md) before relying on advanced Codex feat
 | Unsupported reasoning effort | Choose a catalog-supported level with `-c 'model_reasoning_effort="low"'` after `--`. Haiku 4.5 has no configurable effort; the bridge logs that limitation. |
 | Port already used | Let the launcher choose a free port, or change `PORT` for a direct server. Do not stop another project's process. |
 | Unknown response/tool call | The bridge may have restarted or expired the session. Start a new conversation; never fabricate a tool result. |
+| Long turn or context-limit error | Local auto-compaction also handles completed tool-result batches. Use `/compact` between turns or start a shorter conversation if the model still reports `context_length_exceeded`; increasing a byte limit does not increase model context. |
 | History too large | Start a shorter conversation or explicitly raise `MAX_REPLAY_BYTES` with awareness of memory/context limits. |
 | Unsupported input or transport | Use the launcher defaults and text-only requests. Upgrading Codex can introduce new request forms. |
 | Custom tool parse error | Grammar is advisory through the SDK, not native constrained decoding. Try again or choose another allowed model; raw tool text is never silently rewritten. |
 
 Both the serialized conversation-history limit (`MAX_REPLAY_BYTES`) and HTTP request-body limit (`MAX_BODY_BYTES`) default to **33,554,432 bytes (32 MiB)**. These are operational starting points, not benchmarked capacity guarantees or model context-window limits; very large conversations can still exceed available memory or the upstream model's context. Override either limit with a positive integer environment variable when needed, and restart the bridge to apply changes. The launcher does not automatically load `.env`. Stop a background bridge only after closing its Codex sessions, because restarting discards its in-memory conversation state.
 
+The launcher disables Codex's automatic HTTP/stream retries: an upstream failure or bounded timeout is surfaced instead of repeatedly resubmitting a long prompt or uncertain tool results. The default model-turn deadline remains five minutes (`TURN_TIMEOUT_MS=300000`), with a six-minute total manager request deadline including queue wait (`REQUEST_TIMEOUT_MS=360000`); cleanup has separate bounds. These changes apply to newly launched processes. If using an existing background bridge, first close its Codex sessions, run `./bin/codex-ghcp-stop`, and relaunch.
+
 ## Local checks and integrated compatibility
 
 ```bash
 npm test                              # Unit/controller checks, no model calls
+npm run test:context:runtime           # Actual Codex picker, auto-compaction and failure recovery; fake SDK
 npm run test:scenarios                 # 18 versioned scenario contracts
 npm run docs:scenarios:check           # Generated document consistency
 npm run test:compatibility -- --plan   # Offline execution plan
 npm run test:compatibility:runtime     # Real Codex + SDK double, no model calls
 ```
+
+The context runtime checks use the installed Codex CLI with an isolated profile and a mechanical SDK peer; they do not make model calls or certify maximum-context or long-duration reliability.
 
 The 18-scenario compatibility contract is separate from the 11-scenario stability contract; stability results do not certify this larger live matrix.
 **18 scenarios × seven GHCP models = 126 cases**, with no reference-provider run, fast suite or model subset.

@@ -33,6 +33,24 @@ function reasoningEfforts(model) {
   ])];
 }
 
+function contextBudget(model) {
+  const limits = model.capabilities?.limits || {};
+  // Sessions use the default SDK tier, not the advertised long-context maximum.
+  const prices = model.billing?.tokenPrices;
+  const defaultTier = prices?.longContext ? prices : {};
+  const budgets = [
+    limits.max_context_window_tokens,
+    limits.max_prompt_tokens,
+    defaultTier.maxPromptTokens,
+    defaultTier.contextMax,
+  ].filter(value => Number.isSafeInteger(value) && value > 0);
+  if (Number.isSafeInteger(limits.max_context_window_tokens) && Number.isSafeInteger(limits.max_output_tokens)
+      && limits.max_output_tokens > 0 && limits.max_context_window_tokens > limits.max_output_tokens) {
+    budgets.push(limits.max_context_window_tokens - limits.max_output_tokens);
+  }
+  return budgets.length ? Math.min(...budgets) : undefined;
+}
+
 export function modelCatalog(models) {
   const available = supportedModels(models).filter((model) => model.policy?.state !== "disabled");
   return {
@@ -40,7 +58,7 @@ export function modelCatalog(models) {
     data: available.map((model) => ({ id: model.id, object: "model", owned_by: "github-copilot" })),
     models: available.map((model, priority) => {
       const efforts = reasoningEfforts(model);
-      const contextWindow = model.capabilities?.limits?.max_context_window_tokens;
+      const contextWindow = contextBudget(model);
       return {
         slug: model.id,
         display_name: model.name || model.id,
@@ -57,8 +75,13 @@ export function modelCatalog(models) {
         truncation_policy: { mode: "bytes", limit: 10_000 },
         experimental_supported_tools: [],
         base_instructions: "You are a coding assistant. Follow the user's instructions and use only the provided tools. Respect the client's sandbox and approval requirements.",
-        ...(Number.isSafeInteger(contextWindow) && contextWindow > 0
-          ? { context_window: contextWindow, max_context_window: contextWindow } : {}),
+        ...(contextWindow
+          ? {
+            context_window: contextWindow,
+            max_context_window: contextWindow,
+            // Leave room for SDK instructions, replay framing and the next tool result.
+            auto_compact_token_limit: Math.max(1, Math.floor(contextWindow * 0.8)),
+          } : {}),
       };
     }),
   };

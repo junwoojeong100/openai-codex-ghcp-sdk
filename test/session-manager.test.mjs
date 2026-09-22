@@ -137,6 +137,7 @@ test("empty mode exposes only handlerless client tools and denies SDK permission
   assert.equal(config.onPermissionRequest({}).kind, "reject");
   assert.equal(config.systemMessage.mode, "append");
   assert.equal(config.reasoningSummary, "none");
+  assert.equal(config.contextTier, "default");
   assert.equal(config.systemMessage.content, "Base instruction\n\nFollow the client's instructions.");
   assert.deepEqual(config.infiniteSessions, { enabled: false });
   assert.equal(config.skipCustomInstructions, true);
@@ -325,6 +326,112 @@ test("orphan tool results fail clearly instead of entering a new anonymous sessi
   const { manager, client } = await setup(t);
   await assert.rejects(manager.execute(body([{ type: "function_call_output", call_id: "expired", output: "ok" }])), { code: "unknown_tool_call" });
   assert.equal(client.sessions.length, 0);
+});
+
+test("tool-less compaction can replay a full, resolved handoff without resubmitting or re-executing tools", async t => {
+  const request = body("read before compacting", { tools: [functionTool, customTool] });
+  const { manager, client } = await setup(t, {}, {
+    onSend: session => {
+      if (session.config.tools.length) session.toolCalls([
+        call(request, 0, "compact-read", { path: "example" }),
+        call(request, 1, "compact-patch", { input: "unchanged patch bytes\n" }),
+      ]);
+      else session.reply("Summary with TOOL_MEMORY and PATCH_RECEIPT.");
+    },
+  });
+  const first = await manager.execute(request, headers("compaction"), { responseId: "before-compaction" });
+  const transcript = [
+    { role: "user", content: request.input },
+    ...outputItems(first.messages, first.tools),
+    { type: "function_call_output", call_id: "compact-read", output: "TOOL_MEMORY" },
+    { type: "custom_tool_call_output", call_id: "compact-patch", output: "PATCH_RECEIPT" },
+    { role: "user", content: "Summarize the conversation for continuation." },
+  ];
+  const compact = body(transcript, { tools: [] });
+  const result = await manager.execute(compact, headers("compaction"), { responseId: "after-compaction" });
+  await manager.execute(compact, headers("compaction"), { responseId: "compact-retry" });
+  assert.match(result.messages[0].content, /TOOL_MEMORY/);
+  assert.equal(client.sessions.length, 2);
+  const [retired, summarizer] = client.sessions;
+  assert.equal(retired.aborted, 1);
+  assert.equal(retired.disconnected, 1);
+  assert.equal(retired.submitted.length, 0);
+  assert.equal(summarizer.sent.length, 1);
+  assert.deepEqual(summarizer.config.tools, []);
+  assert.match(summarizer.sent[0].prompt, /TOOL_MEMORY/);
+  assert.match(summarizer.sent[0].prompt, /PATCH_RECEIPT/);
+  assert.equal(manager.callStates.size, 0);
+  assert.equal(manager.responses.has("before-compaction"), false);
+  client.onSend = session => session.reply("continued after compact");
+  const continued = await manager.execute(body([
+    { role: "user", content: "Compacted context: TOOL_MEMORY and PATCH_RECEIPT." },
+    { role: "user", content: "Continue." },
+  ], { tools: [functionTool] }), headers("compaction"));
+  assert.equal(continued.messages[0].content, "continued after compact");
+  assert.equal(client.sessions.length, 3);
+  assert.ok(client.sessions.every(session => session.submitted.length === 0));
+});
+
+test("compaction refuses incomplete, duplicate, wrong-type, or rewritten live handoffs without losing them", async t => {
+  const request = body("read", { tools: [functionTool] });
+  const { manager, client } = await setup(t, {}, {
+    onSend: session => session.toolCalls([call(request, 0, "still-pending", { path: "example" })]),
+    onSubmit: session => session.reply("continued"),
+  });
+  const first = await manager.execute(request, headers("pending-compact"), { responseId: "pending-response" });
+  const prefix = [{ role: "user", content: "read" }, ...outputItems(first.messages, first.tools)];
+  const result = { type: "function_call_output", call_id: "still-pending", output: "real result" };
+  for (const tail of [
+    [], [result, result], [{ ...result, call_id: "unknown" }],
+    [{ ...result, type: "custom_tool_call_output" }],
+  ]) {
+    await assert.rejects(manager.execute(body([...prefix, ...tail, { role: "user", content: "Summarize" }], { tools: [] }),
+      headers("pending-compact")), /pending tool results|Duplicate tool result|type or call_id/);
+  }
+  await assert.rejects(manager.execute(body([
+    { role: "user", content: "rewritten history" }, ...prefix.slice(1), result,
+    { role: "user", content: "Summarize" },
+  ], { tools: [] }), headers("pending-compact")), { code: "pending_session_changed" });
+  await assert.rejects(manager.execute(body([...prefix, result, { role: "user", content: "Summarize" }],
+    { tools: [], instructions: "changed policy" }), headers("pending-compact")), { code: "pending_session_changed" });
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].aborted, 0);
+  assert.equal(client.sessions[0].submitted.length, 0);
+  assert.equal((await manager.execute(body([result], { previous_response_id: "pending-response" }),
+    headers("pending-compact"))).messages[0].content, "continued");
+});
+
+for (const data of [
+  { errorType: "context_limit", message: "SDK context limit" },
+  { errorType: "query", errorCode: "context_length_exceeded", message: "Provider context limit" },
+  { errorType: "query", errorCode: "max_prompt_tokens_exceeded", message: "Provider prompt limit" },
+]) test(`context-limit events preserve Codex's non-retryable overflow code (${data.errorCode || data.errorType})`, async t => {
+  const { manager, client } = await setup(t, {}, {
+    onSend: session => session.emit("session.error", data),
+  });
+  await assert.rejects(manager.execute(body(), headers("context-limit")), {
+    status: 400, code: "context_length_exceeded",
+  });
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(client.sessions[0].aborted, 1);
+  assert.equal(manager.states.size, 0);
+  client.onSend = session => session.reply("shorter conversation works");
+  const next = await manager.execute(body("short"), headers("context-limit"));
+  assert.equal(next.messages[0].content, "shorter conversation works");
+});
+
+test("RPC context overflow is normalized, but unrelated errors and nested-agent context limits are not", async t => {
+  const { manager, client } = await setup(t, {}, {
+    onSend: () => { throw Object.assign(new Error("RPC overflow"), { code: "context_length_exceeded" }); },
+  });
+  await assert.rejects(manager.execute(body()), { status: 400, code: "context_length_exceeded" });
+  client.onSend = session => {
+    session.emit("session.error", { errorType: "context_limit", message: "child overflow" }, { agentId: "child" });
+    session.reply("root is fine");
+  };
+  assert.equal((await manager.execute(body())).messages[0].content, "root is fine");
+  client.onSend = session => session.emit("session.error", { errorType: "query", message: "unrelated query failure" });
+  await assert.rejects(manager.execute(body()), error => error.message === "unrelated query failure" && error.code === undefined);
 });
 
 test("completed historical calls are replayed as context, not resubmitted as live tool results", async (t) => {
@@ -653,8 +760,8 @@ test("reasoning summaries stay disabled across effort changes and history rebuil
   const second = await manager.execute(body("two", { previous_response_id: "summary-one", reasoning: { effort: "high" } }), family, { responseId: "summary-two" });
   await manager.execute(body("three", { previous_response_id: "summary-two" }), family);
   assert.deepEqual(client.sessions[0].switched, [
-    { id: model, options: { reasoningEffort: "high", reasoningSummary: "none" } },
-    { id: model, options: { reasoningSummary: "none" } },
+    { id: model, options: { reasoningEffort: "high", reasoningSummary: "none", contextTier: "default" } },
+    { id: model, options: { reasoningSummary: "none", contextTier: "default" } },
   ]);
   assert.equal(client.sessions.length, 1);
   await manager.execute(body([

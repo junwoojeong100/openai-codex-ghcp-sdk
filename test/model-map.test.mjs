@@ -32,6 +32,7 @@ test("catalog serves both OpenAI IDs and Codex model metadata from the live SDK 
   assert.equal(reasoning.default_reasoning_level, "low");
   assert.equal(reasoning.context_window, 123_456);
   assert.equal(reasoning.max_context_window, 123_456);
+  assert.equal(reasoning.auto_compact_token_limit, 98_764);
   assert.deepEqual(fixed.supported_reasoning_levels, []);
   assert.equal(fixed.default_reasoning_level, null);
   assert.equal(Object.hasOwn(fixed, "context_window"), false);
@@ -45,6 +46,41 @@ test("catalog serves both OpenAI IDs and Codex model metadata from the live SDK 
     assert.deepEqual(entry.experimental_supported_tools, []);
     assert.deepEqual(entry.truncation_policy, { mode: "bytes", limit: 10_000 });
     assert.ok(entry.base_instructions.length > 0);
+  }
+});
+
+test("context budgets use the active default tier and reserve output space before automatic compaction", () => {
+  const catalog = modelCatalog([
+    { id: "gpt-6-astra", capabilities: { limits: {
+      max_context_window_tokens: 1_178_000, max_prompt_tokens: 1_050_000, max_output_tokens: 128_000,
+    } }, billing: { tokenPrices: {
+      contextMax: 272_000, maxPromptTokens: 272_000, longContext: { maxPromptTokens: 872_000 },
+    } } },
+    { id: "claude-haiku-4.5", capabilities: { limits: {
+      max_context_window_tokens: 200_000, max_prompt_tokens: 136_000, max_output_tokens: 64_000,
+    } } },
+    { id: "claude-sonnet-5", capabilities: { limits: {
+      max_context_window_tokens: 32_768, max_output_tokens: 8192,
+    } } },
+  ]);
+  const byId = new Map(catalog.models.map(entry => [entry.slug, entry]));
+  for (const [id, window, threshold] of [
+    ["gpt-6-astra", 272_000, 217_600],
+    ["claude-haiku-4.5", 136_000, 108_800],
+    ["claude-sonnet-5", 24_576, 19_660],
+  ]) {
+    const entry = byId.get(id);
+    assert.equal(entry.context_window, window);
+    assert.equal(entry.max_context_window, window);
+    assert.equal(entry.auto_compact_token_limit, threshold);
+  }
+});
+
+test("missing or invalid token limits are not replaced with Codex's unrelated fallback window", () => {
+  for (const limit of [undefined, 0, -1, 1.5, Infinity, Number.MAX_SAFE_INTEGER + 1, "200000"]) {
+    const [entry] = modelCatalog([{ id: DEFAULT_MODEL, capabilities: { limits: { max_context_window_tokens: limit } } }]).models;
+    assert.equal(Object.hasOwn(entry, "context_window"), false);
+    assert.equal(Object.hasOwn(entry, "auto_compact_token_limit"), false);
   }
 });
 

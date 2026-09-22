@@ -105,6 +105,23 @@ test("upstream failures become response.failed rather than a false completion", 
   assert.doesNotMatch(wire, /response.completed/);
 });
 
+test("context overflow retains its actionable code in both JSON and SSE", async t => {
+  const { post } = await setup(t, {
+    async execute(body, _headers, options) {
+      if (body.stream) options.onReady({ model });
+      throw new BridgeRequestError("Use /compact or start a new conversation.", { status: 400, code: "context_length_exceeded" });
+    },
+  });
+  const plain = await post({ model, input: "large", stream: false });
+  assert.equal(plain.status, 400);
+  assert.equal((await plain.json()).error.code, "context_length_exceeded");
+  const streamed = await (await post({ model, input: "large", stream: true })).text();
+  const terminal = streamed.split("\n").filter(line => line.startsWith("data: ")).map(line => JSON.parse(line.slice(6))).at(-1);
+  assert.equal(terminal.type, "response.failed");
+  assert.equal(terminal.response.error.code, "context_length_exceeded");
+  assert.doesNotMatch(streamed, /response.completed/);
+});
+
 test("client disconnect cancels the corresponding SDK operation", async (t) => {
   let observeAbort;
   const aborted = new Promise((resolve) => { observeAbort = resolve; });

@@ -109,7 +109,9 @@ codex-original --help       # GHCP를 거치지 않는 공식 CLI 도움말
 ./bin/codex-ghcp --ghcp-model claude-sonnet-5
 ```
 
-목록에 표시된다는 사실은 모든 Codex 기능의 호환성을 뜻하지 않습니다. `/v1/models`는 계정의 SDK 모델 정보를 바탕으로 OpenAI 형식의 ID 목록과 Codex catalog 메타데이터를 함께 제공합니다. 실행할 모델은 `--ghcp-model`로 명시하세요. 대화형 `/model` 메뉴의 동작은 아직 검증하지 않았습니다.
+목록에 표시된다는 사실은 모든 Codex 기능의 호환성을 뜻하지 않습니다. 실행기는 인증된 `/v1/models` 목록을 읽어 비공개 임시 `model_catalog_json` 파일로 전달합니다. Codex의 `/model` 피커에는 내장 OpenAI 목록이나 다른 공급자의 캐시 대신 **위 7개 중 계정에서 사용할 수 있는 모델만** 표시되며 Claude도 포함됩니다. 초기 모델은 `--ghcp-model`로 선택하고, 계정 권한 변경은 다시 실행하여 반영합니다. 임시 목록은 해당 Codex 종료 시 삭제하며 상주 bridge 사용 시에도 동일합니다.
+
+모델 정보에는 이론적인 long-context 최댓값 대신 **실제로 사용하는 기본 tier의 입력 예산**을 전달합니다. Copilot의 prompt/output 한도와 기본 tier 한도를 반영하고 SDK 세션을 `contextTier: "default"`로 고정하며, 예산의 **80%**에서 Codex의 로컬 자동 압축을 시작합니다. 한도 메타데이터가 없으면 다른 모델의 기본값으로 진행하지 않고 실행을 중단합니다. 대화 이력의 기준을 Codex로 유지하기 위해 SDK 자체 자동 압축은 계속 비활성화합니다.
 
 ## Codex 실행
 
@@ -176,21 +178,27 @@ health 외에는 `Authorization: Bearer <bridge-token>` 또는 `x-api-key`가 �
 | reasoning effort 미지원 | `--` 뒤에 `-c 'model_reasoning_effort="low"'`처럼 catalog에서 지원하는 값을 전달합니다. Haiku 4.5의 effort는 설정할 수 없으며 제한을 진단 로그로 남깁니다. |
 | 포트 사용 중 | 실행기의 빈 포트 선택을 사용하거나 직접 실행의 `PORT`를 바꿉니다. 다른 프로젝트의 프로세스를 종료하지 마세요. |
 | 알 수 없는 response/tool call | 재시작 또는 만료로 세션을 잃었을 수 있습니다. 새 대화를 시작하고, 도구 결과를 지어내지 마세요. |
+| 긴 턴·컨텍스트 한도 오류 | 도구 결과 반환 직후에도 로컬 자동 압축을 처리합니다. 여전히 `context_length_exceeded`가 발생하면 턴 사이에 `/compact`를 실행하거나 짧은 새 대화를 시작하세요. 바이트 한도를 늘려도 모델 문맥은 늘어나지 않습니다. |
 | 이력 크기 초과 | 새 대화를 시작하거나 메모리·모델 문맥 한도를 고려해 `MAX_REPLAY_BYTES`를 조정합니다. |
 | 입력·전송 미지원 | 실행기 기본값과 텍스트 입력을 사용합니다. Codex 버전 변경으로 새로운 요청 형식이 추가됐을 수 있습니다. |
 | custom 도구 파싱 오류 | SDK가 grammar 기반 생성을 강제하지 않습니다. 재시도하거나 허용된 다른 모델을 선택하세요. bridge가 원문을 임의 수정하지는 않습니다. |
 
 JSON으로 직렬화한 대화 이력 한도(`MAX_REPLAY_BYTES`)와 HTTP 요청 본문 한도(`MAX_BODY_BYTES`)의 기본값은 각각 **33,554,432바이트(32 MiB)**입니다. 이는 실측으로 검증된 최대 처리량이 아닌 운영상 초기 보호 한도이며 모델 문맥 한도와도 별개입니다. 큰 대화는 여전히 메모리나 모델 문맥 한도를 초과할 수 있습니다. 필요하면 양의 정수 환경 변수로 각 한도를 재정의하고 브리지를 재시작하세요. 실행기는 `.env`를 자동으로 읽지 않습니다. 상주 브리지는 연결된 Codex 세션을 닫은 뒤 종료하세요. 재시작하면 메모리의 대화 상태가 사라집니다.
 
+실행기는 Codex의 HTTP·스트림 자동 재시도를 끕니다. 오류나 시간 초과 시 긴 프롬프트·실행 여부가 불확실한 도구 결과를 반복 재전송하지 않고 오류를 표시합니다. 모델 턴 제한은 기본 5분(`TURN_TIMEOUT_MS=300000`), 큐 대기 포함 전체 요청 제한은 6분(`REQUEST_TIMEOUT_MS=360000`)이며 정리 작업은 별도 제한을 갖습니다. 변경은 다시 실행한 프로세스부터 적용됩니다. 기존 상주 bridge를 사용 중이면 연결된 Codex를 닫고 `./bin/codex-ghcp-stop`을 실행한 뒤 다시 시작하세요.
+
 ## 로컬 확인과 통합 호환성 검증
 
 ```bash
 npm test                              # 단위/실행 제어 테스트, 모델 호출 없음
+npm run test:context:runtime           # 실제 Codex 피커·자동 압축·오류 복구, SDK 테스트 대역
 npm run test:scenarios                 # 18개 통합 시나리오 계약 검사
 npm run docs:scenarios:check           # 생성 문서와 사양 일치 검사
 npm run test:compatibility -- --plan   # 모델 호출 없는 실행 계획
 npm run test:compatibility:runtime     # 실제 Codex + SDK 테스트 대역, 모델 호출 없음
 ```
+
+컨텍스트 runtime 검사는 설치된 Codex CLI·격리된 프로필·기계적인 SDK 대역을 사용합니다. 실모델을 호출하지 않으며 최대 문맥이나 장시간 무중단 실행을 인증하는 검사는 아닙니다.
 
 18개 시나리오 호환성 계약은 11개 시나리오 안정성 계약과 별개이며, 안정성 결과를 이 실모델 행렬의 통과 증거로 사용하지 않습니다.
 **시나리오 18개 × GHCP 7모델 = 총 126건**이며, 별도 기준선·빠른 모드·부분 모델 선택은 없습니다.

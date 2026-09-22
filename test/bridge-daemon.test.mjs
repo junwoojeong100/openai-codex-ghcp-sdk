@@ -10,6 +10,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { bridgeHealth, bridgeModels, daemonPaths, daemonStatus, readDaemonRegistry, stopDaemon } from "../src/bridge-daemon.mjs";
+import { modelCatalog } from "../src/model-map.mjs";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const model = "gpt-6-astra";
@@ -27,7 +28,7 @@ async function fakeBridge(t) {
   const health = { ok: true, protocol: "responses", pid: bridge.pid, instanceId: bridge.instanceId, preferredModel: model, modelCount: 1 };
   const server = http.createServer((req, res) => {
     if (req.url === "/health") res.end(JSON.stringify(health));
-    else if (req.headers.authorization === `Bearer ${bridge.token}`) res.end(JSON.stringify({ data: [{ id: model }] }));
+    else if (req.headers.authorization === `Bearer ${bridge.token}`) res.end(JSON.stringify(modelCatalog([{ id: model }])));
     else { res.writeHead(401); res.end(); }
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -81,7 +82,7 @@ test("daemon status verifies authentication without returning the stored token",
   const { env, paths } = stateDirectory(t);
   const { bridge } = await fakeBridge(t);
   writeRegistry(paths, bridge);
-  assert.deepEqual(await bridgeModels(bridge), [{ id: model }]);
+  assert.deepEqual(await bridgeModels(bridge), [{ id: model, object: "model", owned_by: "github-copilot" }]);
   const status = await daemonStatus(env);
   assert.equal(status.running, true);
   assert.equal(status.pid, bridge.pid);

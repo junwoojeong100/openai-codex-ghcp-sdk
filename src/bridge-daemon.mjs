@@ -108,16 +108,20 @@ export async function bridgeHealth(bridge) {
   }
 }
 
-export async function bridgeModels(bridge) {
+export async function bridgeModelCatalog(bridge, signal) {
   const response = await fetch(`http://127.0.0.1:${bridge.port}/v1/models`, {
     headers: { authorization: `Bearer ${bridge.token}` },
-    signal: AbortSignal.timeout(50_000),
+    signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(50_000)]) : AbortSignal.timeout(50_000),
     redirect: "error",
   });
   if (!response.ok) throw new Error(`Bridge model lookup failed (HTTP ${response.status}).`);
   const body = await response.json();
-  if (!Array.isArray(body.data)) throw new Error("Invalid bridge model catalog.");
-  return body.data;
+  if (!Array.isArray(body?.data) || !Array.isArray(body?.models)) throw new Error("Invalid bridge model catalog.");
+  return body;
+}
+
+export async function bridgeModels(bridge) {
+  return (await bridgeModelCatalog(bridge)).data;
 }
 
 async function requireModel(bridge, model) {
