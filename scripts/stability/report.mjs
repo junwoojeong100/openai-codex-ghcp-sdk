@@ -12,7 +12,7 @@ export function sourceManifest(root = ROOT) {
     for (const item of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
       const relative = `${prefix}/${item.name}`, absolute = path.join(dir, item.name);
       if (item.isDirectory()) walk(absolute, relative);
-      else if (item.isFile() && (item.name.endsWith(".mjs") || prefix === "bin")) files.push(relative);
+      else if (item.isFile() && (/\.(mjs|html|py)$/.test(item.name) || prefix === "bin")) files.push(relative);
     }
   };
   for (const dir of ["src", "scripts", "test", "bin"]) walk(path.join(root, dir), dir);

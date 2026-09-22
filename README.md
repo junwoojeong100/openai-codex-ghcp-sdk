@@ -185,20 +185,25 @@ See [Compatibility](docs/COMPATIBILITY.md) before relying on advanced Codex feat
 
 Both the serialized conversation-history limit (`MAX_REPLAY_BYTES`) and HTTP request-body limit (`MAX_BODY_BYTES`) default to **33,554,432 bytes (32 MiB)**. These are operational starting points, not benchmarked capacity guarantees or model context-window limits; very large conversations can still exceed available memory or the upstream model's context. Override either limit with a positive integer environment variable when needed, and restart the bridge to apply changes. The launcher does not automatically load `.env`. Stop a background bridge only after closing its Codex sessions, because restarting discards its in-memory conversation state.
 
-The launcher disables Codex's automatic HTTP/stream retries: an upstream failure or bounded timeout is surfaced instead of repeatedly resubmitting a long prompt or uncertain tool results. The default model-turn deadline remains five minutes (`TURN_TIMEOUT_MS=300000`), with a six-minute total manager request deadline including queue wait (`REQUEST_TIMEOUT_MS=360000`); cleanup has separate bounds. These changes apply to newly launched processes. If using an existing background bridge, first close its Codex sessions, run `./bin/codex-ghcp-stop`, and relaunch.
+The launcher disables Codex's automatic HTTP/stream retries: an upstream failure or bounded timeout is surfaced instead of repeatedly resubmitting a long prompt or uncertain tool results. A turn with **90 seconds of no model progress** fails with `copilot_idle_timeout` (`TURN_IDLE_TIMEOUT_MS=90000`). Root text, reasoning and tool-input streaming refresh this deadline; HTTP keepalives and subordinate-agent traffic do not. Reasoning and partial tool arguments are observed only for liveness, never exposed to the client. Raise this setting for a model that legitimately thinks silently for longer.
+
+Session creation and model-setting RPCs use the **30-second SDK startup bound** (`SDK_STARTUP_TIMEOUT_MS=30000`, capped by the turn deadline), returning `copilot_setup_timeout` instead of waiting for a full model turn. The absolute turn deadline remains five minutes (`TURN_TIMEOUT_MS=300000`), with a six-minute total manager request deadline including queue wait (`REQUEST_TIMEOUT_MS=360000`); cleanup has separate bounds. These changes apply to newly launched processes. If using an existing background bridge, first close its Codex sessions, run `./bin/codex-ghcp-stop`, and relaunch.
 
 ## Local checks and integrated compatibility
 
 ```bash
 npm test                              # Unit/controller checks, no model calls
-npm run test:context:runtime           # Actual Codex picker, auto-compaction and failure recovery; fake SDK
+npm run test:context:runtime           # Actual Codex/PTY: compaction, 120 tools, idle/setup/Esc recovery; fake SDK
+npm run test:terminal:runtime          # Integrated PTY/Playwright lanes, cancellation and cleanup; fake SDK
 npm run test:scenarios                 # 18 versioned scenario contracts
 npm run docs:scenarios:check           # Generated document consistency
 npm run test:compatibility -- --plan   # Offline execution plan
 npm run test:compatibility:runtime     # Real Codex + SDK double, no model calls
 ```
 
-The context runtime checks use the installed Codex CLI with an isolated profile and a mechanical SDK peer; they do not make model calls or certify maximum-context or long-duration reliability.
+The context runtime checks use the installed Codex CLI with an isolated profile and a mechanical SDK peer. The actual-terminal cases also require Python 3 for a private PTY. They verify same-terminal recovery after inactivity, stuck session creation and Escape, plus 120 sequential native tool calls across repeated compaction. They do not make model calls or certify maximum-context or long-duration reliability.
+
+Actual bounded terminal checks are reproducible with `npm run test:terminal -- --execute --driver playwright --model gpt-6-astra --duration-seconds 120`; `pty` is also supported. Install Chromium first with `npx --no-install playwright install chromium`. For workload sizing, cancellation, source-frozen evidence and the integrated `test:soak -- --terminal` path, see [terminal/endurance testing](docs/SOAK_TESTING.md). Live commands consume Copilot usage; the default `--plan` does not.
 
 The 18-scenario compatibility contract is separate from the 11-scenario stability contract; stability results do not certify this larger live matrix.
 **18 scenarios × seven GHCP models = 126 cases**, with no reference-provider run, fast suite or model subset.
@@ -225,7 +230,7 @@ npm run test:stability -- --plan
 npm run test:stability -- --execute  # Consumes Copilot usage
 ```
 
-**Latest full real-Codex run (2026-09-22), `application-data-v1`: 74/77 (96.10%), meeting the ≥95% target.** Fixture-tool metadata now clearly describes its full text result rather than extracted field values. User prompts, oracles and the production bridge are unchanged; model-visible tool metadata did change. Opus S10/S11 filtering and Sonnet S05 label omission remain three failed cases. Original/default v3's 66/77 and both earlier 50/77 runs stay separate, never combined. See the [repair, full result and evidence](docs/validation/2026-09-22-runner-repair/README.md) and [verification index](docs/validation/README.md).
+**Latest full real-Codex verification (2026-09-23 KST): default v3 66/77 (85.71%); separate `application-data-v1` 72/77 (93.51%).** Both entire matrices were executed after terminal-runner integration and verified against current/frozen source. Upstream filtering, literal-label omissions and missing repeated tool calls remain failures; neither run is 77/77 or meets the earlier 95% target. Extra real PTY/Playwright checks found and fixed a scrolling-region observer bug. Earlier 74/77 and other results remain independent historical records, never combined. See the [implementation, full results and evidence](docs/validation/2026-09-22-terminal-integration/README.md) and [verification index](docs/validation/README.md).
 
 Archived verification documents were removed before this repair at the user’s request and have not been restored. Complete runs during this repair are recorded separately, including failures and timeouts; old cells are not reused as new scores. This is not hours-long or whole-product certification.
 

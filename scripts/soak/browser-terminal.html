@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Codex terminal verification</title>
+<style>
+body { margin: 12px; background: #101827; color: #e2e8f0; font: 14px system-ui; }
+#terminal { padding: 8px; background: #030712; }
+textarea { width: 96%; height: 60px; }
+button, textarea { margin: 6px 0; padding: 8px; color: inherit; background: #1e293b; border: 1px solid #64748b; }
+#error { color: #fca5a5; }
+</style></head>
+<body>
+<h1>Actual Codex terminal</h1>
+<p>Owned read-only PTY, driven by Playwright. Model responses are not rendered by the test harness.</p>
+<div id="terminal"></div>
+<label for="input">Verification prompt</label><textarea id="input" spellcheck="false"></textarea>
+<button id="send">Send prompt</button><button id="escape">Escape</button>
+<div id="error" role="alert"></div>
+<script>
+window.initializeTerminal = options => {
+  const term = new Terminal({ ...options, scrollback: 100000, screenReaderMode: true,
+    fontSize: 12, theme: { background: "#030712", foreground: "#e2e8f0" } });
+  term.open(document.querySelector("#terminal"));
+  window.term = term;
+  window.submitted = 0;
+  window.inputError = null;
+  let pending = Promise.resolve();
+  term.onData(text => {
+    pending = pending.then(() => window.ptyInput(text)).catch(error => {
+      window.inputError = error.message;
+      document.querySelector("#error").textContent = error.message;
+    });
+  });
+  window.terminalText = () => {
+    const buffer = term.buffer.active, lines = [];
+    for (let i = buffer.viewportY; i < buffer.viewportY + term.rows; i++)
+      lines.push(buffer.getLine(i)?.translateToString(true) || "");
+    return lines.join("\n");
+  };
+  document.querySelector("#send").onclick = async () => {
+    term.paste(document.querySelector("#input").value);
+    await pending;
+    await new Promise(resolve => setTimeout(resolve, 200));
+    await window.ptyInput("\r");
+    document.querySelector("#input").value = "";
+    window.submitted++;
+  };
+  document.querySelector("#escape").onclick = () => window.ptyInput("\x1b");
+};
+</script></body></html>

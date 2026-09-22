@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { performance } from "node:perf_hooks";
 import { CopilotClient, defineTool } from "@github/copilot-sdk";
 
 import { resolveCopilotHome } from "./copilot-home.mjs";
@@ -68,6 +69,11 @@ function upstreamError(error) {
       "The conversation exceeds GitHub Copilot's active context limit. Run /compact or start a new conversation.",
       { status: 400, code: "context_length_exceeded" },
     );
+  }
+  if (error?.code === "sdk_operation_timeout") {
+    return new BridgeRequestError("GitHub Copilot session setup timed out. No request was retried.", {
+      status: 504, code: "copilot_setup_timeout",
+    });
   }
   return error instanceof Error ? error : new Error(error?.message || "GitHub Copilot session error.");
 }
@@ -193,6 +199,7 @@ export class SessionManager {
     preferredModel = DEFAULT_MODEL,
     logLevel = "error",
     turnTimeoutMs = 300_000,
+    turnIdleTimeoutMs = 90_000,
     requestTimeoutMs = 360_000,
     maxRequestsPerFamily = 8,
     maxRequests = 128,
@@ -204,12 +211,15 @@ export class SessionManager {
     maxToolResults = 32,
     onDiagnostic = () => {},
   } = {}) {
+    if (!Number.isSafeInteger(turnIdleTimeoutMs) || turnIdleTimeoutMs < 1 || turnIdleTimeoutMs > 2_147_483_647) {
+      throw new Error("turnIdleTimeoutMs must be an integer from 1 through 2147483647.");
+    }
     this.clientFactory = clientFactory ?? (client ? null : () => new CopilotClient({
       mode: "empty", baseDirectory, logLevel, enableRemoteSessions: false,
     }));
     this.client = client ?? this.clientFactory();
     Object.assign(this, {
-      preferredModel, turnTimeoutMs, requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
+      preferredModel, turnTimeoutMs, turnIdleTimeoutMs, requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
       readinessTimeoutMs, startupTimeoutMs, readinessIntervalMs, recoveryBackoffMs,
       stateIdleTtlMs, maxStates, maxReplayBytes, maxToolResults,
     });
@@ -445,7 +455,7 @@ export class SessionManager {
       if (reasoningEffort !== state.reasoningEffort) {
         await withinDeadline(() => state.session.setModel(model, {
           ...(reasoningEffort ? { reasoningEffort } : {}), reasoningSummary: "none", contextTier: "default",
-        }), this.turnTimeoutMs, signal);
+        }), Math.min(this.startupTimeoutMs, this.turnTimeoutMs), signal);
         state.reasoningEffort = reasoningEffort;
       }
       assertNotAborted(signal);
@@ -611,7 +621,7 @@ export class SessionManager {
         return session;
       });
       const creationSignal = signal ? AbortSignal.any([signal, state.creationController.signal]) : state.creationController.signal;
-      const session = await withinDeadline(() => state.creation, this.turnTimeoutMs, creationSignal);
+      const session = await withinDeadline(() => state.creation, Math.min(this.startupTimeoutMs, this.turnTimeoutMs), creationSignal);
       state.unsubscribers.push(session.on("external_tool.requested", (event) => {
         if (!isRootEvent(event)) return;
         try {
@@ -695,10 +705,13 @@ export class SessionManager {
       let triggerFinished = false;
       let finishing = false;
       let ready = false;
+      let lastActivityAt = performance.now();
+      let lastActivity = "request_started";
       const settle = (error) => {
         if (settled) return;
         settled = true;
         clearTimeout(timeout);
+        clearTimeout(idleTimeout);
         signal?.removeEventListener("abort", onAbort);
         for (const unsubscribe of subscriptions) unsubscribe();
         state.cancelActive = null;
@@ -709,6 +722,19 @@ export class SessionManager {
       const timeout = setTimeout(() => settle(new BridgeRequestError("Timed out waiting for GitHub Copilot.", {
         status: 504, code: "copilot_timeout",
       })), this.turnTimeoutMs);
+      const idleTimeout = setTimeout(() => {
+        this.onDiagnostic({ event: "bridge.turn_stalled", model: state.model, phase: state.phase,
+          timeoutMs: this.turnIdleTimeoutMs, idleMs: Math.floor(performance.now() - lastActivityAt), lastActivity });
+        settle(new BridgeRequestError("GitHub Copilot stopped producing model progress. The idle deadline expired; no request was retried.", {
+          status: 504, code: "copilot_idle_timeout",
+        }));
+      }, this.turnIdleTimeoutMs);
+      const progress = type => {
+        if (settled) return;
+        lastActivityAt = performance.now();
+        lastActivity = type;
+        idleTimeout.refresh();
+      };
       const finish = () => {
         if (settled || finishing || !started) return;
         finishing = true;
@@ -726,10 +752,13 @@ export class SessionManager {
           }).catch(settle);
       };
       subscriptions.push(
-        state.session.on("assistant.turn_start", (event) => { if (isRootEvent(event)) started = true; }),
+        state.session.on("assistant.turn_start", (event) => {
+          if (isRootEvent(event)) { started = true; progress("assistant.turn_start"); }
+        }),
         state.session.on("assistant.message", (event) => {
           if (!isRootEvent(event) || settled) return;
           started = true;
+          if (event.data.content || event.data.toolRequests?.length) progress("assistant.message");
           messages.push(event.data);
           const { chunkIndex, chunkCount } = event.data;
           const finalChunk = !Number.isInteger(chunkIndex) || !Number.isInteger(chunkCount) || chunkIndex === chunkCount - 1;
@@ -737,13 +766,20 @@ export class SessionManager {
         }),
         state.session.on("assistant.message_delta", (event) => {
           if (isRootEvent(event) && !settled) {
+            if (typeof event.data?.deltaContent === "string" && event.data.deltaContent.length) progress("assistant.message_delta");
             try { onEvent?.(event); } catch (error) { settle(error); }
           }
         }),
+        ...[["assistant.reasoning_delta", "deltaContent"], ["assistant.tool_call_delta", "inputDelta"]]
+          .map(([type, field]) => state.session.on(type, event => {
+            // Observe progress only; never publish reasoning or unvalidated tool fragments.
+            if (isRootEvent(event) && typeof event.data?.[field] === "string" && event.data[field].length) progress(type);
+          })),
         state.session.on("assistant.usage", (event) => {
           if (!isRootEvent(event) || settled) return;
           const data = event.data ?? {};
           usage.push(data);
+          progress("assistant.usage");
         }),
         // A model turn can end before stop-hook corrections, usage, or errors.
         // Only session.idle is terminal for text. External tool handoff above

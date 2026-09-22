@@ -2,7 +2,16 @@
 
 [한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
 
-## Latest: tool return-type metadata repair meets the ≥95% target — 2026-09-22
+## Latest: bridge and terminal-runner integration — 2026-09-23 KST
+
+[Implementation, full matrices, additional live tests and retained failures](2026-09-22-terminal-integration/README.md)
+
+- Final independent matrices: default **v3 66/77 (85.71%)**, separate **application-data-v1 72/77 (93.51%)**. Neither is 77/77 or meets the previously recorded 95% target.
+- PTY and Playwright paths are now repository-owned commands. Extra live testing exposed and fixed ANSI scroll-region handling; the failed run and preliminary matrix remain separate.
+- Remaining outcomes are explicit upstream filtering, literal-label omission and missing repeated tool calls. No oracle weakening, automatic retry, output rewriting or cross-profile score combination.
+- The final matrices were independently verified against current/frozen source. [Full results and source hashes](2026-09-22-terminal-integration/summary.json) · [Additional real-terminal checks](2026-09-22-terminal-integration/additional-live.json).
+
+## Earlier: tool return-type metadata repair meets the ≥95% target — 2026-09-22
 
 [Change scope, fresh full run and original evidence](2026-09-22-runner-repair/README.md)
 

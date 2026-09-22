@@ -130,10 +130,11 @@ export class SoakExecutor extends CaseExecutor {
   }
 }
 
-export async function runNativeLane(config) {
+export async function runNativeLane(config, { signal: parentSignal } = {}) {
   const { directory, model, durationSeconds, intervalSeconds, payloadBytes, compactEvery } = config;
   fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
-  const started = performance.now(), startWall = Date.now(), signal = AbortSignal.timeout((durationSeconds + 900) * 1000);
+  const started = performance.now(), startWall = Date.now(),
+    signal = AbortSignal.any([parentSignal, AbortSignal.timeout((durationSeconds + 900) * 1000)].filter(Boolean));
   const executor = new SoakExecutor({ ...config, provider: "ghcp", seed: config.runId,
     bin: config.bin || "codex", workRoot: path.join(directory, "owned-work"), signal });
   const clean = scrubber(process.env, [executor.token]);

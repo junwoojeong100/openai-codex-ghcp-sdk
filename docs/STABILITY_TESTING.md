@@ -10,7 +10,9 @@ Previous results, logs and reports were deleted at the user’s request. A fresh
 
 `v3` remains the default. `--profile application-data-v1` explicitly selects shorter read/remember/recall task wording under a distinct catalog ID and hash. The seven models, 11 scenarios, fixtures, fault schedule, budgets, literal-output and cleanup checks stay the same. Production user requests are not rewritten. Reports, workers and artifacts carry profile identity; verification rejects cross-profile case substitution and cannot be overridden with `--profile`.
 
-After clarifying fixture-tool return-type metadata, a fresh full run scored **74/77 (96.10%), Opus 9/11**, **meeting the ≥95% target**. Model-visible tool metadata changed as documented below; user prompts, fixtures, oracles, models, budgets and the production bridge did not. Opus S10/S11 filtering and Sonnet S05 literal-label omission remain three failures, with `fullMatrixPassed=false` and exit code 1. Both earlier 50/77 runs and original/default v3's **66/77 (85.71%), Opus 0/11** remain separate. The default profile and historical failure statuses are unchanged. [Target-meeting run and change scope](validation/2026-09-22-runner-repair/README.md) · [Earlier follow-up](validation/2026-09-22-fidelity-followup/README.md).
+The latest terminal-integration implementation was tested with two independent full matrices: **v3 66/77 (85.71%)** and **application-data-v1 72/77 (93.51%)**. Both retain failed cases, `fullMatrixPassed=false` and exit code 1. The 95% target is not met by these runs. See [current results, diagnosis and additional live terminal checks](validation/2026-09-22-terminal-integration/README.md).
+
+An earlier fixture-tool metadata repair scored **74/77 (96.10%), Opus 9/11** and met that run's target. Its changed model-visible metadata and three failures remain documented; it is not the score of the current implementation. Earlier 50/77 and v3 66/77 records also remain separate. The default profile, fixed contracts and historical failures are not rewritten. [Historical target-meeting run](validation/2026-09-22-runner-repair/README.md) · [Earlier follow-up](validation/2026-09-22-fidelity-followup/README.md).
 
 ```sh
 # Plan only; no model calls
@@ -91,11 +93,12 @@ The bridge uses structured SDK metadata, not matching refusal-like prose. It doe
 | Setting | Default | Meaning |
 |---|---:|---|
 | `TURN_TIMEOUT_MS` | 300000 | One SDK turn |
+| `TURN_IDLE_TIMEOUT_MS` | 90000 | No root-model progress; text, reasoning and tool-input streaming refresh it, not keepalives |
 | `REQUEST_TIMEOUT_MS` | 360000 | Manager request, including queue wait and SDK work; not HTTP body reception |
 | `MAX_REQUESTS_PER_SESSION` | 8 | Admitted active + queued requests per family |
 | `MAX_REQUESTS` | 128 | Global admitted active + queued requests |
 | `SDK_READINESS_TIMEOUT_MS` | 2000 | Local SDK ping deadline |
-| `SDK_STARTUP_TIMEOUT_MS` | 30000 | SDK start, ping and catalog initialization |
+| `SDK_STARTUP_TIMEOUT_MS` | 30000 | SDK start, ping/catalog initialization, session creation and model-setting RPCs; session setup is also capped by the turn limit |
 | `SDK_READINESS_INTERVAL_MS` | 15000 | Background connection monitoring interval |
 | `SDK_RECOVERY_BACKOFF_MS` | 5000 | Minimum interval between failed recovery attempts |
 

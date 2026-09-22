@@ -11,6 +11,7 @@ import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog } from "../../src/mode
 import { createBridgeServer } from "../../src/server.mjs";
 import { SessionManager } from "../../src/session-manager.mjs";
 import { NativeHost } from "../../scripts/compatibility/rpc.mjs";
+import { runTerminalProbe } from "../../scripts/soak/terminal.mjs";
 import { FakeClient } from "../helpers/stability-sdk.mjs";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
@@ -216,4 +217,112 @@ test("a stalled native stream returns a deadline error without automatic inferen
   assert.equal(client.sessions[0].sent.length, 1);
   assert.equal(client.sessions[0].aborted, 1);
   assert.equal(bridge.manager.states.size, 0);
+});
+
+test("one native turn can complete 120 sequential tools across repeated automatic compactions", { timeout: 25_000 }, async t => {
+  const f = fixture(t);
+  const target = 120;
+  let toolExecutions = 0;
+  const checkpoint = prompt => [...prompt.matchAll(/\bSTEP_(\d+)\b/g)].map(match => Number(match[1])).at(-1) ?? 0;
+  const advance = (session, step) => {
+    if (step === target) { session.reply("ALL_STEPS_DONE"); return; }
+    const tool = session.config.tools.find(entry => entry.description.includes("longturn-counter fixture"));
+    assert.ok(tool);
+    session.inputTokens = (session.inputTokens ?? 4000) + 2000;
+    session.emit("assistant.usage", { model, inputTokens: session.inputTokens, outputTokens: 20 });
+    session.toolCalls([{ toolCallId: `longturn-${step + 1}`, name: tool.name, arguments: { index: step + 1 } }]);
+  };
+  const client = new FakeClient({ models,
+    onSend(session, { prompt }) {
+      const step = checkpoint(prompt);
+      if (!session.config.tools.length) {
+        assert.ok(step > 0);
+        session.reply(`Completed through STEP_${step}. Continue the remaining steps without repeating earlier tools.`);
+      } else advance(session, step);
+    },
+    onSubmit(session, request) { advance(session, checkpoint(request.result.textResultForLlm)); },
+  });
+  const bridge = await f.bridge(client);
+  const host = await f.host(bridge.args, {
+    onRequest: async request => {
+      assert.equal(request.method, "item/tool/call");
+      assert.equal(request.params.tool, "read_counter");
+      assert.equal(request.params.arguments.index, toolExecutions + 1);
+      toolExecutions++;
+      return { success: true, contentItems: [{ type: "inputText", text: `STEP_${toolExecutions}\n${"inert measurement data\n".repeat(100)}` }] };
+    },
+  });
+  const thread = await startThread(host, f.directory, {
+    dynamicTools: [{ name: "read_counter", description: "Read longturn-counter fixture.",
+      inputSchema: { type: "object", properties: { index: { type: "integer" } }, required: ["index"], additionalProperties: false },
+      deferLoading: false }],
+  });
+  const turn = await host.turn(thread, `Read all ${target} counter samples in order, one tool call at a time.`);
+  assert.equal(turn.status, "completed", JSON.stringify({ error: turn.error, diagnostics: bridge.diagnostics }));
+  assert.equal(toolExecutions, target);
+  const compactions = host.records.filter(row => row.message.method === "item/completed"
+    && row.message.params?.item?.type === "contextCompaction");
+  assert.ok(compactions.length >= 6, `Expected repeated compaction, observed ${compactions.length}`);
+  assert.equal(bridge.manager.states.size, 1);
+  assert.equal(bridge.manager.queue.total, 0);
+  assert.ok(client.sessions.slice(0, -1).every(session => session.aborted === 1 && session.disconnected === 1));
+  assert.ok(!bridge.diagnostics.some(event => event.event === "bridge.pending_session_changed"));
+  t.diagnostic(JSON.stringify({ toolExecutions, compactions: compactions.length, sdkSessions: client.sessions.length }));
+});
+
+async function terminalFixture(t, { turns, hangFirstSetup = false }) {
+  const f = fixture(t);
+  const tmp = path.join(f.directory, "tmp");
+  fs.mkdirSync(tmp, { mode: 0o700 });
+  const output = path.join(f.directory, "sdk.json");
+  const configuration = path.join(f.directory, "fixture.json");
+  fs.writeFileSync(configuration, JSON.stringify({ output, hangFirstSetup }), { mode: 0o600 });
+  const result = await runTerminalProbe({
+    bin: path.join(root, "bin/codex-ghcp"),
+    args: ["--", "-a", "never", "--sandbox", "read-only",
+      "-c", `projects={ ${JSON.stringify(fs.realpathSync(f.directory))}={ trust_level="trusted" } }`,
+      "-c", "features.apps=false", "-c", "features.plugins=false", "-c", "features.memories=false", "-c", "features.multi_agent=false"],
+    cwd: f.directory, ownedRoot: f.directory, directory: path.join(f.directory, "terminal"),
+    env: { ...f.env, TMPDIR: tmp, CODEX_BIN: bin, COPILOT_HOME: path.join(f.directory, "copilot"),
+      GHCP_DAEMON_DIR: path.join(f.directory, "daemon"), GHCP_TERMINAL_FIXTURE: configuration,
+      TURN_TIMEOUT_MS: "4000", TURN_IDLE_TIMEOUT_MS: "1500", SDK_STARTUP_TIMEOUT_MS: "500",
+      NODE_OPTIONS: `--import=${JSON.stringify(path.join(root, "test/fixtures/terminal-sdk.mjs"))}` },
+    turns, timeoutMs: 20000, readyTimeoutMs: 8000, turnTimeoutMs: 6000, stopGraceMs: 1000,
+    allowOwnedTrust: true, allowOwnedSetup: true, columns: 160, rows: 45,
+  });
+  assert.equal(result.status, "passed", JSON.stringify({
+    result, screen: fs.readFileSync(path.join(f.directory, "terminal/terminal-screen.txt"), "utf8"),
+  }));
+  assert.equal(result.cleanup.childReaped, true);
+  assert.equal(result.cleanup.processGroupGone, true);
+  const sdk = JSON.parse(fs.readFileSync(output, "utf8"));
+  return { result, sdk };
+}
+
+test("the real TUI recovers from idle failure and Escape without restarting its terminal", { timeout: 25_000 }, async t => {
+  const { result, sdk } = await terminalFixture(t, { turns: [
+    { prompt: "Reply with FIRST_OK.", expectedMarker: "FIRST_OK" },
+    { prompt: "Run IDLE_FIXTURE.", expectedError: "GitHub Copilot stopped producing model progress" },
+    { prompt: "Reply with AFTER_IDLE_OK.", expectedMarker: "AFTER_IDLE_OK" },
+    { prompt: "Run INTERRUPT_FIXTURE.", expectedError: "Conversation interrupted", interruptAfterMs: 500 },
+    { prompt: "Reply with AFTER_INTERRUPT_OK.", expectedMarker: "AFTER_INTERRUPT_OK" },
+  ] });
+  assert.equal(sdk.sends, 5, "no stalled prompt or tool result may be silently retried");
+  assert.equal(result.turns[1].errorObserved, true);
+  assert.ok(result.turns[1].durationMs < 3500);
+  assert.ok(result.turns[3].interruptionRecoveryMs < 2500);
+  assert.equal(result.turns[4].markerObserved, true);
+  assert.equal(sdk.diagnostics.filter(event => event.event === "bridge.turn_stalled").length, 1);
+});
+
+test("the real TUI surfaces a stalled session setup and accepts the next prompt", { timeout: 25_000 }, async t => {
+  const { result, sdk } = await terminalFixture(t, { hangFirstSetup: true, turns: [
+    { prompt: "Start the initial controlled session.", expectedError: "GitHub Copilot session setup timed out" },
+    { prompt: "Reply with AFTER_SETUP_OK.", expectedMarker: "AFTER_SETUP_OK" },
+  ] });
+  assert.equal(result.turns[0].errorObserved, true);
+  assert.ok(result.turns[0].durationMs < 2500);
+  assert.equal(result.turns[1].markerObserved, true);
+  assert.equal(sdk.sends, 1);
+  assert.equal(sdk.sessions, 2);
 });

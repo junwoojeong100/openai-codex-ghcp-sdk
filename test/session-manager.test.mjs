@@ -968,6 +968,108 @@ test("a turn_end without idle times out instead of reporting completion", async 
   assert.equal(manager.states.size, 0);
 });
 
+test("the idle watchdog rejects a silent turn despite control-plane and subordinate heartbeats", async t => {
+  const diagnostics = [];
+  let timer;
+  t.after(() => clearInterval(timer));
+  const { manager, client } = await setup(t, {
+    turnTimeoutMs: 400, turnIdleTimeoutMs: 60, onDiagnostic: event => diagnostics.push(event),
+  }, {
+    onSend: session => {
+      session.emit("assistant.turn_start", {});
+      timer = setInterval(() => {
+        session.emit("session.usage_info", { currentTokens: 100, tokenLimit: 200_000 });
+        session.emit("assistant.message_delta", { deltaContent: "private-child-text" }, { agentId: "child" });
+        session.emit("assistant.reasoning_delta", { deltaContent: "private-child-reasoning", parentToolCallId: "child" });
+        session.emit("assistant.tool_call_delta", { inputDelta: "private-child-arguments" }, { agentId: "child" });
+        session.emit("assistant.message_delta", { deltaContent: "" });
+      }, 10);
+    },
+  });
+  const started = Date.now();
+  await assert.rejects(manager.execute(body("private-input"), headers("idle-watchdog")), {
+    status: 504, code: "copilot_idle_timeout",
+  });
+  assert.ok(Date.now() - started < 300);
+  assert.equal(client.sessions[0].aborted, 1);
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(manager.states.size, 0);
+  const stalled = diagnostics.find(event => event.event === "bridge.turn_stalled");
+  assert.equal(stalled.timeoutMs, 60);
+  assert.equal(stalled.lastActivity, "assistant.turn_start");
+  assert.equal(stalled.phase, "prompt");
+  assert.ok(stalled.idleMs >= 50);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /private-input|private-child/);
+  client.onSend = session => session.reply("recovered");
+  assert.equal((await manager.execute(body("next"), headers("idle-watchdog"))).messages[0].content, "recovered");
+});
+
+for (const [type, field] of [
+  ["assistant.message_delta", "deltaContent"],
+  ["assistant.reasoning_delta", "deltaContent"],
+  ["assistant.tool_call_delta", "inputDelta"],
+]) test(`genuine root progress refreshes the idle watchdog without exposing hidden data (${type})`, async t => {
+  let timer;
+  t.after(() => clearInterval(timer));
+  const forwarded = [], diagnostics = [];
+  const { manager } = await setup(t, { turnTimeoutMs: 500, turnIdleTimeoutMs: 80, onDiagnostic: e => diagnostics.push(e) }, {
+    onSend: session => {
+      let ticks = 0;
+      session.emit("assistant.turn_start", {});
+      timer = setInterval(() => {
+        session.emit(type, { [field]: "progress-data" });
+        if (++ticks === 5) {
+          clearInterval(timer);
+          session.reply("completed");
+        }
+      }, 30);
+    },
+  });
+  const started = Date.now();
+  const result = await manager.execute(body(), {}, { onEvent: event => forwarded.push(event) });
+  assert.equal(result.messages[0].content, "completed");
+  assert.ok(Date.now() - started >= 140);
+  assert.ok(forwarded.every(event => event.type === "assistant.message_delta"));
+  if (type !== "assistant.message_delta") assert.doesNotMatch(JSON.stringify(forwarded), /progress-data/);
+  assert.ok(!diagnostics.some(event => event.event === "bridge.turn_stalled"));
+});
+
+test("root progress cannot extend the absolute turn deadline indefinitely", async t => {
+  let timer;
+  t.after(() => clearInterval(timer));
+  const { manager } = await setup(t, { turnTimeoutMs: 110, turnIdleTimeoutMs: 60 }, {
+    onSend: session => {
+      session.emit("assistant.turn_start", {});
+      timer = setInterval(() => session.emit("assistant.reasoning_delta", { deltaContent: "working" }), 15);
+    },
+  });
+  await assert.rejects(manager.execute(body()), { code: "copilot_timeout" });
+  assert.equal(manager.states.size, 0);
+});
+
+test("session setup has a control-plane deadline instead of waiting for the full model turn", async t => {
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+  const { manager } = await setup(t, { startupTimeoutMs: 25, turnTimeoutMs: 400 }, {
+    createSession: () => gate,
+  });
+  t.after(release);
+  const started = Date.now();
+  await assert.rejects(manager.execute(body()), { status: 504, code: "copilot_setup_timeout" });
+  assert.ok(Date.now() - started < 250);
+  assert.equal(manager.states.size, 0);
+});
+
+test("a stalled model-setting RPC uses the same bounded setup deadline", async t => {
+  const { manager, client } = await setup(t, { startupTimeoutMs: 25, turnTimeoutMs: 400 });
+  await manager.execute(body("first", { reasoning: { effort: "low" } }), headers("setup"), { responseId: "setup-first" });
+  client.sessions[0].setModel = () => new Promise(() => {});
+  await assert.rejects(manager.execute(body("second", { previous_response_id: "setup-first", reasoning: { effort: "high" } }),
+    headers("setup")), { status: 504, code: "copilot_setup_timeout" });
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(manager.states.size, 0);
+});
+
 test("legacy parentToolCallId events cannot contaminate root text, usage or filter status", async t => {
   const seen = [];
   const { manager } = await setup(t, {}, {

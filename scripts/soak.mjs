@@ -11,9 +11,9 @@ export function parseArguments(args) {
     if (["--plan", "--execute", "--smoke"].includes(key)) {
       if (options.mode !== "plan" || (key !== "--plan" && seen.has("--plan"))) throw new Error("Choose one soak action");
       options.mode = key.slice(2);
-    } else if (["--output", "--duration-seconds", "--bin"].includes(key)) {
+    } else if (["--output", "--duration-seconds", "--bin", "--terminal-driver"].includes(key)) {
       const value = args[++i]; if (!value || value.startsWith("-")) throw new Error(`Missing ${key}`);
-      options[key === "--duration-seconds" ? "durationSeconds" : key.slice(2)] =
+      options[key === "--duration-seconds" ? "durationSeconds" : key === "--terminal-driver" ? "terminalDriver" : key.slice(2)] =
         key === "--duration-seconds" ? Number(value) : value;
     } else if (key === "--terminal") options.terminal = true;
     else throw new Error(`Unknown option ${key}`);
@@ -21,6 +21,9 @@ export function parseArguments(args) {
   if (options.durationSeconds !== undefined && (!Number.isSafeInteger(options.durationSeconds) ||
     options.durationSeconds < (options.mode === "smoke" ? 1 : SOAK_SECONDS))) throw new Error("Invalid soak duration");
   if (options.mode === "plan" && (options.output || options.bin)) throw new Error("Output/bin require execution");
+  if (options.terminalDriver !== undefined && (!options.terminal || !["pty", "playwright"].includes(options.terminalDriver))) {
+    throw new Error("--terminal-driver requires --terminal and must be pty or playwright");
+  }
   return options;
 }
 export async function main(args = process.argv.slice(2)) {
@@ -28,6 +31,7 @@ export async function main(args = process.argv.slice(2)) {
   if (mode === "plan") {
     console.log(JSON.stringify({ kind: "five-hour-soak-plan", modelCalls: 0, requiredSeconds: SOAK_SECONDS,
       nativeLanes: NATIVE_LANES, terminalRequested: options.terminal === true,
+      terminalDriver: options.terminalDriver ?? "pty",
       controlledContextOverridesAreNotModelCapacityChanges: true }, null, 2));
     return 0;
   }

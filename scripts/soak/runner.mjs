@@ -58,7 +58,8 @@ function ownedProcesses(groups) {
 }
 
 export async function runSoak({ output, smoke = false, durationSeconds = smoke ? 60 : SOAK_SECONDS,
-  signal, bin = process.env.CODEX_BIN || "codex", terminal = false } = {}) {
+  signal, bin = process.env.CODEX_BIN || "codex", terminal = false, terminalDriver = "pty" } = {}) {
+  if (!["pty", "playwright"].includes(terminalDriver) || terminalDriver !== "pty" && !terminal) throw new Error("A valid terminal driver requires --terminal.");
   if (!Number.isSafeInteger(durationSeconds) || durationSeconds < (smoke ? 1 : SOAK_SECONDS))
     throw new Error("A live endurance run requires at least 18000 seconds; use --smoke for a short harness check");
   if (smoke && durationSeconds > 600) throw new Error("Smoke runs are limited to 600 seconds");
@@ -73,7 +74,7 @@ export async function runSoak({ output, smoke = false, durationSeconds = smoke ?
     scope: "Long-lived native conversations and separately labelled controlled context/compaction stress; not a 77-case score.",
     lanes: NATIVE_LANES.map(lane => ({ ...lane, status: "not-run" })), monitorErrors: [], incidents: [] };
   if (terminal) report.lanes.push({ id: "terminal-luna-64k", model: "gpt-5.6-luna",
-    contextWindow: 65536, kind: "terminal", status: "not-run" });
+    contextWindow: 65536, kind: "terminal", terminalDriver, status: "not-run" });
   writeJson(path.join(directory, "freeze.json"), { ...report, sources: manifest });
   const checkpoint = () => writeJson(path.join(directory, "report.json"), report);
   const seen = new Set(), terminating = new Set();
@@ -129,14 +130,15 @@ export async function runSoak({ output, smoke = false, durationSeconds = smoke ?
         compactEvery: smoke && lane.compactEvery ? 3 : lane.compactEvery,
         expectedImplementationHash: before,
         payloadBytes: smoke ? 1024 : 8192, directory: laneDirectory,
-        workRoot: path.join(laneDirectory, "supervisor-work"), timeoutMs: (durationSeconds + 900) * 1000 };
+        workRoot: path.join(laneDirectory, "supervisor-work"), timeoutMs: (durationSeconds + 900) * 1000,
+        gracefulShutdownMs: 45000 };
       lane.supervisor = await supervise(config, { signal,
         workerFile: path.join(directory, "source-snapshot/scripts/soak/worker.mjs"),
         onGroup: (pid, live) => { if (live) { groups.add(pid); lane.workerPid = pid; } else groups.delete(pid); checkpoint(); } });
       const file = path.join(laneDirectory, "report.json");
       if (fs.existsSync(file)) lane.result = JSON.parse(fs.readFileSync(file, "utf8"));
       lane.status = lane.supervisor.code === 0 && lane.supervisor.processGroupGone &&
-        lane.result?.durationMet && !lane.result.error && !lane.result.cleanupError ? "completed" : "failed";
+        lane.result?.durationMet && !lane.result.error && !lane.result.cleanupError && !lane.result.evidenceError ? "completed" : "failed";
       checkpoint();
     }));
   } catch (error) {

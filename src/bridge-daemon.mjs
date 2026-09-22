@@ -81,7 +81,7 @@ function fingerprint(env, port) {
     hash.update(fs.readFileSync(path.join(rootDir, name)));
   }
   const entries = Object.entries(env).filter(([name]) =>
-    /^(COPILOT_|MAX_|GH_TOKEN$|GITHUB_TOKEN$|GH_CONFIG_DIR$|HOME$|HTTPS?_PROXY$|NO_PROXY$|LOG_LEVEL$|SDK_|REQUEST_TIMEOUT_MS$|TURN_TIMEOUT_MS$|CLEANUP_TIMEOUT_MS$|PENDING_TOOL_WAIT_MS$|STATE_IDLE_TTL_MS$)/.test(name));
+    /^(COPILOT_|MAX_|GH_TOKEN$|GITHUB_TOKEN$|GH_CONFIG_DIR$|HOME$|HTTPS?_PROXY$|NO_PROXY$|LOG_LEVEL$|SDK_|REQUEST_TIMEOUT_MS$|TURN_(?:IDLE_)?TIMEOUT_MS$|CLEANUP_TIMEOUT_MS$|PENDING_TOOL_WAIT_MS$|STATE_IDLE_TTL_MS$)/.test(name));
   hash.update(JSON.stringify(entries.sort(([a], [b]) => a.localeCompare(b))));
   return hash.digest("hex");
 }

@@ -185,20 +185,25 @@ health 외에는 `Authorization: Bearer <bridge-token>` 또는 `x-api-key`가 �
 
 JSON으로 직렬화한 대화 이력 한도(`MAX_REPLAY_BYTES`)와 HTTP 요청 본문 한도(`MAX_BODY_BYTES`)의 기본값은 각각 **33,554,432바이트(32 MiB)**입니다. 이는 실측으로 검증된 최대 처리량이 아닌 운영상 초기 보호 한도이며 모델 문맥 한도와도 별개입니다. 큰 대화는 여전히 메모리나 모델 문맥 한도를 초과할 수 있습니다. 필요하면 양의 정수 환경 변수로 각 한도를 재정의하고 브리지를 재시작하세요. 실행기는 `.env`를 자동으로 읽지 않습니다. 상주 브리지는 연결된 Codex 세션을 닫은 뒤 종료하세요. 재시작하면 메모리의 대화 상태가 사라집니다.
 
-실행기는 Codex의 HTTP·스트림 자동 재시도를 끕니다. 오류나 시간 초과 시 긴 프롬프트·실행 여부가 불확실한 도구 결과를 반복 재전송하지 않고 오류를 표시합니다. 모델 턴 제한은 기본 5분(`TURN_TIMEOUT_MS=300000`), 큐 대기 포함 전체 요청 제한은 6분(`REQUEST_TIMEOUT_MS=360000`)이며 정리 작업은 별도 제한을 갖습니다. 변경은 다시 실행한 프로세스부터 적용됩니다. 기존 상주 bridge를 사용 중이면 연결된 Codex를 닫고 `./bin/codex-ghcp-stop`을 실행한 뒤 다시 시작하세요.
+실행기는 Codex의 HTTP·스트림 자동 재시도를 끕니다. 오류나 시간 초과 시 긴 프롬프트·실행 여부가 불확실한 도구 결과를 반복 재전송하지 않고 오류를 표시합니다. **모델 진행이 90초 동안 없으면** `copilot_idle_timeout`으로 종료합니다(`TURN_IDLE_TIMEOUT_MS=90000`). 루트 모델의 텍스트·추론·도구 입력 스트리밍은 대기 시간을 갱신하지만 HTTP keepalive와 하위 에이전트 이벤트는 갱신하지 않습니다. 추론과 미완성 도구 인자는 생존 확인에만 사용하며 클라이언트에 노출하지 않습니다. 정상적으로 조용히 오래 추론하는 모델은 이 값을 늘릴 수 있습니다.
+
+세션 생성·모델 설정 RPC는 **SDK 시작 제한 30초**(`SDK_STARTUP_TIMEOUT_MS=30000`, 턴 제한 이하)를 적용하고 `copilot_setup_timeout`으로 알립니다. 전체 모델 턴 제한은 기본 5분(`TURN_TIMEOUT_MS=300000`), 큐 대기 포함 요청 제한은 6분(`REQUEST_TIMEOUT_MS=360000`)이며 정리 작업은 별도 제한을 갖습니다. 변경은 다시 실행한 프로세스부터 적용됩니다. 기존 상주 bridge를 사용 중이면 연결된 Codex를 닫고 `./bin/codex-ghcp-stop`을 실행한 뒤 다시 시작하세요.
 
 ## 로컬 확인과 통합 호환성 검증
 
 ```bash
 npm test                              # 단위/실행 제어 테스트, 모델 호출 없음
-npm run test:context:runtime           # 실제 Codex 피커·자동 압축·오류 복구, SDK 테스트 대역
+npm run test:context:runtime           # 실제 Codex/PTY: 압축·120회 도구·무응답/설정/Esc 복구, SDK 대역
+npm run test:terminal:runtime          # 통합 PTY/Playwright 경로·취소·정리, SDK 대역
 npm run test:scenarios                 # 18개 통합 시나리오 계약 검사
 npm run docs:scenarios:check           # 생성 문서와 사양 일치 검사
 npm run test:compatibility -- --plan   # 모델 호출 없는 실행 계획
 npm run test:compatibility:runtime     # 실제 Codex + SDK 테스트 대역, 모델 호출 없음
 ```
 
-컨텍스트 runtime 검사는 설치된 Codex CLI·격리된 프로필·기계적인 SDK 대역을 사용합니다. 실모델을 호출하지 않으며 최대 문맥이나 장시간 무중단 실행을 인증하는 검사는 아닙니다.
+컨텍스트 runtime 검사는 설치된 Codex CLI·격리된 프로필·기계적인 SDK 대역을 사용합니다. 실제 터미널 항목은 private PTY를 위한 Python 3도 필요합니다. 무응답·세션 생성 정체·Escape 이후 같은 터미널에서 재개하는지, 120회 연속 도구 호출과 반복 압축이 완료되는지 확인합니다. 실모델을 호출하지 않으며 최대 문맥이나 장시간 무중단 실행을 인증하는 검사는 아닙니다.
+
+단독 실모델 터미널 검사는 `npm run test:terminal -- --execute --driver playwright --model gpt-6-astra --duration-seconds 120`으로 재현하며 `pty` 드라이버도 지원합니다. 먼저 `npx --no-install playwright install chromium`으로 브라우저를 설치하세요. 입력·응답 크기, 취소, 동결 증거, 통합 `test:soak -- --terminal` 경로는 [터미널·내구성 검사](docs/SOAK_TESTING_KO.md)를 참고하세요. 실검증은 Copilot 사용량이 발생하며 기본 `--plan`은 모델을 호출하지 않습니다.
 
 18개 시나리오 호환성 계약은 11개 시나리오 안정성 계약과 별개이며, 안정성 결과를 이 실모델 행렬의 통과 증거로 사용하지 않습니다.
 **시나리오 18개 × GHCP 7모델 = 총 126건**이며, 별도 기준선·빠른 모드·부분 모델 선택은 없습니다.
@@ -225,7 +230,7 @@ npm run test:stability -- --plan
 npm run test:stability -- --execute  # Copilot 사용량 발생
 ```
 
-**최신 실제 Codex 전체 검증(2026-09-22), `application-data-v1`: 74/77(96.10%)로 95% 목표를 달성했습니다.** 검증용 도구 설명에 반환값이 필드 값만이 아닌 전체 원문임을 명확히 했습니다. 사용자 프롬프트·판정기·생산 브릿지는 그대로이며 모델이 보는 도구 메타데이터는 변경됐습니다. Opus S10·S11 필터와 Sonnet S05의 레이블 누락, 총 3건은 실패로 유지합니다. 원래/기본 v3의 66/77과 앞선 두 50/77 실행은 별도 보존하며 점수를 조합하지 않습니다. [수정·전체 결과·증거](docs/validation/2026-09-22-runner-repair/README_KO.md)와 [검증 목록](docs/validation/README_KO.md)을 참고하세요.
+**최신 실제 Codex 전체 검증(한국 시간 2026-09-23)은 기본 v3 66/77(85.71%), 별도 `application-data-v1` 72/77(93.51%)입니다.** 터미널 실행기 통합 후 두 행렬을 각각 전체 실행하고 현재·동결 소스로 검증했습니다. 상위 필터·literal 레이블 누락·반복 도구 호출 누락을 실패로 유지하며, 77/77도 기존 95% 목표 달성도 아닙니다. 추가 실제 PTY·Playwright 확인에서 스크롤 영역 관측 오류를 찾아 수정했습니다. 앞선 74/77을 포함한 과거 결과는 별도로 보존하고 점수를 조합하지 않습니다. [구현·전체 결과·증거](docs/validation/2026-09-22-terminal-integration/README_KO.md)와 [검증 목록](docs/validation/README_KO.md)을 참고하세요.
 
 사용자 요청으로 이번 수정 전에 삭제한 과거 검증 문서는 복원하지 않았습니다. 이번 수정 중 수행한 전체 실행은 실패·시간 초과를 포함해 각각 기록했으며, 과거 셀을 새 점수로 재사용하지 않습니다. 수시간 안정성이나 제품 전체 지원을 인증하는 결과는 아닙니다.
 

@@ -25,6 +25,8 @@ Codex CLI — 승인·샌드박스·도구 실행 담당
 - `model-map.mjs`: 허용된 7개 ID, 기본 모델, OpenAI/Codex catalog 메타데이터 및 reasoning effort 검사. 모델 문맥 한도와 지원 effort는 SDK catalog에서 가져오며, 자동 대체 모델은 없습니다.
 - `copilot-home.mjs`, `list-models.mjs`: 기존 Copilot 홈 경로 해석과 계정별 모델 조회.
 - 실행기·daemon 모듈 및 `bin/`: 프로젝트 소유 bridge 시작, 프로세스별 Codex 설정과 비공개 임시 모델 목록 전달, 선택적 백그라운드 실행 관리. 임시 목록은 피커의 내장·캐시 목록을 대체하며 Codex 종료 시 삭제합니다.
+- `scripts/terminal.mjs`, `scripts/soak/terminal-lane.mjs`: 명시적 실모델 터미널 실행, 소스 동결 worker, 격리 환경과 SDK 응답 대조. 통합 soak worker도 같은 terminal lane을 사용합니다.
+- `scripts/soak/terminal.mjs`, `browser.mjs`: 동일한 소유 PTY 수명주기에 독립 파서 또는 Playwright/xterm 표시기를 연결합니다. 브라우저 입출력은 실제 PTY를 사용하며 모의 assistant 화면이 아닙니다. 취소 시 터미널 그룹과 소유 브라우저를 함께 정리합니다.
 
 ## 도구 호출 왕복
 
@@ -59,6 +61,8 @@ SDK 세션은 기본 context tier를 사용하고 SDK 자체 압축은 비활성
 HTTP는 루프백에만 바인딩하고 `/health` 외에는 bridge 전용 인증이 필요합니다. 실행기가 생성한 로컬 토큰은 자식 프로세스 환경 변수로 전달하며, Copilot 인증을 Codex 설정으로 복사하지 않습니다.
 
 세션 수·유휴 시간·본문 크기·이력 크기·응답 시간에 상한을 둡니다. 연결 중단·실패·시간 초과 시 해당 bridge 소유 세션을 제거합니다. abort, disconnect, delete를 각각 시간 제한 안에서 시도하며, 종료 시 정상 정리가 실패하면 이 프로젝트의 SDK client를 강제로 정리합니다. TTL 또는 용량에 따른 제거로 대기 호출이 사라질 수 있으며, 이 경우 가짜 결과를 만들지 않고 명시적으로 오류를 반환합니다.
+
+모델 진행 감시는 유휴 세션 만료와 전체 턴 제한과 별개입니다. 루트 모델의 활동만 갱신하며 추론·도구 입력 조각은 전달하지 않고 생존 확인에만 사용합니다. heartbeat나 하위 에이전트 활동으로 루트 무응답이 가려지지 않습니다. `bridge.turn_stalled` 진단에는 모델·단계·정해진 이벤트 이름·시간만 기록합니다. 세션 생성·모델 설정에는 SDK 시작과 턴 제한 중 짧은 값을 적용하여 제어 RPC 하나가 기본 5분의 전체 턴 시간을 소모하지 않도록 합니다.
 
 bridge의 상관관계·재시도 상태는 메모리에 있습니다. `store:false`는 여기서 Responses 조회용 저장소를 만들지 않는다는 뜻이지, Copilot·Codex·SDK가 로컬 세션 파일이나 서비스 측 데이터를 전혀 남기지 않는다는 보장은 아닙니다. bridge는 요청 본문과 인증정보를 로그에 기록하지 않습니다. SDK 오류에는 서비스 진단 내용이 포함될 수 있습니다.
 

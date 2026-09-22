@@ -10,7 +10,9 @@
 
 기본값은 `v3`입니다. `--profile application-data-v1`을 명시하면 read/remember/recall 요청 문구를 간결하게 작성한 별도 catalog ID·hash를 선택합니다. 7개 모델·11개 시나리오·fixture·장애 주입·예산·literal-output·정리 판정은 같습니다. production 사용자 요청을 재작성하지 않습니다. 보고서·worker·artifact에 프로필 identity를 전달하며, 다른 프로필의 통과 셀 대입이나 `--verify --profile` 재채점을 거절합니다.
 
-검증 도구의 반환형식 설명을 명확히 한 뒤 새 전체 실측은 **74/77(96.10%), Opus 9/11**로 **95% 목표를 달성**했습니다. 아래 설명처럼 모델이 보는 도구 메타데이터는 변경됐지만 사용자 프롬프트·fixture·판정기·모델·예산·생산 브릿지는 그대로입니다. Opus S10/S11 필터와 Sonnet S05의 literal 레이블 누락, 총 3건은 실패이며 `fullMatrixPassed=false`와 종료 코드 1을 유지합니다. 앞선 두 50/77 실행과 원래/기본 v3의 **66/77(85.71%), Opus 0/11**은 별도 보존합니다. 기본 프로필 변경이나 과거 실패의 재채점은 하지 않습니다. [목표 달성 실행·변경 범위](validation/2026-09-22-runner-repair/README_KO.md) · [앞선 추가 검증](validation/2026-09-22-fidelity-followup/README_KO.md).
+최신 터미널 통합 구현의 독립 전체 실측은 **v3 66/77(85.71%)**, **application-data-v1 72/77(93.51%)**입니다. 두 실행 모두 실패·`fullMatrixPassed=false`·종료 코드 1을 유지하며 이번에는 95% 목표도 미달입니다. [현재 결과·원인 분류·추가 실제 터미널 확인](validation/2026-09-22-terminal-integration/README_KO.md)을 참고하세요.
+
+앞선 도구 메타데이터 수정 실행은 **74/77(96.10%), Opus 9/11**로 당시 목표를 달성했습니다. 모델이 보는 메타데이터 변경과 3건의 실패는 해당 기록에 유지하며 현재 구현의 점수로 사용하지 않습니다. 더 앞선 두 50/77 및 v3 66/77도 별도 보존합니다. 기본 프로필·고정 계약·과거 실패를 바꾸거나 재채점하지 않습니다. [과거 목표 달성 실행](validation/2026-09-22-runner-repair/README_KO.md) · [앞선 추가 검증](validation/2026-09-22-fidelity-followup/README_KO.md).
 
 ```sh
 # 계획만 출력, 모델 호출 없음
@@ -91,11 +93,12 @@ npm run test:stability -- --verify .runtime/application-live-new/report.json
 | 설정 | 기본값 | 의미 |
 |---|---:|---|
 | `TURN_TIMEOUT_MS` | 300000 | SDK 턴 1회 |
+| `TURN_IDLE_TIMEOUT_MS` | 90000 | 루트 모델 진행이 없는 시간; 텍스트·추론·도구 입력 스트리밍은 갱신하고 keepalive는 제외 |
 | `REQUEST_TIMEOUT_MS` | 360000 | 대기열·SDK 작업을 포함한 manager 요청; HTTP 본문 수신은 별도 |
 | `MAX_REQUESTS_PER_SESSION` | 8 | 대화별 실행 중 + 대기 요청 수 |
 | `MAX_REQUESTS` | 128 | 전체 실행 중 + 대기 요청 수 |
 | `SDK_READINESS_TIMEOUT_MS` | 2000 | 로컬 SDK ping 제한 |
-| `SDK_STARTUP_TIMEOUT_MS` | 30000 | SDK 시작·ping·모델 목록 초기화 |
+| `SDK_STARTUP_TIMEOUT_MS` | 30000 | SDK 시작·ping·모델 목록 초기화 및 세션 생성·모델 설정 RPC; 세션 설정에는 턴 제한도 적용 |
 | `SDK_READINESS_INTERVAL_MS` | 15000 | 백그라운드 연결 검사 간격 |
 | `SDK_RECOVERY_BACKOFF_MS` | 5000 | 실패한 복구 시도 간 최소 간격 |
 

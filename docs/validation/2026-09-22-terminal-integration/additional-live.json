@@ -1,0 +1,535 @@
+{
+  "terminalRuns": [
+    {
+      "label": "pre-fix-pty-observer-failure",
+      "localEvidence": ".runtime/integration-terminal-pty-live-20260922",
+      "model": "gpt-6-astra",
+      "driver": "pty",
+      "passed": false,
+      "interrupted": false,
+      "startedAt": "2026-09-22T13:39:20.729Z",
+      "finishedAt": "2026-09-22T13:44:31.047Z",
+      "implementationHash": "6abc79a3574db0b7a3ac421cd7a6bbc9a3c5f885d74fc3805b702a2c6fc8a11f",
+      "frozenSourceUnchanged": true,
+      "requiredSeconds": 30,
+      "coveredSeconds": 300.02011325,
+      "durationMet": false,
+      "turns": 1,
+      "passedTurns": 0,
+      "failed": 2,
+      "evidence": {
+        "completed": 0,
+        "modelResponsesVerified": false,
+        "largeResponses": 0,
+        "responseChars": 0,
+        "upstreamFailed": false
+      },
+      "probeStatus": "timed-out",
+      "reason": "completion-deadline",
+      "error": {
+        "name": "TerminalProbeError",
+        "message": "completion-deadline"
+      },
+      "cleanup": {
+        "type": "cleanup",
+        "at": 1790084671015,
+        "pid": 3542,
+        "childReaped": true,
+        "processGroupGone": true,
+        "signals": [
+          "SIGINT"
+        ],
+        "errors": [],
+        "probeObservations": [],
+        "helperExited": true
+      },
+      "supervisor": {
+        "code": 1,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 308066,
+        "error": null
+      },
+      "sdk": {
+        "modelCalls": 1,
+        "maxInputTokens": 11004,
+        "filtered": 0,
+        "errors": 0,
+        "modelMismatches": 0,
+        "streamFailures": 0,
+        "streamCompletions": 1
+      }
+    },
+    {
+      "label": "post-fix-pty",
+      "localEvidence": ".runtime/integration-terminal-pty-fixed-20260922",
+      "model": "gpt-6-astra",
+      "driver": "pty",
+      "passed": true,
+      "interrupted": false,
+      "startedAt": "2026-09-22T13:56:29.393Z",
+      "finishedAt": "2026-09-22T13:57:12.666Z",
+      "implementationHash": "afb15ca56072448ed56b8efff10eb0cce0baa339c272119b5312d64d998a6eae",
+      "frozenSourceUnchanged": true,
+      "requiredSeconds": 30,
+      "coveredSeconds": 32.884191458000004,
+      "durationMet": true,
+      "turns": 2,
+      "passedTurns": 2,
+      "failed": 0,
+      "evidence": {
+        "completed": 2,
+        "modelResponsesVerified": true,
+        "largeResponses": 2,
+        "responseChars": 5167,
+        "upstreamFailed": false
+      },
+      "probeStatus": "passed",
+      "reason": "duration-covered",
+      "cleanup": {
+        "type": "cleanup",
+        "at": 1790085432645,
+        "pid": 12742,
+        "childReaped": true,
+        "processGroupGone": true,
+        "signals": [
+          "SIGINT"
+        ],
+        "errors": [],
+        "probeObservations": [],
+        "helperExited": true
+      },
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 41031,
+        "error": null
+      },
+      "sdk": {
+        "modelCalls": 2,
+        "maxInputTokens": 17171,
+        "filtered": 0,
+        "errors": 0,
+        "modelMismatches": 0,
+        "streamFailures": 0,
+        "streamCompletions": 2
+      }
+    },
+    {
+      "label": "large-playwright",
+      "localEvidence": ".runtime/integration-terminal-browser-live-20260922",
+      "model": "claude-sonnet-5",
+      "driver": "playwright",
+      "passed": true,
+      "interrupted": false,
+      "startedAt": "2026-09-22T13:56:29.500Z",
+      "finishedAt": "2026-09-22T13:57:42.420Z",
+      "implementationHash": "afb15ca56072448ed56b8efff10eb0cce0baa339c272119b5312d64d998a6eae",
+      "frozenSourceUnchanged": true,
+      "requiredSeconds": 60,
+      "coveredSeconds": 62.428186583999995,
+      "durationMet": true,
+      "turns": 2,
+      "passedTurns": 2,
+      "failed": 0,
+      "evidence": {
+        "completed": 2,
+        "modelResponsesVerified": true,
+        "largeResponses": 2,
+        "responseChars": 13594,
+        "upstreamFailed": false
+      },
+      "probeStatus": "passed",
+      "reason": "duration-covered",
+      "cleanup": {
+        "type": "cleanup",
+        "at": 1790085462332,
+        "pid": 12762,
+        "childReaped": true,
+        "processGroupGone": true,
+        "signals": [
+          "SIGINT"
+        ],
+        "errors": [],
+        "probeObservations": [],
+        "helperExited": true
+      },
+      "browser": {
+        "version": "153.0.8010.12"
+      },
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 70730,
+        "error": null
+      },
+      "sdk": {
+        "modelCalls": 2,
+        "maxInputTokens": 57344,
+        "filtered": 0,
+        "errors": 0,
+        "modelMismatches": 0,
+        "streamFailures": 0,
+        "streamCompletions": 2
+      }
+    },
+    {
+      "label": "expected-live-cancellation",
+      "localEvidence": ".runtime/integration-terminal-live-cancel-20260922",
+      "model": "gpt-6-astra",
+      "driver": "playwright",
+      "passed": false,
+      "interrupted": true,
+      "startedAt": "2026-09-22T14:03:14.267Z",
+      "finishedAt": "2026-09-22T14:03:44.710Z",
+      "implementationHash": "afb15ca56072448ed56b8efff10eb0cce0baa339c272119b5312d64d998a6eae",
+      "frozenSourceUnchanged": true,
+      "requiredSeconds": 120,
+      "coveredSeconds": 19.385948125,
+      "durationMet": false,
+      "turns": 2,
+      "passedTurns": 1,
+      "failed": 1,
+      "evidence": {
+        "completed": 1,
+        "modelResponsesVerified": true,
+        "largeResponses": 1,
+        "responseChars": 2553,
+        "upstreamFailed": false
+      },
+      "probeStatus": "aborted",
+      "reason": "cancelled",
+      "error": {
+        "name": "TerminalProbeError",
+        "message": "cancelled"
+      },
+      "cleanup": {
+        "type": "cleanup",
+        "at": 1790085824687,
+        "pid": 14167,
+        "childReaped": true,
+        "processGroupGone": true,
+        "signals": [
+          "SIGINT"
+        ],
+        "errors": [],
+        "probeObservations": [],
+        "helperExited": true
+      },
+      "browser": {
+        "version": "153.0.8010.12"
+      },
+      "supervisor": {
+        "code": 1,
+        "signal": null,
+        "killed": true,
+        "processGroupGone": true,
+        "durationMs": 27616,
+        "error": {
+          "name": "AbortError",
+          "message": "Deliberate live cancellation check"
+        }
+      },
+      "sdk": {
+        "modelCalls": 1,
+        "maxInputTokens": 11066,
+        "filtered": 0,
+        "errors": 0,
+        "modelMismatches": 0,
+        "streamFailures": 0,
+        "streamCompletions": 1
+      },
+      "expectedCancellationCheck": {
+        "kind": "expected-live-cancellation",
+        "enteredActualInference": true,
+        "model": "gpt-6-astra",
+        "interrupted": true,
+        "partialRunStillNotPassed": true,
+        "terminalAndBrowserGone": true,
+        "pass": true
+      }
+    },
+    {
+      "label": "lazy-large-playwright-final",
+      "localEvidence": ".runtime/integration-lazy-workload-live-20260923",
+      "model": "gpt-6-astra",
+      "driver": "playwright",
+      "passed": true,
+      "interrupted": false,
+      "startedAt": "2026-09-22T15:16:46.039Z",
+      "finishedAt": "2026-09-22T15:17:44.934Z",
+      "implementationHash": "83fe8c2f0dba8ecd0b5d4b95079cf0d567b4717d8db6799ff9ada97aa91a8ebb",
+      "frozenSourceUnchanged": true,
+      "requiredSeconds": 30,
+      "coveredSeconds": 47.544782792,
+      "durationMet": true,
+      "turns": 2,
+      "passedTurns": 2,
+      "failed": 0,
+      "evidence": {
+        "completed": 2,
+        "modelResponsesVerified": true,
+        "largeResponses": 2,
+        "responseChars": 8506,
+        "upstreamFailed": false
+      },
+      "probeStatus": "passed",
+      "reason": "duration-covered",
+      "cleanup": {
+        "type": "cleanup",
+        "at": 1790090264859,
+        "pid": 35809,
+        "childReaped": true,
+        "processGroupGone": true,
+        "signals": [
+          "SIGINT"
+        ],
+        "errors": [],
+        "probeObservations": [],
+        "helperExited": true
+      },
+      "browser": {
+        "version": "153.0.8010.12"
+      },
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 56489,
+        "error": null
+      },
+      "sdk": {
+        "modelCalls": 2,
+        "maxInputTokens": 39832,
+        "filtered": 0,
+        "errors": 0,
+        "modelMismatches": 0,
+        "streamFailures": 0,
+        "streamCompletions": 2
+      }
+    }
+  ],
+  "soaks": [
+    {
+      "label": "combined-playwright-smoke",
+      "localEvidence": ".runtime/integration-soak-playwright-live-20260922",
+      "kind": "real-codex-soak-smoke",
+      "startedAt": "2026-09-22T13:39:22.970Z",
+      "finishedAt": "2026-09-22T13:40:32.106Z",
+      "implementationHash": "6abc79a3574db0b7a3ac421cd7a6bbc9a3c5f885d74fc3805b702a2c6fc8a11f",
+      "frozenSourceUnchanged": true,
+      "durationMet": false,
+      "requiredSeconds": 60,
+      "allLanesCompleted": true,
+      "noObservedFailures": true,
+      "incidents": [],
+      "monitorErrors": [],
+      "lanes": [
+        {
+          "id": "native-luna-default",
+          "model": "gpt-5.6-luna",
+          "kind": "native",
+          "status": "completed",
+          "supervisor": {
+            "code": 0,
+            "signal": null,
+            "killed": false,
+            "processGroupGone": true,
+            "durationMs": 63387,
+            "error": null
+          },
+          "turns": 20,
+          "passed": 20,
+          "failed": 0,
+          "coveredSeconds": 60.354291084,
+          "durationMet": true,
+          "compactions": 0,
+          "resources": {
+            "cleaned": true,
+            "errors": [],
+            "networkConnections": 0,
+            "hostPids": [
+              3812
+            ]
+          }
+        },
+        {
+          "id": "native-sonnet-128k",
+          "model": "claude-sonnet-5",
+          "kind": "native",
+          "status": "completed",
+          "supervisor": {
+            "code": 0,
+            "signal": null,
+            "killed": false,
+            "processGroupGone": true,
+            "durationMs": 65734,
+            "error": null
+          },
+          "turns": 9,
+          "passed": 9,
+          "failed": 0,
+          "coveredSeconds": 62.888139625,
+          "durationMet": true,
+          "compactions": 3,
+          "resources": {
+            "cleaned": true,
+            "errors": [],
+            "networkConnections": 0,
+            "hostPids": [
+              3728
+            ]
+          }
+        },
+        {
+          "id": "terminal-luna-64k",
+          "model": "gpt-5.6-luna",
+          "kind": "terminal",
+          "terminalDriver": "playwright",
+          "status": "completed",
+          "supervisor": {
+            "code": 0,
+            "signal": null,
+            "killed": false,
+            "processGroupGone": true,
+            "durationMs": 69106,
+            "error": null
+          },
+          "turns": 15,
+          "passed": 15,
+          "failed": 0,
+          "coveredSeconds": 60.457124042000004,
+          "durationMet": true,
+          "compactions": 0,
+          "probeCleanup": {
+            "type": "cleanup",
+            "at": 1790084431981,
+            "pid": 3702,
+            "childReaped": true,
+            "processGroupGone": true,
+            "signals": [
+              "SIGINT"
+            ],
+            "errors": [],
+            "probeObservations": [],
+            "helperExited": true
+          }
+        }
+      ]
+    },
+    {
+      "label": "combined-pty-smoke-final",
+      "localEvidence": ".runtime/integration-soak-pty-final-20260922",
+      "kind": "real-codex-soak-smoke",
+      "startedAt": "2026-09-22T14:03:17.095Z",
+      "finishedAt": "2026-09-22T14:04:30.187Z",
+      "implementationHash": "afb15ca56072448ed56b8efff10eb0cce0baa339c272119b5312d64d998a6eae",
+      "frozenSourceUnchanged": true,
+      "durationMet": false,
+      "requiredSeconds": 60,
+      "allLanesCompleted": true,
+      "noObservedFailures": true,
+      "incidents": [],
+      "monitorErrors": [],
+      "lanes": [
+        {
+          "id": "native-luna-default",
+          "model": "gpt-5.6-luna",
+          "kind": "native",
+          "status": "completed",
+          "supervisor": {
+            "code": 0,
+            "signal": null,
+            "killed": false,
+            "processGroupGone": true,
+            "durationMs": 64578,
+            "error": null
+          },
+          "turns": 16,
+          "passed": 16,
+          "failed": 0,
+          "coveredSeconds": 61.759107042000004,
+          "durationMet": true,
+          "compactions": 0,
+          "resources": {
+            "cleaned": true,
+            "errors": [],
+            "networkConnections": 0,
+            "hostPids": [
+              14203
+            ]
+          }
+        },
+        {
+          "id": "native-sonnet-128k",
+          "model": "claude-sonnet-5",
+          "kind": "native",
+          "status": "completed",
+          "supervisor": {
+            "code": 0,
+            "signal": null,
+            "killed": false,
+            "processGroupGone": true,
+            "durationMs": 73066,
+            "error": null
+          },
+          "turns": 9,
+          "passed": 9,
+          "failed": 0,
+          "coveredSeconds": 70.01708620800001,
+          "durationMet": true,
+          "compactions": 3,
+          "resources": {
+            "cleaned": true,
+            "errors": [],
+            "networkConnections": 0,
+            "hostPids": [
+              14214
+            ]
+          }
+        },
+        {
+          "id": "terminal-luna-64k",
+          "model": "gpt-5.6-luna",
+          "kind": "terminal",
+          "terminalDriver": "pty",
+          "status": "completed",
+          "supervisor": {
+            "code": 0,
+            "signal": null,
+            "killed": false,
+            "processGroupGone": true,
+            "durationMs": 68807,
+            "error": null
+          },
+          "turns": 15,
+          "passed": 15,
+          "failed": 0,
+          "coveredSeconds": 60.667866167,
+          "durationMet": true,
+          "compactions": 0,
+          "probeCleanup": {
+            "type": "cleanup",
+            "at": 1790085865887,
+            "pid": 14028,
+            "childReaped": true,
+            "processGroupGone": true,
+            "signals": [
+              "SIGINT"
+            ],
+            "errors": [],
+            "probeObservations": [],
+            "helperExited": true
+          }
+        }
+      ]
+    }
+  ],
+  "note": "Smoke coverage, not five-hour certification. The pre-fix failure and intentional cancellation remain non-passing duration runs."
+}

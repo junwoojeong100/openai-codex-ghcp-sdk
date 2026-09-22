@@ -25,6 +25,8 @@ The bridge adapts protocols. It does not replace Codex's tool executor with Copi
 - `model-map.mjs`: the seven allowed IDs, default selection, OpenAI/Codex catalog metadata and reasoning-effort checks. Model context limits and supported efforts come from the SDK catalog; there is no automatic model fallback.
 - `copilot-home.mjs` and `list-models.mjs`: existing Copilot home resolution and account-specific model listing.
 - Launcher/daemon modules and `bin/`: start a project-owned bridge, pass per-process Codex configuration and a private temporary model catalog, and manage optional background operation. The catalog replaces bundled/cached picker entries and is removed on Codex exit.
+- `scripts/terminal.mjs` and `scripts/soak/terminal-lane.mjs`: explicit live terminal validation, frozen-source workers, isolated environments and SDK-correlated outcome checks. The soak worker uses the same terminal lane.
+- `scripts/soak/terminal.mjs` and `browser.mjs`: one owned PTY lifecycle with either the independent parser or a Playwright/xterm renderer. Browser input and output use the real PTY, not a simulated assistant; cancellation reaps both the terminal group and owned browser.
 
 ## Tool handoff
 
@@ -59,6 +61,8 @@ SDK sessions use the default context tier with independent SDK compaction disabl
 The HTTP listener is loopback-only and requires a bridge-specific credential except for `/health`. Launchers pass a generated local credential through child-process environment variables; they do not copy Copilot authentication into Codex configuration.
 
 Session count, idle lifetime, body size, history size and turn duration are bounded. Client disconnect or a failed/timed-out turn evicts its bridge-owned SDK session. Cleanup attempts abort, disconnect and delete with deadlines. Shutdown stops this project's SDK client, with a forced stop fallback if graceful cleanup fails. TTL/capacity eviction can invalidate pending calls; clients receive an explicit error rather than a fabricated tool result.
+
+The model-progress watchdog is separate from idle-session expiry and the absolute turn deadline. Only root model activity refreshes it, including streamed reasoning/tool-input fragments without forwarding them. Heartbeats and subordinate activity cannot mask a stalled root response. `bridge.turn_stalled` records only the model, phase, bounded event name and timing. Session creation and model-setting use the smaller of the SDK startup and turn deadlines; a hung control RPC cannot consume the whole default five-minute turn budget.
 
 Bridge correlation and retry state live in memory. `store:false` means there is no Responses retrieval store here; it does **not** promise that Copilot, Codex or the SDK never writes local session files or retains service-side data. The bridge avoids logging request bodies and credentials. SDK errors may still contain service diagnostics.
 

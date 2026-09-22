@@ -174,13 +174,16 @@ test("byte limit overrides must remain positive safe integers", () => {
 });
 
 test("request, queue and SDK lifecycle bounds validate independently of turn duration", () => {
-  const config = bridgeConfig({ BRIDGE_API_KEY: token, TURN_TIMEOUT_MS: "9000", REQUEST_TIMEOUT_MS: "15000",
+  const config = bridgeConfig({ BRIDGE_API_KEY: token, TURN_TIMEOUT_MS: "9000", TURN_IDLE_TIMEOUT_MS: "4000", REQUEST_TIMEOUT_MS: "15000",
     MAX_REQUESTS_PER_SESSION: "3", MAX_REQUESTS: "9", SDK_READINESS_TIMEOUT_MS: "500", SDK_STARTUP_TIMEOUT_MS: "8000",
     SDK_READINESS_INTERVAL_MS: "4000", SDK_RECOVERY_BACKOFF_MS: "2000" });
   assert.equal(config.managerOptions.requestTimeoutMs, 15000);
+  assert.equal(config.managerOptions.turnIdleTimeoutMs, 4000);
+  assert.equal(bridgeConfig({ BRIDGE_API_KEY: token }).managerOptions.turnIdleTimeoutMs, 90_000);
+  assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, TURN_IDLE_TIMEOUT_MS: "2147483648" }), /TURN_IDLE_TIMEOUT_MS/);
   assert.equal(config.managerOptions.maxRequestsPerFamily, 3); assert.equal(config.managerOptions.maxRequests, 9);
   assert.equal(config.managerOptions.readinessTimeoutMs, 500); assert.equal(config.managerOptions.startupTimeoutMs, 8000);
-  for (const name of ["REQUEST_TIMEOUT_MS", "MAX_REQUESTS_PER_SESSION", "MAX_REQUESTS", "SDK_READINESS_TIMEOUT_MS", "SDK_STARTUP_TIMEOUT_MS", "SDK_READINESS_INTERVAL_MS", "SDK_RECOVERY_BACKOFF_MS"]) {
+  for (const name of ["TURN_IDLE_TIMEOUT_MS", "REQUEST_TIMEOUT_MS", "MAX_REQUESTS_PER_SESSION", "MAX_REQUESTS", "SDK_READINESS_TIMEOUT_MS", "SDK_STARTUP_TIMEOUT_MS", "SDK_READINESS_INTERVAL_MS", "SDK_RECOVERY_BACKOFF_MS"]) {
     for (const value of ["0", "-1", "0.5", "Infinity"]) assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, [name]: value }), new RegExp(name));
   }
 });

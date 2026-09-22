@@ -195,6 +195,8 @@ export function bridgeConfig(env = process.env) {
   if (!env.BRIDGE_API_KEY) throw new Error("BRIDGE_API_KEY is required.");
   const preferredModel = env.GHCP_MODEL || DEFAULT_MODEL;
   if (!SUPPORTED_MODEL_IDS.includes(preferredModel)) throw new Error(`Unsupported GHCP_MODEL: ${preferredModel}.`);
+  const turnIdleTimeoutMs = integerEnv(env, "TURN_IDLE_TIMEOUT_MS", 90_000);
+  if (turnIdleTimeoutMs > 2_147_483_647) throw new Error("TURN_IDLE_TIMEOUT_MS must not exceed 2147483647.");
   return {
     host, port, preferredModel,
     apiKey: env.BRIDGE_API_KEY,
@@ -204,6 +206,7 @@ export function bridgeConfig(env = process.env) {
       preferredModel,
       logLevel: env.LOG_LEVEL || "error",
       turnTimeoutMs: integerEnv(env, "TURN_TIMEOUT_MS", 300_000),
+      turnIdleTimeoutMs,
       requestTimeoutMs: integerEnv(env, "REQUEST_TIMEOUT_MS", 360_000),
       maxRequestsPerFamily: integerEnv(env, "MAX_REQUESTS_PER_SESSION", 8),
       maxRequests: integerEnv(env, "MAX_REQUESTS", 128),

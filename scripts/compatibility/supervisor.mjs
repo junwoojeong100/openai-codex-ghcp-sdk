@@ -42,6 +42,9 @@ export function workerEnvironment(env = process.env) {
 export async function supervise(config, { signal, env = process.env, command = process.execPath, workerFile = worker, onGroup } = {}) {
   if (process.platform === "win32") throw new Error("The bounded runner currently requires POSIX process-group supervision (macOS/Linux).");
   signal?.throwIfAborted();
+  const gracefulShutdownMs = config.gracefulShutdownMs ?? 0;
+  if (!Number.isSafeInteger(gracefulShutdownMs) || gracefulShutdownMs < 0 ||
+      gracefulShutdownMs > 60000 || gracefulShutdownMs >= config.timeoutMs) throw new Error("Invalid graceful shutdown budget.");
   mkdir(config.directory); mkdir(config.workRoot);
   const configFile = path.join(config.workRoot, "worker-config.json");
   writeJson(configFile, config);
@@ -49,15 +52,23 @@ export async function supervise(config, { signal, env = process.env, command = p
   const child = spawn(command, [workerFile, configFile], {
     cwd: config.workRoot, env: workerEnvironment(env), detached: true, stdio: ["ignore", "pipe", "pipe"],
   });
-  let failure, killed = false, bytes = 0, groupGone = false;
+  let failure, killed = false, bytes = 0, groupGone = false, escalation;
   const logFile = path.join(config.directory, "worker.log");
   const stop = reason => {
-    failure ??= reason; killed = true;
-    if (child.pid) { try { killOwnedGroup(child.pid); } catch (error) { failure ??= error; } }
+    failure ??= reason;
+    if (killed) return;
+    killed = true;
+    if (child.pid) {
+      try { killOwnedGroup(child.pid, gracefulShutdownMs ? "SIGTERM" : "SIGKILL"); }
+      catch (error) { failure ??= error; }
+      if (gracefulShutdownMs) escalation = setTimeout(() => {
+        try { killOwnedGroup(child.pid); } catch (error) { failure ??= error; }
+      }, gracefulShutdownMs);
+    }
   };
   const abort = () => stop(signal.reason ?? new Error("Interrupted"));
   // Keep a small parent-side margin so group termination fits inside the case slot.
-  const timer = setTimeout(() => stop(Object.assign(new Error("Case wall-clock deadline exceeded"), { name: "TimeoutError" })), Math.max(1, config.timeoutMs - 100));
+  const timer = setTimeout(() => stop(Object.assign(new Error("Case wall-clock deadline exceeded"), { name: "TimeoutError" })), Math.max(1, config.timeoutMs - gracefulShutdownMs - 100));
   signal?.addEventListener("abort", abort, { once: true });
   if (signal?.aborted) abort();
   if (child.pid) onGroup?.(child.pid, true);
@@ -73,7 +84,7 @@ export async function supervise(config, { signal, env = process.env, command = p
     child.once("error", error => { failure ??= error; });
     child.once("close", (code, exitSignal) => resolve({ code, signal: exitSignal }));
   });
-  clearTimeout(timer); signal?.removeEventListener("abort", abort);
+  clearTimeout(timer); clearTimeout(escalation); signal?.removeEventListener("abort", abort);
   // Also remove straggling descendants after a normal worker exit.
   if (child.pid) {
     try {
