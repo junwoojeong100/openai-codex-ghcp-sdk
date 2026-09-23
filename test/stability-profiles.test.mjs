@@ -12,7 +12,7 @@ import { artifacts, readCase, verifyReport, implementationHash, newReport, summa
 import { stabilityEvidence } from "./helpers/stability-evidence.mjs";
 import { sha } from "../scripts/compatibility/util.mjs";
 
-const alternate = "application-data-v2";
+const alternate = "application-data-v3";
 const identity = name => { const p = getProfile(name); return { profile: p.name, catalogId: p.catalog.id, catalogHash: p.catalogHash }; };
 const temp = t => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "stability-profiles-test-"));
@@ -32,22 +32,22 @@ function saveCase(directory, config, evidence) {
   return { manifest, resultHash: sha(fs.readFileSync(file)) };
 }
 
-test("the six-model v4 catalog is the exact immutable default", () => {
-  assert.equal(DEFAULT_PROFILE, "v4");
+test("the six-model v5 catalog is the exact immutable default", () => {
+  assert.equal(DEFAULT_PROFILE, "v5");
   assert.equal(getProfile().catalog, CATALOG);
   assert.equal(getProfile().catalogHash, catalogHash());
-  assert.equal(catalogHash(), "850aec6737b1f6d325fdf0b669defd6348e5f91c05b9c66ed626b724aa6d4b06");
-  assert.deepEqual(PROFILE_IDS, ["v4", alternate]);
+  assert.equal(catalogHash(), "d70a068e8de450b1df08366b44e14e06607d5313d769d2af251884fa06f0edb1");
+  assert.deepEqual(PROFILE_IDS, ["v5", alternate]);
   for (const name of PROFILE_IDS) {
     const p = getProfile(name);
     assert.ok(Object.isFrozen(p) && Object.isFrozen(p.catalog) && Object.isFrozen(p.catalog.prompts));
   }
-  for (const invalid of [null, "", "latest", "opus", {}, "__proto__", "v3", "application-data-v1"]) assert.throws(() => getProfile(invalid));
+  for (const invalid of [null, "", "latest", "opus", {}, "__proto__", "v3", "v4", "application-data-v1", "application-data-v2"]) assert.throws(() => getProfile(invalid));
 });
 
 test("the optional profile changes task wording and provenance, never models, faults, budgets or output checks", () => {
   const p = getProfile(alternate), c = p.catalog;
-  const allowed = ["id", "prompts", "baseCatalogId", "baseCatalogHash", "changesFromBase", "changesFromApplicationDataV1"];
+  const allowed = ["id", "prompts", "baseCatalogId", "baseCatalogHash", "changesFromBase", "changesFromApplicationDataV1", "changesFromApplicationDataV2"];
   for (const key of Object.keys(c).filter(key => !allowed.includes(key))) assert.deepEqual(c[key], CATALOG[key], key);
   assert.equal(c.baseCatalogId, CATALOG.id);
   assert.equal(c.baseCatalogHash, catalogHash());
@@ -56,14 +56,14 @@ test("the optional profile changes task wording and provenance, never models, fa
   assert.equal(c.prompts.read, "Call read_fixture once. Display its returned application data as a fenced text block, preserving the two lines and their characters.");
   assert.match(c.prompts.remember, /once in this turn, including on repeated requests/);
   assert.match(c.prompts.recall, /Do not use tools\./);
-  assert.deepEqual(matrix("live", alternate), matrix("live", "v4"));
+  assert.deepEqual(matrix("live", alternate), matrix("live", "v5"));
   assert.equal(matrix("live", alternate).length, 66);
 });
 
 test("profile selection still requires live opt-in and cannot override a recorded verification contract", () => {
   assert.deepEqual(parseArguments(["--profile", alternate]), { mode: "plan", profile: alternate });
   assert.deepEqual(parseArguments(["--execute", "--profile", alternate]), { mode: "execute", profile: alternate });
-  for (const args of [["--profile"], ["--profile", "other"], ["--profile", alternate, "--profile", "v4"],
+  for (const args of [["--profile"], ["--profile", "other"], ["--profile", alternate, "--profile", "v5"],
     ["--verify", "report.json", "--profile", alternate], ["--models", "claude-opus-5.5"], ["--retry"]]) {
     assert.throws(() => parseArguments(args));
   }
@@ -76,9 +76,9 @@ test("profile selection still requires live opt-in and cannot override a recorde
 
 test("profile identity cannot be switched, inferred from success, or supplied with another catalog hash", () => {
   assert.equal(profileForRecord(identity(alternate)).name, alternate);
-  assert.equal(profileForRecord({ catalogHash: catalogHash() }).name, "v4");
+  assert.equal(profileForRecord({ catalogHash: catalogHash() }).name, "v5");
   for (const record of [
-    { ...identity(alternate), profile: "v4" }, { ...identity(alternate), profile: undefined },
+    { ...identity(alternate), profile: "v5" }, { ...identity(alternate), profile: undefined },
     { ...identity(alternate), catalogId: CATALOG.id }, { ...identity(alternate), catalogHash: catalogHash() },
   ]) assert.throws(() => profileForRecord(record));
 });
@@ -91,7 +91,7 @@ for (const scenario of SCENARIOS) test(`${scenario.id}: alternate-profile eviden
   assert.ok(evaluate(scenario, old, alternate).some(c => !c.passed));
   assert.ok(evaluate(scenario, current).some(c => !c.passed));
   for (const mutate of [
-    e => { e.profile = "v4"; },
+    e => { e.profile = "v5"; },
     e => { e.sdk.find(r => r.type === "assistant.usage").data.model = "claude-sonnet-5"; },
     e => { e.native = []; }, e => { e.transport = []; },
     e => { e.resources.backends[0].queued = 1; },
@@ -115,7 +115,7 @@ test("alternate-profile literal-prefix failures and incomplete matrices remain f
   report.cases.forEach(c => c.status = "passed");
   assert.equal(summarize(report).fullMatrixPassed, true);
   assert.equal(summarize(report).catalogId, getProfile(alternate).catalog.id);
-  assert.match(markdown(report), /application-data-v2/);
+  assert.match(markdown(report), /application-data-v3/);
   for (const status of CATALOG.statuses.filter(s => s !== "passed")) {
     report.cases[0].status = status;
     assert.equal(summarize(report).fullMatrixPassed, false);
@@ -130,11 +130,11 @@ test("alternate case artifacts require matching profile at config, manifest and 
     executionKind: "offline-self-test", implementationHash: implementationHash() };
   const { manifest } = saveCase(directory, config, evidence);
   assert.equal(readCase(directory, config).manifest.status, "passed");
-  assert.throws(() => readCase(directory, { ...config, ...identity("v4") }));
-  manifest.profile = "v4";
+  assert.throws(() => readCase(directory, { ...config, ...identity("v5") }));
+  manifest.profile = "v5";
   fs.writeFileSync(path.join(directory, "result.json"), JSON.stringify(manifest));
   assert.throws(() => readCase(directory, config));
-  evidence.profile = "v4";
+  evidence.profile = "v5";
   saveCase(directory, config, evidence);
   assert.throws(() => readCase(directory, config));
 });
@@ -143,9 +143,9 @@ test("a report row cannot override its run's profile to import another profile's
   const directory = temp(t);
   const report = newReport({ runId: "unit", executionKind: "offline-self-test", profile: alternate });
   const row = report.cases[0], relative = `cases/${row.model}/${row.scenarioId}`;
-  const config = { ...report, ...row, ...identity("v4") };
+  const config = { ...report, ...row, ...identity("v5") };
   const { manifest, resultHash } = saveCase(path.join(directory, relative), config, stabilityEvidence(row.scenarioId));
-  Object.assign(row, identity("v4"), { status: "passed", observedStatus: "passed", artifactPath: relative,
+  Object.assign(row, identity("v5"), { status: "passed", observedStatus: "passed", artifactPath: relative,
     failedChecks: [], metrics: manifest.metrics, resultHash, supervisor: { processGroupGone: true, code: 0, killed: false } });
   Object.assign(report, { finishedAt: new Date().toISOString(), implementationUnchanged: true, userSettingsUnchanged: true });
   report.summary = summarize(report);

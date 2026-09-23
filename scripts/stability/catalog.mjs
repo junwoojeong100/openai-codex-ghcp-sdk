@@ -25,7 +25,7 @@ export const FLOW = freeze({
 export const SCENARIOS = freeze([
   { id: "S01", name: "Native read, Unicode SSE and readiness", seconds: 90, fault: "none", turns: 1 },
   { id: "S02", name: "Reordered tools while returning a pending result", seconds: 90, fault: "request-tool-permutation", turns: 1 },
-  { id: "S03", name: "Reject changed tool policy, then accept the unchanged result", seconds: 90, fault: "rejected-control-request", turns: 1 },
+  { id: "S03", name: "Reject changed tool policy without pending results, then accept the complete original request", seconds: 90, fault: "incomplete-result-control-request", turns: 1 },
   { id: "S04", name: "Duplicate pending-result HTTP request without duplicate submission", seconds: 90, fault: "exact-control-duplicate", turns: 1 },
   { id: "S05", name: "Cancel a queued HTTP duplicate while native inference continues", seconds: 120, fault: "bounded-sdk-ack-gate-and-queued-disconnect", turns: 1 },
   { id: "S06", name: "Total request deadline followed by a fresh native turn", seconds: 180, fault: "bounded-sdk-ack-gate-and-request-deadline", turns: 2 },
@@ -36,7 +36,7 @@ export const SCENARIOS = freeze([
   { id: "S11", name: "Repeated native tool turns, long history and local compaction", seconds: 240, fault: "explicit-native-compaction", turns: 8 },
 ]);
 export const CATALOG = freeze({
-  id: "codex-ghcp-stability-11-v4", schemaVersion: 1,
+  id: "codex-ghcp-stability-11-v5", schemaVersion: 1,
   versions: { codex: "0.154.0", copilotSdk: "1.0.14" }, models: [...SUPPORTED_MODEL_IDS], scenarios: SCENARIOS, prompts: PROMPTS, flow: FLOW,
   totalCases: SCENARIOS.length * SUPPORTED_MODEL_IDS.length, concurrency: 4, automaticCaseRetries: 0,
   cleanupReserveSeconds: 30, preflightSeconds: 90, maxNativeToolCalls: 20,
@@ -45,6 +45,7 @@ export const CATALOG = freeze({
   changesFromV1: "Acceptance checks and the 77-cell denominator are unchanged. Prompts now explicitly require exact immediate echo and one read per turn; cleanup uses the production 5s default; gate/deadline budgets allow bounded SDK startup. No output rewriting or case substitution.",
   changesFromV2: "Common benign transport-test context and fenced exact-copy requests replace imperative plain-text-only wording. Existing oracles already allow surrounding fences and still require every literal character. Safety settings, models, fixtures, fault checks and all 77 cells are unchanged.",
   changesFromV3: "Only the model set changes: claude-opus-5.5, claude-sonnet-5, claude-haiku-4.5, gpt-6-astra, gpt-6-sol and gpt-6-luna replace the seven v3 models. Scenarios, prompts, fixtures, fault flows, budgets, oracles and cleanup checks are unchanged. The denominator becomes 66 cells; 77-cell v3 records stay historical, are verified only with their frozen source and are never regraded or combined.",
+  changesFromV4: "S03 omits all tool results from its changed-policy control request and requires tool_result_mismatch with the original pending state intact. Complete matching results now allow a safe session handoff. All other scenarios, prompts, models, budgets and literal-output checks are unchanged. Historical v4 records require their frozen source and are never regraded.",
   outputPolicy: "Every successful read/remember/recall must preserve both complete literal value: and receipt: tokens in its final native answer. Surrounding prose/fences are recorded as presentation diagnostics, not a liveness failure. Padding must acknowledge ACK without tools. This is a new stability contract, not regrading v4 exact-output assertions.",
   acceptance: "All declared checks and cleanup receipts required. Failed, blocked, unsupported, timed-out and not-run cells remain in the 66-cell denominator. Live inference is required in every passing live cell. Fault injection is explicitly labelled; no whole-product or hours-long reliability claim.",
   isolation: "Owned temporary HOME/CODEX_HOME, read-only native threads, no shell execution, fixture-only native dynamic tool, no user bridge discovery/restart, and no automatic inference replay after loss.",

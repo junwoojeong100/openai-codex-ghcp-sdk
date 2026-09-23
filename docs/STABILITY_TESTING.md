@@ -4,13 +4,15 @@
 
 ## Fresh live verification
 
-Previous results, logs and reports were deleted at the user’s request. A fresh full 11-scenario × 6-model (66-cell) run uses the v4 criteria frozen before each execution. Results are published in the [new verification records](validation/README.md); no old scores or selective failed-cell reruns are reused.
+New full 11-scenario × 6-model (66-cell) runs use the v5 criteria frozen before each execution. Earlier reports, including failures, remain historical; no old scores or selective failed-cell reruns are reused. The [verification records](validation/README.md) distinguish each implementation and contract.
 
 ## Optional application-data profile and current status
 
-`v4` is the default (`codex-ghcp-stability-11-v4`). `--profile application-data-v2` explicitly selects `codex-ghcp-stability-11-application-data-v2`: the application-data-v1 read/remember/recall wording on the v4 base under a distinct catalog ID and hash. The six models, 11 scenarios, fixtures, fault schedule, budgets, literal-output and cleanup checks stay the same. Production user requests are not rewritten. Reports, workers and artifacts carry profile identity; verification rejects cross-profile case substitution and cannot be overridden with `--profile`.
+`v5` is the default (`codex-ghcp-stability-11-v5`). `--profile application-data-v3` explicitly selects `codex-ghcp-stability-11-application-data-v3`: the existing application-data read/remember/recall wording on the v5 base under a distinct catalog ID and hash. Both profiles retain the same six models, 11 scenarios, fixtures, fault schedule, budgets, literal-output and cleanup checks. Production user requests are not rewritten. Reports, workers and artifacts carry profile identity; verification rejects cross-profile case substitution and cannot be overridden with `--profile`.
 
-`v3` and `application-data-v1` are no longer selectable. Their 7-model, 77-cell records remain historical and are verified only with each run's frozen `source-snapshot/scripts/stability.mjs`, never regraded or combined with new results.
+v5 changes only S03's rejection boundary: its policy-change control request deliberately omits tool results and must receive `tool_result_mismatch` without losing pending work. Complete matching results now permit a safe configuration handoff instead of the former blanket 409. `v4`/`application-data-v2` and earlier profiles are no longer selectable. Their 66-cell or older 77-cell records require each run's frozen `source-snapshot/scripts/stability.mjs`; they are never regraded or combined with v5.
+
+The latest release check on implementation `320d502c` completed the full default **v5 matrix at 57/66 (86.36%)**, with nine explicit Opus 5.5 upstream-filter failures and exit code 1. The other five models passed 11/11 each. A separate actual-TUI matrix passed 72/72; these scores are not combined. Both reports were independently verified with current and frozen source. The requested no-problems commit/push condition was not met. [Evidence and release gate](validation/2026-09-23-pending-handoff.json).
 
 The six-model implementation `68f92d74` was tested with two independent full matrices: **v4 57/66 (86.36%)** and **application-data-v2 63/66 (95.45%)**. Both retain failed cases, `fullMatrixPassed=false` and exit code 1. application-data-v2 meets the 95% reference (≥63/66); v4 does not, because every Opus 5.5 read turn was upstream-filtered. The later freeform `apply_patch` catalog change (`54c7eb77`) was verified by the separate [real-TUI matrix](validation/2026-09-23-tui-scenarios/README.md), not by rerunning these matrices. See [results, run history and MCP isolation](validation/2026-09-23-six-model-switch/README.md).
 
@@ -20,16 +22,16 @@ An earlier fixture-tool metadata repair under the historical 7-model v3 contract
 
 ```sh
 # Plan only; no model calls
-npm run test:stability -- --plan --profile application-data-v2
+npm run test:stability -- --plan --profile application-data-v3
 # Mechanical SDK / explicit live opt-in; each needs a new directory
-npm run test:stability -- --runtime --profile application-data-v2 --output .runtime/application-offline-new
-npm run test:stability -- --execute --profile application-data-v2 --output .runtime/application-live-new
+npm run test:stability -- --runtime --profile application-data-v3 --output .runtime/application-offline-new
+npm run test:stability -- --execute --profile application-data-v3 --output .runtime/application-live-new
 npm run test:stability -- --verify .runtime/application-live-new/report.json
 ```
 
 ## Scope and fixed criteria
 
-`codex-ghcp-stability-11-v4` is a **separate 11-scenario × 6-model = 66-cell** matrix, using Codex **0.154.0** and Copilot SDK **1.0.14**. It does not replace, regrade, or enlarge the historical 18-workflow v4 compatibility result. No automatic case retries, model substitution, subset mode, or native OpenAI baseline.
+`codex-ghcp-stability-11-v5` is a **separate 11-scenario × 6-model = 66-cell** matrix, using Codex **0.154.0** and Copilot SDK **1.0.14**. It does not replace, regrade, or enlarge the historical 18-workflow v4 compatibility result. No automatic case retries, model substitution, subset mode, or native OpenAI baseline.
 
 Each passing live case requires native Codex app-server → the production Responses bridge → the real SDK → the exact model, plus native fixture-tool callbacks, independent checks, and owned-resource cleanup. A labelled proxy/instrumentation layer injects the specific faults below. It does not fabricate model output or replace the SDK in live mode. Extra duplicate/rejected/cancelled HTTP control requests are not additional live matrix cells.
 
@@ -37,7 +39,7 @@ Each passing live case requires native Codex app-server → the production Respo
 |---|---|---|---:|
 | S01 | Native read, Unicode SSE and readiness | None | 90s |
 | S02 | Tool order changes while returning a pending result | Tool-list permutation only | 90s |
-| S03 | Reject a tool policy change, then accept the original result | One intentionally invalid control request | 90s |
+| S03 | Reject a tool policy change with missing results, then accept the complete original request | One control request omitting all tool results | 90s |
 | S04 | Exact result-request retry without duplicate submission | One duplicate HTTP request | 90s |
 | S05 | Cancel a queued duplicate while native work continues | Bounded SDK acknowledgement gate + disconnect | 120s |
 | S06 | Total request deadline and fresh native recovery | 45s request deadline + bounded acknowledgement gate | 180s |
@@ -86,7 +88,7 @@ The bridge uses structured SDK metadata, not matching refusal-like prose. It doe
 
 ## Implemented recovery boundaries
 
-- Tools are compared by identity, not array order. Real schema, permission, model, instruction and history changes still fail closed while calls are pending. Conflict diagnostics record field names, hashes and counts, not raw content.
+- Tools are compared by identity, not array order. Configuration changes with pending calls require every matching result and unchanged non-instruction history. Confirmed abort/disconnect/delete and same-generation readiness precede replacement; completed results are serialized history, never repeated result RPCs. Incomplete, duplicate, mismatched or rewritten conversation input remains rejected. Completed IDs and response versions survive, but a model may still propose the same operation under a new ID. Conflict diagnostics record request IDs, field names, hashes and counts, not raw content.
 - SDK control-plane `ping` detects loss. A single shared recovery task creates a **new client generation** with bounded startup and backoff; concurrent requests do not each spawn a client. Lost conversations are invalidated. No inference or uncertain tool result is automatically replayed after connection loss.
 - With a healthy connection, the model-progress watchdog can recover a silent turn on its original response stream, once by default. Input must be acknowledged, no output or calls may be pending, and old-session cleanup must be confirmed. Resolved history is context only; completed tool-result RPCs are never repeated. Partial output, filtering, cancellation, uncertain submissions and cleanup failure are excluded. Diagnostics identify recovery attempts, success and specific skip reasons. This is bounded inference replay, not an exactly-once guarantee or an external process-restart watcher.
 - `/health` is public **HTTP-process liveness**, with the last-known `ready`/`upstreamState` fields. Authenticated `/readyz` performs a bounded SDK readiness probe (200/503) and does not reconnect by itself. Authenticated `/v1/models` may recover the SDK before exposing the catalog. Readiness does not guarantee inference service health or quota.
@@ -112,6 +114,18 @@ The bridge uses structured SDK metadata, not matching refusal-like prose. It doe
 All are positive integers except `TURN_IDLE_RECOVERY_ATTEMPTS`, which accepts 0–3. Recovery resets neither the absolute turn deadline nor the total request deadline. Existing byte/session/cleanup limits remain. `copilot_idle_timeout`, `copilot_timeout` and `request_timeout` are 504 errors, `request_queue_full` is 429, and `upstream_session_lost` is 409 asking for a new conversation. Do not blindly replay tool side effects. To apply updated bridge code, first close its Codex sessions, then relaunch the project-owned bridge; the development/test runner never restarts a user's active bridge. `/health.turnWatchdog` reports runtime settings, not the current source file's defaults. Background status also exposes them, but does not discover foreground bridges.
 
 ## Commands and evidence
+
+The dedicated pending-handoff regression uses the actual Codex TUI, launcher, fixture MCP server and headless Playwright. It injects a labelled top-level instruction update on a complete result batch, requires one fixture execution, zero old result RPCs, exact result retention, and a second successful turn in the same TUI without `/new`. The normal runtime suite uses an SDK double. Live opt-in runs all six models and preserves each case's evidence in a new directory; this focused regression is not a rerun of the 66-cell stability matrix.
+
+Its `pending-result-instruction-handoff-v2` prompts explicitly request the sample on a standalone line, matching the existing strict TUI marker oracle. The initial probe omitted that formatting requirement: all six handoffs were accepted, but two correct inline answers failed the screen check and prevented their follow-up turns, leaving that run at 4/6. Those failed records are preserved, not regraded. The revised probe requires a fresh six-model run; production prompts and output are not rewritten.
+
+```sh
+node --test test/runtime/pending-handoff.test.mjs
+GHCP_LIVE_HANDOFF_OUTPUT=.runtime/pending-handoff-live-new \
+  node --test --test-concurrency=1 test/runtime/pending-handoff.test.mjs
+```
+
+Unconfirmed handoff cleanup/readiness is `session_handoff_failed` (503). Cancellation, connection loss or replacement failure keeps that family unavailable rather than treating a result retry as a fresh conversation. Missing/mismatched pending results remain `tool_result_mismatch` (409); rewritten history remains `pending_session_changed` (409).
 
 ```bash
 npm test

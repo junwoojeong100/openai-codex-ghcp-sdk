@@ -21,6 +21,23 @@ test("stability has a distinct fixed 11-by-6 contract and deliberate live opt-in
   for (const args of [["--execute", "--runtime"], ["--plan", "--output", "x"], ["--models", "gpt-6-astra"], ["--retry"], ["--verify"], ["--execute", "--execute"]]) assert.throws(() => parseArguments(args));
 });
 
+test("S03 requires genuinely missing results, not the former complete-result rejection", () => {
+  const scenario = SCENARIOS.find(item => item.id === "S03");
+  for (const mutation of ["complete-results", "rewritten-history", "old-error-code"]) {
+    const evidence = stabilityEvidence("S03");
+    const probe = evidence.controls.find(item => item.action === "policy-rejection");
+    const control = evidence.transport.find(item => item.origin === "control-policy");
+    if (mutation === "complete-results") {
+      probe.request.input.push(...evidence.transport.find(item => item.origin === "native").request.input.filter(item => item.type === "function_call_output"));
+      control.request = structuredClone(probe.request);
+    } else if (mutation === "rewritten-history") {
+      probe.request.input[0].content = "unrelated history";
+      control.request = structuredClone(probe.request);
+    } else probe.response = JSON.stringify({ error: { code: "pending_session_changed" } });
+    assert.equal(evaluate(scenario, evidence).find(check => check.id === "S03.reject").passed, false, mutation);
+  }
+});
+
 test("native fixture metadata describes unchanged plain text for every model and profile", async t => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "stability-tool-text-test-"));
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
@@ -28,7 +45,7 @@ test("native fixture metadata describes unchanged plain text for every model and
   const file = path.join(directory, "fixture-data.txt");
   fs.writeFileSync(file, content);
   const descriptions = new Set();
-  for (const profile of ["v4", "application-data-v2"]) for (const model of CATALOG.models) {
+  for (const profile of ["v5", "application-data-v3"]) for (const model of CATALOG.models) {
     const executor = new StabilityExecutor({ model, profile, scenario: SCENARIOS[0] });
     executor.fixture = { cwd: directory, workspace: directory };
     let declaration;
@@ -119,8 +136,10 @@ test("case verifier recomputes checks, metrics and exact artifact projections", 
 });
 
 
-test("v4 keeps the v3 prompts and literal oracle, changes only the model set, and budgets cover SDK startup", () => {
-  assert.equal(CATALOG.id, "codex-ghcp-stability-11-v4");
+test("v5 preserves prompts, literal output and budgets while versioning the incomplete S03 policy probe", () => {
+  assert.equal(CATALOG.id, "codex-ghcp-stability-11-v5");
+  assert.equal(SCENARIOS.find(scenario => scenario.id === "S03").fault, "incomplete-result-control-request");
+  assert.match(CATALOG.changesFromV4, /tool_result_mismatch/);
   assert.match(CATALOG.changesFromV3, /Only the model set changes/);
   for (const kind of ["read", "remember", "recall"]) {
     assert.match(PROMPTS[kind], /fenced text code block containing the two original lines/);

@@ -262,13 +262,10 @@ export class SessionManager {
         });
         for (const state of this.states.values()) {
           if (state.generation !== generation) continue;
-          this.lostFamilies.set(state.family, Date.now());
+          this.#markFamilyLost(state.family);
           state.upstreamLost = true;
           void this.#evict(state, error).catch(() => {});
         }
-        // Tombstones are finite; even after expiry orphan results still fail
-        // validateReplay. Never use a lost previous_response_id as fresh input.
-        while (this.lostFamilies.size > this.maxStates * 4) this.lostFamilies.delete(this.lostFamilies.keys().next().value);
       },
     });
     this.startPromise = (async () => {
@@ -389,7 +386,7 @@ export class SessionManager {
     }
     const resultsOnly = request.input.length > 0 && request.input.every(isResult);
     const delta = Boolean(previous || (state && resultsOnly));
-    const input = delta ? [...state.history, ...request.input] : request.input;
+    let input = delta ? [...state.history, ...request.input] : request.input;
     const instructions = delta && !request.instructionsProvided ? state.instructions : request.instructions;
     const tools = delta && !request.toolsProvided && request.toolChoice !== "none" ? state.tools : request.tools;
     const model = resolveCopilotModel({
@@ -411,36 +408,71 @@ export class SessionManager {
     const signatureTools = state && sameToolDefinitions(state.tools, tools) ? state.tools : tools;
     const signature = hash({ model, contextTier, system, tools: signatureTools });
     let fresh = !state;
+    let handoff;
     const historyMatches = !state || historyStartsWith(input, state.history);
     if (state && (signature !== state.signature || !historyMatches)) {
       if (state.outstanding.size) {
-        // Codex compacts without tools after executing a tool batch. Its full
-        // transcript must resolve every live call before retiring that session.
-        const completedHandoff = !delta && historyMatches && request.toolsProvided && !tools.length
-          && model === state.model && contextTier === state.contextTier && hash(system) === state.systemHash;
-        if (completedHandoff) {
-          const tail = input.slice(state.history.length);
-          this.#validateResults(state, tail.filter(isResult), tail.filter(item => !isResult(item)));
-        } else {
-          // No raw instructions, tool descriptions, arguments, paths or family IDs.
-          const changed = [
-            ...(model !== state.model ? ["model"] : []),
-            ...(contextTier !== state.contextTier ? ["contextTier"] : []),
-            ...(hash(system) !== state.systemHash ? ["instructions"] : []),
-            ...(!sameToolDefinitions(state.tools, tools) ? ["tools"] : []),
-            ...(!historyMatches ? ["history"] : []),
-          ];
-          this.onDiagnostic({ event: "bridge.pending_session_changed", familyHash: hash(family), changed,
+        const changed = [
+          ...(model !== state.model ? ["model"] : []),
+          ...(contextTier !== state.contextTier ? ["contextTier"] : []),
+          ...(hash(system) !== state.systemHash ? ["instructions"] : []),
+          ...(!sameToolDefinitions(state.tools, tools) ? ["tools"] : []),
+          ...(!historyMatches ? ["history"] : []),
+        ];
+        try {
+          // Instruction updates stay authoritative, but cannot rewrite any
+          // earlier user text, assistant output, call arguments or tool result.
+          const prior = state.history.filter(item => !isInstruction(item));
+          const conversation = input.filter(item => !isInstruction(item));
+          if (!historyStartsWith(conversation, prior)) {
+            throw new BridgeRequestError("The conversation history changed while tools were pending. Preserve the original calls and return all pending tool results.", {
+              status: 409, code: "pending_session_changed",
+            });
+          }
+          const tail = conversation.slice(prior.length);
+          const results = this.#validateResults(state, tail.filter(isResult), tail.filter(item => !isResult(item)));
+          let index = 0;
+          input = input.map(item => isInstruction(item) ? item : prior[index++] ?? item);
+          validateReplay(input);
+          this.#checkHistorySize(input);
+          const completed = new Map(state.completed);
+          for (const { item, digest } of results) completed.set(item.call_id, digest);
+          handoff = { previous: state, responses: this.#responseVersions(state), completed, changed, completedCalls: results.length };
+        } catch (error) {
+          this.onDiagnostic({ event: "bridge.pending_session_changed", requestId: responseId, familyHash: hash(family), changed,
             pendingCalls: state.outstanding.size, suppliedResults: input.filter(isResult).length,
             previousToolSetHash: hash(state.tools.map(t => t.name).sort()),
             requestedToolSetHash: hash(tools.map(t => t.name).sort()) });
-          throw new BridgeRequestError("The model, context tier, tools, instructions or history changed while tools were pending. Return their results before changing the session.", {
-            status: 409, code: "pending_session_changed",
-          });
+          error.message += ` Changed session fields: ${changed.join(", ")}.`;
+          throw error;
         }
       }
       validateReplay(input);
-      await this.#evict(state);
+      if (handoff) {
+        // Retiring the old state is irreversible. Keep retries fail-closed
+        // until the replacement has committed a validated response.
+        this.#markFamilyLost(family);
+        let reason = "cleanup_unconfirmed";
+        try {
+          const cleaned = await this.#evict(state);
+          assertNotAborted(signal);
+          if (!cleaned) throw new Error("Session cleanup was not confirmed.");
+          reason = "upstream_unavailable";
+          const ready = await withinDeadline(() => this.readiness(), this.readinessTimeoutMs + 100, signal);
+          assertNotAborted(signal);
+          if (!ready.ready || !this.lifecycle.owns(state.client, state.generation)) {
+            throw new Error("SDK readiness or ownership changed.");
+          }
+        } catch {
+          this.onDiagnostic({ event: "bridge.session_handoff_failed", requestId: responseId, changed: handoff.changed,
+            reason: signal?.aborted ? "cancelled" : reason });
+          assertNotAborted(signal);
+          throw new BridgeRequestError("The completed tool results could not be safely handed off because prior session cleanup or SDK readiness was not confirmed. Start a new conversation; the results were not resubmitted.", {
+            status: 503, code: "session_handoff_failed",
+          });
+        }
+      } else await this.#evict(state);
+      assertNotAborted(signal);
       state = null;
       fresh = true;
       this.onDiagnostic({ event: "bridge.history_replayed" });
@@ -451,7 +483,13 @@ export class SessionManager {
     }
     if (!state) {
       validateReplay(input);
-      state = await this.#createState({ family, model, contextTier, system, tools, instructions, signature, reasoningEffort, signal });
+      try {
+        state = await this.#createState({ family, model, contextTier, system, tools, instructions, signature, reasoningEffort, signal });
+      } catch (error) {
+        if (handoff) this.onDiagnostic({ event: "bridge.session_handoff_failed", requestId: responseId,
+          changed: handoff.changed, reason: signal?.aborted ? "cancelled" : "replacement_setup_failed" });
+        throw error;
+      }
     }
     const results = fresh ? [] : newInput.filter(isResult);
     const context = results.length ? newInput.filter((item) => !isResult(item)) : [];
@@ -467,6 +505,14 @@ export class SessionManager {
     state.lastUsedAt = Date.now();
     try {
       assertNotAborted(signal);
+      if (handoff) {
+        if (!this.lifecycle.owns(handoff.previous.client, handoff.previous.generation)) {
+          throw new BridgeRequestError("The upstream connection changed during the session handoff. Start a new conversation; the results were not resubmitted.", {
+            status: 503, code: "session_handoff_failed",
+          });
+        }
+        this.#inheritSessionState(state, handoff.previous, handoff.responses, handoff.completed);
+      }
       if (reasoningEffort !== state.reasoningEffort) {
         await withinDeadline(() => state.session.setModel(model, {
           ...(reasoningEffort ? { reasoningEffort } : {}), reasoningSummary: "none", contextTier,
@@ -532,7 +578,7 @@ export class SessionManager {
             }
             validateReplay(recordedInput);
             const previousState = state;
-            const previousResponses = previousState.responseIds.map(id => [id, this.responses.get(id).version]);
+            const previousResponses = this.#responseVersions(previousState);
             const cleaned = await this.#evict(previousState, error);
             assertNotAborted(turnSignal);
             if (!cleaned) {
@@ -551,16 +597,7 @@ export class SessionManager {
             this.onDiagnostic({ event: "bridge.turn_recovering", model, requestId: responseId, attempt: recoveries,
               maxAttempts: this.turnIdleRecoveryAttempts });
             state = await this.#createState({ family, model, contextTier, system, tools, instructions, signature, reasoningEffort, signal: turnSignal });
-            state.completed = new Map(previousState.completed);
-            state.version = previousState.version;
-            state.responseIds = [...previousState.responseIds];
-            for (const [id, version] of previousResponses) this.responses.set(id, { state, version });
-            for (const id of previousState.callIds) {
-              const owner = this.callStates.get(id);
-              if (owner && owner !== state) throw invalidUpstream("Copilot reused a tool call ID during recovery.");
-              state.callIds.add(id);
-              this.callStates.set(id, state);
-            }
+            this.#inheritSessionState(state, previousState, previousResponses);
           }
         }
       } finally {
@@ -597,10 +634,17 @@ export class SessionManager {
       state.lastResult = result;
       state.phase = state.outstanding.size ? "tool_handoff" : "completed";
       this.#rememberResponse(state, responseId);
+      if (handoff) {
+        this.lostFamilies.delete(family);
+        this.onDiagnostic({ event: "bridge.session_handoff", requestId: responseId, changed: handoff.changed,
+          completedCalls: handoff.completedCalls });
+      }
       if (recoveries) this.onDiagnostic({ event: "bridge.turn_recovered", model, requestId: responseId, attempts: recoveries });
       return state.lastResult;
     } catch (error) {
       await this.#evict(state);
+      if (handoff) this.onDiagnostic({ event: "bridge.session_handoff_failed", requestId: responseId,
+        changed: handoff.changed, reason: signal?.aborted ? "cancelled" : "replacement_failed" });
       throw upstreamError(error);
     } finally {
       state.lastUsedAt = Date.now();
@@ -615,10 +659,33 @@ export class SessionManager {
     }
   }
 
+  #markFamilyLost(family) {
+    this.lostFamilies.set(family, Date.now());
+    while (this.lostFamilies.size > this.maxStates * 4) this.lostFamilies.delete(this.lostFamilies.keys().next().value);
+  }
+
+  #responseVersions(state) {
+    return state.responseIds.map(id => [id, this.responses.get(id).version]);
+  }
+
+  #inheritSessionState(state, previous, responses, completed = previous.completed) {
+    state.completed = new Map(completed);
+    state.version = previous.version;
+    state.toolResultSubmissions = previous.toolResultSubmissions;
+    state.responseIds = [...previous.responseIds];
+    for (const [id, version] of responses) this.responses.set(id, { state, version });
+    for (const id of previous.callIds) {
+      const owner = this.callStates.get(id);
+      if (owner && owner !== state) throw invalidUpstream("Copilot reused a tool call ID while replacing the session.");
+      state.callIds.add(id);
+      this.callStates.set(id, state);
+    }
+  }
+
   #validateResults(state, results, context) {
     if (results.length > this.maxToolResults) throw new BridgeRequestError("Too many tool results in one turn.");
     if (context.some((item) => item.type !== "message" || item.role !== "user")) {
-      throw new BridgeRequestError("Only new user messages may accompany tool results; instruction changes require an idle session.");
+      throw new BridgeRequestError("Only new user messages may accompany tool results after top-level instructions are separated.");
     }
     const ids = new Set(results.map((item) => item.call_id));
     if (ids.size !== results.length) throw new BridgeRequestError("Duplicate tool result in one request.");

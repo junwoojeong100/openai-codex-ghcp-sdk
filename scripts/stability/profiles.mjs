@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
 import { CATALOG } from "./catalog.mjs";
 
-// The six-model v4 contract is the default and is never edited or regraded.
-// Historical v3/application-data-v1 (seven-model) records verify only with
+// The six-model v5 contract versions the pending-policy rejection boundary.
+// Historical v4/application-data-v2 and earlier records verify only with
 // their frozen source. This opt-in profile changes only application task
 // wording, not the bridge, model selection, fixture, fault schedule, budgets
 // or literal-output checks.
@@ -16,18 +16,19 @@ const prompts = Object.freeze({
 const digest = value => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const applicationCatalog = Object.freeze({
   ...CATALOG,
-  id: "codex-ghcp-stability-11-application-data-v2",
+  id: "codex-ghcp-stability-11-application-data-v3",
   prompts,
   baseCatalogId: CATALOG.id,
   baseCatalogHash: digest(CATALOG),
   changesFromBase: "Explicitly selected application-data task wording. All models, fixtures, fault flows, budgets and acceptance checks are retained. This is a separate contract, not a fix or regrade of the base contract's results.",
   changesFromApplicationDataV1: "Same application-data wording on the six-model v4 base (66 cells). Seven-model application-data-v1 records stay historical and are never regraded or combined.",
+  changesFromApplicationDataV2: "Same application-data wording on the v5 base with the explicitly incomplete S03 control request. Application-data-v2 results stay historical and require their frozen source.",
 });
-export const DEFAULT_PROFILE = "v4";
-export const PROFILE_IDS = Object.freeze([DEFAULT_PROFILE, "application-data-v2"]);
+export const DEFAULT_PROFILE = "v5";
+export const PROFILE_IDS = Object.freeze([DEFAULT_PROFILE, "application-data-v3"]);
 const profiles = new Map([
   [DEFAULT_PROFILE, CATALOG],
-  ["application-data-v2", applicationCatalog],
+  ["application-data-v3", applicationCatalog],
 ].map(([name, catalog]) => [name, Object.freeze({ name, catalog, catalogHash: digest(catalog) })]));
 
 export function getProfile(name = DEFAULT_PROFILE) {

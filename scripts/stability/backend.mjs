@@ -143,6 +143,7 @@ export class StabilityBackend {
         let changedTool = changed.tools?.length && changeDescription(changed.tools);
         if (!changedTool) for (const item of changed.input ?? []) if (item.type === "additional_tools" && !changedTool) changedTool = changeDescription(item.tools);
         if (!changedTool) throw new Error("No declared tool to change");
+        changed.input = changed.input.filter(item => !["function_call_output", "custom_tool_call_output"].includes(item.type));
         const before = this.snapshot("before-policy-probe");
         const response = await this.fetch(changed, headers, "control-policy", signal), text = await response.text();
         this.record("policy-rejection", { status: response.status, response: text, originalHash: ingress.requestHash, request: changed, before, after: this.snapshot("after-policy-probe") });

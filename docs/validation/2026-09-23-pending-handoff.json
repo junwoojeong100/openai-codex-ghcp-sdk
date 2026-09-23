@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "scope": "Complete pending-tool-result handoff when trusted instructions or session configuration change.",
+  "baseCommit": "a0f76dc714bfbfa34edb1f07f06b193d8144c686",
+  "implementationHash": "320d502ccc9c0786851b630a216cbc18b7e12af6cad976a9513efc913073f254",
+  "sessionManagerSha256": "6185f3250b585de8d9e7873e5dea9d501f961a52c8932c9f3cc043165fe58b3d",
+  "diagnosis": {
+    "confirmedBehavior": "The prior pending-session guard rejected complete matching result batches when trusted instructions changed, leaving subsequent continuations subject to the same 409.",
+    "originalIncidentLimit": "The exact changed field in the user's earlier request was unavailable. The controlled probe reproduced the instruction-change path, not every possible cause of a 409.",
+    "correction": "Validate the complete result batch and unchanged non-instruction history, confirm old-session cleanup and same-generation SDK readiness, then carry completed results into a replacement session as history without submitting the old result RPCs.",
+    "failureBoundary": "Missing, duplicate, mismatched or rewritten history is rejected before retirement. Failed cleanup, readiness, cancellation or replacement keeps the family unavailable rather than implicitly retrying completed work."
+  },
+  "localChecks": {
+    "handoffUnitCases": { "passed": 32, "failed": 0 },
+    "scopedUnitIntegrationAndOfflineTui": {
+      "passed": 216,
+      "failed": 0,
+      "log": ".runtime/pending-handoff-final-regression.log",
+      "note": "The live-probe standalone-line prompt clarification followed this run; production bridge code did not change. The final probe was separately rerun below."
+    },
+    "finalOfflineTui": { "passed": 1, "failed": 0, "log": ".runtime/pending-handoff-tui-v2-offline.log" },
+    "stabilityRuntime": {
+      "profile": "v5",
+      "passed": 11,
+      "failed": 0,
+      "realModelCalls": 0,
+      "independentlyVerified": true,
+      "report": ".runtime/pending-handoff-v5-offline-20260923/report.json",
+      "verificationSource": "Use that run's frozen source; later test-harness edits changed the implementation manifest."
+    },
+    "remoteCiExecuted": false
+  },
+  "liveTui": {
+    "contractId": "pending-result-instruction-handoff-v2",
+    "report": ".runtime/pending-handoff-live-20260923-run2/report.json",
+    "reportSha256": "6db81f9f70619e695cba650522c4d69d67d434a0af7f002e9eb9e435b3bcaf01",
+    "verification": ".runtime/pending-handoff-live-20260923-run2/verification.json",
+    "passed": 6,
+    "totalCases": 6,
+    "models": ["claude-opus-5.5", "claude-sonnet-5", "claude-haiku-4.5", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna"],
+    "perCase": { "fixtureExecutions": 1, "oldResultRpcSubmissions": 0, "sdkSessions": 2, "successfulHttpResponses": 3, "sameThreadFollowup": true },
+    "sourceAndFrozenSourceUnchanged": true,
+    "rawEvidenceIndependentlyChecked": true,
+    "ownedProcessCleanupPassed": true,
+    "userBridgeRestarted": false,
+    "verifiedAt": "2026-09-23T12:54:02.568Z"
+  },
+  "preservedInitialLiveRun": {
+    "report": ".runtime/pending-handoff-live-20260923-run1/report.json",
+    "reportSha256": "b1e91f7301e2d58080bc5fd46fed8e0b4f801667f572cdf79af192c85aad22db",
+    "passed": 4,
+    "totalCases": 6,
+    "handoffsAccepted": 6,
+    "failures": "Sonnet and Haiku returned the correct sample inline. The strict terminal marker oracle required a standalone line, but the initial prompt did not request it; their follow-up turns were not run.",
+    "correction": "Versioned the focused probe prompts to request the existing oracle's standalone-line format, then reran all six models. No production prompt/output rewriting or historical regrading."
+  },
+  "releaseVerification": {
+    "verifiedAt": "2026-09-23T13:31:38.607Z",
+    "implementationHash": "320d502ccc9c0786851b630a216cbc18b7e12af6cad976a9513efc913073f254",
+    "productionCodeChangedDuringVerification": false,
+    "unitAndIntegration": {
+      "passed": 424,
+      "failed": 0,
+      "scenarioAndGeneratedDocumentationChecks": "passed",
+      "log": ".runtime/pending-handoff-release-ci-20260923-2211.log",
+      "logSha256": "8ca5c6dad8750999e7aaf8cbe7c25c97d93fd50a8502313384ce2e67ec4c4302"
+    },
+    "offlineRuntime": {
+      "runtimeTests": { "passed": 24, "failed": 0 },
+      "nativeCompatibilityCases": { "passed": 18, "failed": 0 },
+      "stabilityCases": { "passed": 11, "failed": 0 },
+      "standardStressCycles": 100,
+      "log": ".runtime/pending-handoff-release-runtime-20260923-2211.log",
+      "logSha256": "136570edc325e3a6ffd4e909aed8d009f962487dc237276a44bb869a544bf207"
+    },
+    "repeatedMixedHandoff": {
+      "executionKind": "offline-repeated-mixed-handoff",
+      "passed": true,
+      "cycles": 100,
+      "completedResults": 200,
+      "exactRetries": 100,
+      "staleHandlesRejected": 100,
+      "oldResultRpcSubmissions": 0,
+      "changes": ["model", "contextTier", "tools", "instructions"],
+      "report": ".runtime/pending-handoff-release-cycles-20260923-2211.json",
+      "reportSha256": "32ebb6dc1d57648463ba3046cf5bcacf6e56029cc22c6d3a599805076c495859",
+      "script": ".runtime/pending-handoff-release-cycles-20260923-2211.mjs",
+      "scriptSha256": "a97299d885229ce3a574797a56046cf1f2591978fdfbc433ebf93e80873ff3bb"
+    },
+    "fullLiveTui": {
+      "catalogId": "codex-ghcp-tui-12-v3",
+      "passed": 72,
+      "totalCases": 72,
+      "failed": 0,
+      "durationMs": 383153,
+      "report": ".runtime/pending-handoff-release-tui-20260923-2211/report.json",
+      "reportSha256": "adbb9b9c6b9b38f0a8e027f36c5678db3022e78df41d638c63557bb5ab74efd1",
+      "currentAndFrozenSourceVerified": true,
+      "userSettingsUnchanged": true,
+      "pendingConflictsOrHandoffFailures": 0
+    },
+    "fullLiveStability": {
+      "profile": "v5",
+      "catalogId": "codex-ghcp-stability-11-v5",
+      "passed": 57,
+      "totalCases": 66,
+      "failed": 9,
+      "percent": 86.36363636363636,
+      "fullMatrixPassed": false,
+      "exitCode": 1,
+      "durationMs": 602383,
+      "report": ".runtime/pending-handoff-release-stability-20260923-2211/report.json",
+      "reportSha256": "ea9926b9e62feaab19d6db259700e8f09d031d4bc0b928b97182f45a4f639917",
+      "verification": ".runtime/pending-handoff-release-stability-20260923-2211/verification.json",
+      "currentAndFrozenSourceVerified": true,
+      "userSettingsUnchanged": true,
+      "failures": {
+        "model": "claude-opus-5.5",
+        "scenarios": ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09"],
+        "observedCause": "Explicit upstream contentFilterTriggered=true and finishReason=content_filter; eight cases failed before any tool call, and S07 failed during ordinary result continuation.",
+        "pendingSessionChangeOrHandoffFailureObserved": false,
+        "cleanupPassed": true,
+        "historicalComparison": "The earlier v4 report on implementation 68f92d74 also recorded 57/66 with nine Opus filter failures. This is a separate v5 run, not a regrade or proof of the provider's internal cause."
+      }
+    },
+    "releaseGatePassed": false,
+    "commitCreated": false,
+    "pushed": false,
+    "reason": "The user conditioned commit/push on finding no problems. The complete stability matrix retains nine upstream-filter failures, so commit and push were withheld rather than treating those failures as passes.",
+    "userBridgeRestarted": false,
+    "originalUserConversationResumedByVerifier": false,
+    "remoteCiExecuted": false
+  },
+  "limitations": [
+    "The focused six-case run and the later full release matrices are independent results. The 57/66 stability run does not meet the earlier 95% target; no scores were combined or failures waived.",
+    "Preserving completed IDs and avoiding duplicate result RPCs does not prevent a model from proposing the same semantic operation under a new call ID.",
+    "Source edits apply only after a normal Codex/bridge exit and relaunch; the active user bridge was not modified. Resume was verified in isolated TUI cases, not by taking over the user's original conversation.",
+    "Accelerated repeated handoffs and full scenario matrices do not certify multi-hour reliability or future upstream availability."
+  ]
+}

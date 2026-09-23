@@ -64,7 +64,7 @@ export function evaluate(scenario, e, profile = DEFAULT_PROFILE) {
     sends.length > 0 && sends.every(s => sessions.some(v => v.sessionId === s.sessionId)) && nativePosts.length > 0 &&
     nativePosts.every(p => p.request?.model === e.model) && wireOutputs(successfulPosts).every(r => r.model === e.model), "Actual selected-model SDK usage, no model substitution");
   check("stream", successfulPosts.length > 0 && successfulPosts.every(p => p.status === 200 && !p.truncated && streamValid(p)), "All successful HTTP/SSE responses reconcile exactly");
-  const allowedError = { S03: "pending_session_changed", S06: "request_timeout", S07: "upstream_session_lost", S08: "upstream_session_lost", S09: "invalid_upstream_response" }[scenario.id];
+  const allowedError = { S03: "tool_result_mismatch", S06: "request_timeout", S07: "upstream_session_lost", S08: "upstream_session_lost", S09: "invalid_upstream_response" }[scenario.id];
   check("transport-outcomes", posts.length > 0 && posts.every(p => successfulPosts.includes(p) ||
     (scenario.id === "S05" && p.origin === "control-cancelled" && p.closed && !p.finished) ||
     (allowedError && errorCode(p) === allowedError && (scenario.id === "S03" ? p.origin === "control-policy" : p.origin === "native"))), "Only explicitly injected failures may be observed; no unexpected transport failures");
@@ -113,12 +113,21 @@ export function evaluate(scenario, e, profile = DEFAULT_PROFILE) {
   }
   if (scenario.id === "S03") {
     const probe = act("policy-rejection")[0];
-    check("S03.reject", act("policy-rejection").length === 1 && probe.status === 409 && parse(probe.response)?.error?.code === "pending_session_changed" &&
+    let incomplete = false;
+    if (probe) try {
+      const changed = normalizeRequest(probe.request);
+      const original = posts.find(p => p.origin === "native" && sha(JSON.stringify(p.request)) === probe.originalHash);
+      const originalRequest = normalizeRequest(original?.request);
+      const isResult = item => ["function_call_output", "custom_tool_call_output"].includes(item.type);
+      incomplete = originalRequest.input.some(isResult) && !changed.input.some(isResult) &&
+        same(changed.input, originalRequest.input.filter(item => !isResult(item))) && !same(changed.tools, originalRequest.tools);
+    } catch { /* Invalid or unrelated control requests cannot establish this boundary. */ }
+    check("S03.reject", incomplete && act("policy-rejection").length === 1 && probe.status === 409 && parse(probe.response)?.error?.code === "tool_result_mismatch" &&
       probe.before.pending === 1 && probe.after.pending === 1 && probe.before.submissions === probe.after.submissions &&
-      posts.some(p => p.origin === "control-policy" && same(p.request, probe.request) && errorCode(p) === "pending_session_changed") &&
+      posts.some(p => p.origin === "control-policy" && same(p.request, probe.request) && errorCode(p) === "tool_result_mismatch") &&
       posts.some(p => p.origin === "native" && sha(JSON.stringify(p.request)) === probe.originalHash) &&
       (e.diagnostics ?? []).some(d => d.event === "bridge.pending_session_changed" && d.changed?.includes("tools")),
-      "Real 409 rejects changed definitions without losing/submitting the pending result; the original request then succeeds");
+      "Real 409 rejects changed definitions with missing results without losing/submitting pending work; the complete original request then succeeds");
   }
   if (scenario.id === "S04") {
     const retry = act("exact-retry")[0]; const copies = posts.filter(p => p.origin === "control-duplicate");

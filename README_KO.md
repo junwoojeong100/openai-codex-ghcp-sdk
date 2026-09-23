@@ -212,6 +212,12 @@ Codex의 HTTP·스트림 자동 재시도는 계속 비활성화합니다. 브�
 
 무진행 시 브릿지는 기존 응답 스트림을 유지하면서 해당 SDK 세션을 **요청당 한 번** 재구성할 수 있습니다(`TURN_IDLE_RECOVERY_ATTEMPTS=1`, 범위 0–3; 0은 즉시 실패 방식). 입력 접수 확인, assistant 출력·대기 호출 없음, 이전 세션의 abort·disconnect·delete 성공이 모두 필요합니다. 완료된 도구 결과는 대화 이력으로만 전달하며 **도구 결과 RPC를 다시 제출하지 않습니다.** 모델·추론 수준·지시문을 유지하고 다른 대화는 재시작하지 않습니다. 부분 출력, 접수 여부가 불확실한 도구 결과, 필터, 취소, 정리 실패, SDK 연결 유실은 자동 재전송하지 않습니다. 복구 후 다시 멈추면 무한 반복하지 않고 `copilot_idle_timeout`으로 종료합니다. 복구는 추가 추론 사용량을 소비할 수 있으며 동일한 답변이나 모델 행동의 정확히 한 번 실행을 보장하지 않습니다.
 
+**도구 실행 후 반복되는 409:** 이제 모든 대기 결과가 반환되면 `/new` 없이 최상위 지시문·모델·context tier·도구 갱신을 반영할 수 있습니다. 지시문을 제외한 기존 대화는 일치해야 합니다. 이전 세션 정리와 SDK 준비 상태를 확인한 뒤 완료 결과를 새 세션의 이력으로만 넘기고 결과 RPC를 중복 제출하지 않습니다. 결과 누락·중복·불일치·기존 대화 변조는 계속 거절합니다. 모델이 새 호출 ID로 같은 작업을 제안하는 것까지 정확히 한 번 실행을 보장하지는 않습니다. [핸드오프 경계](docs/ARCHITECTURE_KO.md#대화-연속성)를 참고하세요.
+
+이 지시문 핸드오프 경로를 실제 Codex TUI·headless Playwright로 확인하여 **실모델 6/6**이 통과했습니다. 모델별 fixture 실행 1회·기존 결과 RPC 제출 0회였고 같은 대화의 다음 턴도 성공했습니다. 전체 안정성·TUI 행렬 재실행 결과와는 구분합니다. [증거·보존한 최초 실패·한계](docs/validation/2026-09-23-pending-handoff.json).
+
+이후 배포 전 전체 확인에서 **단위·통합 424건과 실모델 TUI 72/72**가 통과했지만 기본 **v5 안정성은 57/66**이며 Opus의 명시적 상위 필터 실패 9건이 남았습니다. 실패를 통과로 처리하지 않고 조건부 커밋·푸시를 보류했습니다. 두 행렬은 같은 [검증 기록](docs/validation/2026-09-23-pending-handoff.json)에 별도로 보존합니다.
+
 세션 생성·모델 설정 RPC는 **SDK 시작 제한 30초**(`SDK_STARTUP_TIMEOUT_MS=30000`, 턴 제한 이하)를 적용하고 `copilot_setup_timeout`으로 알립니다. 전체 모델 턴 제한은 복구 시도가 공유하는 기본 5분(`TURN_TIMEOUT_MS=300000`), 큐 대기 포함 요청 제한은 6분(`REQUEST_TIMEOUT_MS=360000`)이며 정리 작업은 별도 제한을 갖습니다. 복구해도 두 제한을 초기화하지 않습니다. 변경은 다시 실행한 프로세스부터 적용됩니다. 기존 상주 bridge를 사용 중이면 연결된 Codex를 닫고 `./bin/codex-ghcp-stop`을 실행한 뒤 다시 시작하세요.
 
 **소스 수정만으로 실행 중인 브릿지가 갱신되지는 않습니다.** 기본 foreground 실행에서는 Codex를 정상 종료한 뒤 같은 폴더에서 `./bin/codex-ghcp -- resume --last`를 실행하면 수정 코드를 로드하고 최근 대화를 이어갑니다. 활성 Codex 아래의 브릿지만 강제 종료하지 마세요. `codex-ghcp-status`는 background 브릿지만 확인하므로 `stopped`여도 foreground 브릿지가 실행 중일 수 있습니다. 실행 중인 `/health.turnWatchdog`에는 `firstProgressTimeoutMs`, `idleTimeoutMs`, `recoveryAttempts`, `intervalMs`가 표시됩니다. `firstProgressTimeoutMs`가 없으면 첫 진행·스트리밍 제한을 분리한 수정이 적용되지 않은 프로세스입니다. 이전의 첫 대기 90초를 명시적으로 사용하려면 `TURN_FIRST_PROGRESS_TIMEOUT_MS=90000`을 설정하세요. 복구 생략 시에는 구체적인 이유를 알립니다.
@@ -270,7 +276,7 @@ npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.js
 
 GitHub Actions는 Linux/macOS·Node 22/24에서 단위 검사와 Node 내장 소스 커버리지를 실행하고, 별도 Linux/macOS 작업에서 고정된 Codex·SDK 대역으로 실제 TUI/PTY/브라우저·워크플로 회귀 검사를 수행하도록 구성했습니다. CI는 Copilot 자격 증명이나 실모델 호출을 사용하지 않습니다. `coverage/lcov.info`는 단위 실행기가 관측한 `src` 모듈의 측정치이며 실행되지 않은 진입점까지 포함하거나 제품 기능 커버리지를 인증하지 않습니다. 워크플로 추가만으로 원격 CI 통과가 입증되지는 않습니다. 검증 보고서는 로컬 OS·아키텍처·Node·프록시 설정 유무도 기록하되 주소·비밀은 남기지 않습니다.
 
-별도 계약 `codex-ghcp-stability-11-v4`는 **11개 시나리오 × 6개 모델 = 66건**입니다. 도구 순서 변경, pending 정책 거절, HTTP 중복·취소, SDK 연결 상실, 스트림 불일치, resume·문맥 압축을 실제 Codex 경로에서 검사합니다. 장애 주입과 실제 모델 결과를 구분합니다. [범위·판정 기준·설정·명령](docs/STABILITY_TESTING_KO.md)을 참고하세요.
+별도 계약 `codex-ghcp-stability-11-v5`는 **11개 시나리오 × 6개 모델 = 66건**입니다. 도구 순서 변경, 결과 누락 시 정책 변경 거절, HTTP 중복·취소, SDK 연결 상실, 스트림 불일치, resume·문맥 압축을 실제 Codex 경로에서 검사합니다. S03 경계를 v5로 구분하며 과거 v4 점수는 재채점하지 않습니다. 장애 주입과 실제 모델 결과를 구분합니다. [범위·판정 기준·설정·명령](docs/STABILITY_TESTING_KO.md)을 참고하세요.
 
 ```bash
 npm run test:stability:stress
@@ -279,7 +285,7 @@ npm run test:stability -- --plan
 npm run test:stability -- --execute  # Copilot 사용량 발생
 ```
 
-**최신 실제 Codex 전체 검증(6개 모델 계약, 한국 시간 2026-09-23)은 기본 v4 57/66(86.36%), 별도 `application-data-v2` 63/66(95.45%)입니다.** 두 행렬 모두 구현 `68f92d74`로 전체 실행하고 현재·동결 소스로 검증했습니다. freeform `apply_patch` 목록 변경 전 결과이며 `54c7eb77`에서는 다시 실행하지 않았습니다. v4에서 `claude-opus-5.5`를 제외한 모델은 모두 11/11이며, Opus 5.5의 실패 9건은 모두 명시적인 상위 필터입니다. application-data-v2의 남은 실패는 Opus 필터 1건, SDK `disconnect` 정리 시간 초과 1건, 모델 도구 반복 미충족 1건입니다. bridge는 이제 쓰지 않는 Copilot 런타임 MCP 서버를 비활성화합니다(최종 행렬 동안 MCP 프로세스 0개). 실검증 중 macOS `EPERM` supervisor 오판도 찾아 수정했습니다. [변경·실행 이력·증거](docs/validation/2026-09-23-six-model-switch/README_KO.md)를 참고하세요.
+**과거 실제 Codex 전체 검증(6개 모델 계약, 한국 시간 2026-09-23)은 기본 v4 57/66(86.36%), 별도 `application-data-v2` 63/66(95.45%)입니다.** 두 행렬 모두 구현 `68f92d74`로 전체 실행하고 현재·동결 소스로 검증했습니다. freeform `apply_patch` 목록 변경 전 결과이며 `54c7eb77`에서는 다시 실행하지 않았습니다. v4에서 `claude-opus-5.5`를 제외한 모델은 모두 11/11이며, Opus 5.5의 실패 9건은 모두 명시적인 상위 필터입니다. application-data-v2의 남은 실패는 Opus 필터 1건, SDK `disconnect` 정리 시간 초과 1건, 모델 도구 반복 미충족 1건입니다. bridge는 이제 쓰지 않는 Copilot 런타임 MCP 서버를 비활성화합니다(최종 행렬 동안 MCP 프로세스 0개). 실검증 중 macOS `EPERM` supervisor 오판도 찾아 수정했습니다. [변경·실행 이력·증거](docs/validation/2026-09-23-six-model-switch/README_KO.md)를 참고하세요.
 
 **이전 실제 Codex 전체 검증(과거 7개 모델 v3/application-data-v1 계약, 한국 시간 2026-09-23)은 기본 v3 66/77(85.71%), 별도 `application-data-v1` 72/77(93.51%)입니다.** 터미널 실행기 통합 후 두 행렬을 각각 전체 실행하고 현재·동결 소스로 검증했습니다. 상위 필터·literal 레이블 누락·반복 도구 호출 누락을 실패로 유지하며, 77/77도 기존 95% 목표 달성도 아닙니다. 추가 실제 PTY·Playwright 확인에서 스크롤 영역 관측 오류를 찾아 수정했습니다. 앞선 74/77을 포함한 과거 결과는 별도로 보존하고 점수를 조합하지 않습니다. [구현·전체 결과·증거](docs/validation/2026-09-22-terminal-integration/README_KO.md)와 [검증 목록](docs/validation/README_KO.md)을 참고하세요.
 

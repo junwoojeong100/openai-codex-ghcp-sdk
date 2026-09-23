@@ -4,13 +4,15 @@
 
 ## 새 실모델 검증
 
-기존 결과·로그·보고서는 사용자 요청으로 삭제했습니다. 실행 전에 동결하는 v4 기준으로 11개 시나리오 × 6개 모델의 전체 66건을 새로 실행하며, [새 검증 기록](validation/README_KO.md)에 결과를 게시합니다. 과거 점수를 재사용하거나 실패 셀만 재실행하지 않습니다.
+새 전체 실행은 실행 전에 동결하는 v5 기준으로 11개 시나리오 × 6개 모델의 66건을 검증합니다. 실패를 포함한 기존 보고서는 과거 기록으로 보존하며 점수를 재사용하거나 실패 셀만 재실행하지 않습니다. [검증 기록](validation/README_KO.md)에서 구현과 계약을 구분합니다.
 
 ## 선택적 application-data 프로필과 현재 상태
 
-기본값은 `v4`(`codex-ghcp-stability-11-v4`)입니다. `--profile application-data-v2`를 명시하면 `codex-ghcp-stability-11-application-data-v2`를 선택합니다. 이는 application-data-v1의 read/remember/recall 문구를 v4 기반에 적용한 별도 catalog ID·hash입니다. 6개 모델·11개 시나리오·fixture·장애 주입·예산·literal-output·정리 판정은 같습니다. production 사용자 요청을 재작성하지 않습니다. 보고서·worker·artifact에 프로필 identity를 전달하며, 다른 프로필의 통과 셀 대입이나 `--verify --profile` 재채점을 거절합니다.
+기본값은 `v5`(`codex-ghcp-stability-11-v5`)입니다. `--profile application-data-v3`를 명시하면 `codex-ghcp-stability-11-application-data-v3`를 선택합니다. 이는 기존 application-data의 read/remember/recall 문구를 v5 기반에 적용한 별도 catalog ID·hash입니다. 두 프로필은 6개 모델·11개 시나리오·fixture·장애 주입·예산·literal-output·정리 판정이 같습니다. production 사용자 요청을 재작성하지 않습니다. 보고서·worker·artifact에 프로필 identity를 전달하며, 다른 프로필의 통과 셀 대입이나 `--verify --profile` 재채점을 거절합니다.
 
-`v3`와 `application-data-v1`은 더 이상 선택할 수 없습니다. 해당 7개 모델·77건 기록은 과거 기록으로 남기며 각 실행의 동결된 `source-snapshot/scripts/stability.mjs`로만 검증하고, 새 결과와 재채점하거나 합산하지 않습니다.
+v5는 S03의 거절 경계만 바꿉니다. 정책 변경 제어 요청에서 도구 결과를 의도적으로 누락하고, 대기 상태를 잃지 않은 채 `tool_result_mismatch`를 반환해야 합니다. 올바른 결과가 모두 있으면 기존의 일괄 409 대신 안전한 설정 핸드오프를 허용합니다. `v4`/`application-data-v2`와 이전 프로필은 더 이상 선택할 수 없습니다. 해당 66건 또는 과거 77건 기록은 각 실행의 동결된 `source-snapshot/scripts/stability.mjs`로만 검증하며 v5로 재채점하거나 합산하지 않습니다.
+
+최신 배포 전 확인에서 구현 `320d502c`의 기본 **v5 전체 행렬은 57/66(86.36%)**이며 Opus 5.5의 명시적 상위 필터 실패 9건과 종료 코드 1을 유지합니다. 나머지 5개 모델은 각각 11/11입니다. 별도 실제 TUI 행렬은 72/72이며 점수를 합산하지 않습니다. 두 보고서 모두 현재·동결 소스로 독립 검증했습니다. 요청된 '이상없으면 커밋·푸시' 조건은 충족하지 못했습니다. [증거와 커밋 조건](validation/2026-09-23-pending-handoff.json).
 
 6개 모델 구현 `68f92d74`의 독립 전체 실측은 **v4 57/66(86.36%)**, **application-data-v2 63/66(95.45%)**입니다. 두 실행 모두 실패·`fullMatrixPassed=false`·종료 코드 1을 유지합니다. application-data-v2는 95% 참고 기준(63/66 이상)을 충족하지만, v4는 Opus 5.5의 읽기 턴이 모두 상위 필터에 걸려 미달입니다. 이후 freeform `apply_patch` 목록 변경(`54c7eb77`)은 이 행렬을 다시 돌리지 않고 별도 [실제 TUI 행렬](validation/2026-09-23-tui-scenarios/README_KO.md)로 검증했습니다. [결과·실행 이력·MCP 격리](validation/2026-09-23-six-model-switch/README_KO.md)를 참고하세요.
 
@@ -20,16 +22,16 @@
 
 ```sh
 # 계획만 출력, 모델 호출 없음
-npm run test:stability -- --plan --profile application-data-v2
+npm run test:stability -- --plan --profile application-data-v3
 # 모의 SDK / 명시적 실모델 실행. 각각 새 디렉터리 사용
-npm run test:stability -- --runtime --profile application-data-v2 --output .runtime/application-offline-new
-npm run test:stability -- --execute --profile application-data-v2 --output .runtime/application-live-new
+npm run test:stability -- --runtime --profile application-data-v3 --output .runtime/application-offline-new
+npm run test:stability -- --execute --profile application-data-v3 --output .runtime/application-live-new
 npm run test:stability -- --verify .runtime/application-live-new/report.json
 ```
 
 ## 범위와 실행 전 판정 기준
 
-`codex-ghcp-stability-11-v4`는 **11개 시나리오 × 6개 모델 = 66건**의 별도 계약입니다. Codex **0.154.0**, Copilot SDK **1.0.14**를 사용합니다. 과거 18개 워크플로 v4 호환성 결과를 대체·재채점하지 않으며, 자동 케이스 재실행·모델 대체·부분 선택·OpenAI 기준선은 없습니다.
+`codex-ghcp-stability-11-v5`는 **11개 시나리오 × 6개 모델 = 66건**의 별도 계약입니다. Codex **0.154.0**, Copilot SDK **1.0.14**를 사용합니다. 과거 18개 워크플로 v4 호환성 결과를 대체·재채점하지 않으며, 자동 케이스 재실행·모델 대체·부분 선택·OpenAI 기준선은 없습니다.
 
 실검증 통과에는 실제 Codex app-server → 생산 Responses bridge → 실제 SDK → 정확한 모델 경로, 네이티브 fixture 도구 호출, 독립 판정과 자원 정리가 모두 필요합니다. 관찰용 프록시·계층이 아래 장애만 명시적으로 주입합니다. live 모드에서 SDK나 모델 출력을 대역으로 바꾸지 않습니다. 복제·거절·취소하는 제어용 HTTP 요청은 별도 실모델 셀로 세지 않습니다.
 
@@ -37,7 +39,7 @@ npm run test:stability -- --verify .runtime/application-live-new/report.json
 |---|---|---|---:|
 | S01 | 네이티브 읽기·유니코드 SSE·준비 상태 | 없음 | 90초 |
 | S02 | pending 결과 반환 중 도구 순서 변경 | 도구 목록 순서만 변경 | 90초 |
-| S03 | 정책 변경 거절 후 원래 결과 수락 | 의도적으로 잘못된 제어 요청 1회 | 90초 |
+| S03 | 결과가 누락된 정책 변경 거절 후 완전한 원래 요청 수락 | 도구 결과를 모두 누락한 제어 요청 1회 | 90초 |
 | S04 | 결과 요청 재시도·중복 제출 방지 | 동일 HTTP 요청 1회 복제 | 90초 |
 | S05 | 네이티브 작업 중 대기 요청 취소 | 제한된 SDK ACK 대기·연결 취소 | 120초 |
 | S06 | 전체 요청 시간 제한 후 새 네이티브 턴 복구 | 45초 요청 제한·제한된 ACK 대기 | 180초 |
@@ -86,7 +88,7 @@ v4의 분모 66건, 정확한 모델 라우팅, 원문 value/receipt 검사, 필
 
 ## 구현한 복구 경계
 
-- 도구 배열 순서가 아니라 identity로 동등성을 비교합니다. 실제 스키마·권한·모델·지시문·기존 이력 변경은 pending 상태에서 계속 거절합니다. 충돌 로그에는 원문 대신 변경 field, hash와 개수만 남깁니다.
+- 도구 배열 순서가 아니라 identity로 동등성을 비교합니다. 대기 중 설정 변경은 모든 대응 결과와 지시문을 제외한 기존 이력의 일치를 요구합니다. abort·disconnect·delete와 같은 generation의 준비 상태 확인 후 교체하며, 완료 결과는 직렬화된 이력으로만 전달하고 결과 RPC를 반복하지 않습니다. 결과 누락·중복·불일치·대화 변조는 계속 거절합니다. 완료 ID와 응답 버전은 보존하지만 모델이 새 ID로 같은 작업을 제안할 수는 있습니다. 충돌 로그에는 원문 대신 요청 ID·변경 field·hash·개수만 남깁니다.
 - SDK 제어 연결 `ping`으로 상실을 감지합니다. 공유된 복구 작업 하나가 시간 제한·backoff 안에서 **새 client generation**을 만들며 동시 요청마다 SDK를 중복 생성하지 않습니다. 잃은 대화는 무효화하고 연결 유실 이후 추론·불확실한 도구 결과를 자동 재전송하지 않습니다.
 - 연결이 정상이라면 모델 진행 감시가 무응답 턴을 기존 응답 스트림에서 기본 한 번 복구할 수 있습니다. 입력 접수 확인, 출력·대기 호출 없음, 이전 세션 정리 확인이 필요합니다. 완료 이력은 문맥으로만 전달하며 완료된 도구 결과 RPC는 반복하지 않습니다. 부분 출력·필터·취소·불확실한 제출·정리 실패는 제외합니다. 진단에는 복구 시도·성공·구체적인 생략 이유가 남습니다. 이는 제한적인 추론 재전송이며 정확히 한 번 실행의 보장이나 외부 프로세스 재시작 감시가 아닙니다.
 - 공개 `/health`는 **HTTP 프로세스 생존**이며 마지막 `ready`·`upstreamState`도 제공합니다. 인증된 `/readyz`는 제한 시간 안에서 SDK를 검사해 200/503을 반환하며 그 자체로 재연결하지 않습니다. 인증된 `/v1/models`는 필요하면 SDK 복구 후 목록을 제공합니다. 준비 상태는 모델 서비스·쿼터까지 보증하지 않습니다.
@@ -112,6 +114,18 @@ v4의 분모 66건, 정확한 모델 라우팅, 원문 value/receipt 검사, 필
 `TURN_IDLE_RECOVERY_ATTEMPTS`만 0–3을 허용하고 나머지는 양의 정수입니다. 복구해도 절대 턴·전체 요청 제한은 초기화하지 않습니다. 기존 바이트·세션·정리 한도는 유지합니다. `copilot_idle_timeout`·`copilot_timeout`·`request_timeout`은 504, `request_queue_full`은 429, `upstream_session_lost`는 새 대화를 요구하는 409입니다. 부작용 있는 도구를 무조건 다시 실행하지 마세요. 업데이트를 적용하려면 연결된 Codex 세션을 먼저 닫고 프로젝트 소유 bridge를 재실행해야 합니다. 개발·검증 실행기는 사용 중인 bridge를 재시작하지 않습니다. `/health.turnWatchdog`는 소스 파일의 기본값이 아니라 실행 중인 설정을 표시합니다. background 상태에도 표시하지만 foreground 브릿지는 검색하지 않습니다.
 
 ## 명령과 증거
+
+전용 pending-handoff 회귀 검사는 실제 Codex TUI·실행기·fixture MCP 서버·headless Playwright를 사용합니다. 모든 도구 결과를 반환하는 요청에 명시적으로 최상위 지시문 갱신을 주입하고, fixture 실행 1회·기존 결과 RPC 제출 0회·결과 원문 보존·`/new` 없는 같은 TUI의 다음 턴 성공을 요구합니다. 기본 runtime 검사는 SDK 대역을 사용합니다. live 옵션은 6개 모델 전체를 실행하고 새 디렉터리에 각 케이스 증거를 보존하며, 이 집중 회귀 검사는 66건 안정성 행렬 재실행과 다릅니다.
+
+`pending-result-instruction-handoff-v2`는 기존 TUI marker 판정에 맞춰 샘플을 독립된 한 줄로 출력하도록 명시합니다. 최초 검사에서는 이 형식 요구가 빠져, 6개 모델 모두 핸드오프에 성공했지만 올바른 inline 답변 2건이 화면 검사에서 실패하고 다음 턴에 도달하지 못하여 4/6으로 남았습니다. 해당 실패 기록을 보존하고 재채점하지 않습니다. 수정 검사는 새 6개 모델 전체 실행을 요구하며 production 프롬프트나 출력을 재작성하지 않습니다.
+
+```sh
+node --test test/runtime/pending-handoff.test.mjs
+GHCP_LIVE_HANDOFF_OUTPUT=.runtime/pending-handoff-live-new \
+  node --test --test-concurrency=1 test/runtime/pending-handoff.test.mjs
+```
+
+핸드오프 정리·준비 상태를 확인하지 못하면 `session_handoff_failed`(503)입니다. 취소·연결 유실·대체 세션 실패 후에는 결과 재시도를 새 대화로 처리하지 않고 해당 대화를 유실 상태로 유지합니다. 결과 누락·불일치는 `tool_result_mismatch`(409), 기존 대화 변조는 `pending_session_changed`(409)로 거절합니다.
 
 ```bash
 npm test

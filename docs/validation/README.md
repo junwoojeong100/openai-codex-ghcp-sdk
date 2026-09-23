@@ -2,7 +2,13 @@
 
 [한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
 
-## Latest: first-progress watchdog and real TUI v3 — 2026-09-23 KST
+## Latest: pending-result handoff and release verification — 2026-09-23 KST
+
+[Verification summary, failures and release gate](2026-09-23-pending-handoff.json)
+
+Implementation `320d502c` passed 424 unit/integration tests, all SDK-double runtime suites, 100 mixed handoffs, the focused 6/6 live handoff probe, and a fresh **72/72 real-TUI matrix**. The separate full **v5 stability matrix remains 57/66 (86.36%)**: all nine failures carry explicit Opus 5.5 upstream content-filter metadata, not the pending-session 409. Both full live reports passed current/frozen-source evidence verification. Failures are preserved and the conditional commit/push was withheld. The active user bridge was not restarted.
+
+## Earlier: first-progress watchdog and real TUI v3 — 2026-09-23 KST
 
 [Machine-readable verification summary and limits](2026-09-23-first-progress.json)
 

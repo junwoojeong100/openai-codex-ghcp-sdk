@@ -86,8 +86,9 @@ export function stabilityEvidence(id, profile = DEFAULT_PROFILE) {
   }
   if (id === "S03") {
     const changed = structuredClone(req); changed.tools[0].description = "changed policy";
-    post(changed, { origin: "control-policy", status: 409, error: "pending_session_changed" });
-    control("policy-rejection", { status: 409, response: JSON.stringify({ error: { code: "pending_session_changed" } }), request: changed,
+    changed.input = changed.input.filter(item => !["function_call_output", "custom_tool_call_output"].includes(item.type));
+    post(changed, { origin: "control-policy", status: 409, error: "tool_result_mismatch" });
+    control("policy-rejection", { status: 409, response: JSON.stringify({ error: { code: "tool_result_mismatch" } }), request: changed,
       originalHash: sha(JSON.stringify(req)), before: { pending: 1, submissions: 0 }, after: { pending: 1, submissions: 0 } });
     e.diagnostics.push({ event: "bridge.pending_session_changed", changed: ["tools"] });
   }
