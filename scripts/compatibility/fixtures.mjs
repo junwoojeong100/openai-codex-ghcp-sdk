@@ -44,7 +44,7 @@ export async function createFixture(root, id, seed, env, signal) {
     for (const name of ["allow.txt", "deny.txt"]) fs.writeFileSync(path.join(protectedRoot, name), "KEEP", { mode: 0o600 });
   }
   if (id === "C08") {
-    write("sandbox-probe.mjs", "import fs from 'node:fs'; import net from 'node:net'; const r={}; try{fs.writeFileSync('allowed.txt','OK');r.allowed=true;}catch(e){r.allowed=false;} try{fs.writeFileSync('../protected/sentinel.txt','BAD');r.outsideDenied=false;}catch(e){r.outsideDenied=true;r.outsideCode=e.code;} const port=Number(fs.readFileSync('port.txt','utf8')); const s=net.createConnection({host:'127.0.0.1',port}); await new Promise(resolve=>{ const done=ok=>{r.networkDenied=!ok;s.destroy();resolve();};s.once('connect',()=>done(true));s.once('error',()=>done(false));s.setTimeout(700,()=>done(false)); }); console.log(JSON.stringify(r));\n");
+    write("sandbox-probe.mjs", "import fs from 'node:fs'; import net from 'node:net'; const r={}; try{fs.writeFileSync('allowed.txt','OK');r.allowed=true;}catch(e){r.allowed=false;} try{fs.writeFileSync('../protected/sentinel.txt','BAD');r.outsideDenied=false;}catch(e){r.outsideDenied=true;r.outsideCode=e.code;} const port=Number(fs.readFileSync('port.txt','utf8')); const s=net.createConnection({host:'127.0.0.1',port}); await new Promise(resolve=>{ const done=ok=>{r.networkDenied=!ok;s.destroy();resolve();};s.once('connect',()=>done(true));s.once('error',()=>done(false));s.setTimeout(700,()=>done(false)); }); fs.writeSync(1,JSON.stringify(r)+'\\n');\n");
     allowed.push("allowed.txt");
   }
   if (["C09", "C10", "C14"].includes(id)) { write("memory.txt", nonce); allowed.push("memory.txt"); }

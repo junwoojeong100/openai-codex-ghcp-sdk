@@ -107,7 +107,7 @@ class ScriptedSession {
       this.reply(`CHILD MODE=SAFE ${values.join(" ")}`);
     } else if (this.id === "C04" && this.step === 1) this.shell("node app.mjs && git diff --check");
     else if (this.id === "C05" && this.step === 1) this.patch("*** Begin Patch\n*** Update File: discount.mjs\n@@\n-export function discount(price, percent) { return price * (100 - percent); }\n+export function discount(price, percent) { return price * (100 - percent) / 100; }\n*** End Patch");
-    else if (this.id === "C05" && this.step === 2) this.shell("node --test");
+    else if (this.id === "C05" && this.step === 2) this.shell("node --test --experimental-test-isolation=none");
     else if (["C06", "C16"].includes(this.id)) {
       const step = this.step + (this.id === "C16" ? 1 : 0);
       if (step === 1) this.named("list_mcp_resources", { server: "fixture" });
@@ -150,7 +150,7 @@ Use release code ${tokens(output)[0]} without changing files.
     else if (this.id === "C02") this.shell("cat note.txt ../.agents/skills/fixture-check/guide.txt; node ../.agents/skills/fixture-check/helper.mjs");
     else if (this.id === "C03") this.shell("grep -n targetPrice src/*; cat 'src/주문 계산.mjs'; wc -c empty.txt; git diff -- review.mjs");
     else if (this.id === "C04") this.patch(REFACTOR);
-    else if (this.id === "C05") this.shell("node --test");
+    else if (this.id === "C05") this.shell("node --test --experimental-test-isolation=none");
     else if (this.id === "C06") this.named("alpha.lookup", { key: "한글", ids: [2, 1], enabled: false, note: null });
     else if (this.id === "C07") {
       const command = /exactly this command:\n([^\n]+)/.exec(latest)?.[1]; assert.ok(command);

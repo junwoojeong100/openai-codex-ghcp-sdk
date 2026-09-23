@@ -182,7 +182,8 @@ export function evaluate(scenario, e) {
   }
   if (scenario.id === "C05") {
     const tests = allCommands.filter(i => /\bnode\s+--test\b/.test(i.command || ""));
-    check("C05.1", tests.length >= 2 && Number.isInteger(code(tests[0])) && code(tests[0]) !== 0 && code(tests.at(-1)) === 0 &&
+    check("C05.1", tests.length >= 2 && tests.every(item => safeApprovalCommand(item.command, "node --test --experimental-test-isolation=none")) &&
+      Number.isInteger(code(tests[0])) && code(tests[0]) !== 0 && code(tests.at(-1)) === 0 &&
       /(?:#|ℹ) tests 3/.test(output(tests.at(-1))) && /(?:#|ℹ) pass 3/.test(output(tests.at(-1))) && e.independentTest?.code === 0,
       "Observed failing test followed by the same three passing tests and independent inputs");
     check("C05.2", e.before?.["discount.test.mjs"] && same(e.before["discount.test.mjs"], e.after?.["discount.test.mjs"]) &&

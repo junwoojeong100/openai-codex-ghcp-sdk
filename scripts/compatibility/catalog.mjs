@@ -76,7 +76,7 @@ export const NATIVE_SCENARIOS = freeze([
     ["editing", "multi-file", "git"], text("patch/경로 손상·사용자 변경 덮어쓰기", "Corrupted patch/path or overwritten user changes"), ["host", "exec"]),
   scenario("C05", text("실패 재현→디버깅→수정→회귀 테스트", "Reproduce failure, debug, fix and regression test"), 120, 1, 7,
     text("discount.mjs의 /100 누락 버그, 고정 Node 테스트 3개. 테스트 파일/설정을 수정할 수 없고 별도 입력으로 독립 검증한다.", "Missing /100 in discount.mjs and three fixed Node tests. Tests/config are immutable; independently check extra inputs."),
-    "Run node --test as a standalone command (no pipes, tail, or exit-code masking) to reproduce the failure, fix only discount.mjs, then rerun the same tests as a standalone command. Preserve the complete TAP summary and actual exit codes. Do not modify tests or dependencies. Summarize the observed before/after result.",
+    "Run node --test --experimental-test-isolation=none as a standalone command (no pipes, tail, or exit-code masking) to reproduce the failure, fix only discount.mjs, then rerun the same tests with the same command. This keeps the three tests in one Node process inside the OS sandbox. Preserve the complete TAP summary and actual exit codes. Do not modify tests or dependencies. Summarize the observed before/after result.",
     [text("실패 exit/log→코드 변경→성공 exit/log의 순서를 검증하고 별도 샌드박스에서 추가 입력을 확인한다.", "Verify failing exit/log → code edit → passing exit/log, then extra inputs in a separate sandbox.")],
     [[text("실패 재현 후 동일 3개 테스트가 통과하고 독립 입력도 맞다.", "Observed failure followed by the same three passing tests and correct independent inputs."), "test-results.json"],
      [text("제품 코드만 수정하고 테스트 약화·가짜 성공·의존성 설치가 없다.", "Only production code changes; no weakened tests, fake success or dependency installation."), "state.json"]],
@@ -154,8 +154,9 @@ export const COVERAGE = freeze({
   ],
 });
 export const NATIVE_SCENARIO_CATALOG = freeze({
-  id: "codex-ghcp-workflows-18-v5", schemaVersion: 5, designedAt: "2026-09-21",
+  id: "codex-ghcp-workflows-18-v6", schemaVersion: 6, designedAt: "2026-09-21",
   changesFromV4: "Only the model set changes to claude-opus-5.5, claude-sonnet-5, claude-haiku-4.5, gpt-6-astra, gpt-6-sol and gpt-6-luna (108 cases). Workflows, prompts, oracles and budgets are unchanged; 126-case v4 reports verify only with their original runner revision.",
+  changesFromV5: "C05 explicitly runs its unchanged three tests in one Node process to avoid the pinned Linux sandbox's captured-child-stdio defect. C08 emits its original measurements through the file descriptor, and C15 correlates the receipt's PID namespace with an owned host PID before checking exit. OS sandbox enforcement, models, budgets and the 108-case denominator remain unchanged. Historical v5 records require their frozen source and are not regraded.",
   status: "runner-implemented-live-unverified", runnerImplemented: true,
   versions: { codex: "0.154.0", copilotSdk: "1.0.14" }, models: NATIVE_MODELS, route: REQUIRED_ROUTE,
   budget: EXECUTION_BUDGET, acceptance: ACCEPTANCE, coverage: COVERAGE,

@@ -2,7 +2,7 @@
 
 [English](NATIVE_SCENARIOS.md) · [실행 안내](COMPATIBILITY_TESTING_KO.md) · [제품 경계](COMPATIBILITY_KO.md)
 
-**현재 계약: codex-ghcp-workflows-18-v5. 시나리오 18개 × 모델 6개 = 108건.** 전체 행렬을 실행하며 빠른/부분 모델 모드는 없습니다.
+**현재 계약: codex-ghcp-workflows-18-v6. 시나리오 18개 × 모델 6개 = 108건.** 전체 행렬을 실행하며 빠른/부분 모델 모드는 없습니다.
 
 실모델 결과와 증거는 실행 안내를 참고하세요. 다른 계약이나 삭제된 과거 실행의 결과를 현재 계약의 결과로 재사용하거나 재채점하지 않습니다.
 
@@ -235,7 +235,7 @@ Use native apply_patch (not shell writes): rename second() to total() in calc.mj
 **작업:**
 
 ```text
-Run node --test as a standalone command (no pipes, tail, or exit-code masking) to reproduce the failure, fix only discount.mjs, then rerun the same tests as a standalone command. Preserve the complete TAP summary and actual exit codes. Do not modify tests or dependencies. Summarize the observed before/after result.
+Run node --test --experimental-test-isolation=none as a standalone command (no pipes, tail, or exit-code masking) to reproduce the failure, fix only discount.mjs, then rerun the same tests with the same command. This keeps the three tests in one Node process inside the OS sandbox. Preserve the complete TAP summary and actual exit codes. Do not modify tests or dependencies. Summarize the observed before/after result.
 ```
 
 **절차:**

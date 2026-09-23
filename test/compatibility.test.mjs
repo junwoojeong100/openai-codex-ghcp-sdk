@@ -36,6 +36,20 @@ test("one integrated suite has a versioned scenario catalog, six models and a de
   const copy = structuredClone(C); copy.scenarios[0].timeoutSeconds = 999;
   assert.throws(() => validateDesign(copy)); assert.notEqual(catalogFingerprint(copy), catalogFingerprint());
 });
+
+test("C05 requires the declared standalone in-process command and all three original tests", () => {
+  assert.equal(C.id, "codex-ghcp-workflows-18-v6");
+  assert.match(scenario("C05").prompt, /node --test --experimental-test-isolation=none/);
+  for (const replacement of ["node --test", "node --test --experimental-test-isolation=none | cat", "echo 'node --test'"]) {
+    const evidence = syntheticEvidence("C05");
+    for (const row of evidence.native) if (row.message.params?.item?.type === "commandExecution") row.message.params.item.command = replacement;
+    assert.equal(evaluate(scenario("C05"), evidence).find(check => check.id === "C05.1").passed, false);
+  }
+  const evidence = syntheticEvidence("C05");
+  const last = evidence.native.findLast(row => row.message.params?.item?.type === "commandExecution");
+  last.message.params.item.aggregatedOutput = "# tests 1\n# pass 1";
+  assert.equal(evaluate(scenario("C05"), evidence).find(check => check.id === "C05.1").passed, false);
+});
 test("CLI requires deliberate execution, has no fast/subset mode and defaults to an offline plan", () => {
   assert.equal(parseArguments([]).mode, "plan");
   assert.equal(parseArguments(["--execute"]).mode, "execute");

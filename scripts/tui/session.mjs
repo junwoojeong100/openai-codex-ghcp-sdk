@@ -2,7 +2,7 @@
 // rendered/driven by headless Playwright + xterm.js. Model output is never simulated.
 import fs from "node:fs";
 import path from "node:path";
-import { spawn, execFileSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { StringDecoder } from "node:string_decoder";
 import { fileURLToPath } from "node:url";
@@ -10,8 +10,10 @@ import { performance } from "node:perf_hooks";
 import { isDeepStrictEqual } from "node:util";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
 import { ROOT, environment, mkdir, writeJson } from "../compatibility/util.mjs";
+import { descendants, processTable } from "../compatibility/processes.mjs";
 import { createBrowserTerminal } from "../soak/browser.mjs";
 import { inspectTerminalScreen } from "../soak/terminal.mjs";
+export { descendants, processTable } from "../compatibility/processes.mjs";
 
 const hash = value => createHash("sha256").update(value).digest("hex");
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -28,19 +30,6 @@ export function isExpectedTitleRejection(row) {
       schema: { type: "object", properties: { title: { type: "string", minLength: 1, maxLength: 36 } }, required: ["title"], additionalProperties: false } })
     && row.error?.code === "invalid_request_error"
     && row.error?.message === "Structured output is not supported; use plain text output.";
-}
-
-export function processTable() {
-  return execFileSync("ps", ["-axo", "pid=,ppid=,command="], { encoding: "utf8", maxBuffer: 16 * 1024 * 1024 }).trim().split("\n")
-    .map(line => /^\s*(\d+)\s+(\d+)\s+(.*)$/.exec(line)).filter(Boolean).map(m => ({ pid: +m[1], ppid: +m[2], command: m[3] }));
-}
-export function descendants(root, rows = processTable()) {
-  const out = [], queue = [root];
-  while (queue.length) {
-    const parent = queue.shift();
-    for (const row of rows) if (row.ppid === parent) { out.push(row); queue.push(row.pid); }
-  }
-  return out;
 }
 
 // Numbered rows of the real Codex /model popup (1. slug (default) / › 4. slug (current)).

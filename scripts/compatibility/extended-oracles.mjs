@@ -81,7 +81,7 @@ export function extendedChecks(scenario, e, h) {
       phaseRecords(stopped).some(r => r.message?.method === "item/started" && r.message.params?.item?.type === "commandExecution" && /node\s+long-task\.mjs/.test(r.message.params.item.command || "")),
       "An observed active native command is interrupted by exact thread/turn identity");
     let receipt; try { receipt = JSON.parse(content(e.after, "task-started.json")); } catch {}
-    check("C15.2", Number.isSafeInteger(i.pid) && receipt?.pid === i.pid && i.processGone === true &&
+    check("C15.2", Number.isSafeInteger(i.pid) && receipt?.pid === i.pid && Number.isSafeInteger(i.hostPid) && i.hostPid > 1 && i.processGone === true &&
       rpcRoundTrip(records, "thread/backgroundTerminals/clean", p => p.threadId === i.threadId) && continued?.threadId === i.threadId &&
       continued.result?.status === "completed" && answer(phaseRecords(continued)) === n &&
       allCommands.filter(c => /node\s+long-task\.mjs/.test(c.command || "")).length === 1 && allCommands.some(c => code(c) === 0 && has(output(c), n)),

@@ -73,7 +73,7 @@ export function syntheticEvidence(id, provider = "ghcp", model = "gpt-6-astra") 
   }
   if (id === "C05") {
     e.before["discount.mjs"] = file("buggy"); e.before["discount.test.mjs"] = file("fixed tests");
-    events = [command("node --test", "# tests 3\n# fail 1", 1), command("node --test", "# tests 3\n# pass 3", 0)]; e.independentTest = { code: 0 };
+    events = [command("node --test --experimental-test-isolation=none", "# tests 3\n# fail 1", 1), command("node --test --experimental-test-isolation=none", "# tests 3\n# pass 3", 0)]; e.independentTest = { code: 0 };
   }
   if (id === "C06") {
     const args = { key: "한글", ids: [2, 1], enabled: false, note: null };

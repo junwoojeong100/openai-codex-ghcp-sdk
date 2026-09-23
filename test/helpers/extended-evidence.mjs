@@ -58,7 +58,7 @@ export function extendedEvidence(id, e, { file, command, item, received }) {
     const phase = turn("interrupt", "", [received({ method: "item/started", params: { threadId: "t1", item: commandItem.message.params.item } }), commandItem,
       ...rpc("turn/interrupt", { threadId: "t1", turnId: "turn-1" }), ...rpc("thread/backgroundTerminals/clean", { threadId: "t1" }) ]);
     phase.result.status = "interrupted";
-    e.interruption = { started: true, threadId: "t1", turnId: phase.result.id, pid: 777, processGone: true };
+    e.interruption = { started: true, threadId: "t1", turnId: phase.result.id, pid: 777, hostPid: 777, processGone: true };
     e.after["task-started.json"] = file(JSON.stringify({ pid: 777 }));
     turn("recovery", n, [command("cat recovery.txt", n)]);
   }

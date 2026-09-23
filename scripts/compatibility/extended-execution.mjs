@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { pidAlive } from "../../src/bridge-daemon.mjs";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
 import { ROOT, mkdir, run, writeJson, safeRead, CaseError, deadline } from "./util.mjs";
+import { sandboxTaskPid } from "./processes.mjs";
 
 export function requireCompleted(f, result, expected = "completed") {
   if (result?.status === expected) return;
@@ -97,12 +98,13 @@ export async function executeExtended(f) {
           r.message.params?.item?.type === "commandExecution" && /node\s+long-task\.mjs/.test(r.message.params.item.command || ""), phase.after);
         await until(() => fs.existsSync(receiptFile), f.signal);
         const receipt = JSON.parse(safeRead(receiptFile, 1024));
-        f.observation.interruption = { threadId: f.threadId, turnId: initial.turn.id, pid: receipt.pid, started: Number.isSafeInteger(receipt.pid) && pidAlive(receipt.pid) };
+        const hostPid = sandboxTaskPid(f.host.child.pid, receipt.pid, f.fixture.workspace);
+        f.observation.interruption = { threadId: f.threadId, turnId: initial.turn.id, pid: receipt.pid, hostPid, started: pidAlive(hostPid) };
         await f.host.request("turn/interrupt", { threadId: f.threadId, turnId: initial.turn.id });
         phase.result = (await f.host.wait(isCompleted(f.threadId, initial.turn.id), phase.after)).message.params.turn;
         requireCompleted(f, phase.result, "interrupted");
         await f.host.request("thread/backgroundTerminals/clean", { threadId: f.threadId });
-        await until(() => !pidAlive(receipt.pid), deadline(f.signal, 3000));
+        await until(() => !pidAlive(hostPid), deadline(f.signal, 3000));
         f.observation.interruption.processGone = true;
       } finally { phase.end = f.observation.native.length; }
       await f.turn("Read recovery.txt once and return its exact contents. Do not run long-task.mjs again.", { label: "recovery" });

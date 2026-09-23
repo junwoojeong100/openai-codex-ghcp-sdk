@@ -4,9 +4,11 @@
 
 ## Current contract and verification records
 
-`codex-ghcp-workflows-18-v5` (schemaVersion 5): **18 scenarios × six exact GHCP models = 108 cases**. Matrix dimensions, report denominators and documentation are derived from the catalog. There is one full suite, no live subset, no automatic case reruns and no native OpenAI baseline.
+`codex-ghcp-workflows-18-v6` (schemaVersion 6): **18 scenarios × six exact GHCP models = 108 cases**. Matrix dimensions, report denominators and documentation are derived from the catalog. There is one full suite, no live subset, no automatic case reruns and no native OpenAI baseline. Runtime verification uses Node 22.12+; the bridge's application engine requirements are unchanged.
 
-Historical v4 126-case reports verify only with their original runner revision. Previous verification results and raw evidence were deleted at the user’s request. See the [new verification records](validation/README.md). The current rerun covers the separate 11-scenario stability contract; its results cannot be credited as a pass of this 18-workflow contract.
+Historical v5 108-case and v4 126-case reports verify only with their original runner revision. See the [verification records](validation/README.md). The separate 11-scenario stability contract cannot be credited as a pass of this 18-workflow contract.
+
+v6 corrects three Linux verification assumptions without relaxing the OS sandbox. C05 explicitly runs `node --test --experimental-test-isolation=none`: the same three immutable tests execute in one Node process, avoiding the pinned sandbox's loss of captured child-stdio ([upstream issue](https://github.com/openai/codex/issues/18473)). The oracle still requires the real failing and passing exits, all three tests and independent inputs. C08 writes its unchanged measurements directly to stdout's file descriptor instead of the affected Node stream. C15 maps the receipt's namespace PID to a unique descendant of the owned native host with the same working directory before checking that the host process exits; it never probes host PID 2 on the assumption that a sandbox PID is global. Old failed runs are preserved, not regraded.
 
 ## Three separate metrics
 
@@ -41,12 +43,12 @@ Unit tests use synthetic evidence, owned subprocesses and loopback HTTP. The run
 
 C03 now explicitly specifies field types and distinguishes semantic JSON checks from presentation (bare JSON or one JSON fence). `git -c ... diff` is recognized. C05 requests standalone test commands so pipelines cannot mask the failing exit. Tool-call targets are **efficiency diagnostics**; a separate higher hard cap bounds runaway execution.
 
-## Evidence interpretation (fixed before execution; unchanged from v4 to v5)
+## Evidence interpretation (fixed before execution)
 
 - C12 reads the native completed review's rendered findings or JSON. It still requires exactly one actionable finding at `review.mjs:3`, an actual diff read, the correlated reviewer lifecycle and unchanged files.
 - C13 reads the authoritative completed native `plan` item, not an incidental assistant message. The hidden host answer must be correlated and appear in the final plan; only read-only exploration is allowed, with no edits, mutating commands or broad permission grant.
 - Git-diff evidence recognizes grouped shell invocations and Git global options, but a quoted `git diff` string is not execution evidence. Negative tests reject wrong paths/turns, extra findings, missing diffs and uncorrelated or unsafe plans.
-- These rules were fixed for v4 and carry over unchanged to v5; they are not post-run exceptions. Freeze catalog and implementation hashes before live execution; preserve failures and do not rerun cells to improve the score.
+- These C12/C13 and Git rules were fixed for v4 and carry over unchanged to v6; they are not post-run exceptions. The C05 command and C15 host-PID evidence changes are explicitly versioned above. Freeze catalog and implementation hashes before live execution; preserve failures and do not rerun cells to improve the score.
 
 ## Live execution: explicit opt-in and usage
 
