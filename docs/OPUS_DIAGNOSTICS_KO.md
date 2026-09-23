@@ -10,18 +10,18 @@
 # 계획만 출력. 모델 호출 0회.
 npm run diagnose:opus
 
-# 실제 claude-opus-5 호출. 비어 있거나 아직 없는 증거 디렉터리만 허용.
+# 실제 claude-opus-5.5 호출. 비어 있거나 아직 없는 증거 디렉터리만 허용.
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
 ```
 
-Copilot SDK 1.0.14와 해당 모델에 접근할 수 있는 기존 Copilot 인증이 필요합니다. 일곱 개의 새 세션에서 다음을 비교합니다.
+Copilot SDK 1.0.14와 `claude-opus-5.5`에 접근할 수 있는 기존 Copilot 인증이 필요합니다. `claude-opus-5`에 대한 기존 refusal/filter 분석은 과거 기록으로 남습니다. 일곱 개의 새 세션에서 다음을 비교합니다.
 
-- 변경하지 않은 v3 `read_fixture` 요청: SDK 직접 호출 / production `SessionManager` 경로.
+- 변경하지 않은 v4 `read_fixture` 요청: SDK 직접 호출 / production `SessionManager` 경로.
 - 같은 요청에서 SDK streaming 옵션과 reasoning summary 옵션의 영향.
 - 별도 단순 도구 호출 대조군: SDK / 브릿지.
 - 별도 산술 대조군.
 
-대조군의 문구는 **진단 전용**이며 production 요청이나 77개 시나리오를 치환하지 않습니다. 모델 ID·추론 강도(low)를 유지하고 SDK 기본 보호 지시를 제거하지 않습니다. 모든 SDK 권한 요청은 거절하며, 프로그램이 수행하는 유일한 도구 작업은 메모리에서 생성한 합성 fixture 문자열 반환입니다. 자동 재시도, 모델 fallback, 사용자 설정 변경은 없습니다.
+대조군의 문구는 **진단 전용**이며 production 요청이나 66개 시나리오를 치환하지 않습니다. 모델 ID·추론 강도(low)를 유지하고 SDK 기본 보호 지시를 제거하지 않습니다. 모든 SDK 권한 요청은 거절하며, 프로그램이 수행하는 유일한 도구 작업은 메모리에서 생성한 합성 fixture 문자열 반환입니다. 자동 재시도, 모델 fallback, 사용자 설정 변경은 없습니다.
 
 `--execute`는 실제 모델 사용량을 발생시킵니다. 실패를 재실행해 같은 보고서를 덮어쓰지 않습니다. 차단·불일치·오류·정리 실패가 있으면 종료 코드는 1입니다. 종료 코드 0도 정식 안정성 행렬 통과를 의미하지 않습니다.
 

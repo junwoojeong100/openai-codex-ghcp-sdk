@@ -4,14 +4,14 @@
 
 ## Current contract and verification records
 
-`codex-ghcp-workflows-18-v4`: **18 scenarios × seven exact GHCP models = 126 cases**. Matrix dimensions, report denominators and documentation are derived from the catalog. There is one full suite, no live subset, no automatic case reruns and no native OpenAI baseline.
+`codex-ghcp-workflows-18-v5` (schemaVersion 5): **18 scenarios × six exact GHCP models = 108 cases**. Matrix dimensions, report denominators and documentation are derived from the catalog. There is one full suite, no live subset, no automatic case reruns and no native OpenAI baseline.
 
-Previous verification results and raw evidence were deleted at the user’s request. See the [new verification records](validation/README.md). The current rerun covers the separate 11-scenario stability contract; its results cannot be credited as a pass of this 18-workflow contract.
+Historical v4 126-case reports verify only with their original runner revision. Previous verification results and raw evidence were deleted at the user’s request. See the [new verification records](validation/README.md). The current rerun covers the separate 11-scenario stability contract; its results cannot be credited as a pass of this 18-workflow contract.
 
 ## Three separate metrics
 
 1. **Checklist design scope:** 20 reviewer-defined, equal-weight feature groups; direct=1, partial=0.5, uncovered=0. Current score **75%** (12 direct, six partial, two uncovered). “Direct” means a representative implemented probe, not a successful or exhaustive feature.
-2. **Live matrix pass rate:** passed cells divided by **126**, plus model-specific results out of 18. Missing/unsupported/blocked/timed-out cells stay in the denominator. A model needs all 18 workflows to pass for the versioned compatibility verdict.
+2. **Live matrix pass rate:** passed cells divided by **108**, plus model-specific results out of 18. Missing/unsupported/blocked/timed-out cells stay in the denominator. A model needs all 18 workflows to pass for the versioned compatibility verdict.
 3. **Measured product coverage:** **unknown/null**. The checklist is not an OpenAI metric, a usage-frequency survey or a product support percentage. **90% remains a target**, not a result.
 
 Reports also show feature-group evidence per model. Offline runs never establish live feature evidence. Partial scope remains partial even if its linked scenarios pass.
@@ -41,12 +41,12 @@ Unit tests use synthetic evidence, owned subprocesses and loopback HTTP. The run
 
 C03 now explicitly specifies field types and distinguishes semantic JSON checks from presentation (bare JSON or one JSON fence). `git -c ... diff` is recognized. C05 requests standalone test commands so pipelines cannot mask the failing exit. Tool-call targets are **efficiency diagnostics**; a separate higher hard cap bounds runaway execution.
 
-## v4 evidence interpretation (fixed before execution)
+## Evidence interpretation (fixed before execution; unchanged from v4 to v5)
 
 - C12 reads the native completed review's rendered findings or JSON. It still requires exactly one actionable finding at `review.mjs:3`, an actual diff read, the correlated reviewer lifecycle and unchanged files.
 - C13 reads the authoritative completed native `plan` item, not an incidental assistant message. The hidden host answer must be correlated and appear in the final plan; only read-only exploration is allowed, with no edits, mutating commands or broad permission grant.
 - Git-diff evidence recognizes grouped shell invocations and Git global options, but a quoted `git diff` string is not execution evidence. Negative tests reject wrong paths/turns, extra findings, missing diffs and uncorrelated or unsafe plans.
-- These are the existing v4 rules, not post-run exceptions. Freeze catalog and implementation hashes before live execution; preserve failures and do not rerun cells to improve the score.
+- These rules were fixed for v4 and carry over unchanged to v5; they are not post-run exceptions. Freeze catalog and implementation hashes before live execution; preserve failures and do not rerun cells to improve the score.
 
 ## Live execution: explicit opt-in and usage
 
@@ -58,7 +58,7 @@ npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
 npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
 ```
 
-The default is offline `--plan`. Existing output folders are never overwritten. An unavailable model retains 18 blocked cells. Shared prerequisite failure retains all 126 cells. Failures do not skip subsequent cases. User interruption stops scheduling and preserves incomplete evidence.
+The default is offline `--plan`. Existing output folders are never overwritten. An unavailable model retains 18 blocked cells. Shared prerequisite failure retains all 108 cells. Failures do not skip subsequent cases. User interruption stops scheduling and preserves incomplete evidence.
 
 Up to four model lanes run concurrently. Each case includes preparation, native/model/tool work and an eight-second cleanup reserve. The sum of worst-case slots is 2,220 seconds/model; including preflight and two scheduling waves gives **75.5 minutes**, excluding I/O/OS overhead. One hour is a target, **not a global cutoff**. Normal runs need not consume every deadline.
 
@@ -70,4 +70,4 @@ C11 instrumentation wraps the actual SDK and HTTP boundaries in live mode withou
 
 Reports retain native JSONL, HTTP/SSE, SDK, state, assertion, cleanup and scenario-specific evidence. Verification checks contract and implementation hashes, every matrix slot, artifact ownership/hashes, recomputed assertions and metrics. Hashes are not third-party attestation. Inspect evidence for private information before publishing; raw evidence can stay under ignored `.runtime`.
 
-Exit codes: `0` valid plan or **126/126** live pass; `1` failed/blocked/unsupported/incomplete matrix; `2` invalid arguments or evidence. A runtime self-test has its own non-live verdict.
+Exit codes: `0` valid plan or **108/108** live pass; `1` failed/blocked/unsupported/incomplete matrix; `2` invalid arguments or evidence. A runtime self-test has its own non-live verdict.

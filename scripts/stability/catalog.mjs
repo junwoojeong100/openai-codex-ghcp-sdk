@@ -36,7 +36,7 @@ export const SCENARIOS = freeze([
   { id: "S11", name: "Repeated native tool turns, long history and local compaction", seconds: 240, fault: "explicit-native-compaction", turns: 8 },
 ]);
 export const CATALOG = freeze({
-  id: "codex-ghcp-stability-11-v3", schemaVersion: 1,
+  id: "codex-ghcp-stability-11-v4", schemaVersion: 1,
   versions: { codex: "0.154.0", copilotSdk: "1.0.14" }, models: [...SUPPORTED_MODEL_IDS], scenarios: SCENARIOS, prompts: PROMPTS, flow: FLOW,
   totalCases: SCENARIOS.length * SUPPORTED_MODEL_IDS.length, concurrency: 4, automaticCaseRetries: 0,
   cleanupReserveSeconds: 30, preflightSeconds: 90, maxNativeToolCalls: 20,
@@ -44,8 +44,9 @@ export const CATALOG = freeze({
   cleanupTimeoutMs: 5000, startupTimeoutMs: 30_000,
   changesFromV1: "Acceptance checks and the 77-cell denominator are unchanged. Prompts now explicitly require exact immediate echo and one read per turn; cleanup uses the production 5s default; gate/deadline budgets allow bounded SDK startup. No output rewriting or case substitution.",
   changesFromV2: "Common benign transport-test context and fenced exact-copy requests replace imperative plain-text-only wording. Existing oracles already allow surrounding fences and still require every literal character. Safety settings, models, fixtures, fault checks and all 77 cells are unchanged.",
+  changesFromV3: "Only the model set changes: claude-opus-5.5, claude-sonnet-5, claude-haiku-4.5, gpt-6-astra, gpt-6-sol and gpt-6-luna replace the seven v3 models. Scenarios, prompts, fixtures, fault flows, budgets, oracles and cleanup checks are unchanged. The denominator becomes 66 cells; 77-cell v3 records stay historical, are verified only with their frozen source and are never regraded or combined.",
   outputPolicy: "Every successful read/remember/recall must preserve both complete literal value: and receipt: tokens in its final native answer. Surrounding prose/fences are recorded as presentation diagnostics, not a liveness failure. Padding must acknowledge ACK without tools. This is a new stability contract, not regrading v4 exact-output assertions.",
-  acceptance: "All declared checks and cleanup receipts required. Failed, blocked, unsupported, timed-out and not-run cells remain in the 77-cell denominator. Live inference is required in every passing live cell. Fault injection is explicitly labelled; no whole-product or hours-long reliability claim.",
+  acceptance: "All declared checks and cleanup receipts required. Failed, blocked, unsupported, timed-out and not-run cells remain in the 66-cell denominator. Live inference is required in every passing live cell. Fault injection is explicitly labelled; no whole-product or hours-long reliability claim.",
   isolation: "Owned temporary HOME/CODEX_HOME, read-only native threads, no shell execution, fixture-only native dynamic tool, no user bridge discovery/restart, and no automatic inference replay after loss.",
   statuses: ["passed", "failed", "blocked", "unsupported", "timed-out", "not-run"],
 });

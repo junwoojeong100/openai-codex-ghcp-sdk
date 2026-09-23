@@ -7,7 +7,7 @@ import test from "node:test";
 import { codexEnvironment, codexProviderArgs, parseLauncherArgs, validateCodexArgs, writeCodexCatalog } from "../src/launcher.mjs";
 import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog } from "../src/model-map.mjs";
 
-test("launcher defaults and model selection stay within the seven allowed models", () => {
+test("launcher defaults and model selection stay within the six allowed models", () => {
   const defaults = parseLauncherArgs([], {});
   assert.equal(defaults.model, DEFAULT_MODEL);
   assert.equal(defaults.port, 0);
@@ -17,6 +17,10 @@ test("launcher defaults and model selection stay within the seven allowed models
     assert.equal(parseLauncherArgs([], { GHCP_MODEL: model }).model, model);
   }
   assert.throws(() => parseLauncherArgs(["--ghcp-model=other"], {}), /Unsupported model/);
+  for (const removed of ["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "claude-opus-5"]) {
+    assert.throws(() => parseLauncherArgs(["--ghcp-model", removed], {}), /Unsupported model/);
+    assert.throws(() => parseLauncherArgs([], { GHCP_MODEL: removed }), /Unsupported model/);
+  }
   for (const port of ["-1", "65536", "not-a-port", "1.5"]) {
     assert.throws(() => parseLauncherArgs([`--bridge-port=${port}`], {}), /integer/);
   }
@@ -78,7 +82,7 @@ test("the launch-specific private catalog contains only account-enabled main mod
   const filename = writeCodexCatalog(catalog, directory);
   const contents = JSON.parse(fs.readFileSync(filename, "utf8"));
   assert.deepEqual(contents, { models: catalog.models });
-  assert.equal(contents.models.length, 6);
+  assert.deepEqual(contents.models.map(entry => entry.slug), SUPPORTED_MODEL_IDS.filter(id => id !== "claude-haiku-4.5"));
   assert.ok(contents.models.every(entry => entry.context_window === 136_000 && entry.auto_compact_token_limit === 108_800));
   assert.equal(fs.statSync(filename).mode & 0o777, 0o600);
   const args = codexProviderArgs({ model: DEFAULT_MODEL, port: 4143, catalogPath: filename });

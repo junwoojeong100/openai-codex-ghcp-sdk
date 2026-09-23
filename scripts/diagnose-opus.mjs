@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { CopilotClient, defineTool } from "@github/copilot-sdk";
 import { SessionManager } from "../src/session-manager.mjs";
 import { resolveCopilotHome } from "../src/copilot-home.mjs";
+import { configuredMcpServerNames } from "../src/mcp-isolation.mjs";
 import { withinDeadline } from "../src/copilot-session-rpc.mjs";
 import { modelCatalog, resolveCopilotModel } from "../src/model-map.mjs";
 import { outputItems } from "../src/responses.mjs";
@@ -14,6 +15,7 @@ import { implementationHash } from "./stability/report.mjs";
 import { mkdir, writeJson, sha, scrubber } from "./compatibility/util.mjs";
 import { CopilotWireObserver } from "./diagnostics/copilot-wire.mjs";
 
+export const DIAGNOSTIC_MODEL = "claude-opus-5.5";
 export const PROBES = Object.freeze([
   { id: "sdk-exact-fixture", route: "sdk", prompt: "exact" },
   { id: "bridge-exact-fixture", route: "bridge", prompt: "exact" },
@@ -51,7 +53,7 @@ export function answerEvidence(text, fixture) {
 }
 
 export async function runProbe({ variant, signal }) {
-  const model = "claude-opus-5", prompt = prompts[variant.prompt];
+  const model = DIAGNOSTIC_MODEL, prompt = prompts[variant.prompt];
   const fixture = `value:N_${randomBytes(10).toString("hex")}_한글\nreceipt:N_${randomBytes(10).toString("hex")}_한글`;
   const row = { ...variant, model, startedAt: new Date().toISOString(), promptHash: sha(prompt), fixtureHash: sha(fixture),
     status: "not-run", wire: [], usage: [], diagnostics: [], submissions: 0, permissionRequests: 0, cleanup: [] };
@@ -100,6 +102,7 @@ export async function runProbe({ variant, signal }) {
         model, reasoningEffort: "low", ...(!variant.defaultSummary ? { reasoningSummary: "none" } : {}),
         tools: [defineTool(fixtureTool.name, { description: fixtureTool.description, parameters: fixtureTool.parameters,
           skipPermission: true, defer: "never", overridesBuiltInTool: true })], availableTools: ["custom:read_fixture"],
+        disabledMcpServers: configuredMcpServerNames(resolveCopilotHome(process.env.COPILOT_HOME)),
         toolSearch: { enabled: false }, streaming: variant.streaming !== false, infiniteSessions: { enabled: false },
         systemMessage: { mode: "append", content: instructions }, skipCustomInstructions: true, customAgentsLocalOnly: true,
         enableSessionTelemetry: false, onPermissionRequest: () => { row.permissionRequests++; return { kind: "reject" }; },
@@ -152,7 +155,7 @@ export async function runProbe({ variant, signal }) {
 export async function main(args = process.argv.slice(2)) {
   const options = parseArguments(args);
   if (!options.execute) {
-    console.log(JSON.stringify({ model: "claude-opus-5", inferenceRequests: 0, executionRequires: "--execute",
+    console.log(JSON.stringify({ model: DIAGNOSTIC_MODEL, inferenceRequests: 0, executionRequires: "--execute",
       unscored: true, automaticRetries: 0, probes: PROBES }, null, 2));
     return 0;
   }
@@ -161,7 +164,7 @@ export async function main(args = process.argv.slice(2)) {
   mkdir(directory);
   const controller = new AbortController(), interrupt = () => controller.abort(new Error("Interrupted"));
   process.once("SIGINT", interrupt); process.once("SIGTERM", interrupt);
-  const report = { kind: "unscored-opus-wire-diagnostic", schemaVersion: 1, model: "claude-opus-5",
+  const report = { kind: "unscored-opus-wire-diagnostic", schemaVersion: 1, model: DIAGNOSTIC_MODEL,
     sdkVersion: "1.0.14", startedAt: new Date().toISOString(), catalogHash: catalogHash(), implementationHash: implementationHash(),
     sdkFoundationPreserved: true, wireBytesUnmodified: true, automaticRetries: 0, safetyPolicyChanges: false,
     promptChangesAreDiagnosticOnly: true, cases: PROBES.map(p => ({ ...p, status: "not-run" })) };

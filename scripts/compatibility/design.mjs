@@ -6,7 +6,7 @@ import { checklistSummary } from "./capabilities.mjs";
 export function validateDesign(c = C) {
   assert.equal(c.scenarios.length, NATIVE_SCENARIOS.length);
   assert.deepEqual(c.models, NATIVE_MODELS);
-  assert.equal(new Set(c.models).size, 7);
+  assert.equal(new Set(c.models).size, 6);
   assert.equal(c.acceptance.perModelDenominator, c.scenarios.length);
   assert.equal(c.acceptance.minimumPassedPerModel, c.scenarios.length);
   assert.equal(c.acceptance.removeMissingFromDenominator, false);

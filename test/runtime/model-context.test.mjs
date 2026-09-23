@@ -112,13 +112,13 @@ test("native model/list exposes exactly the available main models, including Cla
     ...(id === "claude-haiku-4.5" ? {
       supportedReasoningEfforts: [], capabilities: { supports: { reasoningEffort: false }, limits },
     } : {}),
-    ...(id === "gpt-5.6-luna" ? { policy: { state: "disabled" } } : {}),
-  })).concat({ id: "unrelated-model" }));
+    ...(id === "gpt-6-luna" ? { policy: { state: "disabled" } } : {}),
+  })).concat({ id: "unrelated-model" }, { id: "gpt-5.6-luna" }, { id: "claude-opus-5" }));
   const catalogPath = writeCodexCatalog(catalog, f.directory);
   const host = await f.host(codexProviderArgs({ model, port: 4143, catalogPath }));
   for (const includeHidden of [false, true]) {
     const picker = await host.request("model/list", { includeHidden });
-    assert.deepEqual(picker.data.map(entry => entry.model), SUPPORTED_MODEL_IDS.filter(id => id !== "gpt-5.6-luna"));
+    assert.deepEqual(picker.data.map(entry => entry.model), SUPPORTED_MODEL_IDS.filter(id => id !== "gpt-6-luna"));
     assert.equal(picker.nextCursor, null);
   }
 });

@@ -13,7 +13,7 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
   const clean = scrubber(process.env);
   const roles = new Map();
   const metrics = { executionKind: config.executionKind, model: config.model, pid: process.pid,
-    sessions: 0, modelCalls: 0, rootAnswers: [], compactions: 0, maxInputTokens: 0,
+    sessions: 0, modelCalls: 0, rootAnswers: [], compactions: 0, maxInputTokens: 0, toolRequests: 0,
     inputTokens: 0, outputTokens: 0, filtered: 0, errors: 0, modelMismatches: 0, streamFailures: 0, streamCompletions: 0,
     requestBytes: 0, responseBytes: 0, maxRssBytes: 0, maxHeapBytes: 0 };
   const append = (name, row) => fs.appendFileSync(path.join(config.output, name),
@@ -25,7 +25,7 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
       if (row.model !== config.model) metrics.modelMismatches++;
       roles.set(row.sessionId, row.tools.length ? "turn" : "compaction");
       if (!row.tools.length) metrics.compactions++;
-      append("sdk.jsonl", { type: row.type, model: row.model, sessionId: row.sessionId, toolCount: row.tools.length });
+      append("sdk.jsonl", { type: row.type, model: row.model, effort: row.effort ?? null, sessionId: row.sessionId, toolCount: row.tools.length });
     } else if (row.type === "assistant.usage" && root) {
       const data = row.data;
       metrics.modelCalls++;
@@ -39,11 +39,16 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
     } else if (row.type === "assistant.message" && root && roles.get(row.sessionId) === "turn") {
       const content = row.data.content || "";
       if (content && !row.data.toolRequests?.length) {
-        metrics.rootAnswers.push({ chars: content.length, markers: [...new Set(content.match(/\bSOAK_[a-f0-9]{8}_\d{6}\b/g) || [])] });
+        metrics.rootAnswers.push({ chars: content.length, markers: [...new Set(content.match(/\b(?:SOAK|TUI)_[a-f0-9]{8}_\d{6}\b/g) || [])] });
         append("answers.jsonl", { sessionId: row.sessionId, content });
       }
     } else if (row.type === "session.error" && root) {
       metrics.errors++; append("sdk.jsonl", { type: row.type, errorType: row.data?.errorType, errorCode: row.data?.errorCode });
+    } else if (row.type === "external_tool.requested" && root) {
+      metrics.toolRequests++;
+      append("sdk.jsonl", { type: row.type, sessionId: row.sessionId, toolName: row.data?.toolName });
+    } else if (["session.setModel", "session.abort"].includes(row.type)) {
+      append("sdk.jsonl", { type: row.type, sessionId: row.sessionId, ...(row.type === "session.setModel" ? { model: row.model, effort: row.effort ?? null } : {}) });
     } else if (row.type === "client.deleteSession") {
       roles.delete(row.sessionId);
     }

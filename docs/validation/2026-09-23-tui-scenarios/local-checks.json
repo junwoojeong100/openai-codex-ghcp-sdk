@@ -1,0 +1,64 @@
+{
+  "implementationHash": "54c7eb77ea5986dde0dbc3c9a24c0a95d6a253e55a9ca01305a05e8b152d05cf",
+  "note": "Run after the final live matrix on unchanged source; no real model calls.",
+  "unitTests": {
+    "passed": 332,
+    "total": 332,
+    "realModelCalls": 0
+  },
+  "tuiRuntime": {
+    "passed": 2,
+    "total": 2,
+    "scenarios": [
+      "U01",
+      "U12"
+    ],
+    "driver": "real Codex TUI + headless Playwright/xterm.js + SDK double",
+    "note": "Only the mcp-isolation common check is expected to fail offline, because no Copilot runtime process exists; the test asserts exactly that.",
+    "realModelCalls": 0
+  },
+  "nativeCompatibilityRuntime": {
+    "passed": 18,
+    "total": 18,
+    "contract": "codex-ghcp-workflows-18-v5",
+    "realModelCalls": 0
+  },
+  "contextRuntime": {
+    "passed": 8,
+    "total": 8,
+    "realModelCalls": 0
+  },
+  "terminalRuntime": {
+    "passed": 7,
+    "total": 7,
+    "realModelCalls": 0
+  },
+  "stabilityRuntimeV4": {
+    "passed": 11,
+    "total": 11,
+    "realModelCalls": 0
+  },
+  "stabilityRuntimeApplicationDataV2": {
+    "passed": 11,
+    "total": 11,
+    "realModelCalls": 0
+  },
+  "scenarioContractCheck": true,
+  "generatedScenarioDocsMatch": true,
+  "tuiPlan": {
+    "catalogId": "codex-ghcp-tui-12-v1",
+    "totalCases": 72,
+    "exitCode": 0
+  },
+  "regressions": {
+    "freeformApplyPatch": {
+      "file": "test/model-map.test.mjs",
+      "asserts": "every catalog entry declares apply_patch_tool_type \"freeform\" next to shell_type"
+    },
+    "tuiEvaluation": {
+      "file": "test/tui-scenarios.test.mjs",
+      "tests": 7,
+      "covers": "contract shape without subset or retry options, scenario options, picker parsing, rollout evidence, common and scenario checks, and --verify recomputation with tamper rejection"
+    }
+  }
+}

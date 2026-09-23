@@ -3,7 +3,7 @@ import test from "node:test";
 import { CopilotWireObserver, requestEvidence, responseEvidence } from "../scripts/diagnostics/copilot-wire.mjs";
 import { answerEvidence, parseArguments, PROBES } from "../scripts/diagnose-opus.mjs";
 
-const model = "claude-opus-5";
+const model = "claude-opus-5.5";
 const frame = data => `data: ${JSON.stringify(data)}\r\n\r\n`;
 const evidence = (text, type = "text/event-stream") => responseEvidence(Buffer.from(text), type, model);
 const context = () => ({ transport: "http", signal: new AbortController().signal, headers: { authorization: "private-auth" },

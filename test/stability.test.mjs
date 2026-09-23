@@ -11,8 +11,9 @@ import { newReport, summarize, artifacts, readCase, implementationHash } from ".
 import { sha } from "../scripts/compatibility/util.mjs";
 import { stabilityEvidence } from "./helpers/stability-evidence.mjs";
 
-test("stability has a distinct fixed 11-by-7 contract and deliberate live opt-in", () => {
-  assert.equal(SCENARIOS.length, 11); assert.equal(CATALOG.models.length, 7); assert.equal(CATALOG.totalCases, 77);
+test("stability has a distinct fixed 11-by-6 contract and deliberate live opt-in", () => {
+  assert.equal(SCENARIOS.length, 11); assert.equal(CATALOG.models.length, 6); assert.equal(CATALOG.totalCases, 66);
+  assert.deepEqual(CATALOG.models, ["claude-opus-5.5", "claude-sonnet-5", "claude-haiku-4.5", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna"]);
   assert.ok(Object.isFrozen(CATALOG) && Object.isFrozen(CATALOG.scenarios));
   assert.equal(CATALOG.automaticCaseRetries, 0);
   for (const s of SCENARIOS) assert.equal(FLOW[s.id].length, s.turns);
@@ -27,7 +28,7 @@ test("native fixture metadata describes unchanged plain text for every model and
   const file = path.join(directory, "fixture-data.txt");
   fs.writeFileSync(file, content);
   const descriptions = new Set();
-  for (const profile of ["v3", "application-data-v1"]) for (const model of CATALOG.models) {
+  for (const profile of ["v4", "application-data-v2"]) for (const model of CATALOG.models) {
     const executor = new StabilityExecutor({ model, profile, scenario: SCENARIOS[0] });
     executor.fixture = { cwd: directory, workspace: directory };
     let declaration;
@@ -97,7 +98,7 @@ test("offline harness successes never certify live support or remove failing liv
   Object.assign(live, { finishedAt: new Date().toISOString(), implementationUnchanged: true, userSettingsUnchanged: true });
   live.cases.forEach(c => c.status = "passed"); assert.equal(summarize(live).fullMatrixPassed, true);
   for (const status of CATALOG.statuses.filter(s => s !== "passed")) {
-    live.cases[0].status = status; const s = summarize(live); assert.equal(s.totalCases, 77); assert.equal(s.fullMatrixPassed, false);
+    live.cases[0].status = status; const s = summarize(live); assert.equal(s.totalCases, 66); assert.equal(s.fullMatrixPassed, false);
   }
   live.cases[0].status = "passed"; live.cases.pop(); assert.equal(summarize(live).fullMatrixPassed, false);
 });
@@ -118,8 +119,9 @@ test("case verifier recomputes checks, metrics and exact artifact projections", 
 });
 
 
-test("v3 prompts state the unchanged literal oracle explicitly and budgets cover SDK startup", () => {
-  assert.equal(CATALOG.id, "codex-ghcp-stability-11-v3");
+test("v4 keeps the v3 prompts and literal oracle, changes only the model set, and budgets cover SDK startup", () => {
+  assert.equal(CATALOG.id, "codex-ghcp-stability-11-v4");
+  assert.match(CATALOG.changesFromV3, /Only the model set changes/);
   for (const kind of ["read", "remember", "recall"]) {
     assert.match(PROMPTS[kind], /fenced text code block containing the two original lines/);
     assert.match(PROMPTS[kind], /no added space after either colon/);

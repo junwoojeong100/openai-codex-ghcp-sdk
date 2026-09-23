@@ -11,7 +11,7 @@ import { ROOT, writeJson, sha } from "../compatibility/util.mjs";
 
 export const SOAK_SECONDS = 18000;
 export const NATIVE_LANES = Object.freeze([
-  Object.freeze({ id: "native-luna-default", model: "gpt-5.6-luna", contextWindow: null, compactEvery: 0 }),
+  Object.freeze({ id: "native-luna-default", model: "gpt-6-luna", contextWindow: null, compactEvery: 0 }),
   Object.freeze({ id: "native-sonnet-128k", model: "claude-sonnet-5", contextWindow: 131072, compactEvery: 40 }),
 ]);
 
@@ -71,9 +71,9 @@ export async function runSoak({ output, smoke = false, durationSeconds = smoke ?
   const report = { kind: smoke ? "real-codex-soak-smoke" : "real-codex-five-hour-soak", scored: false,
     runId, declaredAt: new Date(declaredAt).toISOString(), requiredSeconds: durationSeconds,
     implementationHash: before, sourceHash: sha(JSON.stringify(manifest)), mockModelCalls: 0,
-    scope: "Long-lived native conversations and separately labelled controlled context/compaction stress; not a 77-case score.",
+    scope: "Long-lived native conversations and separately labelled controlled context/compaction stress; not a stability-matrix score.",
     lanes: NATIVE_LANES.map(lane => ({ ...lane, status: "not-run" })), monitorErrors: [], incidents: [] };
-  if (terminal) report.lanes.push({ id: "terminal-luna-64k", model: "gpt-5.6-luna",
+  if (terminal) report.lanes.push({ id: "terminal-luna-64k", model: "gpt-6-luna",
     contextWindow: 65536, kind: "terminal", terminalDriver, status: "not-run" });
   writeJson(path.join(directory, "freeze.json"), { ...report, sources: manifest });
   const checkpoint = () => writeJson(path.join(directory, "report.json"), report);

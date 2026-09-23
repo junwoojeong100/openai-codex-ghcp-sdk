@@ -1,0 +1,3987 @@
+{
+  "label": "preliminary-tui-interrupted",
+  "localEvidence": ".runtime/tui-live-20260923",
+  "runId": "5ee9b620-a32f-4563-933a-19292277b7e3",
+  "catalogId": "codex-ghcp-tui-12-v1",
+  "catalogHash": "66948cf09ddb078c2eccd58d8f34511b9ed951b3b3a13db88986b0af3157ec0f",
+  "implementationHash": "a273b5e0cef7d6392cb0dfd084c7974ba1bfa9e8642c6b1568e830ddfb358247",
+  "startedAt": "2026-09-23T02:01:28.882Z",
+  "finishedAt": "2026-09-23T02:10:47.943Z",
+  "interrupted": true,
+  "implementationUnchanged": true,
+  "frozenSourceUnchanged": true,
+  "userSettingsUnchanged": true,
+  "summary": {
+    "catalogId": "codex-ghcp-tui-12-v1",
+    "totalCases": 72,
+    "counts": {
+      "passed": 29,
+      "failed": 2,
+      "blocked": 0,
+      "timed-out": 2,
+      "not-run": 39
+    },
+    "passed": 29,
+    "percent": 40.27777777777778,
+    "fullMatrixPassed": false,
+    "eligible": false,
+    "perModel": [
+      {
+        "model": "claude-opus-5.5",
+        "passed": 8,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 11,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 7,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 3,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-sol",
+        "passed": 0,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-luna",
+        "passed": 0,
+        "total": 12,
+        "verdict": "not-established"
+      }
+    ],
+    "perScenario": [
+      {
+        "scenarioId": "U01",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U02",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U03",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U04",
+        "passed": 0,
+        "total": 6
+      },
+      {
+        "scenarioId": "U05",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U06",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U07",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U08",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U09",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U10",
+        "passed": 1,
+        "total": 6
+      },
+      {
+        "scenarioId": "U11",
+        "passed": 1,
+        "total": 6
+      },
+      {
+        "scenarioId": "U12",
+        "passed": 1,
+        "total": 6
+      }
+    ],
+    "driver": "playwright-headless-xterm",
+    "realTuiThroughLauncher": true,
+    "hoursLongSoakCertified": false
+  },
+  "reportHash": "8fb815b0449d21253b18fe100b8cda623f61a6af4ef8bc34d68b98fb3493cc21",
+  "currentVerification": {
+    "evidenceIntegrity": true,
+    "catalogId": "codex-ghcp-tui-12-v1",
+    "totalCases": 72,
+    "counts": {
+      "passed": 29,
+      "failed": 2,
+      "blocked": 0,
+      "timed-out": 2,
+      "not-run": 39
+    },
+    "passed": 29,
+    "percent": 40.27777777777778,
+    "fullMatrixPassed": false,
+    "eligible": false,
+    "perModel": [
+      {
+        "model": "claude-opus-5.5",
+        "passed": 8,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 11,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 7,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 3,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-sol",
+        "passed": 0,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-luna",
+        "passed": 0,
+        "total": 12,
+        "verdict": "not-established"
+      }
+    ],
+    "perScenario": [
+      {
+        "scenarioId": "U01",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U02",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U03",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U04",
+        "passed": 0,
+        "total": 6
+      },
+      {
+        "scenarioId": "U05",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U06",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U07",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U08",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U09",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U10",
+        "passed": 1,
+        "total": 6
+      },
+      {
+        "scenarioId": "U11",
+        "passed": 1,
+        "total": 6
+      },
+      {
+        "scenarioId": "U12",
+        "passed": 1,
+        "total": 6
+      }
+    ],
+    "driver": "playwright-headless-xterm",
+    "realTuiThroughLauncher": true,
+    "hoursLongSoakCertified": false
+  },
+  "frozenVerification": {
+    "evidenceIntegrity": true,
+    "catalogId": "codex-ghcp-tui-12-v1",
+    "totalCases": 72,
+    "counts": {
+      "passed": 29,
+      "failed": 2,
+      "blocked": 0,
+      "timed-out": 2,
+      "not-run": 39
+    },
+    "passed": 29,
+    "percent": 40.27777777777778,
+    "fullMatrixPassed": false,
+    "eligible": false,
+    "perModel": [
+      {
+        "model": "claude-opus-5.5",
+        "passed": 8,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 11,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 7,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 3,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-sol",
+        "passed": 0,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-luna",
+        "passed": 0,
+        "total": 12,
+        "verdict": "not-established"
+      }
+    ],
+    "perScenario": [
+      {
+        "scenarioId": "U01",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U02",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U03",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U04",
+        "passed": 0,
+        "total": 6
+      },
+      {
+        "scenarioId": "U05",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U06",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U07",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U08",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U09",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U10",
+        "passed": 1,
+        "total": 6
+      },
+      {
+        "scenarioId": "U11",
+        "passed": 1,
+        "total": 6
+      },
+      {
+        "scenarioId": "U12",
+        "passed": 1,
+        "total": 6
+      }
+    ],
+    "driver": "playwright-headless-xterm",
+    "realTuiThroughLauncher": true,
+    "hoursLongSoakCertified": false
+  },
+  "cases": [
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "seed": "11a083af",
+      "durationMs": 16104,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U01.picker",
+          "passed": true,
+          "detail": "Exactly the six pinned models in order, the launch model current, no other models"
+        },
+        {
+          "id": "U01.reply",
+          "passed": true,
+          "detail": "The first turn answers with its random marker"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "claude-opus-5.5",
+          "codexDefaultLabel": null,
+          "forbidden": 0
+        }
+      },
+      "resultHash": "27608e2d4bd17e1b68487821416bad944642b238088ab78e65f84be65c53684d",
+      "factsHash": "5fbf517c609c2e6be62d530ea1f106443bbba3aa9ee4d305d1afb26fe46060b0",
+      "artifactPath": "cases/claude-opus-5.5/U01"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "seed": "4f207c21",
+      "durationMs": 20581,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses gpt-6-astra then claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U02.switch",
+          "passed": true,
+          "detail": "Turn before uses gpt-6-astra; turns after the picker use claude-opus-5.5"
+        },
+        {
+          "id": "U02.reply",
+          "passed": true,
+          "detail": "Both turns answered; Codex recorded the switched model"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 2,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "gpt-6-astra",
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            "low"
+          ]
+        },
+        "samples": {
+          "count": 14,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "gpt-6-astra",
+          "codexDefaultLabel": "claude-opus-5.5",
+          "forbidden": 0
+        },
+        "effortPopup": true,
+        "modelChangedLine": "• Model changed to claude-opus-5.5 low"
+      },
+      "resultHash": "00167a7b5a4c1be029847cc4071009b5662dcfbf26b081d6f41b59f2c0ba7c0a",
+      "factsHash": "8db53ac78783457d2b3c93bbcfeb8d9c512389fac37b101951aa214e036b7953",
+      "artifactPath": "cases/claude-opus-5.5/U02"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "seed": "5c34e188",
+      "durationMs": 16439,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U03.tool",
+          "passed": true,
+          "detail": "Codex executed a shell tool handed off by the bridge"
+        },
+        {
+          "id": "U03.value",
+          "passed": true,
+          "detail": "The hidden file token came back only through the tool result"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "exec_command"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 10,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "a12d1372291359eab321ebdf3a452e7d9a81eff48ca87226497239249611babc",
+      "factsHash": "b563c91c9fc19de9c75d54c700d238b4474ec9f940b8f9dec3da0d0d3753e2b5",
+      "artifactPath": "cases/claude-opus-5.5/U03"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U04",
+      "status": "timed-out",
+      "seed": "7708475a",
+      "durationMs": 220688,
+      "failedChecks": [
+        "cleanup",
+        "U04.patch",
+        "U04.file"
+      ],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": false,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U04.patch",
+          "passed": false,
+          "detail": "Codex applied a patch (apply_patch tool or its shell interception) handed off by the bridge"
+        },
+        {
+          "id": "U04.file",
+          "passed": false,
+          "detail": "The created file holds exactly the requested line"
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for answer-TUI_7708475a_000002"
+      },
+      "evidence": {
+        "markersSeen": 0,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 214,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "c78b9f79b969e2b53f08fe4390d941cf3671972150eff2a5ac2608d42f783678",
+      "factsHash": "53722632bffbd8d46d7eb09950b94161bd9a2aea8919c6cd92b54d40408228dc",
+      "artifactPath": "cases/claude-opus-5.5/U04"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "seed": "563d623e",
+      "durationMs": 16063,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U05.mcp",
+          "passed": true,
+          "detail": "Codex started and called its own fixture MCP server"
+        },
+        {
+          "id": "U05.value",
+          "passed": true,
+          "detail": "The hidden MCP nonce came back through Codex"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "lookup"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 3
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "7c78990853b9e4ecac41c5f32ce50c17fa73242fc2e9e931c315da3912636000",
+      "factsHash": "f883154a84dfbe1f719c07373dfd185aaedc1c046a9e4410261222cc5864cf6f",
+      "artifactPath": "cases/claude-opus-5.5/U05"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "seed": "8332d8f8",
+      "durationMs": 31115,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U06.length",
+          "passed": true,
+          "detail": "The streamed answer is at least 2,500 characters"
+        },
+        {
+          "id": "U06.marker",
+          "passed": true,
+          "detail": "The final marker stays visible after the long render"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 24,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "b1ab1ea456092c04a035d36f3d6ae95a372e3b9783ee1cd6c002fcd42f3a2df9",
+      "factsHash": "1eb910d542244a11000e0e2de7a78db074557bee634b1cd216b6613006baad20",
+      "artifactPath": "cases/claude-opus-5.5/U06"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "seed": "88801f57",
+      "durationMs": 14692,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U07.delivery",
+          "passed": true,
+          "detail": "The 24 KiB paste reached the model"
+        },
+        {
+          "id": "U07.value",
+          "passed": true,
+          "detail": "The first-line sample id was answered"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "a46a681aa62e4ad65cd7e865305f5d6a532e98c0cfccb81a23d9c5f3e0628233",
+      "factsHash": "63aebc87ac433a02ac4ea1cc9923fda42c61fb367e152c687ac604ce2fcaddc6",
+      "artifactPath": "cases/claude-opus-5.5/U07"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "seed": "092d6bd1",
+      "durationMs": 15376,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U08.interrupt",
+          "passed": true,
+          "detail": "Escape cancelled the in-flight request and the bridge aborted its SDK turn"
+        },
+        {
+          "id": "U08.recovery",
+          "passed": true,
+          "detail": "The same Codex process answered the next turn"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 2,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "f9001a0b9bba8be6a1a1f73c6e3731da1f33c04160916129484a572010eb2b55",
+      "factsHash": "387a171035d715ad1aca78f3949500197d27c88b155f228686b806d31ad43367",
+      "artifactPath": "cases/claude-opus-5.5/U08"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "seed": "4f70f7b7",
+      "durationMs": 24814,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U09.compaction",
+          "passed": true,
+          "detail": "Codex compaction ran through a tool-less bridge session"
+        },
+        {
+          "id": "U09.recall",
+          "passed": true,
+          "detail": "The explicitly important launch code survived compaction"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 3,
+          "usage": 3,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 3,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 1,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 18,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "11a69e96236c50bf0542567203b96f6cff957da91a60213177dbe03c214d4a6b",
+      "factsHash": "bab7bf7acacc6de2d688c5aa55b46e8c6b8b6767fbd267556158d9b4b68c5059",
+      "artifactPath": "cases/claude-opus-5.5/U09"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U10",
+      "status": "not-run",
+      "seed": "c07386f5",
+      "durationMs": 20480,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-opus-5.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U10.relaunch",
+          "passed": true,
+          "detail": "Codex quit cleanly and resume --last started a new bridge session"
+        },
+        {
+          "id": "U10.recall",
+          "passed": true,
+          "detail": "The replayed history answered the launch code"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 2,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "claude-opus-5.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 12,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 0,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          },
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "ee196c87874947e31e168aa9978347df78605cd3f84fffe22139fdc795a30e07",
+      "factsHash": "768b0dfa437a6a7ac6b7c9f211a95955585577e56faca6ddad942602e88ba8fb",
+      "artifactPath": "cases/claude-opus-5.5/U10"
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U11",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U12",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "seed": "4f38ce26",
+      "durationMs": 15314,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U01.picker",
+          "passed": true,
+          "detail": "Exactly the six pinned models in order, the launch model current, no other models"
+        },
+        {
+          "id": "U01.reply",
+          "passed": true,
+          "detail": "The first turn answers with its random marker"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "claude-sonnet-5",
+          "codexDefaultLabel": "claude-opus-5.5",
+          "forbidden": 0
+        }
+      },
+      "resultHash": "f2282c83980b5333f33b8a2c58083f16256e6e9d99d885a3b01a899d15dfbaab",
+      "factsHash": "250b09cf7c6f8558903760afd2b007d43eb2bbc2da14f44ef457c3044a28d8f8",
+      "artifactPath": "cases/claude-sonnet-5/U01"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "seed": "4c04cf23",
+      "durationMs": 20196,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses gpt-6-astra then claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U02.switch",
+          "passed": true,
+          "detail": "Turn before uses gpt-6-astra; turns after the picker use claude-sonnet-5"
+        },
+        {
+          "id": "U02.reply",
+          "passed": true,
+          "detail": "Both turns answered; Codex recorded the switched model"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 2,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "gpt-6-astra",
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            "low"
+          ]
+        },
+        "samples": {
+          "count": 13,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "gpt-6-astra",
+          "codexDefaultLabel": "claude-opus-5.5",
+          "forbidden": 0
+        },
+        "effortPopup": true,
+        "modelChangedLine": "• Model changed to claude-sonnet-5 low"
+      },
+      "resultHash": "0294f78feae283c5784b78b9a5d208ff03d6486c6b08ac8ddfae99a703f47110",
+      "factsHash": "a1eb788de2ad6b517c5eba43dec783c1c4b6b9a4a23b7399dfce312135c901df",
+      "artifactPath": "cases/claude-sonnet-5/U02"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "seed": "8064311e",
+      "durationMs": 15541,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U03.tool",
+          "passed": true,
+          "detail": "Codex executed a shell tool handed off by the bridge"
+        },
+        {
+          "id": "U03.value",
+          "passed": true,
+          "detail": "The hidden file token came back only through the tool result"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "exec_command"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "294d1bafb1a98d6ada1532c67aab44d1da347116d122db90f9c93fed9b657457",
+      "factsHash": "0287fa06388bfc4041d5301132596a284065e11556c23ce0ca2603eb5fada5fd",
+      "artifactPath": "cases/claude-sonnet-5/U03"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U04",
+      "status": "failed",
+      "seed": "8fcd267c",
+      "durationMs": 15637,
+      "failedChecks": [
+        "U04.patch"
+      ],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U04.patch",
+          "passed": false,
+          "detail": "Codex applied a patch (apply_patch tool or its shell interception) handed off by the bridge"
+        },
+        {
+          "id": "U04.file",
+          "passed": true,
+          "detail": "The created file holds exactly the requested line"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "exec_command"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "f83a0a3ccdf26f7993163a8b9db1aecd1fc32c90ce4682ec270a709ecb8eaee3",
+      "factsHash": "2a5efc9fb0b5af561ac84fde90620f2273c1e94a9c75c7fa5ffce2169c899988",
+      "artifactPath": "cases/claude-sonnet-5/U04"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "seed": "78f11ff7",
+      "durationMs": 14708,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U05.mcp",
+          "passed": true,
+          "detail": "Codex started and called its own fixture MCP server"
+        },
+        {
+          "id": "U05.value",
+          "passed": true,
+          "detail": "The hidden MCP nonce came back through Codex"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "lookup"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 3
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "46dfe85ba52eb1bb6b30bf80a5d1a9921b698358871b4b0857fd015d1c2a0894",
+      "factsHash": "c099764a6f25aa352b4b90c69c88f267d7c11630e4189a1a7e9d2309b5708d8f",
+      "artifactPath": "cases/claude-sonnet-5/U05"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "seed": "a58c1484",
+      "durationMs": 32596,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U06.length",
+          "passed": true,
+          "detail": "The streamed answer is at least 2,500 characters"
+        },
+        {
+          "id": "U06.marker",
+          "passed": true,
+          "detail": "The final marker stays visible after the long render"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 26,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "55353118b1e95882a7ccec389891c2ba30e56ccf34d8543e0beecc3e946729d9",
+      "factsHash": "43b28bf57c1ac560dca76ec38806ee749cbe514990a9aeaf1b0bc8c599fdd92b",
+      "artifactPath": "cases/claude-sonnet-5/U06"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "seed": "cb6f1f04",
+      "durationMs": 15398,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U07.delivery",
+          "passed": true,
+          "detail": "The 24 KiB paste reached the model"
+        },
+        {
+          "id": "U07.value",
+          "passed": true,
+          "detail": "The first-line sample id was answered"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "d1ea7316363d274c87f5ae1568cc0e5f2eb356c6a6849b695ccbf25094dec469",
+      "factsHash": "8468423469560111f01c554e71224c9a720dc3743b0078ff785c18ca73431fd4",
+      "artifactPath": "cases/claude-sonnet-5/U07"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "seed": "8643be37",
+      "durationMs": 15066,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U08.interrupt",
+          "passed": true,
+          "detail": "Escape cancelled the in-flight request and the bridge aborted its SDK turn"
+        },
+        {
+          "id": "U08.recovery",
+          "passed": true,
+          "detail": "The same Codex process answered the next turn"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 2,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "d12b4fc1dfefac47ed61afd810bb9e855077e1213bfc73610eef530757d99799",
+      "factsHash": "5f45282435e03bcded5858c1cb44f94f9da732006dcaf8cf538547fe24cb3789",
+      "artifactPath": "cases/claude-sonnet-5/U08"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "seed": "18409b9c",
+      "durationMs": 21934,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U09.compaction",
+          "passed": true,
+          "detail": "Codex compaction ran through a tool-less bridge session"
+        },
+        {
+          "id": "U09.recall",
+          "passed": true,
+          "detail": "The explicitly important launch code survived compaction"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 3,
+          "usage": 3,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 3,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 1,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 15,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "9ebb0dc8d6cf1db75e709180485c2446da40fbc5bb29c8d6d7442a4bca1e8009",
+      "factsHash": "22d2526052a80ebf19480a64499ba11833e617a29c34932e7bbc85637bf5505f",
+      "artifactPath": "cases/claude-sonnet-5/U09"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U10",
+      "status": "passed",
+      "seed": "690504ca",
+      "durationMs": 20652,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U10.relaunch",
+          "passed": true,
+          "detail": "Codex quit cleanly and resume --last started a new bridge session"
+        },
+        {
+          "id": "U10.recall",
+          "passed": true,
+          "detail": "The replayed history answered the launch code"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 2,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 12,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 0,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          },
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "9557b29dc89ca39c66f9352e17e2d5fd8dcabaa09ee5ef2498ea71fb55d88f96",
+      "factsHash": "21da4f8ea1ffda771ed0c5697bdca4435e3bd5ed9725950ec73678694e124d14",
+      "artifactPath": "cases/claude-sonnet-5/U10"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U11",
+      "status": "passed",
+      "seed": "9b6345a2",
+      "durationMs": 15785,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U11.effort",
+          "passed": true,
+          "detail": "High was selected, recorded by Codex and applied by the bridge"
+        },
+        {
+          "id": "U11.reply",
+          "passed": true,
+          "detail": "Turns before and after the change answered"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [
+            "high"
+          ],
+          "aborts": 1,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            "high"
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "claude-sonnet-5",
+          "codexDefaultLabel": "claude-opus-5.5",
+          "forbidden": 0
+        },
+        "effortPopup": true,
+        "modelChangedLine": "• Model changed to claude-sonnet-5 high"
+      },
+      "resultHash": "d64d3d0e8f2253fcb9971503e137abaa1a959ac8e31948305167ce3b816f6a31",
+      "factsHash": "9993113379939ac4a49c5d4560f82918e9afdcc070d88bd1acc4725b0a50a875",
+      "artifactPath": "cases/claude-sonnet-5/U11"
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U12",
+      "status": "passed",
+      "seed": "3097414a",
+      "durationMs": 12710,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-sonnet-5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U12.isolation",
+          "passed": true,
+          "detail": "The new thread used a new SDK session without the earlier code"
+        },
+        {
+          "id": "U12.quit",
+          "passed": true,
+          "detail": "/quit exited Codex and the launcher with status 0"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 2,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "claude-sonnet-5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 10,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 0,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "eb9085aa631decefb30f9257d728b80edd7dc2b3927c683b7973629aded5fd8c",
+      "factsHash": "d4076c9c07dc484f28cd09b5df1b81186d836e20209585e6b50ac51207eeebda",
+      "artifactPath": "cases/claude-sonnet-5/U12"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "seed": "00db3123",
+      "durationMs": 15574,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U01.picker",
+          "passed": true,
+          "detail": "Exactly the six pinned models in order, the launch model current, no other models"
+        },
+        {
+          "id": "U01.reply",
+          "passed": true,
+          "detail": "The first turn answers with its random marker"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "claude-haiku-4.5",
+          "codexDefaultLabel": "claude-opus-5.5",
+          "forbidden": 0
+        }
+      },
+      "resultHash": "9ab800f8570ce03992c1e3ada27638948c5cd1c786774b638664f916b77e3079",
+      "factsHash": "fec21f6e9dc137887603bc135bd92a76c8f0f15b4610b3db3fc3fe6e848f92d8",
+      "artifactPath": "cases/claude-haiku-4.5/U01"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U02",
+      "status": "failed",
+      "seed": "09444891",
+      "durationMs": 36520,
+      "failedChecks": [
+        "cleanup",
+        "U02.switch",
+        "U02.reply"
+      ],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses gpt-6-astra then claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": false,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U02.switch",
+          "passed": false,
+          "detail": "Turn before uses gpt-6-astra; turns after the picker use claude-haiku-4.5"
+        },
+        {
+          "id": "U02.reply",
+          "passed": false,
+          "detail": "Both turns answered; Codex recorded the switched model"
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Timed out waiting for after-model-select"
+      },
+      "evidence": {
+        "markersSeen": 0,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "gpt-6-astra"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 30,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "10675a25cc7b7ecf8423fb5d5dc59bb86a3d7eabeeb8052a574a13d07486b75c",
+      "factsHash": "88a543225c34049edb81ec762f754e0245dd7a39aad0290f09a20eeec2c0d9b8",
+      "artifactPath": "cases/claude-haiku-4.5/U02"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "seed": "09ca7997",
+      "durationMs": 14426,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U03.tool",
+          "passed": true,
+          "detail": "Codex executed a shell tool handed off by the bridge"
+        },
+        {
+          "id": "U03.value",
+          "passed": true,
+          "detail": "The hidden file token came back only through the tool result"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "exec_command"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "17025c04b3f52f110f344aca9e04c6b11bae7302ad687f4d0daa87fc97d066b1",
+      "factsHash": "fba723f5f9365a7c8c606ef340f490193fe5eb3d168dc865b43dd87ca9e6eb5c",
+      "artifactPath": "cases/claude-haiku-4.5/U03"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U04",
+      "status": "timed-out",
+      "seed": "48d13312",
+      "durationMs": 220701,
+      "failedChecks": [
+        "cleanup",
+        "U04.patch",
+        "U04.file"
+      ],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": false,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U04.patch",
+          "passed": false,
+          "detail": "Codex applied a patch (apply_patch tool or its shell interception) handed off by the bridge"
+        },
+        {
+          "id": "U04.file",
+          "passed": false,
+          "detail": "The created file holds exactly the requested line"
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for answer-TUI_48d13312_000002"
+      },
+      "evidence": {
+        "markersSeen": 0,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 214,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "659bc15f006b6bc41d1c0c79d00ec513b89c5a05d2a2cdc2dd02a21527fc9ef9",
+      "factsHash": "bdd452fdbb923636441f4dc93b073594ed1b50e38d2a0d2dd3238cd619a65830",
+      "artifactPath": "cases/claude-haiku-4.5/U04"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "seed": "f0dbe28a",
+      "durationMs": 15197,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U05.mcp",
+          "passed": true,
+          "detail": "Codex started and called its own fixture MCP server"
+        },
+        {
+          "id": "U05.value",
+          "passed": true,
+          "detail": "The hidden MCP nonce came back through Codex"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "lookup"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 3
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "466be063f6def8cc44aa2c2942cbf76b4c524eb2817ffd8a75df5c24227f1f5f",
+      "factsHash": "73addad287ffebd65d3f2e2ace3ee1773063bfdd91216cfc836175cfe39501ca",
+      "artifactPath": "cases/claude-haiku-4.5/U05"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "seed": "ac218f25",
+      "durationMs": 26030,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U06.length",
+          "passed": true,
+          "detail": "The streamed answer is at least 2,500 characters"
+        },
+        {
+          "id": "U06.marker",
+          "passed": true,
+          "detail": "The final marker stays visible after the long render"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 19,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "77c7b1a0f78710e6a24d883aa108203a230d3c94763fda5cbd598843cee2d353",
+      "factsHash": "fdcd1a0e7992ca3040c21839a6556da919e6cbfb492d766296608cdd0d55c778",
+      "artifactPath": "cases/claude-haiku-4.5/U06"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "seed": "cb49fd59",
+      "durationMs": 13574,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U07.delivery",
+          "passed": true,
+          "detail": "The 24 KiB paste reached the model"
+        },
+        {
+          "id": "U07.value",
+          "passed": true,
+          "detail": "The first-line sample id was answered"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 7,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "e8dd7a1ee4e79d76044ad21bea3b552467c050c05bcc07fb73a8fbae5bc96cea",
+      "factsHash": "b7d88bf180cfa33f790948b6ae6f759633e51965916bd1d3e89d2087a96518fb",
+      "artifactPath": "cases/claude-haiku-4.5/U07"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "seed": "515c6dd6",
+      "durationMs": 16021,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U08.interrupt",
+          "passed": true,
+          "detail": "Escape cancelled the in-flight request and the bridge aborted its SDK turn"
+        },
+        {
+          "id": "U08.recovery",
+          "passed": true,
+          "detail": "The same Codex process answered the next turn"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 2,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 9,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "02f4281ebb412a439accc9d7c99791f3fa7cb2d7fbcfd689a6679327a31b7bc1",
+      "factsHash": "524a184b85eb1bb99962a15ec1438d2bb19322c1982e891aff5af693737a0cf2",
+      "artifactPath": "cases/claude-haiku-4.5/U08"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "seed": "1c7bd6c6",
+      "durationMs": 24867,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U09.compaction",
+          "passed": true,
+          "detail": "Codex compaction ran through a tool-less bridge session"
+        },
+        {
+          "id": "U09.recall",
+          "passed": true,
+          "detail": "The explicitly important launch code survived compaction"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 3,
+          "usage": 3,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 3,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 1,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 18,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "69b7adcdd1b072fa44d91b925ac03ceb86cfa0d97e4649874f72eb3064a56811",
+      "factsHash": "8deee8f589fb32575340808d96267433c6f8f67c12619089b77033d8105eb045",
+      "artifactPath": "cases/claude-haiku-4.5/U09"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U10",
+      "status": "not-run",
+      "seed": "b143a971",
+      "durationMs": 20573,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses claude-haiku-4.5"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U10.relaunch",
+          "passed": true,
+          "detail": "Codex quit cleanly and resume --last started a new bridge session"
+        },
+        {
+          "id": "U10.recall",
+          "passed": true,
+          "detail": "The replayed history answered the launch code"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 2,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "claude-haiku-4.5"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            null
+          ]
+        },
+        "samples": {
+          "count": 12,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 0,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          },
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "d8c305cc86134d38b92a34bdb359d4286e0fe69c7fa7c71ba51f41c8a2882e10",
+      "factsHash": "4f4606df522b3046469282dfab9c81a1ca89659060bfd7162e8609b5bd9baf93",
+      "artifactPath": "cases/claude-haiku-4.5/U10"
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U11",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U12",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U01",
+      "status": "passed",
+      "seed": "7f33809d",
+      "durationMs": 15053,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses gpt-6-astra"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U01.picker",
+          "passed": true,
+          "detail": "Exactly the six pinned models in order, the launch model current, no other models"
+        },
+        {
+          "id": "U01.reply",
+          "passed": true,
+          "detail": "The first turn answers with its random marker"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 1,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "gpt-6-astra"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "gpt-6-astra",
+          "codexDefaultLabel": "claude-opus-5.5",
+          "forbidden": 0
+        }
+      },
+      "resultHash": "554a6fc175bf355fe9e3f485df2fafe455e5d0bc59c66700022d7acdf607bc52",
+      "factsHash": "acbd9405a8ebc1c4d9a07aeeba00a8c1734dfc62f71abaedc3907791806738f2",
+      "artifactPath": "cases/gpt-6-astra/U01"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U02",
+      "status": "passed",
+      "seed": "7b6cf3f1",
+      "durationMs": 20439,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses gpt-6-luna then gpt-6-astra"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U02.switch",
+          "passed": true,
+          "detail": "Turn before uses gpt-6-luna; turns after the picker use gpt-6-astra"
+        },
+        {
+          "id": "U02.reply",
+          "passed": true,
+          "detail": "Both turns answered; Codex recorded the switched model"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 2,
+        "sdk": {
+          "sessions": 2,
+          "usage": 2,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 2,
+          "models": [
+            "gpt-6-luna",
+            "gpt-6-astra"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null,
+            "low"
+          ]
+        },
+        "samples": {
+          "count": 14,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0,
+        "picker": {
+          "order": [
+            "claude-opus-5.5",
+            "claude-sonnet-5",
+            "claude-haiku-4.5",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna"
+          ],
+          "current": "gpt-6-luna",
+          "codexDefaultLabel": "claude-opus-5.5",
+          "forbidden": 0
+        },
+        "effortPopup": true,
+        "modelChangedLine": "• Model changed to gpt-6-astra low"
+      },
+      "resultHash": "156044a62316390a4338ec676978c67fe1bfdffe325a27525e12f100e1c4346c",
+      "factsHash": "f5e0c4e5e572dfd07da101b73848abf056fb02b18f2736a7f8301ca7f4d80db0",
+      "artifactPath": "cases/gpt-6-astra/U02"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U03",
+      "status": "passed",
+      "seed": "e7ff3501",
+      "durationMs": 16813,
+      "failedChecks": [],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": true,
+          "detail": "Every SDK session and usage record uses gpt-6-astra"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": true,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U03.tool",
+          "passed": true,
+          "detail": "Codex executed a shell tool handed off by the bridge"
+        },
+        {
+          "id": "U03.value",
+          "passed": true,
+          "detail": "The hidden file token came back only through the tool result"
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "markersSeen": 1,
+        "sdk": {
+          "sessions": 1,
+          "usage": 2,
+          "toolRequests": 1,
+          "setModel": [],
+          "aborts": 1,
+          "models": [
+            "gpt-6-astra"
+          ]
+        },
+        "rollout": {
+          "toolCalls": [
+            "exec_command"
+          ],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 10,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "343bb7ee4b3f326188f407118f8e751afa0a33ef977c7ffc1ca35987a6052fa0",
+      "factsHash": "820978281028349252deebb9e5d553cc95e4e45b9c00a4a041d7bafdb34a9c78",
+      "artifactPath": "cases/gpt-6-astra/U03"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U04",
+      "status": "not-run",
+      "seed": "4c87a5eb",
+      "durationMs": 14430,
+      "failedChecks": [
+        "routing",
+        "cleanup",
+        "U04.patch",
+        "U04.file"
+      ],
+      "checks": [
+        {
+          "id": "routing",
+          "passed": false,
+          "detail": "Every SDK session and usage record uses gpt-6-astra"
+        },
+        {
+          "id": "upstream",
+          "passed": true,
+          "detail": "No upstream filter, SDK error or failed stream"
+        },
+        {
+          "id": "mcp-isolation",
+          "passed": true,
+          "detail": "No MCP server process ever ran under the bridge's Copilot runtime"
+        },
+        {
+          "id": "cleanup",
+          "passed": false,
+          "detail": "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error"
+        },
+        {
+          "id": "U04.patch",
+          "passed": false,
+          "detail": "Codex applied a patch (apply_patch tool or its shell interception) handed off by the bridge"
+        },
+        {
+          "id": "U04.file",
+          "passed": false,
+          "detail": "The created file holds exactly the requested line"
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for answer-TUI_4c87a5eb_000002"
+      },
+      "evidence": {
+        "markersSeen": 0,
+        "sdk": {
+          "sessions": 1,
+          "usage": 0,
+          "toolRequests": 0,
+          "setModel": [],
+          "aborts": 1,
+          "models": []
+        },
+        "rollout": {
+          "toolCalls": [],
+          "patchApplies": 0,
+          "compactions": 0,
+          "turnEfforts": [
+            null
+          ]
+        },
+        "samples": {
+          "count": 8,
+          "maxRuntimeMcp": 0,
+          "maxRuntimes": 1,
+          "maxCodexMcpFixture": 0
+        },
+        "launches": [
+          {
+            "childExit": 130,
+            "reaped": true,
+            "groupGone": true,
+            "browser": "153.0.8010.12"
+          }
+        ],
+        "leftovers": 0,
+        "catalogLeft": 0
+      },
+      "resultHash": "bb2b50790010d1deff937901a075f0a62cadf5e0cd4929cfb7d76a6e48a661d6",
+      "factsHash": "6aa1fe1b43e5f1a7dac3fe73e6b580625844c8bb32cb2df1ee1a8acd1a0ff524",
+      "artifactPath": "cases/gpt-6-astra/U04"
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U05",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U06",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U07",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U08",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U09",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U10",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U11",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U12",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U01",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U02",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U03",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U04",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U05",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U06",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U07",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U08",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U09",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U10",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U11",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U12",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U01",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U02",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U03",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U04",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U05",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U06",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U07",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U08",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U09",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U10",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U11",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U12",
+      "status": "not-run",
+      "seed": null,
+      "durationMs": null,
+      "failedChecks": [],
+      "checks": [],
+      "error": null,
+      "evidence": null,
+      "resultHash": null,
+      "factsHash": null,
+      "artifactPath": null
+    }
+  ]
+}

@@ -144,7 +144,7 @@ test("client disconnect cancels the corresponding SDK operation", async (t) => {
   clearTimeout(timer);
 });
 
-test("direct-server configuration requires auth, loopback, valid limits and one of seven models", () => {
+test("direct-server configuration requires auth, loopback, valid limits and one of six models", () => {
   assert.throws(() => bridgeConfig({}), /BRIDGE_API_KEY/);
   assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, HOST: "0.0.0.0" }), /loopback/);
   assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, PORT: "65536" }), /PORT/);

@@ -4,12 +4,16 @@ import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog, resolveCopilotModel, 
 
 const models = SUPPORTED_MODEL_IDS.map((id) => ({ id, policy: { state: "enabled" } }));
 
-test("only the seven requested models are exposed in the requested order", () => {
-  assert.equal(SUPPORTED_MODEL_IDS.length, 7);
+test("only the six requested models are exposed in the requested picker order", () => {
+  assert.deepEqual(SUPPORTED_MODEL_IDS, ["claude-opus-5.5", "claude-sonnet-5", "claude-haiku-4.5", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna"]);
   assert.equal(DEFAULT_MODEL, "gpt-6-astra");
   assert.deepEqual(supportedModels([...models].reverse().concat({ id: "unrelated-model" })).map((entry) => entry.id), SUPPORTED_MODEL_IDS);
   for (const requested of SUPPORTED_MODEL_IDS) assert.equal(resolveCopilotModel({ requested, models }), requested);
   assert.throws(() => resolveCopilotModel({ requested: "unrelated-model", models: [{ id: "unrelated-model" }] }), /Unsupported/);
+  for (const removed of ["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "claude-opus-5"]) {
+    assert.throws(() => resolveCopilotModel({ requested: removed, models: [{ id: removed }] }), /Unsupported/);
+    assert.deepEqual(supportedModels([{ id: removed }]), []);
+  }
 });
 
 test("unavailable or policy-disabled models never silently fall back", () => {
@@ -21,12 +25,12 @@ test("catalog serves both OpenAI IDs and Codex model metadata from the live SDK 
   const catalog = modelCatalog([
     { id: "gpt-6-astra", name: "Test display name", supportedReasoningEfforts: ["low", "high"], capabilities: { limits: { max_context_window_tokens: 123_456 } } },
     { id: "claude-haiku-4.5", supportedReasoningEfforts: ["high"], capabilities: { supports: { reasoningEffort: false } } },
-    { id: "gpt-5.6-sol", policy: { state: "disabled" } },
+    { id: "gpt-6-sol", policy: { state: "disabled" } },
     { id: "unrelated-model" },
   ]);
-  assert.deepEqual(catalog.data.map((entry) => entry.id), ["gpt-6-astra", "claude-haiku-4.5"]);
+  assert.deepEqual(catalog.data.map((entry) => entry.id), ["claude-haiku-4.5", "gpt-6-astra"]);
   assert.deepEqual(catalog.models.map((entry) => entry.slug), catalog.data.map((entry) => entry.id));
-  const [reasoning, fixed] = catalog.models;
+  const [fixed, reasoning] = catalog.models;
   assert.equal(reasoning.display_name, "Test display name");
   assert.deepEqual(reasoning.supported_reasoning_levels.map((entry) => entry.effort), ["low", "high"]);
   assert.equal(reasoning.default_reasoning_level, "low");
@@ -38,6 +42,7 @@ test("catalog serves both OpenAI IDs and Codex model metadata from the live SDK 
   assert.equal(Object.hasOwn(fixed, "context_window"), false);
   for (const entry of catalog.models) {
     assert.equal(entry.shell_type, "unified_exec");
+    assert.equal(entry.apply_patch_tool_type, "freeform");
     assert.equal(entry.visibility, "list");
     assert.equal(entry.supported_in_api, true);
     assert.equal(entry.supports_reasoning_summary_parameter, false);

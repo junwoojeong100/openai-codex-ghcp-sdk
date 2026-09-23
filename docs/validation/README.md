@@ -2,7 +2,32 @@
 
 [한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
 
-## Latest: bridge and terminal-runner integration — 2026-09-23 KST
+## Latest: real Codex TUI scenarios with Playwright headless — 2026-09-23 KST
+
+[Results, issues found, observations and evidence](2026-09-23-tui-scenarios/README.md)
+
+- New contract `codex-ghcp-tui-12-v1`: 12 scenarios × 6 models = 72 cases through the production launcher, the real Codex 0.154.0 TUI and headless Playwright/xterm.js.
+- Final independent run on implementation `54c7eb77`: **70/72 (97.22%)**, verified against current and frozen source. Opus 5.5, Sonnet 5, Haiku 4.5 and Astra scored 12/12.
+- The two failures are Sol and Luna refusing the U03 fixture wording (`token=`), with no tool call and no filter signal. They stay in the denominator; the contract was not changed.
+- The preliminary run found that **the production launcher did not offer Codex's native `apply_patch` tool**. The catalog now declares `apply_patch_tool_type: "freeform"`, and all six models used the native tool in the final run. A harness gap for Haiku's lingering model popup was also fixed.
+- Observations: 0 runtime MCP processes in 1,282 samples; Codex's task-title requests get HTTP 400 because structured output is unsupported; bridge cleanup diagnostics appear only when the harness ends a case with a group SIGINT, never after `/quit`.
+- The preliminary run is preserved separately. [Summary](2026-09-23-tui-scenarios/summary.json) · [Final run](2026-09-23-tui-scenarios/final-tui.json).
+
+## Earlier: six-model switch, bridge MCP isolation and live verification — 2026-09-23 KST
+
+[Changes, run history, MCP isolation evidence, picker checks and retained failures](2026-09-23-six-model-switch/README.md)
+
+- Supported models are now `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4.5`, `gpt-6-astra`, `gpt-6-sol` and `gpt-6-luna`, pinned in that picker order.
+- Final independent matrices under the new 66-cell contracts: default **v4 57/66 (86.36%)** and separate **application-data-v2 63/66 (95.45%)**. Neither is 66/66.
+- In v4, every model except Opus 5.5 scored 11/11; all nine Opus 5.5 failures are explicit upstream filters.
+- Bridge SDK sessions now disable the Copilot runtime's unused user/plugin MCP servers. Before the fix, each session started azmcp plus two Playwright processes, about 316 MB. With the fix, 533 samples across the final matrices found **0 MCP processes**, and the SDK `disconnect` median fell from about 0.5 s to about 50 ms.
+- Verification-runner fixes:
+  - a hard-coded seven-model preflight;
+  - a macOS `EPERM` process-group false failure.
+- A real TUI `/model` check listed exactly the six models, and switching models routed prompts to the selected model.
+- Intermediate runs and all failures are preserved separately. [Summary](2026-09-23-six-model-switch/summary.json) · [Additional live checks](2026-09-23-six-model-switch/additional-live.json).
+
+## Earlier: bridge and terminal-runner integration (historical 7-model contract) — 2026-09-23 KST
 
 [Implementation, full matrices, additional live tests and retained failures](2026-09-22-terminal-integration/README.md)
 

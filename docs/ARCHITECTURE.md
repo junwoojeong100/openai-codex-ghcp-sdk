@@ -22,16 +22,18 @@ The bridge adapts protocols. It does not replace Codex's tool executor with Copi
 - `responses.mjs`: Responses output items and streaming events; preserves tool `call_id`, namespace, and custom input strings.
 - `session-manager.mjs`: per-conversation queues, history matching, cached retries, pending tool results, deadlines, expiry and cleanup.
 - `copilot-session-rpc.mjs`: narrow wrappers over SDK abort/disconnect/delete and pending-tool-result RPCs.
-- `model-map.mjs`: the seven allowed IDs, default selection, OpenAI/Codex catalog metadata and reasoning-effort checks. Model context limits and supported efforts come from the SDK catalog; there is no automatic model fallback.
+- `mcp-isolation.mjs`: exact MCP server names configured for the Copilot runtime (user `mcp-config.json` and installed plugins), passed as `disabledMcpServers` on every bridge SDK session.
+- `model-map.mjs`: the six allowed IDs, default selection, OpenAI/Codex catalog metadata and reasoning-effort checks. Model context limits and supported efforts come from the SDK catalog; there is no automatic model fallback.
 - `copilot-home.mjs` and `list-models.mjs`: existing Copilot home resolution and account-specific model listing.
-- Launcher/daemon modules and `bin/`: start a project-owned bridge, pass per-process Codex configuration and a private temporary model catalog, and manage optional background operation. The catalog replaces bundled/cached picker entries and is removed on Codex exit.
+- Launcher/daemon modules and `bin/`: start a project-owned bridge, pass per-process Codex configuration and a private temporary model catalog, and manage optional background operation. Catalog entries declare `apply_patch_tool_type: "freeform"`, so Codex offers its native `apply_patch` tool. The catalog replaces bundled/cached picker entries and is removed on Codex exit.
 - `scripts/terminal.mjs` and `scripts/soak/terminal-lane.mjs`: explicit live terminal validation, frozen-source workers, isolated environments and SDK-correlated outcome checks. The soak worker uses the same terminal lane.
+- `scripts/tui.mjs` and `scripts/tui/`: the `codex-ghcp-tui-12-v1` real-TUI matrix. Each case runs `bin/codex-ghcp` in a private PTY rendered and driven by headless Playwright/xterm.js, samples processes under the bridge's Copilot runtime, reads Codex's own rollout, and recomputes checks from saved facts.
 - `scripts/soak/terminal.mjs` and `browser.mjs`: one owned PTY lifecycle with either the independent parser or a Playwright/xterm renderer. Browser input and output use the real PTY, not a simulated assistant; cancellation reaps both the terminal group and owned browser.
 
 ## Tool handoff
 
 1. Codex declares function tools or custom/freeform tools, including declarations nested in an `additional_tools` input item.
-2. The bridge registers **handlerless** SDK tools and exposes only their `custom:<name>` entries. SDK built-in tools and tool search are not enabled.
+2. The bridge registers **handlerless** SDK tools and exposes only their `custom:<name>` entries. SDK built-in tools and tool search are not enabled. The Copilot runtime's own user/plugin MCP servers are disabled at session creation, so none start; a bounded `session.mcp.list` check then stops any server from an unscanned source and disables it for later sessions. Codex's own MCP tools still work because Codex runs them and declares them like other tools.
 3. An SDK assistant message supplies a tool call. `external_tool.requested` supplies its corresponding pending `requestId`.
 4. The HTTP response returns a `function_call` or `custom_tool_call` to Codex. The bridge does not run it.
 5. Codex applies its normal sandbox and approval policy, executes the tool, and sends its output in another Responses request.
@@ -76,7 +78,7 @@ No sibling project's tests, validation runner or validation results are used. Of
 - Delta/final stream reconciliation happens before committing the success cache or pending-tool state.
 - `/health` reports HTTP liveness and last-known readiness; authenticated `/readyz` probes the SDK. Catalog requests may trigger safe connection recovery.
 
-Defaults, errors and the separate 77-cell contract are documented in the [stability guide](STABILITY_TESTING.md). Historical v4 evidence is verified with frozen source, never regraded.
+Defaults, errors and the separate 66-cell stability contract are documented in the [stability guide](STABILITY_TESTING.md). Historical v3 stability and v4 compatibility evidence is verified with frozen source, never regraded.
 
 - SDK-managed system/safety instructions are retained with append mode. All top-level client system/developer messages, including mid-history ones, are collected with request instructions; their text is appended unchanged. A changed instruction policy rebuilds an idle session and is rejected while tools are pending. SDK built-in tools remain excluded and permission requests remain rejected.
 - New user messages accompanying tool results use SDK immediate steering before results are released, not text appended to a tool output. Tool-result text remains byte-exact and exact retries do not repeat either operation.

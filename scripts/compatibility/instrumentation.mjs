@@ -18,7 +18,7 @@ export function observeSdk(client, records) {
       } } };
       if (["send", "setModel", "abort", "disconnect"].includes(key)) return async (...args) => {
         record({ type: `session.${key}`, sessionId, ...(key === "send" ? { promptHash: sha(args[0]?.prompt || "") } : {}),
-          ...(key === "setModel" ? { model: args[0] } : {}) });
+          ...(key === "setModel" ? { model: args[0], effort: args[1]?.reasoningEffort ?? null } : {}) });
         return target[key](...args);
       };
       const value = Reflect.get(target, key, target); return typeof value === "function" ? value.bind(target) : value;

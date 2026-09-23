@@ -1,0 +1,672 @@
+{
+  "kind": "codex-ghcp-tui-12-v1 validation summary",
+  "generatedAt": "2026-09-23T02:36:49+00:00",
+  "contract": {
+    "id": "codex-ghcp-tui-12-v1",
+    "catalogHash": "66948cf09ddb078c2eccd58d8f34511b9ed951b3b3a13db88986b0af3157ec0f",
+    "driver": "playwright-headless-xterm",
+    "scenarios": 12,
+    "models": 6,
+    "totalCases": 72,
+    "concurrency": 3,
+    "automaticCaseRetries": 0,
+    "versions": {
+      "codex": "0.154.0",
+      "copilotSdk": "1.0.14",
+      "playwright": "1.63.0",
+      "xterm": "6.0.0",
+      "headlessChromium": "153.0.8010.12",
+      "node": "v22.16.0"
+    }
+  },
+  "finalRun": {
+    "file": "final-tui.json",
+    "runId": "915c9948-1f7a-4997-9980-b4564d9802fe",
+    "implementationHash": "54c7eb77ea5986dde0dbc3c9a24c0a95d6a253e55a9ca01305a05e8b152d05cf",
+    "startedAt": "2026-09-23T02:16:43.828Z",
+    "finishedAt": "2026-09-23T02:34:52.578Z",
+    "timeKst": "11:16:43-11:34:52",
+    "counts": {
+      "passed": 70,
+      "failed": 0,
+      "blocked": 0,
+      "timed-out": 2,
+      "not-run": 0
+    },
+    "passed": 70,
+    "percent": 97.22,
+    "fullMatrixPassed": false,
+    "exitCode": 1,
+    "perModel": [
+      {
+        "model": "claude-opus-5.5",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v1-passed"
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v1-passed"
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v1-passed"
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v1-passed"
+      },
+      {
+        "model": "gpt-6-sol",
+        "passed": 11,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-luna",
+        "passed": 11,
+        "total": 12,
+        "verdict": "not-established"
+      }
+    ],
+    "evidenceIntegrity": {
+      "current": true,
+      "frozen": true
+    },
+    "implementationUnchanged": true,
+    "frozenSourceUnchanged": true,
+    "userSettingsUnchanged": true,
+    "caseDurationSeconds": {
+      "median": 17.4,
+      "max": 220.8
+    }
+  },
+  "preliminaryRun": {
+    "file": "preliminary-tui.json",
+    "runId": "5ee9b620-a32f-4563-933a-19292277b7e3",
+    "implementationHash": "a273b5e0cef7d6392cb0dfd084c7974ba1bfa9e8642c6b1568e830ddfb358247",
+    "startedAt": "2026-09-23T02:01:28.882Z",
+    "finishedAt": "2026-09-23T02:10:47.943Z",
+    "timeKst": "11:01:28-11:10:47",
+    "interrupted": true,
+    "interruptedBy": "operator SIGINT after two findings; graceful shutdown recorded in-flight and unstarted cells",
+    "counts": {
+      "passed": 29,
+      "failed": 2,
+      "blocked": 0,
+      "timed-out": 2,
+      "not-run": 39
+    },
+    "evidenceIntegrity": {
+      "current": true,
+      "frozen": true
+    },
+    "combinedWithFinal": false
+  },
+  "findings": {
+    "nativeApplyPatchMissing": {
+      "fixedIn": "src/model-map.mjs (catalog apply_patch_tool_type: \"freeform\")",
+      "sdkToolCountBefore": 7,
+      "sdkToolCountAfter": 8,
+      "toolAddedAfter": "custom:apply_patch",
+      "preliminaryEvidence": {
+        "claude-opus-5.5": "replied that no apply_patch tool was available; timed out waiting for the marker",
+        "claude-haiku-4.5": "listed its tools without apply_patch; timed out waiting for the marker",
+        "claude-sonnet-5": "wrote the file with exec_command; U04.patch failed"
+      },
+      "preFixDevObservation": "gpt-6-luna could still pass U04 by running apply_patch through exec_command, which Codex intercepts",
+      "finalRun": {
+        "claude-opus-5.5": [
+          "custom_tool_call:apply_patch"
+        ],
+        "claude-sonnet-5": [
+          "custom_tool_call:apply_patch"
+        ],
+        "claude-haiku-4.5": [
+          "custom_tool_call:apply_patch"
+        ],
+        "gpt-6-astra": [
+          "custom_tool_call:apply_patch"
+        ],
+        "gpt-6-sol": [
+          "custom_tool_call:apply_patch"
+        ],
+        "gpt-6-luna": [
+          "custom_tool_call:apply_patch"
+        ]
+      }
+    },
+    "haikuPickerStaysOpen": {
+      "kind": "harness",
+      "behavior": "Codex keeps the model popup open after selecting a model without configurable reasoning levels",
+      "fix": "scripts/tui/scenarios.mjs closes it with Escape and records pickerStayedOpen",
+      "finalRun": true
+    },
+    "u03ModelRefusals": {
+      "kind": "model behavior on the frozen fixture wording (notes/token.txt, token=)",
+      "cells": [
+        {
+          "model": "gpt-6-sol",
+          "scenarioId": "U03",
+          "status": "timed-out",
+          "answer": "I can’t retrieve or disclose a token from that file.",
+          "filter": false,
+          "finishReasons": [
+            "stop"
+          ]
+        },
+        {
+          "model": "gpt-6-luna",
+          "scenarioId": "U03",
+          "status": "timed-out",
+          "answer": "I can’t read or reveal a token or credential.",
+          "filter": false,
+          "finishReasons": [
+            "stop"
+          ]
+        }
+      ],
+      "toolCalls": 0,
+      "explicitFilterSignals": 0,
+      "contractChanged": false,
+      "samePromptPassed": [
+        "claude-opus-5.5",
+        "claude-sonnet-5",
+        "claude-haiku-4.5",
+        "gpt-6-astra"
+      ]
+    },
+    "taskTitleRequests": {
+      "kind": "known unsupported feature",
+      "request": "Codex 0.154 task-title generation with text.format json_schema (codex_output_schema)",
+      "bridgeResponse": "HTTP 400 Structured output is not supported; use plain text output.",
+      "cases": 66,
+      "requests": 102,
+      "otherHttpErrors": 0,
+      "codexContinued": true
+    },
+    "cleanupDiagnosticsByTeardown": {
+      "kind": "observation, not scored by v1",
+      "sigintTeardown": {
+        "cases": 66,
+        "withBridgeCleanupDiagnostic": 66
+      },
+      "quitOnly": {
+        "cases": 6,
+        "withBridgeCleanupDiagnostic": 0
+      },
+      "byOperation": {
+        "abort:timeout": 62,
+        "delete:rpc_error": 65,
+        "disconnect:timeout": 3,
+        "delete:timeout": 1
+      },
+      "boundMs": 5000,
+      "explanation": "The PTY helper ends non-/quit cases with SIGINT to the whole process group. The SDK starts the Copilot runtime without detaching it, so the runtime receives the same signal while the bridge is still disposing sessions; the bounded abort or disconnect then waits 5 s and delete reports rpc_error. Every process still exited."
+    },
+    "mcpIsolation": {
+      "samples": 1282,
+      "maxRuntimeMcpProcesses": 0,
+      "maxConcurrentRuntimesPerCase": 2,
+      "codexFixtureMcpStarted": {
+        "claude-opus-5.5": 3,
+        "claude-sonnet-5": 3,
+        "claude-haiku-4.5": 3,
+        "gpt-6-astra": 3,
+        "gpt-6-sol": 3,
+        "gpt-6-luna": 3
+      }
+    }
+  },
+  "scenarioEvidence": {
+    "u02": {
+      "claude-opus-5.5": {
+        "launchModel": "gpt-6-astra",
+        "setModel": [],
+        "usageModels": [
+          "gpt-6-astra",
+          "claude-opus-5.5"
+        ],
+        "pickerStayedOpen": null,
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "launchModel": "gpt-6-astra",
+        "setModel": [],
+        "usageModels": [
+          "gpt-6-astra",
+          "claude-sonnet-5"
+        ],
+        "pickerStayedOpen": null,
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "launchModel": "gpt-6-astra",
+        "setModel": [],
+        "usageModels": [
+          "gpt-6-astra",
+          "claude-haiku-4.5"
+        ],
+        "pickerStayedOpen": true,
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "launchModel": "gpt-6-luna",
+        "setModel": [],
+        "usageModels": [
+          "gpt-6-luna",
+          "gpt-6-astra"
+        ],
+        "pickerStayedOpen": null,
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "launchModel": "gpt-6-astra",
+        "setModel": [],
+        "usageModels": [
+          "gpt-6-astra",
+          "gpt-6-sol"
+        ],
+        "pickerStayedOpen": null,
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "launchModel": "gpt-6-astra",
+        "setModel": [],
+        "usageModels": [
+          "gpt-6-astra",
+          "gpt-6-luna"
+        ],
+        "pickerStayedOpen": null,
+        "status": "passed"
+      }
+    },
+    "u06": {
+      "claude-opus-5.5": {
+        "chars": 5477,
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "chars": 4943,
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "chars": 5301,
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "chars": 5185,
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "chars": 3989,
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "chars": 4933,
+        "status": "passed"
+      }
+    },
+    "u07": {
+      "claude-opus-5.5": {
+        "maxInputTokens": 20824,
+        "maxRequestBytes": 39821,
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "maxInputTokens": 21221,
+        "maxRequestBytes": 39821,
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "maxInputTokens": 16761,
+        "maxRequestBytes": 39811,
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "maxInputTokens": 12270,
+        "maxRequestBytes": 39805,
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "maxInputTokens": 12240,
+        "maxRequestBytes": 39797,
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "maxInputTokens": 12245,
+        "maxRequestBytes": 39801,
+        "status": "passed"
+      }
+    },
+    "u08": {
+      "claude-opus-5.5": {
+        "aborts": 2,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "aborts": 2,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "aborts": 2,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "aborts": 2,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "aborts": 2,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "aborts": 2,
+        "sessions": 2,
+        "status": "passed"
+      }
+    },
+    "u09": {
+      "claude-opus-5.5": {
+        "compactions": 1,
+        "toollessSessions": 1,
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "compactions": 1,
+        "toollessSessions": 1,
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "compactions": 1,
+        "toollessSessions": 1,
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "compactions": 1,
+        "toollessSessions": 1,
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "compactions": 1,
+        "toollessSessions": 1,
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "compactions": 1,
+        "toollessSessions": 1,
+        "status": "passed"
+      }
+    },
+    "u10": {
+      "claude-opus-5.5": {
+        "launches": 2,
+        "exits": [
+          0,
+          130
+        ],
+        "sessions": 2,
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "launches": 2,
+        "exits": [
+          0,
+          130
+        ],
+        "sessions": 2,
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "launches": 2,
+        "exits": [
+          0,
+          0
+        ],
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "launches": 2,
+        "exits": [
+          0,
+          130
+        ],
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "launches": 2,
+        "exits": [
+          0,
+          130
+        ],
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "launches": 2,
+        "exits": [
+          0,
+          130
+        ],
+        "sessions": 2,
+        "status": "passed"
+      }
+    },
+    "u11": {
+      "claude-opus-5.5": {
+        "effortPopup": true,
+        "setModelEfforts": [
+          "high"
+        ],
+        "createdEfforts": [
+          "low"
+        ],
+        "turnEfforts": [
+          null,
+          "high"
+        ],
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "effortPopup": true,
+        "setModelEfforts": [
+          "high"
+        ],
+        "createdEfforts": [
+          "low"
+        ],
+        "turnEfforts": [
+          null,
+          "high"
+        ],
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "effortPopup": false,
+        "setModelEfforts": [],
+        "createdEfforts": [
+          null
+        ],
+        "turnEfforts": [
+          null,
+          "none"
+        ],
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "effortPopup": true,
+        "setModelEfforts": [
+          "high"
+        ],
+        "createdEfforts": [
+          "low"
+        ],
+        "turnEfforts": [
+          null,
+          "high"
+        ],
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "effortPopup": true,
+        "setModelEfforts": [
+          "high"
+        ],
+        "createdEfforts": [
+          "low"
+        ],
+        "turnEfforts": [
+          null,
+          "high"
+        ],
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "effortPopup": true,
+        "setModelEfforts": [
+          "high"
+        ],
+        "createdEfforts": [
+          "low"
+        ],
+        "turnEfforts": [
+          null,
+          "high"
+        ],
+        "status": "passed"
+      }
+    },
+    "u12": {
+      "claude-opus-5.5": {
+        "exits": [
+          0
+        ],
+        "catalogLeft": 0,
+        "leftovers": 0,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "claude-sonnet-5": {
+        "exits": [
+          0
+        ],
+        "catalogLeft": 0,
+        "leftovers": 0,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "claude-haiku-4.5": {
+        "exits": [
+          0
+        ],
+        "catalogLeft": 0,
+        "leftovers": 0,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-astra": {
+        "exits": [
+          0
+        ],
+        "catalogLeft": 0,
+        "leftovers": 0,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-sol": {
+        "exits": [
+          0
+        ],
+        "catalogLeft": 0,
+        "leftovers": 0,
+        "sessions": 2,
+        "status": "passed"
+      },
+      "gpt-6-luna": {
+        "exits": [
+          0
+        ],
+        "catalogLeft": 0,
+        "leftovers": 0,
+        "sessions": 2,
+        "status": "passed"
+      }
+    }
+  },
+  "devChecks": {
+    "note": "Single-case development checks on intermediate source. Not part of any matrix or denominator.",
+    "runs": [
+      {
+        "label": "run1",
+        "model": "gpt-6-luna",
+        "scenarios": {
+          "U01": "passed",
+          "U02": "passed",
+          "U03": "passed",
+          "U04": "failed",
+          "U05": "passed",
+          "U06": "failed"
+        }
+      },
+      {
+        "label": "run2",
+        "model": "gpt-6-luna",
+        "scenarios": {
+          "U04": "failed",
+          "U06": "passed",
+          "U07": "passed",
+          "U08": "passed",
+          "U09": "passed",
+          "U10": "passed",
+          "U11": "passed",
+          "U12": "passed"
+        }
+      },
+      {
+        "label": "run3",
+        "model": "gpt-6-luna",
+        "scenarios": {
+          "U04": "passed (shell-intercepted apply_patch, before the catalog fix)"
+        }
+      },
+      {
+        "label": "run4 (after both fixes)",
+        "scenarios": {
+          "claude-haiku-4.5 U02": "passed",
+          "claude-haiku-4.5 U11": "passed",
+          "claude-haiku-4.5 U04": "passed (custom apply_patch)",
+          "claude-opus-5.5 U04": "passed (custom apply_patch)"
+        }
+      }
+    ]
+  },
+  "environment": {
+    "os": "macOS 26.7",
+    "cpuCores": 10,
+    "memoryGb": 16,
+    "load1": {
+      "min": 3.38,
+      "max": 9.89,
+      "samples": 37
+    },
+    "note": "The user's workstation; other Copilot sessions shared the same account during the run."
+  },
+  "laterNote": "The six-model stability matrices (57/66, 63/66) were measured on implementation 68f92d74, before the freeform apply_patch catalog change, and were not rerun on 54c7eb77.",
+  "automaticCaseRetries": 0,
+  "originalFailuresPreserved": true,
+  "runsCombined": false,
+  "rawArtifactsCommitted": false
+}

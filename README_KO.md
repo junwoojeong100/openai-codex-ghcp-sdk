@@ -80,7 +80,7 @@ codex-original --version   # 공식 Codex 버전. bridge를 시작하지 않음
 
 ```zsh
 codex
-codex --ghcp-model gpt-5.6-sol
+codex --ghcp-model gpt-6-sol
 codex -- exec --skip-git-repo-check --sandbox read-only \
   "README_KO.md를 읽고 프로젝트의 목적을 한 문장으로 요약해줘."
 codex-original --help       # GHCP를 거치지 않는 공식 CLI 도움말
@@ -94,24 +94,32 @@ codex-original --help       # GHCP를 거치지 않는 공식 CLI 도움말
 
 ## 모델 선택
 
-허용하는 Copilot catalog ID는 다음 7개뿐입니다.
+허용하는 Copilot catalog ID는 다음 6개뿐이며, 피커 순서도 같습니다.
 
-| 계열 | 모델 ID |
-| --- | --- |
-| GPT | `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra` |
-| Claude | `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4.5` |
+| 순서 | 표시 이름 | 모델 ID |
+| ---: | --- | --- |
+| 1 | Claude Opus 5.5 | `claude-opus-5.5` |
+| 2 | Claude Sonnet 5 | `claude-sonnet-5` |
+| 3 | Claude Haiku 4.5 | `claude-haiku-4.5` |
+| 4 | GPT-6 Astra | `gpt-6-astra` |
+| 5 | GPT-6 Sol | `gpt-6-sol` |
+| 6 | GPT-6 Luna | `gpt-6-luna` |
 
-기본값은 **`gpt-6-astra`**입니다. 계정 catalog와 모델 정책을 확인하며, 사용할 수 없는 모델을 다른 모델로 몰래 대체하지 않습니다.
+기본값은 **`gpt-6-astra`**입니다. 계정 catalog와 모델 정책을 확인하며, 사용할 수 없는 모델을 다른 모델로 몰래 대체하지 않습니다. 제거된 ID(`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `claude-opus-5`)는 실행기와 bridge가 대체 없이 거절합니다.
 
 ```bash
 ./bin/ghcp-models --json
-./bin/codex-ghcp --ghcp-model gpt-5.6-terra
+./bin/codex-ghcp --ghcp-model claude-opus-5.5
 ./bin/codex-ghcp --ghcp-model claude-sonnet-5
 ```
 
-목록에 표시된다는 사실은 모든 Codex 기능의 호환성을 뜻하지 않습니다. 실행기는 인증된 `/v1/models` 목록을 읽어 비공개 임시 `model_catalog_json` 파일로 전달합니다. Codex의 `/model` 피커에는 내장 OpenAI 목록이나 다른 공급자의 캐시 대신 **위 7개 중 계정에서 사용할 수 있는 모델만** 표시되며 Claude도 포함됩니다. 초기 모델은 `--ghcp-model`로 선택하고, 계정 권한 변경은 다시 실행하여 반영합니다. 임시 목록은 해당 Codex 종료 시 삭제하며 상주 bridge 사용 시에도 동일합니다.
+목록에 표시된다는 사실은 모든 Codex 기능의 호환성을 뜻하지 않습니다. 실행기는 인증된 `/v1/models` 목록을 읽어 비공개 임시 `model_catalog_json` 파일로 전달합니다. Codex의 `/model` 피커에는 내장 OpenAI 목록이나 다른 공급자의 캐시 대신 **위 6개 중 계정에서 사용할 수 있는 모델만 표시 순서대로** 표시됩니다. 초기 모델은 `--ghcp-model`로 선택하고, 계정 권한 변경은 다시 실행하여 반영합니다. 임시 목록은 해당 Codex 종료 시 삭제하며 상주 bridge 사용 시에도 동일합니다.
+
+Codex 0.154.0은 catalog priority 순서로 피커를 정렬하고 첫 항목에 `(default)`를 표시하므로 `claude-opus-5.5`에 이 표시가 붙습니다. 실행기는 `--ghcp-model`로 다른 모델을 고르지 않는 한 여전히 `gpt-6-astra`로 시작하며, 피커에는 `(current)`로 표시됩니다. `/model`에서 모델을 고르면 실행 중인 세션이 전환됩니다. Codex는 이 선택을 `~/.codex/config.toml`의 `model`/`model_reasoning_effort`로도 저장하고, 더 높은 우선순위 설정이 이를 덮어쓴다고 경고합니다. 다음 GHCP 실행은 여전히 `--ghcp-model` 또는 기본값을 쓰지만, 공식 `codex-original` 실행은 저장된 값을 읽으므로 필요하면 그 값을 되돌리세요.
 
 모델 정보에는 이론적인 long-context 최댓값 대신 **실제로 사용하는 기본 tier의 입력 예산**을 전달합니다. Copilot의 prompt/output 한도와 기본 tier 한도를 반영하고 SDK 세션을 `contextTier: "default"`로 고정하며, 예산의 **80%**에서 Codex의 로컬 자동 압축을 시작합니다. 한도 메타데이터가 없으면 다른 모델의 기본값으로 진행하지 않고 실행을 중단합니다. 대화 이력의 기준을 Codex로 유지하기 위해 SDK 자체 자동 압축은 계속 비활성화합니다.
+
+각 catalog 항목에는 `apply_patch_tool_type: "freeform"`도 선언합니다. 따라서 Codex는 기본 OpenAI 모델과 마찬가지로 Copilot 모델에도 Codex 기본 `apply_patch` 편집 도구를 제공합니다. 이전에는 실제 TUI에 shell 도구만 제공되어, 모델이 shell 명령으로 파일을 쓰거나 `apply_patch`가 없다고 답했습니다. bridge는 freeform patch 원문을 바이트 그대로 전달하고, 적용은 여전히 Codex가 자체 샌드박스·승인 정책 안에서 합니다.
 
 ## Codex 실행
 
@@ -148,6 +156,8 @@ codex-original --help       # GHCP를 거치지 않는 공식 CLI 도움말
 실행기는 Codex의 `-c` 인자로 Responses 공급자 설정을, 자식 프로세스 환경 변수로 생성한 **로컬 bridge 전용 토큰**을 전달합니다. 미지원 WebSocket·요청 압축·호스팅 웹 검색·원격 compaction·reasoning summary는 비활성화합니다. 실행기 자체는 `~/.codex/config.toml`, `auth.json`, 셸 시작 파일이나 다른 프로젝트의 서버를 수정하지 않습니다. 위의 선택적 zsh 연동은 사용자가 명시적으로 적용하는 별도의 `~/.zshrc` 변경이며, 공식 CLI를 교체하거나 Codex 인증을 변경하지 않습니다.
 
 Copilot/GitHub 인증을 Codex로 복사하지 않습니다. bridge 토큰은 GitHub/OpenAI 인증정보가 아닙니다. 다만 다른 Codex 설정은 실행에 영향을 줄 수 있으며, 실행기가 완전히 새로운 Codex 프로필을 만드는 것은 아닙니다.
+
+bridge의 SDK 세션은 Copilot 런타임 자체에 설정된 MCP 서버(`~/.copilot/mcp-config.json`과 설치된 plugin)를 모두 비활성화합니다. 세션은 Codex가 선언한 도구만 허용하므로 이 서버들은 모델에 노출된 적이 없는데도, 런타임은 세션마다 새 서버 묶음을 띄웠습니다(이 환경에서는 azmcp와 Playwright 2개, 약 300 MB RSS). 서버 이름은 세션 생성 시 해당 파일에서 읽고, 생성 뒤 제한 시간이 있는 점검으로 다른 출처에서 뜬 서버도 중지한 뒤 이후 세션에서 비활성화합니다. Codex 자체 MCP 서버는 영향을 받지 않습니다. Codex가 직접 실행하고 다른 도구와 같이 bridge에 선언하기 때문입니다.
 
 `.env`는 `npm run bridge`나 실행기에서 **자동으로 로드되지 않습니다.** `.env.example`은 서버 직접 실행용 설정 예시입니다.
 
@@ -205,8 +215,12 @@ npm run test:compatibility:runtime     # 실제 Codex + SDK 테스트 대역, �
 
 단독 실모델 터미널 검사는 `npm run test:terminal -- --execute --driver playwright --model gpt-6-astra --duration-seconds 120`으로 재현하며 `pty` 드라이버도 지원합니다. 먼저 `npx --no-install playwright install chromium`으로 브라우저를 설치하세요. 입력·응답 크기, 취소, 동결 증거, 통합 `test:soak -- --terminal` 경로는 [터미널·내구성 검사](docs/SOAK_TESTING_KO.md)를 참고하세요. 실검증은 Copilot 사용량이 발생하며 기본 `--plan`은 모델을 호출하지 않습니다.
 
+별도 계약 `codex-ghcp-tui-12-v1`은 운영 실행기의 **실제 TUI**를 headless Playwright/xterm.js로 구동합니다. **12개 시나리오 × 6개 모델 = 72건**입니다. 피커 고정과 전환, shell·`apply_patch` 도구, Copilot MCP를 끈 상태의 Codex MCP, 긴 출력, 대용량 붙여넣기, Escape 복구, `/compact`, `resume --last`, reasoning 수준 변경, `/new`·`/quit` 정리를 검사합니다. `npm run test:tui`(계획), `npm run test:tui:runtime`(오프라인), `npm run test:tui -- --execute`로 실행합니다. [실제 TUI 시나리오](docs/TUI_SCENARIOS_KO.md)를 참고하세요.
+
+**최신 실제 TUI 검증(한국 시간 2026-09-23): `codex-ghcp-tui-12-v1` 70/72(97.22%)**입니다. 구현 `54c7eb77`로 실행했고 현재·동결 소스로 검증했습니다. Opus 5.5, Sonnet 5, Haiku 4.5, Astra는 12/12입니다. 실패 2건은 Sol과 Luna가 U03 픽스처 문구(`token=`)를 거절한 경우로, 도구 호출과 필터 신호가 모두 없었습니다. 이 검증에서 운영 실행기가 Codex 기본 `apply_patch` 도구를 제공하지 않는다는 사실이 드러났습니다. 이제 모델 목록이 이를 선언하며, 최종 실행에서 6개 모델 모두 이 도구를 사용했습니다. 1,282회 표본 동안 bridge의 Copilot 런타임 아래 MCP 프로세스는 없었습니다. [TUI 결과·증거](docs/validation/2026-09-23-tui-scenarios/README_KO.md)를 참고하세요.
+
 18개 시나리오 호환성 계약은 11개 시나리오 안정성 계약과 별개이며, 안정성 결과를 이 실모델 행렬의 통과 증거로 사용하지 않습니다.
-**시나리오 18개 × GHCP 7모델 = 총 126건**이며, 별도 기준선·빠른 모드·부분 모델 선택은 없습니다.
+**시나리오 18개 × GHCP 6모델 = 총 108건**이며, 별도 기준선·빠른 모드·부분 모델 선택은 없습니다.
 최대 4모델 병렬 실행, 개별 타임아웃, 실패 후 계속 실행을 적용합니다. 전체 1시간은 목표이며 강제 종료 조건이 아닙니다.
 
 실제 검증에는 Copilot 인증이 필요하며 사용량이 발생합니다. OpenAI API 키는 필요하지 않습니다.
@@ -221,7 +235,7 @@ npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.js
 
 ## 브릿지 안정성·복구 검사
 
-별도 계약 `codex-ghcp-stability-11-v3`은 **11개 시나리오 × 7개 모델 = 77건**입니다. 도구 순서 변경, pending 정책 거절, HTTP 중복·취소, SDK 연결 상실, 스트림 불일치, resume·문맥 압축을 실제 Codex 경로에서 검사합니다. 장애 주입과 실제 모델 결과를 구분합니다. [범위·판정 기준·설정·명령](docs/STABILITY_TESTING_KO.md)을 참고하세요.
+별도 계약 `codex-ghcp-stability-11-v4`는 **11개 시나리오 × 6개 모델 = 66건**입니다. 도구 순서 변경, pending 정책 거절, HTTP 중복·취소, SDK 연결 상실, 스트림 불일치, resume·문맥 압축을 실제 Codex 경로에서 검사합니다. 장애 주입과 실제 모델 결과를 구분합니다. [범위·판정 기준·설정·명령](docs/STABILITY_TESTING_KO.md)을 참고하세요.
 
 ```bash
 npm run test:stability:stress
@@ -230,7 +244,9 @@ npm run test:stability -- --plan
 npm run test:stability -- --execute  # Copilot 사용량 발생
 ```
 
-**최신 실제 Codex 전체 검증(한국 시간 2026-09-23)은 기본 v3 66/77(85.71%), 별도 `application-data-v1` 72/77(93.51%)입니다.** 터미널 실행기 통합 후 두 행렬을 각각 전체 실행하고 현재·동결 소스로 검증했습니다. 상위 필터·literal 레이블 누락·반복 도구 호출 누락을 실패로 유지하며, 77/77도 기존 95% 목표 달성도 아닙니다. 추가 실제 PTY·Playwright 확인에서 스크롤 영역 관측 오류를 찾아 수정했습니다. 앞선 74/77을 포함한 과거 결과는 별도로 보존하고 점수를 조합하지 않습니다. [구현·전체 결과·증거](docs/validation/2026-09-22-terminal-integration/README_KO.md)와 [검증 목록](docs/validation/README_KO.md)을 참고하세요.
+**최신 실제 Codex 전체 검증(6개 모델 계약, 한국 시간 2026-09-23)은 기본 v4 57/66(86.36%), 별도 `application-data-v2` 63/66(95.45%)입니다.** 두 행렬 모두 구현 `68f92d74`로 전체 실행하고 현재·동결 소스로 검증했습니다. freeform `apply_patch` 목록 변경 전 결과이며 `54c7eb77`에서는 다시 실행하지 않았습니다. v4에서 `claude-opus-5.5`를 제외한 모델은 모두 11/11이며, Opus 5.5의 실패 9건은 모두 명시적인 상위 필터입니다. application-data-v2의 남은 실패는 Opus 필터 1건, SDK `disconnect` 정리 시간 초과 1건, 모델 도구 반복 미충족 1건입니다. bridge는 이제 쓰지 않는 Copilot 런타임 MCP 서버를 비활성화합니다(최종 행렬 동안 MCP 프로세스 0개). 실검증 중 macOS `EPERM` supervisor 오판도 찾아 수정했습니다. [변경·실행 이력·증거](docs/validation/2026-09-23-six-model-switch/README_KO.md)를 참고하세요.
+
+**이전 실제 Codex 전체 검증(과거 7개 모델 v3/application-data-v1 계약, 한국 시간 2026-09-23)은 기본 v3 66/77(85.71%), 별도 `application-data-v1` 72/77(93.51%)입니다.** 터미널 실행기 통합 후 두 행렬을 각각 전체 실행하고 현재·동결 소스로 검증했습니다. 상위 필터·literal 레이블 누락·반복 도구 호출 누락을 실패로 유지하며, 77/77도 기존 95% 목표 달성도 아닙니다. 추가 실제 PTY·Playwright 확인에서 스크롤 영역 관측 오류를 찾아 수정했습니다. 앞선 74/77을 포함한 과거 결과는 별도로 보존하고 점수를 조합하지 않습니다. [구현·전체 결과·증거](docs/validation/2026-09-22-terminal-integration/README_KO.md)와 [검증 목록](docs/validation/README_KO.md)을 참고하세요.
 
 사용자 요청으로 이번 수정 전에 삭제한 과거 검증 문서는 복원하지 않았습니다. 이번 수정 중 수행한 전체 실행은 실패·시간 초과를 포함해 각각 기록했으며, 과거 셀을 새 점수로 재사용하지 않습니다. 수시간 안정성이나 제품 전체 지원을 인증하는 결과는 아닙니다.
 

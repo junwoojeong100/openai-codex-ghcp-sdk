@@ -2,7 +2,32 @@
 
 [English](README.md) · [안정성 계약](../STABILITY_TESTING_KO.md)
 
-## 최신: 브릿지·터미널 검증 실행기 통합 — 한국 시간 2026-09-23
+## 최신: Playwright headless 기반 실제 Codex TUI 시나리오 — 한국 시간 2026-09-23
+
+[결과·발견한 문제·관찰 사항·증거](2026-09-23-tui-scenarios/README_KO.md)
+
+- 새 계약 `codex-ghcp-tui-12-v1`: 운영 실행기, 실제 Codex 0.154.0 TUI, headless Playwright/xterm.js로 12개 시나리오 × 6개 모델 = 72건을 실행합니다.
+- 구현 `54c7eb77`의 최종 독립 실행은 **70/72(97.22%)**이며 현재·동결 소스로 검증했습니다. Opus 5.5, Sonnet 5, Haiku 4.5, Astra는 12/12입니다.
+- 실패 2건은 Sol과 Luna가 U03 픽스처 문구(`token=`)를 거절한 경우로, 도구 호출과 필터 신호가 없었습니다. 분모에 그대로 남기고 계약도 바꾸지 않았습니다.
+- 예비 실행에서 **운영 실행기가 Codex 기본 `apply_patch` 도구를 제공하지 않는다는 사실**을 발견했습니다. 이제 모델 목록이 `apply_patch_tool_type: "freeform"`을 선언하며, 최종 실행에서 6개 모델 모두 기본 도구를 사용했습니다. Haiku 선택 후 모델 창이 남는 하네스 공백도 고쳤습니다.
+- 관찰 사항: 1,282회 표본 동안 런타임 MCP 프로세스 0개. Codex 작업 제목 요청은 구조화 출력 미지원으로 HTTP 400. bridge 정리 진단은 하네스가 그룹 SIGINT로 케이스를 끝낼 때만 나타나며 `/quit` 뒤에는 없습니다.
+- 예비 실행은 별도로 보존합니다. [요약](2026-09-23-tui-scenarios/summary.json) · [최종 실행](2026-09-23-tui-scenarios/final-tui.json).
+
+## 이전: 6개 주요 모델 전환·브릿지 MCP 격리·실검증 — 한국 시간 2026-09-23
+
+[변경·실행 이력·MCP 격리 증거·피커 확인·남은 실패](2026-09-23-six-model-switch/README_KO.md)
+
+- 지원 모델을 `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4.5`, `gpt-6-astra`, `gpt-6-sol`, `gpt-6-luna`로 바꾸고 피커를 이 순서로 고정했습니다.
+- 새 66건 계약의 최종 독립 행렬은 기본 **v4 57/66(86.36%)**, 별도 **application-data-v2 63/66(95.45%)**입니다. 둘 다 66/66은 아닙니다.
+- v4에서 Opus 5.5를 제외한 모델은 모두 11/11입니다. Opus 5.5의 실패 9건은 모두 명시적인 상위 필터입니다.
+- bridge SDK 세션이 쓰지 않는 Copilot 런타임의 사용자·plugin MCP 서버를 비활성화합니다. 수정 전에는 세션마다 azmcp와 Playwright 2개, 약 316 MB가 떴습니다. 수정 후 최종 행렬 동안 533회 표본에서 **MCP 프로세스 0개**였고, SDK `disconnect` 중앙값은 약 0.5초에서 약 50 ms로 줄었습니다.
+- 검증 실행기 수정:
+  - 모델 7개를 하드코딩한 preflight
+  - macOS `EPERM` 프로세스 그룹 오판
+- 실제 TUI `/model` 확인에서 정확히 6개가 표시됐고, 모델을 바꾸면 선택한 모델로 호출됐습니다.
+- 중간 실행과 모든 실패를 별도로 보존합니다. [요약](2026-09-23-six-model-switch/summary.json) · [추가 실검증](2026-09-23-six-model-switch/additional-live.json).
+
+## 이전: 브릿지·터미널 검증 실행기 통합(과거 7개 모델 계약) — 한국 시간 2026-09-23
 
 [구현·전체 행렬·추가 실검증·남은 실패](2026-09-22-terminal-integration/README_KO.md)
 

@@ -24,9 +24,9 @@ import { syntheticEvidence, writeSyntheticCase } from "./helpers/core-evidence.m
 function temporary(t) { const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "core10-unit-"))); t.after(() => fs.rmSync(dir, { recursive: true, force: true })); return dir; }
 const scenario = id => NATIVE_SCENARIOS.find(s => s.id === id);
 
-test("one integrated suite has a versioned scenario catalog, seven models and a derived full matrix without a global cutoff", () => {
+test("one integrated suite has a versioned scenario catalog, six models and a derived full matrix without a global cutoff", () => {
   const plan = validateDesign();
-  assert.equal(plan.scenarios, NATIVE_SCENARIOS.length); assert.equal(plan.models, 7); assert.equal(plan.totalCases, TOTAL_CASES);
+  assert.equal(plan.scenarios, NATIVE_SCENARIOS.length); assert.equal(plan.models, 6); assert.equal(plan.totalCases, TOTAL_CASES); assert.equal(TOTAL_CASES, 108);
   assert.equal(plan.perModelSeconds, NATIVE_SCENARIOS.reduce((sum, s) => sum + s.timeoutSeconds, 0)); assert.equal(plan.scheduledCeilingEstimateSeconds, C.budget.preflightSeconds + 2 * plan.perModelSeconds);
   assert.equal(plan.budget.globalDeadline, false); assert.equal(plan.modelCalls, 0); assert.equal(plan.liveCompatibilityVerified, false);
   assert.equal(plan.coverage.measuredPercent, null); assert.equal(plan.coverage.targetPercent, 90);
@@ -92,7 +92,7 @@ test("hashed evidence, cell ownership and recomputed assertions are required", t
   const dir = temporary(t), config = { directory: dir, scenarioId: "C01", provider: "ghcp", model: "gpt-6-astra", runId: "run1" };
   writeSyntheticCase(config);
   assert.equal(readCase(dir, config, "run1", catalogFingerprint(), "offline-self-test").manifest.status, "passed");
-  assert.throws(() => readCase(dir, { ...config, model: "claude-opus-5" }, "run1"));
+  assert.throws(() => readCase(dir, { ...config, model: "claude-opus-5.5" }, "run1"));
   assert.throws(() => readCase(dir, config, "other-run"));
   fs.appendFileSync(path.join(dir, "native.jsonl"), "tampered");
   assert.throws(() => readCase(dir, config, "run1", catalogFingerprint(), "offline-self-test"), /Changed artifact|strictly equal/);
@@ -193,8 +193,8 @@ test("failed or timed-out cases do not skip the remaining matrix or retry", asyn
   };
   const { report, directory } = await runCompatibility({ output: path.join(root, "results"), workerSupervisor });
   assert.equal(calls.length, TOTAL_CASES); assert.equal(new Set(calls).size, TOTAL_CASES);
-  assert.equal(report.cases.filter(r => r.status === "failed").length, 7);
-  assert.equal(report.cases.filter(r => r.status === "timed-out").length, 7);
+  assert.equal(report.cases.filter(r => r.status === "failed").length, NATIVE_MODELS.length);
+  assert.equal(report.cases.filter(r => r.status === "timed-out").length, NATIVE_MODELS.length);
   assert.equal(report.cases.filter(r => r.status === "passed").length, TOTAL_CASES - 2 * NATIVE_MODELS.length);
   assert.equal(report.cases.length, TOTAL_CASES); assert.equal(report.summary.fullMatrixPassed, false);
   assert.equal(verifyReport(path.join(directory, "report.json")).evidenceIntegrity, true);

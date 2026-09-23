@@ -28,8 +28,8 @@ export const COMMON_EVIDENCE = freeze(["case.json", "native.jsonl", "transport.j
 export const COMMON_GATES = freeze([
   text("실제 Codex CLI/app-server → bridge → Copilot SDK → 지정 모델 경로를 확인한다. SDK 직접 호출, 테스트 대역, 모델의 자기 선언은 실모델 통과 증거가 아니다.",
     "Require real Codex CLI/app-server → bridge → Copilot SDK → exact model. Direct SDK probes, doubles and model self-reports cannot earn live credit."),
-  text("동일한 작은 합성 fixture와 지시문을 7모델에 사용한다. 모델별 도구/파일 결과를 독립 oracle로 판정하며 숨은 nonce는 프롬프트에 넣지 않는다.",
-    "Use identical small synthetic fixtures/instructions across seven models. Independently evaluate tool/file outcomes; keep hidden nonces out of prompts."),
+  text("동일한 작은 합성 fixture와 지시문을 6모델에 사용한다. 모델별 도구/파일 결과를 독립 oracle로 판정하며 숨은 nonce는 프롬프트에 넣지 않는다.",
+    "Use identical small synthetic fixtures/instructions across six models. Independently evaluate tool/file outcomes; keep hidden nonces out of prompts."),
   text("unified_exec와 freeform apply_patch를 명시적으로 노출한다. C11만 기본 생산 launcher를 별도로 실행한다. OpenAI provider와의 A/B 동등성은 측정하지 않는다.",
     "Explicitly expose unified_exec and freeform apply_patch. C11 separately exercises the production launcher without these overrides. OpenAI-provider A/B parity is not measured."),
   text("통합 시나리오의 모든 하위 조건과 증거가 있어야 passed다. 일부만 성공하거나 미지원 요청을 정직하게 거절해도 그 기능은 통과가 아니다.",
@@ -122,7 +122,7 @@ export const TOTAL_CASES = NATIVE_SCENARIOS.length * NATIVE_MODELS.length;
 export const ACCEPTANCE = freeze({
   scope: "Versioned integrated local Codex workflows; checklist design scope is separate from live support and product coverage.",
   perModelDenominator: NATIVE_SCENARIOS.length, minimumPassedPerModel: NATIVE_SCENARIOS.length,
-  allAssertionsRequired: true, allSevenModelsRequired: true, removeMissingFromDenominator: false,
+  allAssertionsRequired: true, allModelsRequired: true, removeMissingFromDenominator: false,
   statuses: ["passed", "failed", "unsupported", "blocked", "timed-out", "not-run"], creditedStatuses: ["passed"],
 });
 export const COVERAGE = freeze({
@@ -154,7 +154,8 @@ export const COVERAGE = freeze({
   ],
 });
 export const NATIVE_SCENARIO_CATALOG = freeze({
-  id: "codex-ghcp-workflows-18-v4", schemaVersion: 4, designedAt: "2026-09-21",
+  id: "codex-ghcp-workflows-18-v5", schemaVersion: 5, designedAt: "2026-09-21",
+  changesFromV4: "Only the model set changes to claude-opus-5.5, claude-sonnet-5, claude-haiku-4.5, gpt-6-astra, gpt-6-sol and gpt-6-luna (108 cases). Workflows, prompts, oracles and budgets are unchanged; 126-case v4 reports verify only with their original runner revision.",
   status: "runner-implemented-live-unverified", runnerImplemented: true,
   versions: { codex: "0.154.0", copilotSdk: "1.0.14" }, models: NATIVE_MODELS, route: REQUIRED_ROUTE,
   budget: EXECUTION_BUDGET, acceptance: ACCEPTANCE, coverage: COVERAGE,

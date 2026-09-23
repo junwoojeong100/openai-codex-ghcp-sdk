@@ -35,7 +35,7 @@ export function freshDirectory(output) {
 }
 export async function runCompatibility({ output, bin = process.env.CODEX_BIN || "codex", signal, env = process.env,
   onProgress = () => {}, workerSupervisor = supervise, ...unsupported } = {}) {
-  if (Object.keys(unsupported).some(key => !["mode"].includes(key))) throw new Error("This runner always executes the complete current scenario matrix for all seven models.");
+  if (Object.keys(unsupported).some(key => !["mode"].includes(key))) throw new Error("This runner always executes the complete current scenario matrix for all six models.");
   validateDesign(); signal?.throwIfAborted();
   const runId = randomUUID(), started = performance.now(), clean = scrubber(env), beforeSettings = settingsSnapshot(env);
   const report = newReport({ runId, executionKind: workerSupervisor === supervise ? "live" : "offline-self-test" });
@@ -88,7 +88,7 @@ export async function runCompatibility({ output, bin = process.env.CODEX_BIN || 
     report.preflight = JSON.parse(safeRead(path.join(preflightDir, "preflight.json")));
     if (report.preflight.status !== "passed") throw new Error(report.preflight.error || "Prerequisites unavailable");
     const available = report.preflight.value?.models;
-    if (!Array.isArray(available) || available.length !== 7 || NATIVE_MODELS.some(id => available.filter(m => m.id === id && typeof m.available === "boolean").length !== 1))
+    if (!Array.isArray(available) || available.length !== NATIVE_MODELS.length || NATIVE_MODELS.some(id => available.filter(m => m.id === id && typeof m.available === "boolean").length !== 1))
       throw new Error("Invalid preflight model catalog");
     await pool(NATIVE_MODELS, C.budget.modelConcurrency, async model => {
       const rows = report.cases.filter(r => r.model === model);

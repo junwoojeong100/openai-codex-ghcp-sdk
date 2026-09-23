@@ -1,11 +1,11 @@
+// This order is also the fixed Codex /model picker order.
 export const SUPPORTED_MODEL_IDS = Object.freeze([
-  "gpt-5.6-sol",
-  "gpt-5.6-terra",
-  "gpt-5.6-luna",
-  "gpt-6-astra",
-  "claude-opus-5",
+  "claude-opus-5.5",
   "claude-sonnet-5",
   "claude-haiku-4.5",
+  "gpt-6-astra",
+  "gpt-6-sol",
+  "gpt-6-luna",
 ]);
 export const DEFAULT_MODEL = "gpt-6-astra";
 
@@ -65,6 +65,8 @@ export function modelCatalog(models) {
         supported_reasoning_levels: efforts.map((effort) => ({ effort, description: `${effort} reasoning effort` })),
         default_reasoning_level: efforts.includes(model.defaultReasoningEffort) ? model.defaultReasoningEffort : efforts.includes("low") ? "low" : null,
         shell_type: "unified_exec",
+        // Offer Codex's native freeform apply_patch; the bridge keeps custom tool input byte-exact.
+        apply_patch_tool_type: "freeform",
         visibility: "list",
         supported_in_api: true,
         priority,

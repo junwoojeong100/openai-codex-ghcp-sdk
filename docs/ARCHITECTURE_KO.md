@@ -22,16 +22,18 @@ Codex CLI — 승인·샌드박스·도구 실행 담당
 - `responses.mjs`: Responses 출력 항목과 스트리밍 이벤트. `call_id`, namespace, custom 입력 문자열 보존.
 - `session-manager.mjs`: 대화별 직렬화, 이력 대조, 최근 재시도 캐시, 도구 결과 전달, 제한 시간·만료·정리.
 - `copilot-session-rpc.mjs`: SDK abort/disconnect/delete와 대기 중 도구 결과 RPC의 작은 래퍼.
-- `model-map.mjs`: 허용된 7개 ID, 기본 모델, OpenAI/Codex catalog 메타데이터 및 reasoning effort 검사. 모델 문맥 한도와 지원 effort는 SDK catalog에서 가져오며, 자동 대체 모델은 없습니다.
+- `mcp-isolation.mjs`: Copilot 런타임에 설정된 MCP 서버(사용자 `mcp-config.json`과 설치된 plugin)의 정확한 이름을 모아 모든 bridge SDK 세션의 `disabledMcpServers`로 전달.
+- `model-map.mjs`: 허용된 6개 ID, 기본 모델, OpenAI/Codex catalog 메타데이터 및 reasoning effort 검사. 모델 문맥 한도와 지원 effort는 SDK catalog에서 가져오며, 자동 대체 모델은 없습니다.
 - `copilot-home.mjs`, `list-models.mjs`: 기존 Copilot 홈 경로 해석과 계정별 모델 조회.
-- 실행기·daemon 모듈 및 `bin/`: 프로젝트 소유 bridge 시작, 프로세스별 Codex 설정과 비공개 임시 모델 목록 전달, 선택적 백그라운드 실행 관리. 임시 목록은 피커의 내장·캐시 목록을 대체하며 Codex 종료 시 삭제합니다.
+- 실행기·daemon 모듈 및 `bin/`: 프로젝트 소유 bridge 시작, 프로세스별 Codex 설정과 비공개 임시 모델 목록 전달, 선택적 백그라운드 실행 관리. 임시 목록은 피커의 내장·캐시 목록을 대체하며 Codex 종료 시 삭제합니다. 목록 항목에 `apply_patch_tool_type: "freeform"`을 선언하므로 Codex가 기본 `apply_patch` 도구를 제공합니다.
 - `scripts/terminal.mjs`, `scripts/soak/terminal-lane.mjs`: 명시적 실모델 터미널 실행, 소스 동결 worker, 격리 환경과 SDK 응답 대조. 통합 soak worker도 같은 terminal lane을 사용합니다.
+- `scripts/tui.mjs`와 `scripts/tui/`: 실제 TUI 행렬 `codex-ghcp-tui-12-v1`입니다. 케이스마다 `bin/codex-ghcp`를 전용 PTY에서 실행하고 headless Playwright/xterm.js로 렌더링·구동합니다. bridge Copilot 런타임 아래 프로세스를 표본 채취하고, Codex 자체 rollout을 읽으며, 저장한 fact에서 검사를 다시 계산합니다.
 - `scripts/soak/terminal.mjs`, `browser.mjs`: 동일한 소유 PTY 수명주기에 독립 파서 또는 Playwright/xterm 표시기를 연결합니다. 브라우저 입출력은 실제 PTY를 사용하며 모의 assistant 화면이 아닙니다. 취소 시 터미널 그룹과 소유 브라우저를 함께 정리합니다.
 
 ## 도구 호출 왕복
 
 1. Codex가 function 또는 custom/freeform 도구를 선언합니다. `additional_tools` 입력 안의 중첩 선언도 처리합니다.
-2. bridge는 **handler 없는** SDK 도구를 등록하고 `custom:<name>` 항목만 노출합니다. SDK 내장 도구와 tool search는 활성화하지 않습니다.
+2. bridge는 **handler 없는** SDK 도구를 등록하고 `custom:<name>` 항목만 노출합니다. SDK 내장 도구와 tool search는 활성화하지 않습니다. Copilot 런타임 자체의 사용자·plugin MCP 서버는 세션 생성 시 비활성화하므로 하나도 시작되지 않습니다. 이어서 제한 시간이 있는 `session.mcp.list` 점검으로 스캔하지 않은 출처에서 뜬 서버를 중지하고 이후 세션에서 비활성화합니다. Codex 자체 MCP 도구는 Codex가 실행하고 다른 도구처럼 선언하므로 그대로 동작합니다.
 3. SDK assistant 메시지에서 호출을 받고, `external_tool.requested`에서 해당 호출의 대기 `requestId`를 확보합니다.
 4. HTTP 응답으로 `function_call` 또는 `custom_tool_call`을 Codex에 전달합니다. bridge는 도구를 실행하지 않습니다.
 5. Codex가 자신의 승인·샌드박스 정책에 따라 실행하고, 다음 Responses 요청으로 결과를 보냅니다.
@@ -76,7 +78,7 @@ bridge의 상관관계·재시도 상태는 메모리에 있습니다. `store:fa
 - 스트림의 delta/final 일치 검사를 성공 cache·pending 상태 확정 전에 수행합니다.
 - `/health`는 HTTP 생존과 마지막 준비 상태, 인증된 `/readyz`는 SDK ping 검사입니다. 모델 목록 요청은 필요 시 안전한 연결 복구를 시도합니다.
 
-기본값·오류 코드·별도 77건 계약은 [안정성 검증 안내](STABILITY_TESTING_KO.md)에 있습니다. 기존 v4 증거는 동결 소스로 검증하며 재채점하지 않습니다.
+기본값·오류 코드·별도 66건 안정성 계약은 [안정성 검증 안내](STABILITY_TESTING_KO.md)에 있습니다. 과거 v3 안정성 및 v4 호환성 증거는 동결 소스로 검증하며 재채점하지 않습니다.
 
 - SDK 시스템·보호 지시는 append 모드로 유지합니다. 요청 지시문과 대화 중간을 포함한 모든 최상위 system/developer 메시지를 원문 그대로 덧붙입니다. 지시문이 바뀌면 idle 세션을 재구성하고, 도구 대기 중이면 거절합니다. SDK 기본 도구 제외와 권한 요청 거절도 유지합니다.
 - 도구 결과와 함께 온 새 사용자 메시지는 결과를 반환하기 전에 SDK immediate steering으로 별도 전달합니다. 도구 출력에 섞지 않으며 결과 원문과 재시도 멱등성을 보존합니다.

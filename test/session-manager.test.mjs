@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import { SessionManager, aggregateUsage } from "../src/session-manager.mjs";
@@ -1129,7 +1132,7 @@ for (const filterSignal of [
   { contentFilterTriggered: true, finishReason: "stop" },
   { contentFilterTriggered: false, finishReason: "content_filter" },
 ]) test(`a late root filter at tool handoff blocks the pending result (${JSON.stringify(filterSignal)})`, async t => {
-  const opus = "claude-opus-5", diagnostics = [];
+  const opus = "claude-opus-5.5", diagnostics = [];
   const request = { ...body("read", { tools: [functionTool] }), model: opus };
   const { manager, client } = await setup(t, { onDiagnostic: d => diagnostics.push(d) }, {
     models: [{ id: opus }],
@@ -1233,4 +1236,51 @@ test("filter diagnostics expose only bounded stage and usage metadata", async t 
     toolResultSubmissions: 0, contentFilterTriggered: true, finishReason: null, inputTokens: null, outputTokens: null,
   }]);
   assert.ok(!JSON.stringify(diagnostics).includes("private-"));
+});
+
+function mcpHome(t, names) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-session-mcp-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(root, "mcp-config.json"), JSON.stringify({ mcpServers: Object.fromEntries(names.map(name => [name, {}])) }));
+  return root;
+}
+
+test("every SDK session disables the configured MCP servers it never exposes", async t => {
+  const { manager, client } = await setup(t, { baseDirectory: mcpHome(t, ["playwright", "azure"]) });
+  const result = await manager.execute(body("hello", { tools: [functionTool] }), headers("mcp-config"));
+  assert.equal(result.messages[0].content, "reply:hello");
+  const config = client.sessions[0].config;
+  assert.deepEqual(config.disabledMcpServers, ["azure", "playwright"]);
+  assert.deepEqual(config.availableTools, config.tools.map(tool => `custom:${tool.name}`));
+});
+
+test("an MCP server outside the scanned config is stopped and disabled for later sessions", async t => {
+  const diagnostics = [], stopped = [];
+  const { manager, client } = await setup(t, { baseDirectory: mcpHome(t, ["azure"]), onDiagnostic: event => diagnostics.push(event) }, {
+    createSession: session => {
+      session.rpc.mcp = {
+        list: async () => ({ servers: [{ name: "azure", status: "disabled" }, { name: "workspace-only", status: "connected" }] }),
+        disable: async ({ serverName }) => { stopped.push(serverName); },
+      };
+    },
+  });
+  assert.equal((await manager.execute(body("first"), headers("mcp-late-a"))).messages[0].content, "reply:first");
+  assert.deepEqual(stopped, ["workspace-only"]);
+  assert.deepEqual(diagnostics.filter(event => event.event === "bridge.mcp_servers_disabled_late"),
+    [{ event: "bridge.mcp_servers_disabled_late", servers: 1, stopped: 1 }]);
+  await manager.execute(body("second"), headers("mcp-late-b"));
+  assert.deepEqual(client.sessions[1].config.disabledMcpServers, ["azure", "workspace-only"]);
+});
+
+test("MCP isolation checks that fail or stall are diagnosed but never fail the request", async t => {
+  for (const [failureType, list] of [["rpc_error", async () => { throw new Error("private rpc detail"); }], ["timeout", () => new Promise(() => {})]]) {
+    const diagnostics = [];
+    const { manager } = await setup(t, { baseDirectory: mcpHome(t, []), readinessTimeoutMs: 50, onDiagnostic: event => diagnostics.push(event) }, {
+      createSession: session => { session.rpc.mcp = { list }; },
+    });
+    assert.equal((await manager.execute(body("hello"), headers(`mcp-${failureType}`))).messages[0].content, "reply:hello");
+    assert.deepEqual(diagnostics.filter(event => event.event === "bridge.mcp_isolation_unverified"),
+      [{ event: "bridge.mcp_isolation_unverified", failureType }]);
+    assert.ok(!JSON.stringify(diagnostics).includes("private rpc detail"));
+  }
 });

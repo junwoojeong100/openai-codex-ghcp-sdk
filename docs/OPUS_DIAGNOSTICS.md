@@ -10,11 +10,11 @@ This opt-in diagnostic correlates **upstream protocol responses with SDK events*
 # Plan only; zero model calls.
 npm run diagnose:opus
 
-# Actual claude-opus-5 calls; requires a new or empty evidence directory.
+# Actual claude-opus-5.5 calls; requires a new or empty evidence directory.
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
 ```
 
-The pinned Copilot SDK 1.0.14 and existing Copilot access to the exact model are required. Seven fresh sessions compare the unchanged v3 fixture prompt through the direct SDK and production manager, SDK streaming/summary options, separate simple-tool controls on both routes, and an arithmetic control. Control wording is diagnostic only and never substitutes for production requests or any of the 77 scenarios.
+The pinned Copilot SDK 1.0.14 and existing Copilot access to `claude-opus-5.5` are required. Earlier refusal/filter findings for `claude-opus-5` remain historical. Seven fresh sessions compare the unchanged v4 fixture prompt through the direct SDK and production manager, SDK streaming/summary options, separate simple-tool controls on both routes, and an arithmetic control. Control wording is diagnostic only and never substitutes for production requests or any of the 66 scenarios.
 
 The model, low reasoning effort, SDK foundation and provider filter policy are retained. Permission requests are rejected; the only tool action is returning an owned synthetic string generated in memory. There are no automatic retries, fallback models or user-setting changes. Execution consumes actual model usage. Existing reports cannot be overwritten. Filtering, literal-output mismatches, errors or cleanup failures produce exit code 1; even exit code 0 does not establish full-matrix compatibility.
 

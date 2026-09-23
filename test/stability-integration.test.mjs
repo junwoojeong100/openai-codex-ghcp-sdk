@@ -188,7 +188,7 @@ for (const mode of ["json", "sse", "partial-sse"]) test(`explicit SDK content fi
 });
 
 for (const stream of [false, true]) test(`a late Opus filter blocks pending-result HTTP continuation (stream=${stream})`, async t => {
-  const opus = "claude-opus-5";
+  const opus = "claude-opus-5.5";
   const initial = { model: opus, input: "Use lookup", tools: [tool] };
   const callName = normalizeRequest(initial).tools[0].name;
   const client = new FakeClient({ models: [{ id: opus }],

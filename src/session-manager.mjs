@@ -13,6 +13,7 @@ import {
   submitToolResult,
   withinDeadline,
 } from "./copilot-session-rpc.mjs";
+import { configuredMcpServerNames, runningMcpServerNames } from "./mcp-isolation.mjs";
 import {
   DEFAULT_MODEL,
   resolveCopilotModel,
@@ -218,6 +219,8 @@ export class SessionManager {
       mode: "empty", baseDirectory, logLevel, enableRemoteSessions: false,
     }));
     this.client = client ?? this.clientFactory();
+    this.copilotHome = baseDirectory;
+    this.lateMcpServers = new Set();
     Object.assign(this, {
       preferredModel, turnTimeoutMs, turnIdleTimeoutMs, requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
       readinessTimeoutMs, startupTimeoutMs, readinessIntervalMs, recoveryBackoffMs,
@@ -601,6 +604,8 @@ export class SessionManager {
         contextTier: "default",
         availableTools: sdkTools.map((tool) => `custom:${tool.name}`),
         tools: sdkTools,
+        // MCP tools are never exposed above, so do not start user/plugin servers.
+        disabledMcpServers: this.#disabledMcpServers(),
         toolSearch: { enabled: false },
         streaming: true,
         infiniteSessions: { enabled: false },
@@ -622,6 +627,7 @@ export class SessionManager {
       });
       const creationSignal = signal ? AbortSignal.any([signal, state.creationController.signal]) : state.creationController.signal;
       const session = await withinDeadline(() => state.creation, Math.min(this.startupTimeoutMs, this.turnTimeoutMs), creationSignal);
+      await this.#enforceMcpIsolation(session);
       state.unsubscribers.push(session.on("external_tool.requested", (event) => {
         if (!isRootEvent(event)) return;
         try {
@@ -830,6 +836,36 @@ export class SessionManager {
     const expired = [...this.states.values()].filter((state) => !this.busyFamilies.has(state.family)
       && Date.now() - state.lastUsedAt > this.stateIdleTtlMs);
     await Promise.allSettled(expired.map((state) => this.#evict(state)));
+  }
+
+  #disabledMcpServers() {
+    return [...new Set([...configuredMcpServerNames(this.copilotHome), ...this.lateMcpServers])].sort();
+  }
+
+  // Best effort and outside the creation deadline: a server from a source the
+  // scan does not know may still start. Stop it and disable it for later sessions.
+  async #enforceMcpIsolation(session) {
+    if (typeof session?.rpc?.mcp?.list !== "function") return;
+    const bound = this.readinessTimeoutMs;
+    let running;
+    try {
+      running = runningMcpServerNames(await withinDeadline(() => session.rpc.mcp.list(), bound));
+    } catch (error) {
+      this.onDiagnostic({ event: "bridge.mcp_isolation_unverified",
+        failureType: error?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error" });
+      return;
+    }
+    if (!running.length) return;
+    let stopped = 0;
+    for (const serverName of running) {
+      if (this.lateMcpServers.size < 256) this.lateMcpServers.add(serverName);
+      if (typeof session.rpc.mcp.disable !== "function") continue;
+      try {
+        await withinDeadline(() => session.rpc.mcp.disable({ serverName }), bound);
+        stopped += 1;
+      } catch { /* Counted below; the request itself continues. */ }
+    }
+    this.onDiagnostic({ event: "bridge.mcp_servers_disabled_late", servers: running.length, stopped });
   }
 
   async #disposeSession(state) {

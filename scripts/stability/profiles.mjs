@@ -1,9 +1,11 @@
 import { createHash } from "node:crypto";
 import { CATALOG } from "./catalog.mjs";
 
-// The original v3 contract stays the default and is never edited or regraded.
-// This opt-in profile changes only application task wording, not the bridge,
-// model selection, fixture, fault schedule, budgets or literal-output checks.
+// The six-model v4 contract is the default and is never edited or regraded.
+// Historical v3/application-data-v1 (seven-model) records verify only with
+// their frozen source. This opt-in profile changes only application task
+// wording, not the bridge, model selection, fixture, fault schedule, budgets
+// or literal-output checks.
 const display = "Display its returned application data as a fenced text block, preserving the two lines and their characters.";
 const prompts = Object.freeze({
   read: `Call read_fixture once. ${display}`,
@@ -14,17 +16,18 @@ const prompts = Object.freeze({
 const digest = value => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const applicationCatalog = Object.freeze({
   ...CATALOG,
-  id: "codex-ghcp-stability-11-application-data-v1",
+  id: "codex-ghcp-stability-11-application-data-v2",
   prompts,
   baseCatalogId: CATALOG.id,
   baseCatalogHash: digest(CATALOG),
-  changesFromV3: "Explicitly selected application-data task wording. All models, fixtures, fault flows, budgets and acceptance checks are retained. This is a separate contract, not a fix or regrade of the original v3 refusal.",
+  changesFromBase: "Explicitly selected application-data task wording. All models, fixtures, fault flows, budgets and acceptance checks are retained. This is a separate contract, not a fix or regrade of the base contract's results.",
+  changesFromApplicationDataV1: "Same application-data wording on the six-model v4 base (66 cells). Seven-model application-data-v1 records stay historical and are never regraded or combined.",
 });
-export const DEFAULT_PROFILE = "v3";
-export const PROFILE_IDS = Object.freeze([DEFAULT_PROFILE, "application-data-v1"]);
+export const DEFAULT_PROFILE = "v4";
+export const PROFILE_IDS = Object.freeze([DEFAULT_PROFILE, "application-data-v2"]);
 const profiles = new Map([
   [DEFAULT_PROFILE, CATALOG],
-  ["application-data-v1", applicationCatalog],
+  ["application-data-v2", applicationCatalog],
 ].map(([name, catalog]) => [name, Object.freeze({ name, catalog, catalogHash: digest(catalog) })]));
 
 export function getProfile(name = DEFAULT_PROFILE) {
@@ -34,7 +37,8 @@ export function getProfile(name = DEFAULT_PROFILE) {
 }
 
 // The verifier selects a known contract by identity, never caller-supplied
-// prompts or an inferred successful subset. Missing profile means original v3.
+// prompts or an inferred successful subset. A missing profile selects the
+// default contract, so older profile-less records fail the hash check here.
 export function profileForRecord(record) {
   const profile = getProfile(record.profile);
   if (record.catalogHash !== profile.catalogHash ||

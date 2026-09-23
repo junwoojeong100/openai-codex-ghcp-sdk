@@ -4,7 +4,7 @@ import { SUPPORTED_MODEL_IDS, supportedModels } from "./model-map.mjs";
 
 const args = process.argv.slice(2);
 if (args.some((argument) => argument !== "--json")) {
-  console.error("Usage: ghcp-models [--json] (only the seven supported models are listed)");
+  console.error("Usage: ghcp-models [--json] (only the six supported models are listed)");
   process.exitCode = 2;
 } else {
   const client = new CopilotClient({

@@ -80,7 +80,7 @@ Then use:
 
 ```zsh
 codex
-codex --ghcp-model gpt-5.6-sol
+codex --ghcp-model gpt-6-sol
 codex -- exec --skip-git-repo-check --sandbox read-only \
   "Read README.md and summarize its purpose in one sentence."
 codex-original --help       # Official CLI help, bypassing GHCP
@@ -94,24 +94,32 @@ To undo, remove only the marked block from `~/.zshrc`, then open a new terminal 
 
 ## Choose a model
 
-Only these seven Copilot catalog IDs are supported:
+Only these six Copilot catalog IDs are supported, in picker order:
 
-| Family | Model IDs |
-| --- | --- |
-| GPT | `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra` |
-| Claude | `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4.5` |
+| Order | Display name | Model ID |
+| ---: | --- | --- |
+| 1 | Claude Opus 5.5 | `claude-opus-5.5` |
+| 2 | Claude Sonnet 5 | `claude-sonnet-5` |
+| 3 | Claude Haiku 4.5 | `claude-haiku-4.5` |
+| 4 | GPT-6 Astra | `gpt-6-astra` |
+| 5 | GPT-6 Sol | `gpt-6-sol` |
+| 6 | GPT-6 Luna | `gpt-6-luna` |
 
-The default is **`gpt-6-astra`**. Availability is checked against your account's catalog and policy; an unavailable model fails rather than silently switching to another one.
+The default is **`gpt-6-astra`**. Availability is checked against your account's catalog and policy; an unavailable model fails rather than silently switching to another one. Removed IDs (`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `claude-opus-5`) are rejected by the launcher and bridge with no substitution.
 
 ```bash
 ./bin/ghcp-models --json
-./bin/codex-ghcp --ghcp-model gpt-5.6-terra
+./bin/codex-ghcp --ghcp-model claude-opus-5.5
 ./bin/codex-ghcp --ghcp-model claude-sonnet-5
 ```
 
-A catalog entry is not a guarantee that every Codex feature works with that model. At launch, the authenticated `/v1/models` catalog is written to a private, temporary `model_catalog_json` file. Codex's `/model` picker uses only the account-enabled models above, including Claude, rather than bundled OpenAI models or an unrelated cached catalog. Use `--ghcp-model` to choose the initial model; relaunch to refresh account availability. The catalog is removed when that Codex process exits, including when using a background bridge.
+A catalog entry is not a guarantee that every Codex feature works with that model. At launch, the authenticated `/v1/models` catalog is written to a private, temporary `model_catalog_json` file. Codex's `/model` picker uses only the account-enabled subset of the six models above, including Claude, in the order shown rather than bundled OpenAI models or an unrelated cached catalog. Use `--ghcp-model` to choose the initial model; relaunch to refresh account availability. The catalog is removed when that Codex process exits, including when using a background bridge.
+
+Codex 0.154.0 sorts the picker by catalog priority and labels the first entry `(default)`, so `claude-opus-5.5` carries that label; the launcher still starts on `gpt-6-astra`, shown as `(current)`, unless `--ghcp-model` selects another model. Choosing a model in `/model` switches the running session. Codex also saves that choice as `model`/`model_reasoning_effort` in `~/.codex/config.toml` and warns that a higher-priority layer overrides it: the next GHCP launch still uses `--ghcp-model` or the default, but native `codex-original` runs read the saved value, so reset it there if needed.
 
 The catalog also supplies **the active default-tier input budget**, not an unsupported long-context maximum. It accounts for prompt/output limits and the standard tier advertised by Copilot, pins SDK sessions to `contextTier: "default"`, and starts Codex's local automatic compaction at **80%** of that budget. Missing context metadata fails at launch instead of falling back to unrelated Codex limits. SDK-side automatic compaction remains disabled so Codex owns the conversation history.
+
+Each catalog entry also declares `apply_patch_tool_type: "freeform"`, so Codex offers its native `apply_patch` editing tool to Copilot models, as it does for bundled OpenAI models. Before this, the real TUI offered only the shell tool; models either wrote files through shell commands or reported that `apply_patch` was unavailable. The bridge forwards the freeform patch text byte-exact, and Codex still applies it under its own sandbox and approval policy.
 
 ## Run Codex
 
@@ -148,6 +156,8 @@ These are project launcher commands, not built-in Codex options. Stopping a back
 The launcher passes Responses provider settings through Codex `-c` arguments and a generated **local bridge credential** through the child process environment. It disables unsupported WebSocket, request compression, hosted web search, remote compaction and reasoning summaries. The launcher itself does not edit `~/.codex/config.toml`, `auth.json`, shell startup files, or another project's server. The optional zsh integration above is a separate, explicit edit to `~/.zshrc`; it does not replace the official CLI or change Codex authentication.
 
 Copilot/GitHub authentication is not copied into Codex. The local bridge token is not a GitHub or OpenAI credential. Other Codex configuration can still affect a run; the wrapper is not a fresh Codex profile.
+
+Bridge SDK sessions disable every MCP server configured for the Copilot runtime itself (`~/.copilot/mcp-config.json` and installed plugins). Those servers were never exposed to the model, because sessions allow only Codex-declared tools, yet the runtime previously started a fresh set for each session (here azmcp and two Playwright processes, about 300 MB RSS). Names are read from those files at session creation; a bounded post-creation check stops any server from another source and disables it for later sessions. Codex's own MCP servers are unaffected: Codex runs them and declares their tools to the bridge like any other tool.
 
 `.env` is **not automatically loaded** by `npm run bridge` or the launcher. `.env.example` documents direct-server settings. For an explicitly configured server:
 
@@ -205,8 +215,12 @@ The context runtime checks use the installed Codex CLI with an isolated profile 
 
 Actual bounded terminal checks are reproducible with `npm run test:terminal -- --execute --driver playwright --model gpt-6-astra --duration-seconds 120`; `pty` is also supported. Install Chromium first with `npx --no-install playwright install chromium`. For workload sizing, cancellation, source-frozen evidence and the integrated `test:soak -- --terminal` path, see [terminal/endurance testing](docs/SOAK_TESTING.md). Live commands consume Copilot usage; the default `--plan` does not.
 
+The separate `codex-ghcp-tui-12-v1` contract drives the **real TUI** through the production launcher with headless Playwright/xterm.js: **12 scenarios × 6 models = 72 cases**. It covers picker pinning and switching, shell and `apply_patch` tools, Codex MCP with Copilot MCP isolated, long output, a large paste, Escape recovery, `/compact`, `resume --last`, reasoning-level changes, and `/new`/`/quit` cleanup. Run `npm run test:tui` (plan), `npm run test:tui:runtime` (offline) or `npm run test:tui -- --execute`. See [real TUI scenarios](docs/TUI_SCENARIOS.md).
+
+**Latest real-TUI verification (2026-09-23 KST): `codex-ghcp-tui-12-v1` 70/72 (97.22%)** on implementation `54c7eb77`, verified against current and frozen source. Opus 5.5, Sonnet 5, Haiku 4.5 and Astra passed 12/12. The two failures are Sol and Luna refusing the U03 fixture wording (`token=`) with no tool call and no filter signal. The run found that the production launcher did not offer Codex's native `apply_patch` tool; the catalog now declares it, and all six models used it in the final run. No MCP process appeared under the bridge's Copilot runtime in 1,282 samples. See the [TUI results and evidence](docs/validation/2026-09-23-tui-scenarios/README.md).
+
 The 18-scenario compatibility contract is separate from the 11-scenario stability contract; stability results do not certify this larger live matrix.
-**18 scenarios × seven GHCP models = 126 cases**, with no reference-provider run, fast suite or model subset.
+**18 scenarios × six GHCP models = 108 cases**, with no reference-provider run, fast suite or model subset.
 Up to four model lanes, individual deadlines and continuation after failure keep the run short. One hour is a target, not an overall cutoff.
 
 Live execution requires Copilot authentication and consumes usage. No OpenAI API key is required.
@@ -221,7 +235,7 @@ See [integrated scenarios and coverage](docs/NATIVE_SCENARIOS.md) and the [runne
 
 ## Bridge stability and recovery checks
 
-The separate `codex-ghcp-stability-11-v3` contract has **11 scenarios × 7 models = 77 cases**. It exercises tool reordering, pending-policy rejection, HTTP duplication/cancellation, SDK loss, stream mismatch, resume and compaction through real Codex. Fault injections and actual model results are distinguished. See the [scope, acceptance, settings and commands](docs/STABILITY_TESTING.md).
+The separate `codex-ghcp-stability-11-v4` contract has **11 scenarios × 6 models = 66 cases**. It exercises tool reordering, pending-policy rejection, HTTP duplication/cancellation, SDK loss, stream mismatch, resume and compaction through real Codex. Fault injections and actual model results are distinguished. See the [scope, acceptance, settings and commands](docs/STABILITY_TESTING.md).
 
 ```bash
 npm run test:stability:stress
@@ -230,7 +244,9 @@ npm run test:stability -- --plan
 npm run test:stability -- --execute  # Consumes Copilot usage
 ```
 
-**Latest full real-Codex verification (2026-09-23 KST): default v3 66/77 (85.71%); separate `application-data-v1` 72/77 (93.51%).** Both entire matrices were executed after terminal-runner integration and verified against current/frozen source. Upstream filtering, literal-label omissions and missing repeated tool calls remain failures; neither run is 77/77 or meets the earlier 95% target. Extra real PTY/Playwright checks found and fixed a scrolling-region observer bug. Earlier 74/77 and other results remain independent historical records, never combined. See the [implementation, full results and evidence](docs/validation/2026-09-22-terminal-integration/README.md) and [verification index](docs/validation/README.md).
+**Latest full real-Codex verification (six-model contracts, 2026-09-23 KST): default v4 57/66 (86.36%); separate `application-data-v2` 63/66 (95.45%).** Both entire matrices ran on implementation `68f92d74` and were verified against current/frozen source; they predate the freeform `apply_patch` catalog change and were not rerun on `54c7eb77`. In v4, every model except `claude-opus-5.5` passed 11/11; all nine Opus 5.5 failures are explicit upstream filters. The remaining application-data-v2 failures are one Opus filter, one SDK `disconnect` cleanup timeout and one model tool-repetition miss. The bridge now disables the Copilot runtime's unused MCP servers (0 MCP processes across the final matrices). Live runs also found and fixed a macOS `EPERM` supervisor false failure. See the [changes, run history and evidence](docs/validation/2026-09-23-six-model-switch/README.md).
+
+**Previous full real-Codex verification (historical 7-model v3/application-data-v1 contract, 2026-09-23 KST): default v3 66/77 (85.71%); separate `application-data-v1` 72/77 (93.51%).** Both entire matrices were executed after terminal-runner integration and verified against current/frozen source. Upstream filtering, literal-label omissions and missing repeated tool calls remain failures; neither run is 77/77 or meets the earlier 95% target. Extra real PTY/Playwright checks found and fixed a scrolling-region observer bug. Earlier 74/77 and other results remain independent historical records, never combined. See the [implementation, full results and evidence](docs/validation/2026-09-22-terminal-integration/README.md) and [verification index](docs/validation/README.md).
 
 Archived verification documents were removed before this repair at the user’s request and have not been restored. Complete runs during this repair are recorded separately, including failures and timeouts; old cells are not reused as new scores. This is not hours-long or whole-product certification.
 

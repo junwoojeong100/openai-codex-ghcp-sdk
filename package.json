@@ -31,6 +31,8 @@
     "test:soak": "node scripts/soak.mjs",
     "test:terminal": "node scripts/terminal.mjs",
     "test:terminal:runtime": "node --test test/runtime/terminal-lane.test.mjs",
+    "test:tui": "node scripts/tui.mjs",
+    "test:tui:runtime": "node --test test/runtime/tui-harness.test.mjs",
     "diagnose:opus": "node scripts/diagnose-opus.mjs"
   },
   "dependencies": {

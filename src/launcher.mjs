@@ -38,7 +38,7 @@ Supported models (subject to Copilot account policy):
 ${SUPPORTED_MODEL_IDS.map((model) => `  ${model}`).join("\n")}
 
 Examples:
-  ./bin/codex-ghcp --ghcp-model gpt-5.6-sol
+  ./bin/codex-ghcp --ghcp-model gpt-6-sol
   ./bin/codex-ghcp --ghcp-model gpt-6-astra -- exec --sandbox read-only "Explain this project"
   ./bin/codex-ghcp --bridge-background
   ./bin/codex-ghcp-status

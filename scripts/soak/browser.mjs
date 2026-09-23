@@ -80,6 +80,15 @@ export async function createBrowserTerminal({ directory, rows = 40, columns = 12
       async pressEscape() {
         await page.getByRole("button", { name: "Escape", exact: true }).click();
       },
+      // Real keyboard events through xterm.js (arrows, Enter, slash commands).
+      async typeKeys(text) {
+        await page.locator(".xterm-helper-textarea").focus();
+        await page.keyboard.type(text, { delay: 15 });
+      },
+      async press(key) {
+        await page.locator(".xterm-helper-textarea").focus();
+        await page.keyboard.press(key);
+      },
       async close() {
         if (closed) return;
         try {

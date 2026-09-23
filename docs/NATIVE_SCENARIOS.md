@@ -2,13 +2,13 @@
 
 [한국어](NATIVE_SCENARIOS_KO.md) · [Runner guide](COMPATIBILITY_TESTING.md) · [Product boundaries](COMPATIBILITY.md)
 
-**Current contract: codex-ghcp-workflows-18-v4. 18 scenarios × 7 models = 126 cases.** One full matrix, no fast or model-subset mode.
+**Current contract: codex-ghcp-workflows-18-v5. 18 scenarios × 6 models = 108 cases.** One full matrix, no fast or model-subset mode.
 
 See the runner guide for live results and evidence. Results from other contracts or deleted past runs must not be reused or regraded as current-contract results.
 
 ## Separate feature scope from pass rate
 
-90% remains an everyday-workflow target; measured product-feature coverage is null. Repeating scenarios across seven models does not multiply feature breadth.
+90% remains an everyday-workflow target; measured product-feature coverage is null. Repeating scenarios across six models does not multiply feature breadth.
 
 Fixed reviewer checklist of 20 groups: 12 direct, 6 partial, 2 uncovered. Direct=1, partial=0.5, none=0 gives a **design score of 75%**. It is not an official, usage-weighted or support metric. Direct means an implemented probe, not a passed or exhaustive feature.
 
@@ -92,13 +92,12 @@ Fixed reviewer checklist of 20 groups: 12 direct, 6 partial, 2 uncovered. Direct
 
 ## Models
 
-- `gpt-5.6-sol`
-- `gpt-5.6-terra`
-- `gpt-5.6-luna`
-- `gpt-6-astra`
-- `claude-opus-5`
+- `claude-opus-5.5`
 - `claude-sonnet-5`
 - `claude-haiku-4.5`
+- `gpt-6-astra`
+- `gpt-6-sol`
+- `gpt-6-luna`
 
 ## Time and tool budgets
 
@@ -134,7 +133,7 @@ Exceeding the tool target is an efficiency diagnostic. Only the separate hard sa
 ## Mandatory common gates
 
 - Require real Codex CLI/app-server → bridge → Copilot SDK → exact model. Direct SDK probes, doubles and model self-reports cannot earn live credit.
-- Use identical small synthetic fixtures/instructions across seven models. Independently evaluate tool/file outcomes; keep hidden nonces out of prompts.
+- Use identical small synthetic fixtures/instructions across six models. Independently evaluate tool/file outcomes; keep hidden nonces out of prompts.
 - Explicitly expose unified_exec and freeform apply_patch. C11 separately exercises the production launcher without these overrides. OpenAI-provider A/B parity is not measured.
 - Every sub-assertion and artifact is required. Partial success or honest rejection of an unsupported feature is not a feature pass.
 - Preserve non-allowlisted files, user settings and Git index/HEAD. Never bypass approval/sandbox; redact secrets from evidence.

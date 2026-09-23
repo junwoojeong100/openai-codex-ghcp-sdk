@@ -15,7 +15,7 @@ node scripts/compatibility.mjs --execute [--output NEW_DIR] [--bin NATIVE_CODEX]
 node scripts/compatibility.mjs --verify REPORT_JSON
 
 Default: --plan (offline, no model calls or credential access).
-Live execution always uses all seven exact catalog IDs and all current scenarios.
+Live execution always uses all six exact catalog IDs and all current scenarios.
 No fast/subset suite, native OpenAI comparison or overall time cutoff.
 Individual case deadlines remain; failures do not skip later cases.
 Requires Copilot authentication, Codex 0.154.0 and macOS/Linux. No OpenAI API key.

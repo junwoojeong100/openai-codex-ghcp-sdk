@@ -6,7 +6,7 @@
 
 The target is Codex CLI **0.154.0** with `@github/copilot-sdk` **1.0.14**. This is a text-and-client-tools adapter, not a complete OpenAI Responses implementation. A model being enabled in Copilot does not certify every Codex feature. Offline test results and authenticated model runs are distinct checks.
 
-Only `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra`, `claude-opus-5`, `claude-sonnet-5` and `claude-haiku-4.5` are allowed. Account policy still controls availability. Model IDs are passed to the SDK without cross-provider renaming or fallback.
+Only `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4.5`, `gpt-6-astra`, `gpt-6-sol` and `gpt-6-luna` are allowed, in that picker order. Account policy still controls availability. Removed IDs (`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `claude-opus-5`) are rejected by the launcher and bridge. Model IDs are passed to the SDK without cross-provider renaming or fallback.
 
 ## Implemented behavior
 
@@ -48,13 +48,15 @@ Only `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-6-astra`, `claude-opus
 
 The launcher disables incompatible transport/search features. Other unsupported semantics fail explicitly instead of being advertised as implemented. Informational Codex hints such as cache keys, metadata, text verbosity or encrypted-reasoning inclusion can be diagnosed as ignored; they do not add the corresponding service capability.
 
+Codex 0.154 sends one extra request after the first prompt of a thread to generate a short task title, and that request uses a JSON schema. The bridge rejects it with HTTP 400 (`Structured output is not supported`). Codex continues normally without a generated title.
+
 ## Upstream-filtered responses
 
 Explicit root SDK content-filter metadata is reported as `upstream_content_filter` (HTTP 422 for JSON, or a terminal `response.failed` event after SSE has begun). No success cache or pending call is committed for that turn, and there is no automatic replay. Already-delivered partial text is marked incomplete. Refusal-like text without structured filter metadata is preserved as ordinary model output; subordinate-agent metadata does not replace the root response.
 
 ## Operational notes
 
-- Choose the initial model with `--ghcp-model`; `/model` uses the launch's account-enabled subset of the seven allowed models. The launch-owned catalog is temporary and does not change the user's Codex configuration files.
+- Choose the initial model with `--ghcp-model`; `/model` uses the launch's account-enabled subset of the six allowed models in pinned order. The launch-owned catalog is temporary and does not change the user's Codex configuration files.
 - A result batch must include every outstanding call exactly once. Model/instruction/history changes while calls are pending remain rejected. Tool-less full-history compaction may retire a session only after validating its complete result batch with the unchanged model, instructions and history.
 - SDK sessions stay on the default context tier; Codex compacts at 80% of the catalog's effective input budget. Context overflow keeps the `context_length_exceeded` error code, and the launcher disables automatic HTTP/stream inference retries.
 - The most recent result is retryable, but arbitrary historical response branches are not. Start a new full-history conversation to branch.

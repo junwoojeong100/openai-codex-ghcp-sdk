@@ -6,12 +6,19 @@ import { fileURLToPath } from "node:url";
 import { mkdir, writeJson, scrubber } from "./util.mjs";
 
 const worker = fileURLToPath(new URL("./worker.mjs", import.meta.url));
-export function groupExists(pid) {
-  try { process.kill(-pid, 0); return true; } catch (error) { if (error.code === "ESRCH") return false; throw error; }
+// macOS returns EPERM, not ESRCH, while an exited group's last members are
+// unreaped zombies. Keep treating the group as present until ESRCH.
+export function groupExists(pid, kill = process.kill) {
+  try { kill(-pid, 0); return true; } catch (error) {
+    if (error.code === "ESRCH") return false;
+    if (error.code === "EPERM") return true;
+    throw error;
+  }
 }
-export function killOwnedGroup(pid, signal = "SIGKILL") {
+export function killOwnedGroup(pid, signal = "SIGKILL", kill = process.kill) {
   if (!Number.isSafeInteger(pid) || pid <= 1 || pid === process.pid) throw new Error("Invalid owned process group");
-  try { process.kill(-pid, signal); } catch (error) { if (error.code !== "ESRCH") throw error; }
+  // EPERM means no signalable member remains; callers still wait for ESRCH.
+  try { kill(-pid, signal); } catch (error) { if (error.code !== "ESRCH" && error.code !== "EPERM") throw error; }
 }
 // SIGKILL delivery and process-group disappearance are not synchronous.
 // Spend only the remaining case slot (at most 2s) observing our own group.
@@ -39,7 +46,7 @@ export function workerEnvironment(env = process.env) {
 
 // Workers, native Codex, SDK subprocesses and native tools inherit this owned
 // POSIX process group. No existing daemon discovery, process-name kill or user PID.
-export async function supervise(config, { signal, env = process.env, command = process.execPath, workerFile = worker, onGroup } = {}) {
+export async function supervise(config, { signal, env = process.env, command = process.execPath, workerFile = worker, onGroup, kill = process.kill } = {}) {
   if (process.platform === "win32") throw new Error("The bounded runner currently requires POSIX process-group supervision (macOS/Linux).");
   signal?.throwIfAborted();
   const gracefulShutdownMs = config.gracefulShutdownMs ?? 0;
@@ -59,10 +66,10 @@ export async function supervise(config, { signal, env = process.env, command = p
     if (killed) return;
     killed = true;
     if (child.pid) {
-      try { killOwnedGroup(child.pid, gracefulShutdownMs ? "SIGTERM" : "SIGKILL"); }
+      try { killOwnedGroup(child.pid, gracefulShutdownMs ? "SIGTERM" : "SIGKILL", kill); }
       catch (error) { failure ??= error; }
       if (gracefulShutdownMs) escalation = setTimeout(() => {
-        try { killOwnedGroup(child.pid); } catch (error) { failure ??= error; }
+        try { killOwnedGroup(child.pid, "SIGKILL", kill); } catch (error) { failure ??= error; }
       }, gracefulShutdownMs);
     }
   };
@@ -88,8 +95,8 @@ export async function supervise(config, { signal, env = process.env, command = p
   // Also remove straggling descendants after a normal worker exit.
   if (child.pid) {
     try {
-      if (groupExists(child.pid)) killOwnedGroup(child.pid);
-      groupGone = await waitForOwnedGroupExit(child.pid, config.timeoutMs - (performance.now() - started));
+      if (groupExists(child.pid, kill)) killOwnedGroup(child.pid, "SIGKILL", kill);
+      groupGone = await waitForOwnedGroupExit(child.pid, config.timeoutMs - (performance.now() - started), { probe: pid => groupExists(pid, kill) });
     } catch (error) { failure ??= error; }
     onGroup?.(child.pid, false);
   }
