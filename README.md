@@ -279,6 +279,10 @@ npm run test:stability -- --execute  # Consumes Copilot usage
 
 Archived verification documents were removed before this repair at the user’s request and have not been restored. Complete runs during this repair are recorded separately, including failures and timeouts; old cells are not reused as new scores. This is not hours-long or whole-product certification.
 
+## Contributors
+
+Maintained by [junwoojeong100](https://github.com/junwoojeong100), with AI-assisted implementation, testing and documentation contributions from [Codex](https://github.com/codex) and [GitHub Copilot](https://github.com/Copilot).
+
 ## References
 
 - [Official Codex CLI](https://github.com/openai/codex)

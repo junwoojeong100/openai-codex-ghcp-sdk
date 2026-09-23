@@ -279,6 +279,10 @@ npm run test:stability -- --execute  # Copilot 사용량 발생
 
 사용자 요청으로 이번 수정 전에 삭제한 과거 검증 문서는 복원하지 않았습니다. 이번 수정 중 수행한 전체 실행은 실패·시간 초과를 포함해 각각 기록했으며, 과거 셀을 새 점수로 재사용하지 않습니다. 수시간 안정성이나 제품 전체 지원을 인증하는 결과는 아닙니다.
 
+## 기여자
+
+[junwoojeong100](https://github.com/junwoojeong100)이 유지보수하며, [Codex](https://github.com/codex)와 [GitHub Copilot](https://github.com/Copilot)이 AI 도구로서 구현·테스트·문서 작성에 기여했습니다.
+
 ## 공식 참고 자료
 
 - [Codex CLI](https://github.com/openai/codex)
