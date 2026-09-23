@@ -10,6 +10,9 @@ const token = "local-test-token-not-a-github-credential";
 async function setup(t, overrides = {}, serverOptions = {}) {
   const manager = {
     preferredModel: model,
+    turnIdleTimeoutMs: 90_000,
+    turnIdleRecoveryAttempts: 1,
+    readinessIntervalMs: 15_000,
     async readiness() { return { ready: true, state: "ready" }; },
     async ensureReady() {},
     listModels: () => [{ id: model }, { id: "claude-haiku-4.5", policy: { state: "disabled" } }],
@@ -40,6 +43,7 @@ test("health is public, model catalog requires the bridge credential and exclude
   assert.equal(health.ok, true);
   assert.equal(health.protocol, "responses");
   assert.equal(health.instanceId, "test-instance");
+  assert.deepEqual(health.turnWatchdog, { idleTimeoutMs: 90_000, recoveryAttempts: 1, intervalMs: 15_000 });
   assert.equal(JSON.stringify(health).includes(token), false);
   assert.equal((await fetch(`${base}/v1/models`)).status, 401);
   assert.equal((await request("/v1/models", { headers: { authorization: "Bearer wrong" } })).status, 401);
@@ -47,6 +51,12 @@ test("health is public, model catalog requires the bridge credential and exclude
   assert.deepEqual(catalog.data.map((entry) => entry.id), [model]);
   assert.ok(Array.isArray(catalog.models), "Codex requires a models array, not only the OpenAI data array.");
   assert.equal(catalog.models.length, 1);
+});
+
+test("health reports the running watchdog settings, including disabled recovery", async t => {
+  const { base } = await setup(t, { turnIdleTimeoutMs: 500, turnIdleRecoveryAttempts: 0, readinessIntervalMs: 1000 });
+  const health = await (await fetch(`${base}/health`)).json();
+  assert.deepEqual(health.turnWatchdog, { idleTimeoutMs: 500, recoveryAttempts: 0, intervalMs: 500 });
 });
 
 test("non-streaming and streaming responses share final output shape", async (t) => {
@@ -180,6 +190,13 @@ test("request, queue and SDK lifecycle bounds validate independently of turn dur
   assert.equal(config.managerOptions.requestTimeoutMs, 15000);
   assert.equal(config.managerOptions.turnIdleTimeoutMs, 4000);
   assert.equal(bridgeConfig({ BRIDGE_API_KEY: token }).managerOptions.turnIdleTimeoutMs, 90_000);
+  assert.equal(bridgeConfig({ BRIDGE_API_KEY: token }).managerOptions.turnIdleRecoveryAttempts, 1);
+  for (const value of ["0", "1", "3"]) {
+    assert.equal(bridgeConfig({ BRIDGE_API_KEY: token, TURN_IDLE_RECOVERY_ATTEMPTS: value }).managerOptions.turnIdleRecoveryAttempts, Number(value));
+  }
+  for (const value of ["-1", "0.5", "4", "Infinity", "invalid"]) {
+    assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, TURN_IDLE_RECOVERY_ATTEMPTS: value }), /TURN_IDLE_RECOVERY_ATTEMPTS/);
+  }
   assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, TURN_IDLE_TIMEOUT_MS: "2147483648" }), /TURN_IDLE_TIMEOUT_MS/);
   assert.equal(config.managerOptions.maxRequestsPerFamily, 3); assert.equal(config.managerOptions.maxRequests, 9);
   assert.equal(config.managerOptions.readinessTimeoutMs, 500); assert.equal(config.managerOptions.startupTimeoutMs, 8000);

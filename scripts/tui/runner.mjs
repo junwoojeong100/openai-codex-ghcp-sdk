@@ -13,6 +13,7 @@ import { snapshotSources, verifyFrozenSources } from "../soak/runner.mjs";
 import { implementationHash } from "../stability/report.mjs";
 import { TUI_CATALOG as C, TUI_SCENARIOS, tuiCatalogHash } from "./catalog.mjs";
 import { evaluate } from "./scenarios.mjs";
+import { isExpectedTitleRejection } from "./session.mjs";
 
 function settings(env) {
   const codex = env.CODEX_HOME || path.join(env.HOME || os.homedir(), ".codex");
@@ -27,8 +28,13 @@ export function summarizeTui(report) {
   const counts = Object.fromEntries(C.statuses.map(status => [status, report.cases.filter(row => row.status === status).length]));
   const complete = report.cases.map(r => `${r.model}/${r.scenarioId}`).join() === tuiMatrix().map(r => `${r.model}/${r.scenarioId}`).join();
   const eligible = complete && Boolean(report.finishedAt) && report.implementationUnchanged === true && report.frozenSourceUnchanged === true
-    && report.userSettingsUnchanged === true && !report.interrupted && !report.error;
+    && report.userSettingsUnchanged === true && !report.interrupted && !report.error && counts["not-run"] === 0
+    && report.cases.every(row => C.statuses.includes(row.status));
+  const minimumPassed = Math.ceil(C.totalCases * C.thresholdPercent / 100);
   return { catalogId: C.id, totalCases: C.totalCases, counts, passed: counts.passed, percent: counts.passed / C.totalCases * 100,
+    thresholdPercent: C.thresholdPercent, minimumPassed,
+    thresholdMet: report.executionKind === "live" && eligible && counts.passed >= minimumPassed,
+    auxiliaryTitleRejections: report.cases.reduce((sum, row) => sum + (row.auxiliaryTitleRejections ?? 0), 0),
     fullMatrixPassed: report.executionKind === "live" && eligible && counts.passed === C.totalCases, eligible,
     perModel: C.models.map(model => {
       const rows = report.cases.filter(row => row.model === model), passed = rows.filter(row => row.status === "passed").length;
@@ -41,6 +47,7 @@ export function summarizeTui(report) {
 function markdown(report) {
   const rows = report.cases.map(r => `| ${r.model} | ${r.scenarioId} | ${r.status} | ${(r.failedChecks ?? []).join(", ")} |`);
   return [`# ${C.id}`, "", `Run ${report.runId} (${report.executionKind}); ${report.summary.passed}/${report.summary.totalCases} passed.`, "",
+    `95% target: ${report.summary.thresholdMet ? "met" : "not established"}; full matrix: ${report.summary.fullMatrixPassed ? "passed" : "not passed"}.`, "",
     "| Model | Scenario | Status | Failed checks |", "|---|---|---|---|", ...rows, ""].join("\n");
 }
 
@@ -78,6 +85,7 @@ export async function runTui({ output, bin = process.env.CODEX_BIN || "codex", e
             const result = JSON.parse(safeRead(resultFile));
             Object.assign(row, { status: result.status, observedStatus: result.status, failedChecks: result.checks.filter(c => !c.passed).map(c => c.id),
               error: result.error, durationMs: result.durationMs, artifactPath: relative, resultHash: sha(fs.readFileSync(resultFile)) });
+            row.auxiliaryTitleRejections = result.auxiliaryTitleRejections;
           } else Object.assign(row, { status: "failed", reason: "No complete result; see worker log and partial evidence", artifactPath: relative });
           if (row.supervisor.error?.name === "TimeoutError") row.status = "timed-out";
           else if (row.supervisor.code !== 0 || row.supervisor.error || !row.supervisor.processGroupGone) row.status = "failed";
@@ -110,18 +118,32 @@ export async function runTui({ output, bin = process.env.CODEX_BIN || "codex", e
 export function verifyTuiReport(file) {
   const report = JSON.parse(safeRead(file)), directory = path.dirname(file);
   if (report.catalogId !== C.id || report.catalogHash !== tuiCatalogHash()) throw new Error("Historical or foreign report: verify with its frozen source snapshot.");
+  const freeze = JSON.parse(safeRead(path.join(directory, "freeze.json")));
+  if (freeze.runId !== report.runId || freeze.catalogHash !== report.catalogHash || freeze.implementationHash !== report.implementationHash
+      || sha(JSON.stringify(freeze.sources)) !== report.implementationHash || !verifyFrozenSources(directory, freeze.sources)) {
+    throw new Error("Frozen source identity or integrity mismatch");
+  }
   if (report.cases.map(r => `${r.model}/${r.scenarioId}`).join() !== tuiMatrix().map(r => `${r.model}/${r.scenarioId}`).join()) throw new Error("Incomplete matrix");
   for (const row of report.cases) {
+    if (!C.statuses.includes(row.status)) throw new Error("Unknown case status");
     if (!row.artifactPath) { if (row.status === "passed") throw new Error("A passing row has no evidence"); continue; }
+    if (row.artifactPath !== `cases/${row.model}/${row.scenarioId}`) throw new Error("Invalid case artifact path");
     const dir = path.join(directory, row.artifactPath), resultFile = path.join(dir, "result.json");
     if (!fs.existsSync(resultFile)) { if (row.status === "passed") throw new Error(`Missing result for ${row.model}/${row.scenarioId}`); continue; }
     const bytes = fs.readFileSync(resultFile), result = JSON.parse(bytes), factsText = fs.readFileSync(path.join(dir, "facts.json"), "utf8");
     if (sha(bytes) !== row.resultHash || sha(factsText) !== result.factsHash) throw new Error(`Evidence hash mismatch for ${row.model}/${row.scenarioId}`);
-    if (result.runId !== report.runId || result.model !== row.model || result.scenarioId !== row.scenarioId || result.seed !== row.seed) throw new Error("Case identity mismatch");
-    const scenario = TUI_SCENARIOS.find(s => s.id === row.scenarioId), checks = evaluate(scenario, row.model, JSON.parse(factsText));
+    if (result.runId !== report.runId || result.model !== row.model || result.scenarioId !== row.scenarioId || result.seed !== row.seed
+        || result.executionKind !== report.executionKind || result.catalogHash !== report.catalogHash
+        || result.implementationHash !== report.implementationHash) throw new Error("Case identity mismatch");
+    const facts = JSON.parse(factsText), scenario = TUI_SCENARIOS.find(s => s.id === row.scenarioId), checks = evaluate(scenario, row.model, facts);
+    const titles = facts.observer.http.filter(isExpectedTitleRejection).length;
+    if (titles !== result.auxiliaryTitleRejections || titles !== row.auxiliaryTitleRejections) throw new Error("Auxiliary request count mismatch");
     if (JSON.stringify(checks) !== JSON.stringify(result.checks)) throw new Error(`Recomputed checks differ for ${row.model}/${row.scenarioId}`);
     const status = checks.every(c => c.passed) ? "passed" : "failed";
     if (status !== result.status || (row.status === "passed" && status !== "passed")) throw new Error(`Status mismatch for ${row.model}/${row.scenarioId}`);
+    if (row.status === "passed" && (row.supervisor?.code !== 0 || row.supervisor?.error || row.supervisor?.processGroupGone !== true)) {
+      throw new Error("Passing case has no successful process supervision evidence");
+    }
   }
   return { evidenceIntegrity: true, ...summarizeTui(report) };
 }

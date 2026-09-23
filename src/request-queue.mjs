@@ -2,7 +2,7 @@ import { performance } from "node:perf_hooks";
 import { BridgeRequestError } from "./request-policy.mjs";
 
 const cancelled = () => Object.assign(new Error("The client closed the request."), { name: "AbortError" });
-const timeoutError = () => new BridgeRequestError("The request deadline expired, including queue wait. No request was retried.", {
+const timeoutError = () => new BridgeRequestError("The request deadline expired, including queue wait and any bounded recovery.", {
   status: 504, code: "request_timeout",
 });
 

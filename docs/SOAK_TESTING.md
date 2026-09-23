@@ -6,7 +6,7 @@ The native, owned-PTY and Playwright Headless terminal paths are implemented. Hi
 
 `npm run test:soak` is separate from the 66-case stability matrix. It measures real elapsed time, long-lived native Codex conversations, real Copilot SDK calls, context growth, compaction, queues, memory and owned-process liveness. A short harness check never establishes five-hour reliability.
 
-For a bounded, offline regression, `npm run test:context:runtime` exercises 120 sequential native tool calls with repeated compaction and the actual TUI's same-process recovery from idle timeout, setup timeout and Escape. These cases use a mechanical SDK, not live inference. The PTY observer waits until Codex's model/directory loading placeholders disappear and debounces logical readiness/completion rather than raw output silence: cosmetic redraws must not look like a terminal hang. Expected error cases require an actual error line and a successful subsequent prompt, not a stopped/restarted terminal.
+For a bounded, offline regression, `npm run test:context:runtime` exercises 120 sequential native tool calls with repeated compaction and the actual TUI's same-process recovery from idle timeout, setup timeout and Escape. It also checks automatic silent-turn recovery on the original stream, byte-only SDK progress lasting beyond the idle limit, and a successful subsequent prompt without restarting the TUI. The deliberate fail-fast case explicitly sets `TURN_IDLE_RECOVERY_ATTEMPTS=0`. These cases use a mechanical SDK, not live inference. The PTY observer waits until Codex's model/directory loading placeholders disappear and debounces logical readiness/completion rather than raw output silence: cosmetic redraws must not look like a terminal hang. Expected error cases require an actual error line and a successful subsequent prompt, not a stopped/restarted terminal.
 
 ## Reproducible terminal checks
 
@@ -49,7 +49,7 @@ Each output directory must be new. The runner freezes source before execution an
 
 ## Native workloads
 
-- **GPT-6 Luna:** a persistent native thread with the actual model catalog's default context metadata and automatic compaction. Each turn reads a freshly updated, inert 8 KiB application sample through an owned native tool, then returns the sample identifier.
+- **GPT-6 Luna:** a persistent native thread with the actual model catalog's maximum advertised tier input budget and automatic compaction. Each turn reads a freshly updated, inert 8 KiB application sample through an owned native tool, then returns the sample identifier.
 - **Claude Sonnet 5:** the same workload with a labelled **131,072-token client context override**, automatic compaction at 98,304 tokens, and explicit native compaction every 40 successful turn slots. This is accelerated client-context stress, not a claim to exercise the provider's maximum context.
 - **Optional terminal lane:** `--terminal` adds a persistent actual Codex TUI on GPT-6 Luna with the labelled 65,536-token client override. `--terminal-driver playwright` selects headless xterm.js rendering; the default `pty` driver uses the independent terminal parser. These terminal results are separate from native app-server coverage.
 
@@ -65,7 +65,7 @@ The independent supervisor samples owned worker/child CPU and RSS every 15 secon
 
 The existing short-run native host retains its original 8 MiB transcript and 1 MiB stderr defaults. Endurance explicitly uses a 512 MiB transcript budget, a 16 MiB per-drain stderr budget, and disk-backed per-turn log draining. Exceeding any budget remains an error, not silent truncation.
 
-Failed requests are not retried or converted into success. A failed native session may be followed by a **new, recorded thread** to test recovery; the failed turn remains counted. Three consecutive failures stop that lane for investigation. Cleanup errors, unknown outcomes and incomplete durations stay visible.
+The endurance runner does not retry failed requests or convert them into success. The production bridge's bounded pre-output idle recovery happens inside the original request, with watchdog/recovery diagnostics; it does not reset turn/request deadlines. A request that ultimately fails remains failed. A failed native session may be followed by a **new, recorded thread** to test recovery; the failed turn remains counted. Three consecutive failures stop that lane for investigation. Cleanup errors, unknown outcomes and incomplete durations stay visible.
 
 `durationMet` requires at least five actual hours in every declared lane for an endurance run. Reports separately show successful/failed turns, active request time, total measured coverage, maximum observed input tokens/history bytes/RSS, compaction counts, recovery threads and process-group cleanup. Pacing time is not model-active time; elapsed-time coverage alone is not evidence that the maximum context was reached.
 

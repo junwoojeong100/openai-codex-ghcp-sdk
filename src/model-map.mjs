@@ -33,16 +33,23 @@ function reasoningEfforts(model) {
   ])];
 }
 
+export function resolveContextTier(model) {
+  const longContext = model?.billing?.tokenPrices?.longContext;
+  const advertised = longContext && typeof longContext === "object" && !Array.isArray(longContext);
+  return advertised || (Array.isArray(model?.supportedContextTiers) && model.supportedContextTiers.includes("long_context"))
+    ? "long_context" : "default";
+}
+
 function contextBudget(model) {
   const limits = model.capabilities?.limits || {};
-  // Sessions use the default SDK tier, not the advertised long-context maximum.
   const prices = model.billing?.tokenPrices;
-  const defaultTier = prices?.longContext ? prices : {};
+  // Use the same advertised tier as SDK sessions, retaining output reservation.
+  const tier = resolveContextTier(model) === "long_context" ? prices?.longContext : prices;
   const budgets = [
     limits.max_context_window_tokens,
     limits.max_prompt_tokens,
-    defaultTier.maxPromptTokens,
-    defaultTier.contextMax,
+    tier?.maxPromptTokens,
+    tier?.contextMax,
   ].filter(value => Number.isSafeInteger(value) && value > 0);
   if (Number.isSafeInteger(limits.max_context_window_tokens) && Number.isSafeInteger(limits.max_output_tokens)
       && limits.max_output_tokens > 0 && limits.max_context_window_tokens > limits.max_output_tokens) {

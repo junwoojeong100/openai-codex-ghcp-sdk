@@ -2,7 +2,16 @@
 
 [한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
 
-## Latest: real Codex TUI scenarios with Playwright headless — 2026-09-23 KST
+## Latest: TUI → bridge → Copilot SDK connection, v2 — 2026-09-23 KST
+
+[Full results, connection failures, improvements and evidence](2026-09-23-tui-connection-v2/README.md)
+
+- `codex-ghcp-tui-12-v2`: **72/72 (100%)**, all six models 12/12, implementation `fe500d78`; current and frozen-source verification passed.
+- First independent run **45/72 (62.50%)** is preserved: 26 startup failures and one confirmed Copilot API connection timeout. Runs are not combined.
+- The final run used the default 90-second idle limit and one recovery attempt, not extended deadlines; no failed streams, stalled turns or SDK cleanup errors occurred.
+- Actual SDK model/tier snapshots, Responses SSE, watchdog configuration and graceful cleanup are checked. This bounded result does not guarantee future network availability or multi-hour endurance.
+
+## Earlier: real Codex TUI scenarios with Playwright headless — 2026-09-23 KST
 
 [Results, issues found, observations and evidence](2026-09-23-tui-scenarios/README.md)
 

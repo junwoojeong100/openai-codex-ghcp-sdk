@@ -123,6 +123,43 @@ test("native model/list exposes exactly the available main models, including Cla
   }
 });
 
+test("native model switches keep the maximum context tier and catalog budget aligned for all six models", { timeout: 25_000 }, async t => {
+  const f = fixture(t);
+  const catalogModels = SUPPORTED_MODEL_IDS.map(id => {
+    const extended = id !== "claude-haiku-4.5";
+    return { id, supportedReasoningEfforts: extended ? ["low"] : [],
+      capabilities: { supports: { reasoningEffort: extended }, limits: {
+        max_context_window_tokens: extended ? 1_000_000 : 200_000,
+        max_prompt_tokens: extended ? 872_000 : 136_000,
+        max_output_tokens: extended ? 128_000 : 64_000,
+      } },
+      ...(extended ? { billing: { tokenPrices: {
+        maxPromptTokens: 200_000, longContext: { maxPromptTokens: 872_000 },
+      } } } : {}),
+    };
+  });
+  const client = new FakeClient({ models: catalogModels, onSend: session => session.reply(`ACTIVE_${session.config.model}`) });
+  const bridge = await f.bridge(client);
+  const host = await f.host(bridge.args);
+  const thread = await startThread(host, f.directory);
+  for (const id of SUPPORTED_MODEL_IDS) {
+    const turn = await host.turn(thread, `Report the active model ${id}.`, { model: id });
+    assert.equal(turn.status, "completed", JSON.stringify({ id, error: turn.error, diagnostics: bridge.diagnostics }));
+    assert.equal(client.sessions.at(-1).config.model, id);
+    assert.equal(client.sessions.at(-1).config.contextTier, id === "claude-haiku-4.5" ? "default" : "long_context");
+    const budget = id === "claude-haiku-4.5" ? 136_000 : 872_000;
+    const metadata = bridge.catalog.models.find(entry => entry.slug === id);
+    assert.equal(metadata.context_window, budget);
+    assert.equal(metadata.auto_compact_token_limit, Math.floor(budget * 0.8));
+    const usage = host.records.findLast(row => row.message.method === "thread/tokenUsage/updated")?.message.params.tokenUsage;
+    assert.equal(usage?.modelContextWindow, Math.floor(budget * 0.95), id);
+    const answer = host.records.findLast(row => row.message.method === "item/completed"
+      && row.message.params?.turnId === turn.id && row.message.params?.item?.type === "agentMessage");
+    assert.equal(answer?.message.params.item.text, `ACTIVE_${id}`);
+  }
+  assert.equal(client.sessions.length, SUPPORTED_MODEL_IDS.length);
+});
+
 test("native automatic compaction at a resolved tool handoff completes and continues the same thread", { timeout: 25_000 }, async t => {
   const f = fixture(t);
   const marker = `CONTEXT_${randomUUID()}`;
@@ -270,7 +307,7 @@ test("one native turn can complete 120 sequential tools across repeated automati
   t.diagnostic(JSON.stringify({ toolExecutions, compactions: compactions.length, sdkSessions: client.sessions.length }));
 });
 
-async function terminalFixture(t, { turns, hangFirstSetup = false }) {
+async function terminalFixture(t, { turns, hangFirstSetup = false, turnIdleRecoveryAttempts = 1 }) {
   const f = fixture(t);
   const tmp = path.join(f.directory, "tmp");
   fs.mkdirSync(tmp, { mode: 0o700 });
@@ -286,21 +323,23 @@ async function terminalFixture(t, { turns, hangFirstSetup = false }) {
     env: { ...f.env, TMPDIR: tmp, CODEX_BIN: bin, COPILOT_HOME: path.join(f.directory, "copilot"),
       GHCP_DAEMON_DIR: path.join(f.directory, "daemon"), GHCP_TERMINAL_FIXTURE: configuration,
       TURN_TIMEOUT_MS: "4000", TURN_IDLE_TIMEOUT_MS: "1500", SDK_STARTUP_TIMEOUT_MS: "500",
+      TURN_IDLE_RECOVERY_ATTEMPTS: String(turnIdleRecoveryAttempts), SDK_READINESS_INTERVAL_MS: "250",
       NODE_OPTIONS: `--import=${JSON.stringify(path.join(root, "test/fixtures/terminal-sdk.mjs"))}` },
     turns, timeoutMs: 20000, readyTimeoutMs: 8000, turnTimeoutMs: 6000, stopGraceMs: 1000,
     allowOwnedTrust: true, allowOwnedSetup: true, columns: 160, rows: 45,
   });
+  const sdk = fs.existsSync(output) ? JSON.parse(fs.readFileSync(output, "utf8")) : null;
   assert.equal(result.status, "passed", JSON.stringify({
-    result, screen: fs.readFileSync(path.join(f.directory, "terminal/terminal-screen.txt"), "utf8"),
+    result, sdk, screen: fs.readFileSync(path.join(f.directory, "terminal/terminal-screen.txt"), "utf8"),
   }));
   assert.equal(result.cleanup.childReaped, true);
   assert.equal(result.cleanup.processGroupGone, true);
-  const sdk = JSON.parse(fs.readFileSync(output, "utf8"));
+  assert.ok(sdk, "The SDK fixture must write its exit record.");
   return { result, sdk };
 }
 
 test("the real TUI recovers from idle failure and Escape without restarting its terminal", { timeout: 25_000 }, async t => {
-  const { result, sdk } = await terminalFixture(t, { turns: [
+  const { result, sdk } = await terminalFixture(t, { turnIdleRecoveryAttempts: 0, turns: [
     { prompt: "Reply with FIRST_OK.", expectedMarker: "FIRST_OK" },
     { prompt: "Run IDLE_FIXTURE.", expectedError: "GitHub Copilot stopped producing model progress" },
     { prompt: "Reply with AFTER_IDLE_OK.", expectedMarker: "AFTER_IDLE_OK" },
@@ -315,13 +354,30 @@ test("the real TUI recovers from idle failure and Escape without restarting its 
   assert.equal(sdk.diagnostics.filter(event => event.event === "bridge.turn_stalled").length, 1);
 });
 
+test("the real TUI automatically resumes a silent turn and accepts byte-only progress", { timeout: 25_000 }, async t => {
+  const { result, sdk } = await terminalFixture(t, { turns: [
+    { prompt: "Run RECOVER_FIXTURE.", expectedMarker: "AUTO_RECOVERED_OK" },
+    { prompt: "Run BYTES_FIXTURE.", expectedMarker: "STREAM_PROGRESS_OK" },
+    { prompt: "Reply with AFTER_RECOVERY_OK.", expectedMarker: "AFTER_RECOVERY_OK" },
+  ] });
+  assert.equal(sdk.sends, 4);
+  assert.equal(sdk.sessions, 2);
+  assert.equal(sdk.byteDeltas, 8);
+  assert.ok(result.turns.every(turn => turn.markerObserved && !turn.errorObserved));
+  assert.equal(sdk.diagnostics.filter(event => event.event === "bridge.turn_stalled").length, 1);
+  assert.equal(sdk.diagnostics.filter(event => event.event === "bridge.turn_recovered").length, 1);
+  assert.ok(sdk.diagnostics.some(event => event.event === "bridge.turn_watchdog"));
+});
+
 test("the real TUI surfaces a stalled session setup and accepts the next prompt", { timeout: 25_000 }, async t => {
   const { result, sdk } = await terminalFixture(t, { hangFirstSetup: true, turns: [
     { prompt: "Start the initial controlled session.", expectedError: "GitHub Copilot session setup timed out" },
     { prompt: "Reply with AFTER_SETUP_OK.", expectedMarker: "AFTER_SETUP_OK" },
   ] });
   assert.equal(result.turns[0].errorObserved, true);
-  assert.ok(result.turns[0].durationMs < 2500);
+  assert.ok(result.turns[0].durationMs < 2500, JSON.stringify({
+    turn: result.turns[0], diagnostics: sdk.diagnostics,
+  }));
   assert.equal(result.turns[1].markerObserved, true);
   assert.equal(sdk.sends, 1);
   assert.equal(sdk.sessions, 2);

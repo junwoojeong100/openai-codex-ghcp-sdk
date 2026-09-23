@@ -100,3 +100,38 @@ test("hung pings have a bounded deadline and mark the generation lost once", asy
   const results = await Promise.all([lifecycle.readiness(), lifecycle.readiness()]);
   assert.ok(results.every(r => !r.ready)); assert.equal(lost, 1);
 });
+
+for (const operation of ["start", "ping", "listModels"]) {
+  test(`startup timeouts identify the stalled SDK operation without exposing content (${operation})`, async t => {
+    const diagnostics = [];
+    const client = peer({ [operation]: () => new Promise(() => {}) });
+    const lifecycle = setup(t, { client, startupTimeoutMs: 20, onDiagnostic: row => diagnostics.push(row) });
+    await assert.rejects(lifecycle.start(), error => {
+      assert.equal(error.code, "upstream_unavailable");
+      assert.ok(error.message.includes(`SDK ${operation} timed out`));
+      return true;
+    });
+    assert.equal(diagnostics.length, 1);
+    const [{ elapsedMs, ...diagnostic }] = diagnostics;
+    assert.deepEqual(diagnostic, { event: "bridge.upstream_connect_failed", generation: 1,
+      operation, failureType: "timeout", timeoutMs: 20 });
+    assert.ok(elapsedMs >= 0);
+    assert.equal(lifecycle.snapshot().ready, false);
+    assert.ok(client.forced >= 1);
+  });
+}
+
+test("SDK startup diagnostics omit upstream messages, credentials and arbitrary error codes", async t => {
+  const diagnostics = [];
+  const client = peer({ async listModels() {
+    throw Object.assign(new Error("private-input private-credential"), { code: "private-code" });
+  } });
+  const lifecycle = setup(t, { client, onDiagnostic: row => diagnostics.push(row) });
+  await assert.rejects(lifecycle.start(), error => {
+    assert.match(error.message, /SDK listModels failed/);
+    assert.doesNotMatch(error.message, /private-/);
+    return true;
+  });
+  assert.equal(diagnostics[0].failureType, "rpc_error");
+  assert.doesNotMatch(JSON.stringify(diagnostics), /private-/);
+});

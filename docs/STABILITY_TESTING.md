@@ -87,7 +87,8 @@ The bridge uses structured SDK metadata, not matching refusal-like prose. It doe
 ## Implemented recovery boundaries
 
 - Tools are compared by identity, not array order. Real schema, permission, model, instruction and history changes still fail closed while calls are pending. Conflict diagnostics record field names, hashes and counts, not raw content.
-- SDK control-plane `ping` detects loss. A single shared recovery task creates a **new client generation** with bounded startup and backoff; concurrent requests do not each spawn a client. Lost conversations are invalidated. No inference or uncertain tool result is automatically replayed.
+- SDK control-plane `ping` detects loss. A single shared recovery task creates a **new client generation** with bounded startup and backoff; concurrent requests do not each spawn a client. Lost conversations are invalidated. No inference or uncertain tool result is automatically replayed after connection loss.
+- With a healthy connection, the model-progress watchdog can recover a silent turn on its original response stream, once by default. Input must be acknowledged, no output or calls may be pending, and old-session cleanup must be confirmed. Resolved history is context only; completed tool-result RPCs are never repeated. Partial output, filtering, cancellation, uncertain submissions and cleanup failure are excluded. Diagnostics identify recovery attempts, success and specific skip reasons. This is bounded inference replay, not an exactly-once guarantee or an external process-restart watcher.
 - `/health` is public **HTTP-process liveness**, with the last-known `ready`/`upstreamState` fields. Authenticated `/readyz` performs a bounded SDK readiness probe (200/503) and does not reconnect by itself. Authenticated `/v1/models` may recover the SDK before exposing the catalog. Readiness does not guarantee inference service health or quota.
 - Per-conversation FIFO queues are cancellable and bounded. A cancelled waiter is removed immediately and can never run later. Active cancellation settles promptly, but its family lock remains held until bounded cleanup finishes.
 - Responses are structurally reconciled **before** pending calls/history/retry state are committed. Normal identical request retries remain cached; a stream protocol mismatch cannot cache an undelivered tool call as success. Network delivery and model generation are not an exactly-once transaction.
@@ -96,17 +97,18 @@ The bridge uses structured SDK metadata, not matching refusal-like prose. It doe
 
 | Setting | Default | Meaning |
 |---|---:|---|
-| `TURN_TIMEOUT_MS` | 300000 | One SDK turn |
-| `TURN_IDLE_TIMEOUT_MS` | 90000 | No root-model progress; text, reasoning and tool-input streaming refresh it, not keepalives |
-| `REQUEST_TIMEOUT_MS` | 360000 | Manager request, including queue wait and SDK work; not HTTP body reception |
+| `TURN_TIMEOUT_MS` | 300000 | Absolute model-turn budget shared across all recovery attempts and replacement setup |
+| `TURN_IDLE_TIMEOUT_MS` | 90000 | No root-model progress; text, reasoning, tool-input and increasing SDK byte counts refresh it, not keepalives |
+| `TURN_IDLE_RECOVERY_ATTEMPTS` | 1 | Maximum session recoveries per request; integer 0–3, 0 disables |
+| `REQUEST_TIMEOUT_MS` | 360000 | Manager request, including queue wait, SDK work and recovery; not HTTP body reception |
 | `MAX_REQUESTS_PER_SESSION` | 8 | Admitted active + queued requests per family |
 | `MAX_REQUESTS` | 128 | Global admitted active + queued requests |
 | `SDK_READINESS_TIMEOUT_MS` | 2000 | Local SDK ping deadline |
 | `SDK_STARTUP_TIMEOUT_MS` | 30000 | SDK start, ping/catalog initialization, session creation and model-setting RPCs; session setup is also capped by the turn limit |
-| `SDK_READINESS_INTERVAL_MS` | 15000 | Background connection monitoring interval |
+| `SDK_READINESS_INTERVAL_MS` | 15000 | Background connection checks and content-free turn watchdog diagnostics; watchdog interval is capped by the idle limit |
 | `SDK_RECOVERY_BACKOFF_MS` | 5000 | Minimum interval between failed recovery attempts |
 
-All are positive integers. Existing byte/session/cleanup limits remain. `request_queue_full` is a 429, `request_timeout` a 504, and `upstream_session_lost` a 409 asking for a new conversation. Do not blindly replay tool side effects. To apply updated bridge code, first close its Codex sessions, then stop/relaunch the project-owned bridge; the development/test runner never restarts a user's active bridge.
+All are positive integers except `TURN_IDLE_RECOVERY_ATTEMPTS`, which accepts 0–3. Recovery resets neither the absolute turn deadline nor the total request deadline. Existing byte/session/cleanup limits remain. `copilot_idle_timeout`, `copilot_timeout` and `request_timeout` are 504 errors, `request_queue_full` is 429, and `upstream_session_lost` is 409 asking for a new conversation. Do not blindly replay tool side effects. To apply updated bridge code, first close its Codex sessions, then relaunch the project-owned bridge; the development/test runner never restarts a user's active bridge. `/health.turnWatchdog` reports runtime settings, not the current source file's defaults. Background status also exposes them, but does not discover foreground bridges.
 
 ## Commands and evidence
 

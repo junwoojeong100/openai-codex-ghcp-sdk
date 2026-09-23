@@ -11,7 +11,7 @@ export const TUI_SCENARIOS = freeze([
     covers: "launcher model_catalog_json pinning; exact routing to the launch model" },
   { id: "U02", name: "Picker switch routes the next turn to the selected model", seconds: 240, sandbox: "read-only",
     covers: "mid-thread model change through /model; bridge model resolution" },
-  { id: "U03", name: "Codex shell tool reads a workspace file in the read-only sandbox", seconds: 240, sandbox: "read-only",
+  { id: "U03", name: "Codex shell tool reads synthetic application data in the read-only sandbox", seconds: 240, sandbox: "read-only",
     covers: "handlerless tool handoff, Codex-owned execution and pending result submission" },
   { id: "U04", name: "apply_patch creates a workspace file in the workspace-write sandbox", seconds: 240, sandbox: "workspace-write",
     covers: "freeform custom tool input preserved byte-exact through the bridge" },
@@ -33,12 +33,14 @@ export const TUI_SCENARIOS = freeze([
     covers: "conversation identity, launcher shutdown, child bridge/runtime exit and private catalog removal" },
 ]);
 export const TUI_CATALOG = freeze({
-  id: "codex-ghcp-tui-12-v1", schemaVersion: 1, driver: "playwright-headless-xterm",
+  id: "codex-ghcp-tui-12-v2", schemaVersion: 2, driver: "playwright-headless-xterm",
   versions: { codex: "0.154.0", copilotSdk: "1.0.14", playwright: "1.63.0", xterm: "6.0.0" },
   models: [...SUPPORTED_MODEL_IDS], scenarios: TUI_SCENARIOS, totalCases: TUI_SCENARIOS.length * SUPPORTED_MODEL_IDS.length,
   concurrency: 3, automaticCaseRetries: 0, preflightSeconds: 60, rows: 45, columns: 140,
-  commonChecks: ["routing", "upstream", "mcp-isolation", "cleanup"],
-  acceptance: "Every scenario and common check must pass from recorded evidence. Failed, blocked, timed-out and not-run cells remain in the 72-cell denominator. Markers are random per case; no retries, output rewriting or cell substitution.",
+  commonChecks: ["routing", "connection", "context-tier", "watchdog", "upstream", "mcp-isolation", "cleanup"],
+  thresholdPercent: 95,
+  watchdog: { idleTimeoutMs: 90000, recoveryAttempts: 1, intervalMs: 15000 },
+  acceptance: "A case passes only when every scenario and common check passes from recorded evidence. The target is at least 95% (69/72) in one complete live run of an unchanged implementation. Failed, blocked, timed-out and not-run cells stay in the denominator; unrun or interrupted matrices cannot meet the target. No automatic case retries, output rewriting, combining runs or cell substitution. fullMatrixPassed still requires 72/72.",
   isolation: "Owned HOME/CODEX_HOME/workspace per case, real Copilot authentication only, approval policy never, no user Codex configuration, plugins or MCP servers.",
   statuses: ["passed", "failed", "blocked", "timed-out", "not-run"],
 });

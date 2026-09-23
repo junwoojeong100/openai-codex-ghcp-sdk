@@ -34,6 +34,66 @@ async function setup(t, { client = new FakeClient(), managerOptions = {} } = {})
   return { manager, client, server, request, post, base, diagnostics };
 }
 
+test("idle recovery completes the original SSE response with one header and no false failure", async t => {
+  let sends = 0;
+  const client = new FakeClient({ onSend: session => {
+    if (++sends === 1) session.emit("assistant.turn_start", {});
+    else session.reply("RECOVERED_ON_ORIGINAL_STREAM");
+  } });
+  const { post, diagnostics } = await setup(t, { client, managerOptions: { turnIdleTimeoutMs: 50, readinessIntervalMs: 15 } });
+  const response = await post({ model, input: "synthetic stalled turn", stream: true });
+  const wire = await response.text();
+  const events = parseEvents(wire);
+  assert.equal(response.status, 200);
+  assert.equal(events.filter(event => event.type === "response.created").length, 1);
+  assert.equal(events.filter(event => event.type === "response.completed").length, 1);
+  assert.ok(!events.some(event => event.type === "response.failed"));
+  assert.equal(events.at(-1).response.id, events[0].response.id);
+  assert.equal(events.at(-1).response.output[0].content[0].text, "RECOVERED_ON_ORIGINAL_STREAM");
+  assert.doesNotMatch(wire, /bridge.turn_|totalResponseSizeBytes|recoverySafe/);
+  assert.equal(sends, 2);
+  assert.ok(diagnostics.some(event => event.event === "bridge.turn_watchdog"));
+  assert.ok(diagnostics.some(event => event.event === "bridge.turn_recovered"));
+});
+
+test("idle recovery exhaustion emits one failure and the next prompt works on the same bridge", async t => {
+  const client = new FakeClient({ onSend: () => {} });
+  const { post, manager } = await setup(t, { client, managerOptions: { turnIdleTimeoutMs: 40 } });
+  const events = parseEvents(await (await post({ model, input: "silent", stream: true })).text());
+  assert.equal(events.filter(event => event.type === "response.failed").length, 1);
+  assert.equal(events.at(-1).response.error.code, "copilot_idle_timeout");
+  assert.ok(!events.some(event => event.type === "response.completed"));
+  assert.equal(client.sessions.length, 2);
+  assert.equal(manager.states.size, 0);
+  client.onSend = session => session.reply("healthy");
+  const next = parseEvents(await (await post({ model, input: "next", stream: true })).text());
+  assert.equal(next.at(-1).type, "response.completed");
+  assert.equal(client.stopped, false);
+});
+
+test("partial output and unacknowledged tool results are never automatically replayed", async t => {
+  const input = { model, input: "read", tools: [tool], stream: true };
+  const name = normalizeRequest(input).tools[0].name;
+  const client = new FakeClient({
+    onSend: session => session.toolCalls([{ toolCallId: "uncertain", name, arguments: {} }]),
+    onSubmit: () => new Promise(() => {}),
+  });
+  const { post } = await setup(t, { client, managerOptions: { turnIdleTimeoutMs: 40, turnIdleRecoveryAttempts: 3 } });
+  const first = parseEvents(await (await post(input)).text()).at(-1).response;
+  const events = parseEvents(await (await post({ model, stream: true, previous_response_id: first.id,
+    input: [{ type: "function_call_output", call_id: "uncertain", output: "executed exactly once" }],
+  })).text());
+  assert.equal(events.at(-1).response.error.code, "copilot_idle_timeout");
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].submitted.length, 1);
+  client.onSend = session => session.emit("assistant.message_delta", { messageId: "partial", deltaContent: "keep this partial answer" });
+  const partial = parseEvents(await (await post({ model, stream: true, input: "partial" })).text());
+  assert.equal(partial.at(-1).type, "response.failed");
+  assert.equal(partial.at(-1).response.output[0].status, "incomplete");
+  assert.equal(partial.at(-1).response.output[0].content[0].text, "keep this partial answer");
+  assert.equal(client.sessions.length, 2);
+});
+
 test("live health differs from authenticated SDK readiness and catalog recovery", async t => {
   const first = new FakeClient(), second = new FakeClient(); let factories = 0;
   const { request, base, manager } = await setup(t, { client: first, managerOptions: { clientFactory: () => { factories++; return second; } } });

@@ -2,7 +2,16 @@
 
 [English](README.md) · [안정성 계약](../STABILITY_TESTING_KO.md)
 
-## 최신: Playwright headless 기반 실제 Codex TUI 시나리오 — 한국 시간 2026-09-23
+## 최신: TUI → bridge → Copilot SDK 연결 v2 — 한국 시간 2026-09-23
+
+[전체 결과·연결 실패·개선 사항·증거](2026-09-23-tui-connection-v2/README_KO.md)
+
+- `codex-ghcp-tui-12-v2`: **72/72(100%)**, 6개 모델 모두 12/12, 구현 `fe500d78`을 현재·동결 소스로 검증했습니다.
+- 최초 독립 실행 **45/72(62.50%)**를 보존합니다. 시작 실패 26건과 확인된 Copilot API 연결 시간 초과 1건이었으며 실행 간 점수를 합산하지 않습니다.
+- 최종 실행은 늘린 제한이 아닌 기본 무진행 90초·복구 1회를 사용했습니다. 실패 스트림·무응답 턴·SDK 정리 오류는 없었습니다.
+- SDK 실제 모델/tier·Responses SSE·watchdog 설정·정상 정리를 검사합니다. 제한된 실행의 결과이며 향후 네트워크 가용성·수시간 내구성을 보장하지 않습니다.
+
+## 이전: Playwright headless 기반 실제 Codex TUI 시나리오 — 한국 시간 2026-09-23
 
 [결과·발견한 문제·관찰 사항·증거](2026-09-23-tui-scenarios/README_KO.md)
 

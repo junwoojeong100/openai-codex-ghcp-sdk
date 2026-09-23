@@ -80,13 +80,16 @@ test("health requires matching PID, instance and Responses protocol", async (t) 
 
 test("daemon status verifies authentication without returning the stored token", async (t) => {
   const { env, paths } = stateDirectory(t);
-  const { bridge } = await fakeBridge(t);
+  const { bridge, health } = await fakeBridge(t);
   writeRegistry(paths, bridge);
   assert.deepEqual(await bridgeModels(bridge), [{ id: model, object: "model", owned_by: "github-copilot" }]);
   const status = await daemonStatus(env);
   assert.equal(status.running, true);
   assert.equal(status.pid, bridge.pid);
+  assert.equal(status.turnWatchdog, null, "older processes must not claim the new watchdog is active");
   assert.equal(JSON.stringify(status).includes(bridge.token), false);
+  health.turnWatchdog = { idleTimeoutMs: 90_000, recoveryAttempts: 1, intervalMs: 15_000 };
+  assert.deepEqual((await daemonStatus(env)).turnWatchdog, health.turnWatchdog);
   writeRegistry(paths, { ...bridge, token: "c".repeat(64) });
   const unverified = await daemonStatus(env);
   assert.equal(unverified.running, false);

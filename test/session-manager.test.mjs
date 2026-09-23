@@ -6,6 +6,7 @@ import path from "node:path";
 import test from "node:test";
 
 import { SessionManager, aggregateUsage } from "../src/session-manager.mjs";
+import { SUPPORTED_MODEL_IDS } from "../src/model-map.mjs";
 import { normalizeRequest } from "../src/request-policy.mjs";
 import { outputItems } from "../src/responses.mjs";
 
@@ -778,6 +779,75 @@ test("reasoning summaries stay disabled across effort changes and history rebuil
   assert.deepEqual(client.sessions[1].config.systemMessage, { mode: "append", content: "Changed client policy" });
 });
 
+for (const id of SUPPORTED_MODEL_IDS) {
+  test(`maximum context tier survives effort changes, history rebuilds and idle recovery (${id})`, async t => {
+    const extended = id !== "claude-haiku-4.5";
+    const expected = extended ? "long_context" : "default";
+    const family = headers(`context-${id}`);
+    const { manager, client } = await setup(t, { turnIdleTimeoutMs: 40 }, {
+      models: [{ id, supportedReasoningEfforts: ["low", "high"],
+        capabilities: { supports: { reasoningEffort: extended } },
+        ...(extended ? { billing: { tokenPrices: {
+          maxPromptTokens: 200_000, longContext: { maxPromptTokens: 872_000 },
+        } } } : {}),
+      }],
+      onSend: (session, { prompt }) => {
+        if (prompt === "stall") session.emit("assistant.turn_start", {});
+        else session.reply("continued");
+      },
+    });
+    await manager.execute(body("first", { model: id, reasoning: { effort: "low" } }), family, { responseId: "context-first" });
+    await manager.execute(body("second", { model: id, previous_response_id: "context-first", reasoning: { effort: "high" } }), family);
+    assert.equal(client.sessions.length, 1);
+    if (extended) assert.deepEqual(client.sessions[0].switched, [
+      { id, options: { reasoningEffort: "high", reasoningSummary: "none", contextTier: expected } },
+    ]);
+    await manager.execute(body("branch", { model: id, instructions: "Changed policy." }), family, { responseId: "context-branch" });
+    assert.equal(client.sessions.length, 2);
+    const result = await manager.execute(body("stall", { model: id, previous_response_id: "context-branch" }), family);
+    assert.equal(result.messages[0].content, "continued");
+    assert.equal(client.sessions.length, 3);
+    assert.ok(client.sessions.every(session => session.config.model === id && session.config.contextTier === expected));
+    assert.equal([...manager.states.values()][0].contextTier, expected);
+    assert.ok(client.sessions.slice(0, 2).every(session => session.aborted === 1));
+  });
+}
+
+test("a context tier change cannot replace a session while tool calls are pending", async t => {
+  const diagnostics = [];
+  const catalogEntry = { id: model, supportedContextTiers: ["default", "long_context"] };
+  const request = body("read", { tools: [functionTool] });
+  const { manager, client } = await setup(t, { onDiagnostic: event => diagnostics.push(event) }, {
+    models: [catalogEntry], onSend: session => session.toolCalls([call(request, 0, "tier-pending", {})]),
+    onSubmit: session => session.reply("done"),
+  });
+  await manager.execute(request, headers("tier-pending"));
+  catalogEntry.supportedContextTiers = ["default"];
+  const continuation = body([{ type: "function_call_output", call_id: "tier-pending", output: "tool result" }]);
+  await assert.rejects(manager.execute(continuation, headers("tier-pending")), { code: "pending_session_changed" });
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].submitted.length, 0);
+  assert.equal(client.sessions[0].aborted, 0);
+  assert.deepEqual(diagnostics.find(event => event.event === "bridge.pending_session_changed").changed, ["contextTier"]);
+  catalogEntry.supportedContextTiers = ["default", "long_context"];
+  await manager.execute(continuation, headers("tier-pending"));
+  assert.equal(client.sessions[0].submitted.length, 1);
+});
+
+test("an upstream rejection of the advertised long-context tier never silently falls back", async t => {
+  const { manager, client } = await setup(t, {}, {
+    models: [{ id: model, supportedContextTiers: ["default", "long_context"] }],
+    createSession: session => {
+      assert.equal(session.config.contextTier, "long_context");
+      throw new Error("Long-context tier is unavailable for this account.");
+    },
+  });
+  await assert.rejects(manager.execute(body()), /Long-context tier is unavailable/);
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].sent.length, 0);
+  assert.equal(manager.states.size, 0);
+});
+
 test("reasoning summaries are disabled for a model without configurable effort", async t => {
   const haiku = "claude-haiku-4.5";
   const { manager, client } = await setup(t, { preferredModel: haiku }, {
@@ -976,7 +1046,7 @@ test("the idle watchdog rejects a silent turn despite control-plane and subordin
   let timer;
   t.after(() => clearInterval(timer));
   const { manager, client } = await setup(t, {
-    turnTimeoutMs: 400, turnIdleTimeoutMs: 60, onDiagnostic: event => diagnostics.push(event),
+    turnTimeoutMs: 400, turnIdleTimeoutMs: 60, turnIdleRecoveryAttempts: 0, onDiagnostic: event => diagnostics.push(event),
   }, {
     onSend: session => {
       session.emit("assistant.turn_start", {});
@@ -1011,6 +1081,7 @@ for (const [type, field] of [
   ["assistant.message_delta", "deltaContent"],
   ["assistant.reasoning_delta", "deltaContent"],
   ["assistant.tool_call_delta", "inputDelta"],
+  ["assistant.streaming_delta", "totalResponseSizeBytes"],
 ]) test(`genuine root progress refreshes the idle watchdog without exposing hidden data (${type})`, async t => {
   let timer;
   t.after(() => clearInterval(timer));
@@ -1020,7 +1091,7 @@ for (const [type, field] of [
       let ticks = 0;
       session.emit("assistant.turn_start", {});
       timer = setInterval(() => {
-        session.emit(type, { [field]: "progress-data" });
+        session.emit(type, { [field]: field === "totalResponseSizeBytes" ? (ticks + 1) * 512 : "progress-data" });
         if (++ticks === 5) {
           clearInterval(timer);
           session.reply("completed");
@@ -1036,6 +1107,283 @@ for (const [type, field] of [
   if (type !== "assistant.message_delta") assert.doesNotMatch(JSON.stringify(forwarded), /progress-data/);
   assert.ok(!diagnostics.some(event => event.event === "bridge.turn_stalled"));
 });
+
+test("byte progress resets at each root turn boundary", async t => {
+  let timer;
+  t.after(() => clearInterval(timer));
+  const { manager, client } = await setup(t, { turnIdleTimeoutMs: 80, turnIdleRecoveryAttempts: 0 }, {
+    onSend: session => {
+      let ticks = 0;
+      session.emit("assistant.turn_start", {});
+      timer = setInterval(() => {
+        if (++ticks === 3) session.emit("assistant.turn_start", {});
+        session.emit("assistant.streaming_delta", { totalResponseSizeBytes: ticks < 3 ? ticks * 1000 : (ticks - 2) * 10 });
+        if (ticks === 8) {
+          clearInterval(timer);
+          session.reply("completed after counter reset");
+        }
+      }, 25);
+    },
+  });
+  assert.equal((await manager.execute(body())).messages[0].content, "completed after counter reset");
+  assert.equal(client.sessions.length, 1);
+});
+
+test("unchanged, invalid and subordinate byte counters cannot conceal a stalled root", async t => {
+  const diagnostics = [];
+  let timer;
+  t.after(() => clearInterval(timer));
+  const { manager, client } = await setup(t, {
+    turnIdleTimeoutMs: 70, turnIdleRecoveryAttempts: 0, readinessIntervalMs: 20,
+    onDiagnostic: event => diagnostics.push(event),
+  }, { onSend: session => {
+    session.emit("assistant.turn_start", {});
+    session.emit("assistant.streaming_delta", { totalResponseSizeBytes: 100 });
+    let bytes = 100;
+    timer = setInterval(() => {
+      for (const value of [100, 99, 0, -1, "200", NaN, Infinity, 101.5, Number.MAX_SAFE_INTEGER + 1]) {
+        session.emit("assistant.streaming_delta", { totalResponseSizeBytes: value });
+      }
+      for (const [data, extra] of [[{}, { agentId: "child" }], [{ agentId: "child" }, {}], [{ parentToolCallId: "child" }, {}]]) {
+        session.emit("assistant.streaming_delta", { ...data, totalResponseSizeBytes: ++bytes }, extra);
+      }
+    }, 10);
+  } });
+  await assert.rejects(manager.execute(body()), { code: "copilot_idle_timeout" });
+  assert.equal(client.sessions.length, 1);
+  assert.equal(diagnostics.find(event => event.event === "bridge.turn_stalled").lastActivity, "assistant.streaming_delta");
+  assert.ok(diagnostics.some(event => event.event === "bridge.turn_watchdog"));
+});
+
+test("a silent acknowledged turn is recovered once without restarting the client or response", async t => {
+  const diagnostics = [];
+  let sends = 0, ready = 0;
+  const { manager, client } = await setup(t, {
+    turnIdleTimeoutMs: 40, readinessIntervalMs: 10, onDiagnostic: event => diagnostics.push(event),
+  }, { onSend: session => {
+    if (++sends === 1) {
+      session.emit("assistant.turn_start", {});
+      session.emit("assistant.usage", { model, inputTokens: 5, outputTokens: 2, cacheReadTokens: 1 });
+    } else session.reply("recovered");
+  } });
+  const input = body("private-recovery-prompt", { instructions: "private-policy", reasoning: { effort: "high" } });
+  const result = await manager.execute(input, headers("automatic-recovery"), {
+    responseId: "resp_recovered", onReady: () => ready++,
+  });
+  assert.equal(result.messages[0].content, "recovered");
+  assert.deepEqual(result.usage, {
+    input_tokens: 15, output_tokens: 5, total_tokens: 20,
+    input_tokens_details: { cached_tokens: 3 }, output_tokens_details: { reasoning_tokens: 0 },
+  });
+  assert.equal(ready, 1);
+  assert.equal(client.sessions.length, 2);
+  assert.equal(client.sessions[0].aborted, 1);
+  assert.equal(client.sessions[0].disconnected, 1);
+  assert.equal(client.sessions[0].events.listenerCount("assistant.streaming_delta"), 0);
+  assert.equal(client.sessions[1].aborted, 0);
+  assert.equal(client.sessions[1].config.systemMessage.content, "private-policy");
+  assert.equal(client.sessions[1].config.reasoningEffort, "high");
+  assert.equal(client.sessions[1].config.reasoningSummary, "none");
+  assert.deepEqual(client.sessions.map(session => session.sent.length), [1, 1]);
+  assert.equal(client.stopped, false);
+  assert.equal(diagnostics.filter(event => event.event === "bridge.turn_recovering").length, 1);
+  assert.equal(diagnostics.filter(event => event.event === "bridge.turn_recovered").length, 1);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /private-recovery-prompt|private-policy/);
+  await manager.execute(input, headers("automatic-recovery"));
+  assert.equal(sends, 2, "the recovered result remains idempotently cached");
+});
+
+test("idle recovery has a finite attempt budget and never reports a false success", async t => {
+  const diagnostics = [];
+  const { manager, client } = await setup(t, {
+    turnIdleTimeoutMs: 35, onDiagnostic: event => diagnostics.push(event),
+  }, { onSend: session => session.emit("assistant.turn_start", {}) });
+  await assert.rejects(manager.execute(body()), error => {
+    assert.equal(error.code, "copilot_idle_timeout");
+    assert.match(error.message, /expired after 35 ms without root progress \(last event: assistant.turn_start\)/);
+    assert.match(error.message, /exhausted after 1 attempt/);
+    assert.doesNotMatch(error.message, /no request was retried/i);
+    return true;
+  });
+  assert.equal(client.sessions.length, 2);
+  assert.ok(client.sessions.every(session => session.sent.length === 1 && session.aborted === 1));
+  assert.equal(manager.states.size, 0);
+  assert.equal(manager.responses.size, 0);
+  assert.equal(diagnostics.filter(event => event.event === "bridge.turn_stalled").length, 2);
+  assert.ok(!diagnostics.some(event => event.event === "bridge.turn_recovered"));
+});
+
+for (const mode of ["partial-text", "message", "pending-call", "unacknowledged-send"]) {
+  test(`idle recovery cannot replay an unsafe turn (${mode})`, async t => {
+    const diagnostics = [];
+    const request = body("read", { tools: [functionTool] });
+    const { manager, client } = await setup(t, {
+      turnIdleTimeoutMs: 35, turnIdleRecoveryAttempts: 3, onDiagnostic: event => diagnostics.push(event),
+    }, {
+      onSend: session => {
+        session.emit("assistant.turn_start", {});
+        if (mode === "partial-text") session.emit("assistant.message_delta", { messageId: "partial", deltaContent: "partial" });
+        if (mode === "message") session.emit("assistant.message", message("not finished"));
+        if (mode === "pending-call") session.emit("external_tool.requested", {
+          toolCallId: "pending", requestId: "rpc-pending", sessionId: session.sessionId,
+          toolName: normalizeRequest(request).tools[0].name, arguments: {},
+        });
+        if (mode === "unacknowledged-send") return new Promise(() => {});
+      },
+    });
+    const reason = mode === "unacknowledged-send" ? "input_unacknowledged"
+      : mode === "pending-call" ? "pending_tool_calls" : "output_started";
+    await assert.rejects(manager.execute(request), error => {
+      assert.equal(error.code, "copilot_idle_timeout");
+      assert.ok(error.message.includes(reason));
+      return true;
+    });
+    assert.equal(diagnostics.find(event => event.event === "bridge.turn_recovery_skipped").reason, reason);
+    assert.equal(client.sessions.length, 1);
+    assert.equal(client.sessions[0].sent.length, 1);
+  });
+}
+
+for (const operation of ["abort", "disconnect", "delete"]) {
+  test(`idle recovery requires confirmed cleanup (${operation})`, async t => {
+    const diagnostics = [];
+    const { manager, client } = await setup(t, {
+      turnIdleTimeoutMs: 35, cleanupTimeoutMs: 20, onDiagnostic: event => diagnostics.push(event),
+    }, { onSend: session => {
+      if (operation !== "delete") session[operation] = () => new Promise(() => {});
+    } });
+    if (operation === "delete") client.deleteSession = async () => { throw new Error("owned cleanup failure"); };
+    await assert.rejects(manager.execute(body()), { code: "copilot_idle_timeout" });
+    assert.equal(client.sessions.length, 1);
+    assert.ok(diagnostics.some(event => event.event === "bridge.turn_recovery_skipped" && event.reason === "cleanup_unconfirmed"));
+  });
+}
+
+test("recovery replays acknowledged tool results as history without resubmitting their RPC", async t => {
+  const request = body("read", { tools: [functionTool], instructions: "Keep the user policy." });
+  let sends = 0;
+  const { manager, client } = await setup(t, { turnIdleTimeoutMs: 40 }, {
+    onSend: (session, options) => {
+      if (options.mode === "immediate") return;
+      if (++sends === 1) session.toolCalls([call(request, 0, "done-call", { path: "example" })]);
+      else session.reply("continued from completed work");
+    },
+    onSubmit: session => session.emit("assistant.turn_start", {}),
+  });
+  await manager.execute(request, headers("tool-recovery"), { responseId: "resp_tools" });
+  const continuation = body([
+    { type: "function_call_output", call_id: "done-call", output: "original result" },
+    { role: "user", content: "Continue without rerunning the read." },
+  ], { previous_response_id: "resp_tools" });
+  const result = await manager.execute(continuation, headers("tool-recovery"), { responseId: "resp_tool_recovered" });
+  assert.equal(result.messages.at(-1).content, "continued from completed work");
+  assert.equal(client.sessions.length, 2);
+  assert.equal(client.sessions[0].submitted.length, 1);
+  assert.equal(client.sessions[1].submitted.length, 0);
+  assert.match(client.sessions[1].sent[0].prompt, /Earlier tool calls are history/);
+  assert.match(client.sessions[1].sent[0].prompt, /original result/);
+  assert.match(client.sessions[1].sent[0].prompt, /Continue without rerunning/);
+  assert.equal(client.sessions[1].config.systemMessage.content, "Keep the user policy.");
+  assert.ok([...manager.states.values()][0].completed.has("done-call"));
+  assert.deepEqual(await manager.execute(continuation, headers("tool-recovery")), result);
+  assert.equal(sends, 2);
+  assert.equal(client.sessions[0].submitted.length, 1);
+  assert.equal(manager.responses.get("resp_tools").state, manager.responses.get("resp_tool_recovered").state);
+  await assert.rejects(manager.execute(body("new input", { previous_response_id: "resp_tools" }),
+    headers("tool-recovery")), { code: "stale_response" });
+  await manager.execute(body("new input", { previous_response_id: "resp_tool_recovered" }), headers("tool-recovery"));
+  assert.equal(client.sessions.length, 2);
+  assert.equal(sends, 3);
+});
+
+test("anonymous tool-result retries find the recovered success cache without another RPC", async t => {
+  const request = body("read", { tools: [functionTool] });
+  let sends = 0;
+  const { manager, client } = await setup(t, { turnIdleTimeoutMs: 35 }, {
+    onSend: session => {
+      if (++sends === 1) session.toolCalls([call(request, 0, "anonymous-done-call", {})]);
+      else session.reply("recovered anonymous continuation");
+    },
+    onSubmit: () => {},
+  });
+  await manager.execute(request);
+  const continuation = body([{ type: "function_call_output", call_id: "anonymous-done-call", output: "completed result" }]);
+  const result = await manager.execute(continuation);
+  assert.deepEqual(await manager.execute(continuation), result);
+  assert.equal(sends, 2);
+  assert.deepEqual(client.sessions.map(session => session.submitted.length), [1, 0]);
+  const state = [...manager.states.values()][0];
+  assert.equal(manager.callStates.get("anonymous-done-call"), state);
+  await manager.stop();
+  assert.equal(manager.callStates.size, 0);
+});
+
+test("idle recovery never resets the absolute turn deadline", async t => {
+  const { manager, client } = await setup(t, { turnTimeoutMs: 125, turnIdleTimeoutMs: 50, turnIdleRecoveryAttempts: 3 }, {
+    onSend: session => session.emit("assistant.turn_start", {}),
+  });
+  const started = Date.now();
+  await assert.rejects(manager.execute(body()), { code: "copilot_timeout" });
+  assert.ok(Date.now() - started < 300);
+  assert.ok(client.sessions.length >= 2 && client.sessions.length <= 3);
+  assert.equal(manager.states.size, 0);
+});
+
+test("cancelling during idle recovery cleanup cannot submit another prompt", async t => {
+  const controller = new AbortController();
+  const { manager, client } = await setup(t, { turnIdleTimeoutMs: 35 }, { onSend: session => {
+    const abort = session.abort.bind(session);
+    session.abort = async () => { controller.abort(); await abort(); };
+  } });
+  await assert.rejects(manager.execute(body(), {}, { signal: controller.signal }), { name: "AbortError" });
+  await manager.queue.drain();
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.equal(manager.states.size, 0);
+});
+
+test("recovery setup failure never falsely claims that no recovery was attempted", async t => {
+  let creations = 0;
+  const { manager, client } = await setup(t, { turnIdleTimeoutMs: 35, startupTimeoutMs: 25 }, {
+    onSend: () => {},
+    createSession: () => { if (++creations === 2) return new Promise(() => {}); },
+  });
+  await assert.rejects(manager.execute(body()), error => {
+    assert.equal(error.code, "copilot_setup_timeout");
+    assert.doesNotMatch(error.message, /no request was retried/i);
+    return true;
+  });
+  assert.equal(client.sessions.length, 2);
+  assert.deepEqual(client.sessions.map(session => session.sent.length), [1, 0]);
+  assert.equal(manager.states.size, 0);
+});
+
+for (const operation of ["list", "disable"]) {
+  test(`cancelling recovery during MCP ${operation} cannot restore handles or send input`, async t => {
+    const controller = new AbortController();
+    let creations = 0;
+    const { manager, client } = await setup(t, { turnIdleTimeoutMs: 35, readinessTimeoutMs: 500 }, {
+      onSend: (session, { prompt }) => { if (prompt === "first") session.reply("first answer"); },
+      createSession: session => {
+        if (++creations !== 2) return;
+        const cancelled = () => { controller.abort(); return new Promise(() => {}); };
+        session.rpc.mcp = {
+          list: operation === "list" ? cancelled : async () => ({ servers: [{ name: "owned", status: "connected" }] }),
+          disable: cancelled,
+        };
+      },
+    });
+    await manager.execute(body("first"), headers("cancel-recovery"), { responseId: "before-recovery" });
+    await assert.rejects(manager.execute(body("second", { previous_response_id: "before-recovery" }),
+      headers("cancel-recovery"), { signal: controller.signal }), { name: "AbortError" });
+    await manager.queue.drain();
+    assert.equal(client.sessions.length, 2);
+    assert.deepEqual(client.sessions.map(session => session.sent.length), [2, 0]);
+    assert.equal(manager.states.size, 0);
+    assert.equal(manager.responses.size, 0);
+    assert.equal(client.sessions[1].events.eventNames().length, 0);
+  });
+}
 
 test("root progress cannot extend the absolute turn deadline indefinitely", async t => {
   let timer;

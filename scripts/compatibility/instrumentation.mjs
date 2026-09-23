@@ -1,12 +1,26 @@
 import { StringDecoder } from "node:string_decoder";
 import { randomUUID } from "node:crypto";
+import { withinDeadline } from "../../src/copilot-session-rpc.mjs";
 import { sha } from "./util.mjs";
 
-export function observeSdk(client, records) {
+export function observeSdk(client, records, { verifyModelState = false } = {}) {
   const record = value => records.push({ ...value, at: Date.now() });
+  const verifyModel = async (session, operation, model, contextTier) => {
+    if (!verifyModelState) return;
+    try {
+      const current = await withinDeadline(() => session.rpc.model.getCurrent(), 5000);
+      record({ type: "session.model_verified", sessionId: session.sessionId, operation,
+        requestedModel: model, requestedTier: contextTier ?? null, model: current.modelId,
+        contextTier: current.contextTier, effort: current.reasoningEffort ?? null });
+    } catch (error) {
+      record({ type: "session.model_verification_failed", sessionId: session.sessionId, operation,
+        failureType: error?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error" });
+    }
+  };
   const wrapSession = (session, config) => {
     const sessionId = session.sessionId ?? config.sessionId;
     record({ type: "session.created", sessionId, model: config.model, effort: config.reasoningEffort ?? null,
+      contextTier: config.contextTier ?? null,
       tools: (config.tools || []).map(({ name, parameters }) => ({ name, parameters })), availableTools: config.availableTools });
     for (const name of ["assistant.usage", "assistant.message", "external_tool.requested", "session.error"]) {
       session.on(name, event => record({ type: name, sessionId, agentId: event.agentId ?? null, data: event.data }));
@@ -18,14 +32,27 @@ export function observeSdk(client, records) {
       } } };
       if (["send", "setModel", "abort", "disconnect"].includes(key)) return async (...args) => {
         record({ type: `session.${key}`, sessionId, ...(key === "send" ? { promptHash: sha(args[0]?.prompt || "") } : {}),
-          ...(key === "setModel" ? { model: args[0], effort: args[1]?.reasoningEffort ?? null } : {}) });
-        return target[key](...args);
+          ...(key === "setModel" ? { model: args[0], effort: args[1]?.reasoningEffort ?? null, contextTier: args[1]?.contextTier ?? null } : {}) });
+        const result = await target[key](...args);
+        if (key === "setModel") await verifyModel(target, "setModel", args[0], args[1]?.contextTier);
+        return result;
       };
       const value = Reflect.get(target, key, target); return typeof value === "function" ? value.bind(target) : value;
     } });
   };
   return new Proxy(client, { get(target, key) {
-    if (key === "createSession") return async config => wrapSession(await target.createSession(config), config);
+    if (key === "createSession") return async config => {
+      const session = wrapSession(await target.createSession(config), config);
+      await verifyModel(session, "created", config.model, config.contextTier);
+      return session;
+    };
+    if (key === "listModels" && verifyModelState) return async (...args) => {
+      const models = await target.listModels(...args);
+      record({ type: "models.list", models: models.map(({ id, capabilities, billing, supportedContextTiers }) => ({
+        id, capabilities: { limits: capabilities?.limits }, billing, supportedContextTiers,
+      })) });
+      return models;
+    };
     if (["deleteSession", "stop", "forceStop"].includes(key)) return async (...args) => {
       const result = await target[key](...args); record({ type: `client.${key}`, sessionId: key === "deleteSession" ? args[0] : undefined }); return result;
     };

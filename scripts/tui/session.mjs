@@ -7,6 +7,7 @@ import { createHash } from "node:crypto";
 import { StringDecoder } from "node:string_decoder";
 import { fileURLToPath } from "node:url";
 import { performance } from "node:perf_hooks";
+import { isDeepStrictEqual } from "node:util";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
 import { ROOT, environment, mkdir, writeJson } from "../compatibility/util.mjs";
 import { createBrowserTerminal } from "../soak/browser.mjs";
@@ -17,6 +18,17 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const PASSTHROUGH = ["COPILOT_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN", "GH_CONFIG_DIR", "HTTPS_PROXY", "HTTP_PROXY"];
 export const POPUP = /Select Model and Effort|Select Reasoning Level|Select Model\b/;
 export const MCP_PROCESS = /@azure\/mcp|azmcp|@playwright\/mcp|mcp-server|computer-use-mcp/i;
+
+// Codex 0.154's auxiliary title request needs unsupported structured output.
+// Keep the exact rejection visible; never excuse another HTTP or stream failure.
+export function isExpectedTitleRejection(row) {
+  return row.method === "POST" && row.path === "/v1/responses" && row.status === 400 && row.finished === true && !row.terminal
+    && /^application\/json\b/.test(row.contentType ?? "") && row.requestShape?.stream === true && row.requestShape?.toolCount === 0
+    && isDeepStrictEqual(row.requestShape?.format, { type: "json_schema", strict: true, name: "codex_output_schema",
+      schema: { type: "object", properties: { title: { type: "string", minLength: 1, maxLength: 36 } }, required: ["title"], additionalProperties: false } })
+    && row.error?.code === "invalid_request_error"
+    && row.error?.message === "Structured output is not supported; use plain text output.";
+}
 
 export function processTable() {
   return execFileSync("ps", ["-axo", "pid=,ppid=,command="], { encoding: "utf8", maxBuffer: 16 * 1024 * 1024 }).trim().split("\n")
@@ -92,7 +104,7 @@ export class TuiSession {
     this.tmp = mkdir(path.join(this.owned, "tmp"));
     this.observerDir = mkdir(path.join(directory, "observer"));
     this.observerFile = path.join(directory, "observer-config.json");
-    writeJson(this.observerFile, { output: this.observerDir, executionKind, model });
+    writeJson(this.observerFile, { output: this.observerDir, executionKind, model, verifyModelState: true });
   }
   childEnv() {
     const env = environment(this.env, { home: this.home, codexHome: this.codexHome, tmp: this.tmp, token: "" });
@@ -210,9 +222,23 @@ export class TuiSession {
     return inspectTerminalScreen(text, { knownCodex: true, prompt, expectedMarker: marker }).markerObserved && this.ready(text);
   }
   async ask(prompt, marker, timeoutMs = 240000) {
+    const offset = this.observer().http.length;
+    let readySince;
     await this.submit(prompt);
     await sleep(300);
-    return this.waitFor(`answer-${marker}`, text => this.answered(text, marker, prompt), timeoutMs);
+    return this.waitFor(`answer-${marker}`, text => {
+      const requests = this.observer().http.slice(offset).filter(row => row.method === "POST" && !isExpectedTitleRejection(row));
+      if (requests.some(row => row.terminal === "response.failed" || row.status >= 400)) {
+        this.snapshot("request-failed");
+        throw new Error("The bridge request failed; see the recorded HTTP and SDK evidence.");
+      }
+      if (this.ready(text) && requests.some(row => row.finished && row.terminal === "response.completed")) readySince ??= performance.now();
+      else readySince = undefined;
+      if (readySince === undefined || performance.now() - readySince < 500) return false;
+      if (this.answered(text, marker, prompt)) return true;
+      this.snapshot("unexpected-answer");
+      throw new Error("The model completed its turn without the expected answer; this is not a stream timeout.");
+    }, timeoutMs);
   }
   async slash(command) {
     await this.keys(command);
@@ -222,15 +248,21 @@ export class TuiSession {
   async quit(timeoutMs = 45000) {
     clearInterval(this.sampler);
     await this.slash("/quit");
-    const exited = await Promise.race([this.exited.then(() => true), sleep(timeoutMs).then(() => false)]);
+    const exited = await this.waitForExit(timeoutMs);
     await this.closeLaunch();
     return exited;
+  }
+  async waitForExit(timeoutMs) {
+    let timer;
+    try {
+      return await Promise.race([this.exited.then(() => true), new Promise(resolve => { timer = setTimeout(() => resolve(false), timeoutMs); })]);
+    } finally { clearTimeout(timer); }
   }
   async closeLaunch() {
     clearInterval(this.sampler);
     if (this.helper && !this.helperExit) {
       this.send?.({ type: "stop" });
-      const stopped = await Promise.race([this.exited.then(() => true), sleep(20000).then(() => false)]);
+      const stopped = await this.waitForExit(20000);
       if (!stopped) { this.helper.kill("SIGKILL"); await this.exited; }
     }
     try { await this.renderer?.close(); } catch (error) { this.launches.at(-1).rendererCloseError = error.message; }
@@ -250,6 +282,11 @@ export class TuiSession {
   async close() {
     if (this.closed) return this.evidence;
     this.closed = true;
+    if (this.helper && !this.helperExit && this.ready(this.screen())) {
+      try {
+        if (!await this.quit()) this.launches.at(-1).quitError = "Codex did not exit after /quit";
+      } catch (error) { this.launches.at(-1).quitError = error.message; }
+    }
     await this.closeLaunch();
     await sleep(750);
     const catalogLeft = fs.existsSync(this.tmp) ? fs.readdirSync(this.tmp).filter(name => name.startsWith("codex-ghcp-models-")) : [];

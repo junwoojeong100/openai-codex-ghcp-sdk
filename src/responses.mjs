@@ -151,7 +151,7 @@ export class ResponsesStream {
   }
 
   handleSdkEvent(event) {
-    if (this.finished || event.agentId || event.data?.parentToolCallId || event.type !== "assistant.message_delta") return;
+    if (this.finished || event.agentId || event.data?.agentId || event.data?.parentToolCallId || event.type !== "assistant.message_delta") return;
     const { deltaContent, messageId: sdkId } = event.data || {};
     if (typeof deltaContent !== "string") throw protocolError("Copilot returned an invalid message delta.");
     if (!deltaContent) return;

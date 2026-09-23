@@ -1,0 +1,2050 @@
+{
+  "schemaVersion": 2,
+  "catalogId": "codex-ghcp-tui-12-v2",
+  "catalogHash": "1d3f0d44d22063b11552397a0f02ddcb2feff627f3a6060676e1ce3bdde89992",
+  "implementationHash": "e483271a61063beb13e7b85051cef0cfa53cdae8b8daf668821a583f53e6a0f5",
+  "runId": "6c752e9e-1ed1-4c32-91c7-ab8e237d7917",
+  "executionKind": "live",
+  "startedAt": "2026-09-23T05:34:08.352Z",
+  "finishedAt": "2026-09-23T05:45:21.138Z",
+  "cases": [
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:10.544Z",
+      "seed": "8bbf976d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 13980,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 13941,
+      "artifactPath": "cases/claude-opus-5.5/U01",
+      "resultHash": "4bf36b6e11d0ae5bb11caca15bd272b7e880d644cd6c43e5a41cc70363648b1e",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:24.526Z",
+      "seed": "d90bf515",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 25464,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 25430,
+      "artifactPath": "cases/claude-opus-5.5/U02",
+      "resultHash": "e3fc1c5fb1ba42f759c7cc96fa88ee49a0c1334a1d74655549f68eccde6cd772",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:49.990Z",
+      "seed": "b7efeb50",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12365,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12333,
+      "artifactPath": "cases/claude-opus-5.5/U03",
+      "resultHash": "4a504f53ce46afc2b36c2595b407f6147f5ad14ecc5671c93ed85bcf5d5d08d2",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:02.356Z",
+      "seed": "eb1cc446",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 33947,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 33916,
+      "artifactPath": "cases/claude-opus-5.5/U04",
+      "resultHash": "629caf54f6afd66f866ea8d53ac50398b718a6b23c197547813f5b380813365e",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:36.303Z",
+      "seed": "15eff7a0",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12423,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12388,
+      "artifactPath": "cases/claude-opus-5.5/U05",
+      "resultHash": "ccb050600cbd64eb42fe8bc12c064fd12e9c22b169cf72424ebd29b93952d980",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:48.727Z",
+      "seed": "40cb6cc0",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 27391,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 27360,
+      "artifactPath": "cases/claude-opus-5.5/U06",
+      "resultHash": "cfcc7a08bf04b56b86a16f545e424dbe777168f42c496d7f7957802c6177aa42",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:16.118Z",
+      "seed": "0c096e03",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10764,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10730,
+      "artifactPath": "cases/claude-opus-5.5/U07",
+      "resultHash": "0222d4c7b5f3492bbfa4bb167bdac3011fa1e53a0f3fc68a02dd592f0e5404e3",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:26.884Z",
+      "seed": "4f57a204",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11121,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11086,
+      "artifactPath": "cases/claude-opus-5.5/U08",
+      "resultHash": "e0b81ec610a2bc12cc7213414ea9bf4842eaa5083a0903294a5700a43a02e670",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:38.005Z",
+      "seed": "eb353210",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 19620,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 19588,
+      "artifactPath": "cases/claude-opus-5.5/U09",
+      "resultHash": "75e05b48b7bb932d85701f0ccbb38d0db6938692f2fa55cb343c1b92180cedce",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:57.626Z",
+      "seed": "c72e440d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17462,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17427,
+      "artifactPath": "cases/claude-opus-5.5/U10",
+      "resultHash": "3ae8a524bfc3b0fef944e08fca5542298e1ece7974eb070ed93e697616e3c2d5",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U11",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:37:15.088Z",
+      "seed": "27c40fc0",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31603,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U11.effort",
+        "U11.reply"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31571,
+      "artifactPath": "cases/claude-opus-5.5/U11",
+      "resultHash": "9a1ea5b1e0bcd667a12de65d785e267b338923c2296a84383eace697b9143d2e",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U12",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:37:46.691Z",
+      "seed": "604f5e7e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31517,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U12.isolation",
+        "U12.quit"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31484,
+      "artifactPath": "cases/claude-opus-5.5/U12",
+      "resultHash": "7fcfcf754644325d925177958acd66a88d4dbf3d7133be2912fa34252f39ff11",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:10.546Z",
+      "seed": "beb621f2",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12179,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12140,
+      "artifactPath": "cases/claude-sonnet-5/U01",
+      "resultHash": "f1237a8ca073e3fb9932b7dee0812b67572f2a53e0690a6b28420bbff40baa25",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:22.726Z",
+      "seed": "1b94fb6d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 18224,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 18190,
+      "artifactPath": "cases/claude-sonnet-5/U02",
+      "resultHash": "c65294b4bdbbaeebff236dad0572d8b8249fa6b407fbddc12cb3632a991af73a",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:40.951Z",
+      "seed": "cf9a6853",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11837,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11807,
+      "artifactPath": "cases/claude-sonnet-5/U03",
+      "resultHash": "d02298816b67342af0d3dff245f708bcc92c5c178de99100cbc574edff2b82cd",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:52.789Z",
+      "seed": "a3aa7b8f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11706,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11674,
+      "artifactPath": "cases/claude-sonnet-5/U04",
+      "resultHash": "77a62966a3c071987960aa57b8c4cebd9bfae375b757e901dc952c2d401543d8",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:04.495Z",
+      "seed": "dbbe1769",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 26115,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 26085,
+      "artifactPath": "cases/claude-sonnet-5/U05",
+      "resultHash": "8d34471efd0b06faaa82b41e767fce208fc200a4a8fee29f2352d3b00b37636e",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:30.610Z",
+      "seed": "c5de8634",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 26484,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 26452,
+      "artifactPath": "cases/claude-sonnet-5/U06",
+      "resultHash": "3ce499dce5dcf58e314d7a4f85246d6a205d9f3dfb1e8737b5bf67536dcf2370",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:57.095Z",
+      "seed": "b4db667d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 8649,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 8617,
+      "artifactPath": "cases/claude-sonnet-5/U07",
+      "resultHash": "d65cae693e430306f4417c01fc5fbaa54601dd8213cf4d4bd37f7e685b295cc2",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:05.744Z",
+      "seed": "75e11483",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 9922,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 9892,
+      "artifactPath": "cases/claude-sonnet-5/U08",
+      "resultHash": "9e0e626a729ebc03e46524c3e8c3e9470c3cb87341e2e96fa0f1ad5001612f58",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:15.667Z",
+      "seed": "38deaf39",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15930,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15897,
+      "artifactPath": "cases/claude-sonnet-5/U09",
+      "resultHash": "60732fb1474de4395e0286b55caed19adf19bfeae4d9d353d017609497e62a33",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:31.598Z",
+      "seed": "d333a097",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15160,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15124,
+      "artifactPath": "cases/claude-sonnet-5/U10",
+      "resultHash": "b4a910f18443c1c2a6f15176c60597ffcb1a0fb3e3fbb3b30f529654271e517c",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:46.758Z",
+      "seed": "eab9ce43",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12221,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12188,
+      "artifactPath": "cases/claude-sonnet-5/U11",
+      "resultHash": "e7623aa99a7108bf3a624c4532705aed9ed186c203760b899418c72f6856a4fb",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:58.980Z",
+      "seed": "b6f11f5f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12420,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12388,
+      "artifactPath": "cases/claude-sonnet-5/U12",
+      "resultHash": "fcea3cf9a025e9975df105b132848c717402a5e9f56be58a8b51528e40b6e8b8",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:10.547Z",
+      "seed": "2fcf102f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12678,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12641,
+      "artifactPath": "cases/claude-haiku-4.5/U01",
+      "resultHash": "cc10c8129b8a29b3ce8fa539aa70eca0b6db3050e7a1c43ebb900c70762cd152",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:23.226Z",
+      "seed": "bec23caa",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17832,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17800,
+      "artifactPath": "cases/claude-haiku-4.5/U02",
+      "resultHash": "78e9f94eff6feb1b2b5e83b7ddf6e94cba459468539aff20dc6efc9281642698",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:41.059Z",
+      "seed": "51f88423",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11057,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11026,
+      "artifactPath": "cases/claude-haiku-4.5/U03",
+      "resultHash": "d580d86a751e06b3cb4b289ddb4c9fb41d6bc3ec3d1ec98ebb269a3a69880a6b",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:34:52.117Z",
+      "seed": "4af00055",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 13168,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 13138,
+      "artifactPath": "cases/claude-haiku-4.5/U04",
+      "resultHash": "06541eb9febc1631b135a372800b8d98feaa54e5dac04cfd4f9f0afdc9e53861",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:05.285Z",
+      "seed": "51abbc3e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 26971,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 26941,
+      "artifactPath": "cases/claude-haiku-4.5/U05",
+      "resultHash": "60d284042156d143ec26ea11f0bcf3593fc966601cfd7a48ed5d77824434a9de",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:32.256Z",
+      "seed": "b03f469c",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 20618,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 20588,
+      "artifactPath": "cases/claude-haiku-4.5/U06",
+      "resultHash": "012cdd77cb3869773797b6eea52a8e3559b01d1e78819fb04683a43d4c6b70b1",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:35:52.875Z",
+      "seed": "6776f541",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 9336,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 9305,
+      "artifactPath": "cases/claude-haiku-4.5/U07",
+      "resultHash": "1373959b94c28d807de03ed518162ba164d600fcf25fb79cc4a5f43bc3066cbe",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:02.212Z",
+      "seed": "6a36ec81",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10979,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10939,
+      "artifactPath": "cases/claude-haiku-4.5/U08",
+      "resultHash": "88fec2235af48ca07f855d79afee42a61572348980eccb68975f790dd7eb5770",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:13.193Z",
+      "seed": "9ccf8c88",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 19546,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 19511,
+      "artifactPath": "cases/claude-haiku-4.5/U09",
+      "resultHash": "84bfc3350fca410be95df2bcccb08677015bbcf3dfc4ce79ed0e7b7ceece7453",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:32.739Z",
+      "seed": "406e6bc2",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15656,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15625,
+      "artifactPath": "cases/claude-haiku-4.5/U10",
+      "resultHash": "becbf9f59ba1d7c3bcb2d7e2299bc40b45fb6b0d2938b50e3fae099fac3f3f8e",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:36:48.395Z",
+      "seed": "e3a3f2d4",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12411,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12377,
+      "artifactPath": "cases/claude-haiku-4.5/U11",
+      "resultHash": "66356e03541bbf40da1bd53ba19e1e0d214a30f9b67eff4a6b16e49985b0ae84",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U12",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:37:00.806Z",
+      "seed": "39b23f67",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 139393,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "upstream",
+        "cleanup",
+        "U12.isolation",
+        "U12.quit"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "The bridge request failed; see the recorded HTTP and SDK evidence."
+      },
+      "durationMs": 139360,
+      "artifactPath": "cases/claude-haiku-4.5/U12",
+      "resultHash": "4809cebc046d0bfcd55cddc697001dd00fd3c99b23630ee9ccb5af4a875422f2",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U01",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:37:11.400Z",
+      "seed": "c8db989a",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31571,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U01.picker",
+        "U01.reply"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31536,
+      "artifactPath": "cases/gpt-6-astra/U01",
+      "resultHash": "a3242f3b1718fafe29c8aea53a4803ffe8417cbca6a0ba3dfdc7692fc9c6cab0",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U02",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:37:42.971Z",
+      "seed": "6dff8d65",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31585,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U02.switch",
+        "U02.reply"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31548,
+      "artifactPath": "cases/gpt-6-astra/U02",
+      "resultHash": "061916c183bc728fe3af96b5b29dc49a8508687cb6e576f9ea1680e0003c153e",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U03",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:38:14.557Z",
+      "seed": "1ee6617d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31634,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U03.tool",
+        "U03.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31596,
+      "artifactPath": "cases/gpt-6-astra/U03",
+      "resultHash": "2ebe3023f13b97d17fb279c382064edf45dd8fd12de59c4a78f82c070952bff5",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U04",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:38:46.192Z",
+      "seed": "72388d69",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31585,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U04.patch",
+        "U04.file"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31549,
+      "artifactPath": "cases/gpt-6-astra/U04",
+      "resultHash": "ed6be33658566663aa69e1336559b94cfea1ff894ca75507d4e2fa6ba7f46b21",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U05",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:39:17.778Z",
+      "seed": "3cab8a11",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31564,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U05.mcp",
+        "U05.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31528,
+      "artifactPath": "cases/gpt-6-astra/U05",
+      "resultHash": "1b264af6c3588fd248efdde616350a64fd5577c0005806eb37402c3b830f79d1",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U06",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:39:49.342Z",
+      "seed": "69a50576",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31539,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U06.length",
+        "U06.marker"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31499,
+      "artifactPath": "cases/gpt-6-astra/U06",
+      "resultHash": "7ddaa117f41b319ea14cd5d9e5e460649b5fdadb0dd14b6dd430f2f356f2f7fb",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U07",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:40:20.881Z",
+      "seed": "5f7e3fdd",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31640,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U07.delivery",
+        "U07.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31608,
+      "artifactPath": "cases/gpt-6-astra/U07",
+      "resultHash": "5978b744b8135c44325002af8a6af486c4175552e04be4c475531d763fe67e52",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U08",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:40:52.522Z",
+      "seed": "b97eff1c",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31591,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U08.interrupt",
+        "U08.recovery"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31551,
+      "artifactPath": "cases/gpt-6-astra/U08",
+      "resultHash": "aa9aa9317cc14161792e5ab782787d105f0cbcaff6eb06bba9a9f7e990713557",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U09",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:41:24.114Z",
+      "seed": "560437a4",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31592,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U09.compaction",
+        "U09.recall"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31557,
+      "artifactPath": "cases/gpt-6-astra/U09",
+      "resultHash": "e23c8938306866255a5899d6ecdcca3c42579cdde7b4c32f9c9a672331ee9df3",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U10",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:41:55.706Z",
+      "seed": "c116e19d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31541,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U10.relaunch",
+        "U10.recall"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31504,
+      "artifactPath": "cases/gpt-6-astra/U10",
+      "resultHash": "c203d18434f14c852e16ec7caf8e73feb4ce8987a026cb071f188492b2fdcbb1",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:42:27.248Z",
+      "seed": "277e3556",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 97651,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 97617,
+      "artifactPath": "cases/gpt-6-astra/U11",
+      "resultHash": "ce77d16a8f598b8b1244c66f616def3513c6d23db06da19376e66189782f1538",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:44:04.899Z",
+      "seed": "9ae30ec8",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17340,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17308,
+      "artifactPath": "cases/gpt-6-astra/U12",
+      "resultHash": "aec0b2acd35bff8b7aa54a95c1bbdb2780e96e7ecd43d42a5cc634b7c83a9b45",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U01",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:38:18.208Z",
+      "seed": "0e78a2dd",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31584,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U01.picker",
+        "U01.reply"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31551,
+      "artifactPath": "cases/gpt-6-sol/U01",
+      "resultHash": "e30a66a18f2b42bdf308d5296c21d9cca1d00b4f6d19815f7db1f12c57370a9f",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U02",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:38:49.793Z",
+      "seed": "c2260ff7",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31628,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U02.switch",
+        "U02.reply"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31595,
+      "artifactPath": "cases/gpt-6-sol/U02",
+      "resultHash": "1a5430c886067096ac1639a9a85da6b06b2368d565382db4eb54cf742f936f2e",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U03",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:39:21.421Z",
+      "seed": "524913e9",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31573,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U03.tool",
+        "U03.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31541,
+      "artifactPath": "cases/gpt-6-sol/U03",
+      "resultHash": "da3a084a6181f02849bfe37d75e3f4795fd5b8c7cffa73cee116590d08376e0f",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U04",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:39:52.994Z",
+      "seed": "19b9ea74",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31596,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U04.patch",
+        "U04.file"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31563,
+      "artifactPath": "cases/gpt-6-sol/U04",
+      "resultHash": "892515087294932dcee923fc9002066615a24c30aee0a3264fa3ff77d6aea0c9",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U05",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:40:24.590Z",
+      "seed": "7d5c184e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31575,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U05.mcp",
+        "U05.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31544,
+      "artifactPath": "cases/gpt-6-sol/U05",
+      "resultHash": "171f1713257dbf66fe7577d7ff1c15a1bf978c97ff9bec511fe615c79dea0ffc",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U06",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:40:56.166Z",
+      "seed": "ee1428e4",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31545,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U06.length",
+        "U06.marker"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31512,
+      "artifactPath": "cases/gpt-6-sol/U06",
+      "resultHash": "e11afda466cd8d45587c3607b3824281f42bac3f06b1baa670d891f8c9452c0d",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U07",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:41:27.711Z",
+      "seed": "c42745aa",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31563,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U07.delivery",
+        "U07.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31532,
+      "artifactPath": "cases/gpt-6-sol/U07",
+      "resultHash": "ab8af509429984210c08873ac306e8d64bbcb812e3d6b8f3e384f5dd105b3feb",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U08",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:41:59.274Z",
+      "seed": "21379e24",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31573,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U08.interrupt",
+        "U08.recovery"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31540,
+      "artifactPath": "cases/gpt-6-sol/U08",
+      "resultHash": "234262d2731b0588444c92192005aa428d98049e6493f941158f2bac04d0b1a7",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:42:30.847Z",
+      "seed": "c2630ae9",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 93080,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 93046,
+      "artifactPath": "cases/gpt-6-sol/U09",
+      "resultHash": "15db828b7431999e78a44464859f14ae945f8e59e1fc04ab9145e58818a53888",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:44:03.927Z",
+      "seed": "b49c8f0d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 24780,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 24747,
+      "artifactPath": "cases/gpt-6-sol/U10",
+      "resultHash": "f8b828eed47c1937aa2cb240dc11041dd4c154556d2a6b50558de07478dd0a20",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:44:28.707Z",
+      "seed": "cddaf8e8",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 14500,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 14468,
+      "artifactPath": "cases/gpt-6-sol/U11",
+      "resultHash": "ba182bb00781cfc28342713208bc1cfde203299f6c2f21be519506da17aaa0e3",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:44:43.208Z",
+      "seed": "fb2b7ad7",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 14210,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 14178,
+      "artifactPath": "cases/gpt-6-sol/U12",
+      "resultHash": "65a09a6c43c996b885e3d3b9dff0d822f0099b2fdfaf6a95705f966d0b7cc465",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U01",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:39:20.198Z",
+      "seed": "8dddf6a8",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31534,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U01.picker",
+        "U01.reply"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31503,
+      "artifactPath": "cases/gpt-6-luna/U01",
+      "resultHash": "48100ec3cd6a9809d8340a0f954cc8ccaac18c24d2e9bd5bdfcca207e381bb9b",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U02",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:39:51.733Z",
+      "seed": "b9048c7b",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31549,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U02.switch",
+        "U02.reply"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31516,
+      "artifactPath": "cases/gpt-6-luna/U02",
+      "resultHash": "eca9ecf2c5d15fa04dd4d0fe4901d364e0fd1560fb8025822e92566a84bd8fc9",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U03",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:40:23.282Z",
+      "seed": "213d4eba",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31539,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U03.tool",
+        "U03.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31505,
+      "artifactPath": "cases/gpt-6-luna/U03",
+      "resultHash": "fb1a2fc638598d8131717f00c5164cba9c5633df29488a5e95a9d11bf75406b4",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U04",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:40:54.821Z",
+      "seed": "ffafffd2",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31631,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U04.patch",
+        "U04.file"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31590,
+      "artifactPath": "cases/gpt-6-luna/U04",
+      "resultHash": "66cf9821dc9d6ab95ad858d773c303dc34f64ec992cc16f38751e70bc3b60bb3",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U05",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:41:26.453Z",
+      "seed": "79ccf62d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31547,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U05.mcp",
+        "U05.value"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31513,
+      "artifactPath": "cases/gpt-6-luna/U05",
+      "resultHash": "37b5d9c39561780f7676645ce760dcfc324a6b56a6526ec0d5613828f2547b90",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U06",
+      "status": "failed",
+      "startedAt": "2026-09-23T05:41:58.001Z",
+      "seed": "279b3c7f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 31601,
+        "error": null
+      },
+      "observedStatus": "failed",
+      "failedChecks": [
+        "routing",
+        "connection",
+        "context-tier",
+        "watchdog",
+        "cleanup",
+        "U06.length",
+        "U06.marker"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Codex exited while waiting for ready"
+      },
+      "durationMs": 31568,
+      "artifactPath": "cases/gpt-6-luna/U06",
+      "resultHash": "723a8eab124f7c31b71279f6337df49d443b94385d62f002a90d997e098c4dac",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:42:29.602Z",
+      "seed": "2dc4ed48",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 35070,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 35034,
+      "artifactPath": "cases/gpt-6-luna/U07",
+      "resultHash": "d61b41be4c498bbf5db07df36bf5552613bf1df47523e65f669e9ab79bcc5897",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:43:04.673Z",
+      "seed": "72fae360",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 68460,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 68425,
+      "artifactPath": "cases/gpt-6-luna/U08",
+      "resultHash": "fdd910fa2a9594cfe49b97f656d3fb02cceb564d39627d8673e654cf63e5a64a",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:44:13.132Z",
+      "seed": "30f2d73d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 24896,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 24864,
+      "artifactPath": "cases/gpt-6-luna/U09",
+      "resultHash": "ca3ff36a3555358f20bc0f9e177705f3b7eab175ad90f31805721ec7cb8d1eef",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:44:38.029Z",
+      "seed": "d09d2bf9",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17043,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17012,
+      "artifactPath": "cases/gpt-6-luna/U10",
+      "resultHash": "7e26e7b86c1113b03ccd534b053e4c84ab6c341e555c3cf2794300b5b54afffe",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:44:55.072Z",
+      "seed": "534ff27d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12567,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12535,
+      "artifactPath": "cases/gpt-6-luna/U11",
+      "resultHash": "b853ba4629f300bcb7cfb00a87561a2c1c5ded162afde3e2db91390c0eccb8f4",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:45:07.639Z",
+      "seed": "4433808e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 13498,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 13467,
+      "artifactPath": "cases/gpt-6-luna/U12",
+      "resultHash": "e5df2fd215abc6c041f5603a76e3b6b3a9c904b24cb77442714583a5731ca1e1",
+      "auxiliaryTitleRejections": 2
+    }
+  ],
+  "summary": {
+    "catalogId": "codex-ghcp-tui-12-v2",
+    "totalCases": 72,
+    "counts": {
+      "passed": 45,
+      "failed": 27,
+      "blocked": 0,
+      "timed-out": 0,
+      "not-run": 0
+    },
+    "passed": 45,
+    "percent": 62.5,
+    "thresholdPercent": 95,
+    "minimumPassed": 69,
+    "thresholdMet": false,
+    "auxiliaryTitleRejections": 69,
+    "fullMatrixPassed": false,
+    "eligible": true,
+    "perModel": [
+      {
+        "model": "claude-opus-5.5",
+        "passed": 10,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v2-passed"
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 11,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 2,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-sol",
+        "passed": 4,
+        "total": 12,
+        "verdict": "not-established"
+      },
+      {
+        "model": "gpt-6-luna",
+        "passed": 6,
+        "total": 12,
+        "verdict": "not-established"
+      }
+    ],
+    "perScenario": [
+      {
+        "scenarioId": "U01",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U02",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U03",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U04",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U05",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U06",
+        "passed": 3,
+        "total": 6
+      },
+      {
+        "scenarioId": "U07",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U08",
+        "passed": 4,
+        "total": 6
+      },
+      {
+        "scenarioId": "U09",
+        "passed": 5,
+        "total": 6
+      },
+      {
+        "scenarioId": "U10",
+        "passed": 5,
+        "total": 6
+      },
+      {
+        "scenarioId": "U11",
+        "passed": 5,
+        "total": 6
+      },
+      {
+        "scenarioId": "U12",
+        "passed": 4,
+        "total": 6
+      }
+    ],
+    "driver": "playwright-headless-xterm",
+    "realTuiThroughLauncher": true,
+    "hoursLongSoakCertified": false
+  },
+  "preflight": {
+    "codexVersion": "codex-cli 0.154.0",
+    "copilotSdk": "1.0.14",
+    "modelCalls": 0,
+    "models": [
+      {
+        "id": "claude-opus-5.5",
+        "available": true
+      },
+      {
+        "id": "claude-sonnet-5",
+        "available": true
+      },
+      {
+        "id": "claude-haiku-4.5",
+        "available": true
+      },
+      {
+        "id": "gpt-6-astra",
+        "available": true
+      },
+      {
+        "id": "gpt-6-sol",
+        "available": true
+      },
+      {
+        "id": "gpt-6-luna",
+        "available": true
+      }
+    ]
+  },
+  "interrupted": false,
+  "durationMs": 672843,
+  "implementationUnchanged": true,
+  "frozenSourceUnchanged": true,
+  "userSettingsUnchanged": true
+}

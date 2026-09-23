@@ -1,0 +1,1754 @@
+{
+  "schemaVersion": 2,
+  "catalogId": "codex-ghcp-tui-12-v2",
+  "catalogHash": "1d3f0d44d22063b11552397a0f02ddcb2feff627f3a6060676e1ce3bdde89992",
+  "implementationHash": "fe500d787afb80635a311ff92f7a5846ed73c90dc7407ad7f6593524ef5e9661",
+  "runId": "f3125bc0-f65d-4c68-86db-38db21fb31f4",
+  "executionKind": "live",
+  "startedAt": "2026-09-23T05:48:34.990Z",
+  "finishedAt": "2026-09-23T05:54:45.597Z",
+  "cases": [
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:48:36.758Z",
+      "seed": "ab76abf2",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10767,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10723,
+      "artifactPath": "cases/claude-opus-5.5/U01",
+      "resultHash": "9308a770377b3a158a7f18b2b2c860d4589d1bdbf9e80f91e957fb6df7bc862f",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:48:47.527Z",
+      "seed": "6acc0de0",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 16626,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16589,
+      "artifactPath": "cases/claude-opus-5.5/U02",
+      "resultHash": "11759afd84893ae91c96b8ae484463b09ca9469e6c6de3f1be3f18b9af834610",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:04.154Z",
+      "seed": "0215e43f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10513,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10482,
+      "artifactPath": "cases/claude-opus-5.5/U03",
+      "resultHash": "87dc4d10a065ae87272679160fe592591b16f2cddd528b7c695c0812ea8b2302",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:14.668Z",
+      "seed": "fe191f8e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 14488,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 14458,
+      "artifactPath": "cases/claude-opus-5.5/U04",
+      "resultHash": "fe6dcefa3224b1af016ef6989cc4fc02027dfa615889373d3a2cca49637d5bc8",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:29.157Z",
+      "seed": "728570f1",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11845,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11812,
+      "artifactPath": "cases/claude-opus-5.5/U05",
+      "resultHash": "071cfb2c79f5d500ca134faec2f2fc4de1fb34e40544095d034ef6e8fb1a4987",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:41.002Z",
+      "seed": "424e0d45",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 26922,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 26889,
+      "artifactPath": "cases/claude-opus-5.5/U06",
+      "resultHash": "c1aa34facc9415ab576baf6557a12065efedfb6f1d382a147275f295c5dcadb0",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:07.924Z",
+      "seed": "29d0f3bd",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 9601,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 9563,
+      "artifactPath": "cases/claude-opus-5.5/U07",
+      "resultHash": "1aa1b9fe97266374e616662dada97ac1dea13c3531f8535a31e20bdd6bb7edeb",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:17.526Z",
+      "seed": "05f0a831",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11218,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11180,
+      "artifactPath": "cases/claude-opus-5.5/U08",
+      "resultHash": "1b0728b4879faced799e478649b66597344c0a3baa33c3fd3783e9ed24013d86",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:28.744Z",
+      "seed": "70b23dc9",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 19643,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 19601,
+      "artifactPath": "cases/claude-opus-5.5/U09",
+      "resultHash": "0a59b82a8d9d4907bbd476ee9d112bfebf56adc2431cd76d292dcbf74ba16ce9",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:48.389Z",
+      "seed": "c6927984",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17638,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17597,
+      "artifactPath": "cases/claude-opus-5.5/U10",
+      "resultHash": "33334aa7d23d0b6121c325ecdffa0065c07a89dcdf7668c73ec4488eba7ed89e",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:06.027Z",
+      "seed": "53fd3b26",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 14633,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 14594,
+      "artifactPath": "cases/claude-opus-5.5/U11",
+      "resultHash": "e3e912b2d439dab795b9a61a0145266861891da6d5e6c117cca07b6200638779",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:20.662Z",
+      "seed": "3b91300c",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17068,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17004,
+      "artifactPath": "cases/claude-opus-5.5/U12",
+      "resultHash": "c8ae3130af09378664e0fdcd629492aa809058db1d5c7944bfaec7c00dc4e480",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:48:36.761Z",
+      "seed": "76e991a9",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10058,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10019,
+      "artifactPath": "cases/claude-sonnet-5/U01",
+      "resultHash": "ab03232507aeb376f1831406b1afb785baca409de127a2bce8de281d48c18bab",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:48:46.821Z",
+      "seed": "236a480a",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15303,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15273,
+      "artifactPath": "cases/claude-sonnet-5/U02",
+      "resultHash": "0d3bf8d9dcfd75296ce3d6ffb31a4ce82eac6f86e96745369a75042853c6cc8c",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:02.125Z",
+      "seed": "6ef484b4",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11747,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11712,
+      "artifactPath": "cases/claude-sonnet-5/U03",
+      "resultHash": "70358bc55ab10618f55def080fa0ff1ac5051a50bc84fada0e2eca51d93da485",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:13.873Z",
+      "seed": "1c8ec6d1",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11095,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11065,
+      "artifactPath": "cases/claude-sonnet-5/U04",
+      "resultHash": "51972e4e874bfba88cbdd24911d95874d4ec7977f6e1a549d8bd1bb81f55d43c",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:24.969Z",
+      "seed": "8180cc64",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10188,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10155,
+      "artifactPath": "cases/claude-sonnet-5/U05",
+      "resultHash": "01c82b2f7b91692f1a1a6cbedae16828a74c13b82fb0709f2ddb0db916e3ec7f",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:35.157Z",
+      "seed": "f91a820b",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 27895,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 27863,
+      "artifactPath": "cases/claude-sonnet-5/U06",
+      "resultHash": "9fc6af3f9587bf2524cd487d25bc49215f914b35dd76482989cfd78d212fb629",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:03.052Z",
+      "seed": "3ed0b578",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 9210,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 9175,
+      "artifactPath": "cases/claude-sonnet-5/U07",
+      "resultHash": "385af1f5a41f93d1e5a53f224afd2f32157b0f0929d1b2df3361b16599dd100a",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:12.263Z",
+      "seed": "75a3df5e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11174,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11140,
+      "artifactPath": "cases/claude-sonnet-5/U08",
+      "resultHash": "2bce6cc5e10772a1ca5720ef82ef16074339f3a91968e0d107c9ef66da03ce3d",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:23.437Z",
+      "seed": "5109bb03",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15713,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15681,
+      "artifactPath": "cases/claude-sonnet-5/U09",
+      "resultHash": "f8c5bb777b1ae2d7d0f3717571a1efc5396d4c9fa85025712b91394f31890be7",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:39.150Z",
+      "seed": "ad758a52",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 14688,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 14653,
+      "artifactPath": "cases/claude-sonnet-5/U10",
+      "resultHash": "c3048f5fdc095aa6270efc8b5f8638d5bc339c58f557d42c2eec7afde48370bb",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:53.840Z",
+      "seed": "a8d813ed",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12565,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12517,
+      "artifactPath": "cases/claude-sonnet-5/U11",
+      "resultHash": "69697813cf34e4c934adc98be086d2e423586975355782e52945f87d0067ff05",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:06.406Z",
+      "seed": "8d8cd72a",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12955,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12907,
+      "artifactPath": "cases/claude-sonnet-5/U12",
+      "resultHash": "2f13538489a2911047c3961dcee0c8ac4077f0690d15a9722ba081c2c1bdff2f",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:48:36.763Z",
+      "seed": "642ecd11",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10389,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10350,
+      "artifactPath": "cases/claude-haiku-4.5/U01",
+      "resultHash": "706551d2354c82a230d62c9d6d44346d46d7976b93e8cc48e372e9d506bf84cd",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:48:47.153Z",
+      "seed": "7c666a8c",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15965,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15931,
+      "artifactPath": "cases/claude-haiku-4.5/U02",
+      "resultHash": "ff3f9b45b97c9a53864c6800b2de49707dd629d775076de0383b81128b85259e",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:03.118Z",
+      "seed": "bef56633",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10038,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10007,
+      "artifactPath": "cases/claude-haiku-4.5/U03",
+      "resultHash": "e562ef969e22cd7ee9102ce33f866c4cf352d6680f3fad7d411cfc403ff28329",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:13.156Z",
+      "seed": "de5d4443",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11718,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11688,
+      "artifactPath": "cases/claude-haiku-4.5/U04",
+      "resultHash": "616630b7a3befde8e566c256dfcef5aafafc77f8fa4fce5dd1cbab9b7f14b8b4",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:24.876Z",
+      "seed": "ef74555e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10738,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10707,
+      "artifactPath": "cases/claude-haiku-4.5/U05",
+      "resultHash": "13d5ddbc365de04acd5d104ee36dfbef2548fc5ae2326f36e09563a64417ee08",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:35.615Z",
+      "seed": "93e7b3fa",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 20693,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 20661,
+      "artifactPath": "cases/claude-haiku-4.5/U06",
+      "resultHash": "6df1358c97ac1d8a859cc8b75a2ed04c8e236e8b970fb6c769c1969833df4feb",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:49:56.308Z",
+      "seed": "8ffd5703",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 9316,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 9281,
+      "artifactPath": "cases/claude-haiku-4.5/U07",
+      "resultHash": "41c63ae62399b33d41261c452c3b922ba7f6bb0d77626015809a5c04e356de9e",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:05.625Z",
+      "seed": "e2efaaab",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11458,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11411,
+      "artifactPath": "cases/claude-haiku-4.5/U08",
+      "resultHash": "6d0e46f6fec9067998784a3f97d10e2dc2c70a4bdf0a1b50a1c53fc44969cc18",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:17.084Z",
+      "seed": "5b6adc7d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 20449,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 20418,
+      "artifactPath": "cases/claude-haiku-4.5/U09",
+      "resultHash": "29a4d22d169d89164007a6de0a1ee7c02fb43f1666e546d953d4c0d7a02541bb",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:37.533Z",
+      "seed": "40e2b806",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 16031,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16001,
+      "artifactPath": "cases/claude-haiku-4.5/U10",
+      "resultHash": "fb05883c815378757a74c64368694ad59ddc4ca99a47cc2dbfef89c347fe26b3",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:50:53.565Z",
+      "seed": "f66d9084",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12264,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12233,
+      "artifactPath": "cases/claude-haiku-4.5/U11",
+      "resultHash": "2b59a15367d028c2c15a9e7a10b807ed2625353c580a68210b96a1bbf4e6192a",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:05.829Z",
+      "seed": "f8824e69",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 14252,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 14220,
+      "artifactPath": "cases/claude-haiku-4.5/U12",
+      "resultHash": "af49ce1be708865e53f97dcb0c792ce6e4f0b7a6121cfb201b32f1a57cb7a88c",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:19.362Z",
+      "seed": "2fc52bc4",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 13627,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 13586,
+      "artifactPath": "cases/gpt-6-astra/U01",
+      "resultHash": "89b6f8eeb2ac53049c5bb9c15ac9deb88441525a10a9db3ecbdebfea5b86fbf2",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:32.990Z",
+      "seed": "b027712c",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 16975,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16907,
+      "artifactPath": "cases/gpt-6-astra/U02",
+      "resultHash": "1da0f58368e9850d14a7fac15ecf8733a73afac118d07e9ddb8c2a566a2cdf1b",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:49.967Z",
+      "seed": "788f6015",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 13821,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 13737,
+      "artifactPath": "cases/gpt-6-astra/U03",
+      "resultHash": "33cfb6b5b07e56e70b2b18ace29731bbc3b41589caf90863a312699aa9058a8d",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:03.789Z",
+      "seed": "990bb71f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15330,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15282,
+      "artifactPath": "cases/gpt-6-astra/U04",
+      "resultHash": "d23708959c4be6d5d37bcc4222c3b8022b7cc1c2fccc2f86c4e9de2934e3d2a5",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:19.121Z",
+      "seed": "31e8215e",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 15472,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 15409,
+      "artifactPath": "cases/gpt-6-astra/U05",
+      "resultHash": "7d8cd5427493a5b2ce6f6cc754d35bc7adf9a7c8d32b5f107832f1f5d545cc7e",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:34.596Z",
+      "seed": "94009133",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 36575,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 36492,
+      "artifactPath": "cases/gpt-6-astra/U06",
+      "resultHash": "4fc5e9efd7d033767a463ef281e23434f75d0b0dc6950109b0ee5cbc3ae47084",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:11.173Z",
+      "seed": "9c7a736f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10205,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10143,
+      "artifactPath": "cases/gpt-6-astra/U07",
+      "resultHash": "8714f9e4fa2881f3088418cc62c2120056ca95b70853ff7bc41a4e5527c25fe2",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:21.379Z",
+      "seed": "4ecc4fde",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11036,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10997,
+      "artifactPath": "cases/gpt-6-astra/U08",
+      "resultHash": "5379aea25b74157b981282eaffe126db4c253e0face7b53279cbba2c3557cfdb",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:32.416Z",
+      "seed": "e485034d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 25367,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 25328,
+      "artifactPath": "cases/gpt-6-astra/U09",
+      "resultHash": "10e69c432401078b21a4d35d7e61899793a3b64d400912b17b6ec50e8ab70617",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:57.783Z",
+      "seed": "83d27058",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17011,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16979,
+      "artifactPath": "cases/gpt-6-astra/U10",
+      "resultHash": "325b1db219b48a3227a80025cc693579f555f9647d02fa072f95bba03ab4d68a",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:54:14.794Z",
+      "seed": "c7f14438",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 16258,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16227,
+      "artifactPath": "cases/gpt-6-astra/U11",
+      "resultHash": "4983c995318bb14188795b9f1f7b7fd998871f083f8ebdaf6dd2e6f38e8a5cbb",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:54:31.053Z",
+      "seed": "aa54959b",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 14543,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 14514,
+      "artifactPath": "cases/gpt-6-astra/U12",
+      "resultHash": "e462f2dce669a99781526890a591283d6c8701323cef550589eaef984a208b5a",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:20.082Z",
+      "seed": "ae0670b5",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10850,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10798,
+      "artifactPath": "cases/gpt-6-sol/U01",
+      "resultHash": "db0a0747d889bb993d195f5225b313e4200cdb2cec9af71f47c1e0e592aa1d75",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:30.934Z",
+      "seed": "7bbbaede",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 18257,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 18205,
+      "artifactPath": "cases/gpt-6-sol/U02",
+      "resultHash": "8e7ac55df0346f5ad20d3718f0d8e3bd352269b4e20a2743bbec6cf58eda0a3e",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:49.192Z",
+      "seed": "df7b08bf",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12183,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12115,
+      "artifactPath": "cases/gpt-6-sol/U03",
+      "resultHash": "7017b5df936ed9860ddcc4e5cefbbe9f3aafc624b4cd817c297aa414b9971601",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:01.378Z",
+      "seed": "9f35427f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12058,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12007,
+      "artifactPath": "cases/gpt-6-sol/U04",
+      "resultHash": "606e998b2e1db0287655c7ebd9c84b6ca61854f0b320f7ceb8172d4ef1834603",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:13.438Z",
+      "seed": "811b325a",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12450,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12393,
+      "artifactPath": "cases/gpt-6-sol/U05",
+      "resultHash": "cdb0470ccd0abce4d8effd2c103975bbd430f51946ebbfa3aaea7485bab249a4",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:25.889Z",
+      "seed": "7e31d84b",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 21280,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 21241,
+      "artifactPath": "cases/gpt-6-sol/U06",
+      "resultHash": "d9a7612504824f34539cf885cc989e90eac39ff2ba32f593873f647b3d50c1f2",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:47.170Z",
+      "seed": "896f05e4",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10248,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10196,
+      "artifactPath": "cases/gpt-6-sol/U07",
+      "resultHash": "ccbb078e894269259f65164130227f677ed86ab5b8097ccae14d69b2cd123b0a",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:57.420Z",
+      "seed": "f0eaa782",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10980,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10933,
+      "artifactPath": "cases/gpt-6-sol/U08",
+      "resultHash": "d0a814009a0c201bf00fbc56cb25e6361b7f5d995a243c07b143a41ca5e18d14",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:08.401Z",
+      "seed": "0d82c7b4",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 20436,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 20398,
+      "artifactPath": "cases/gpt-6-sol/U09",
+      "resultHash": "8e8015036b305372565b223e8ce66851ae7588b5f431ac53cf16a01b684eac4f",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:28.838Z",
+      "seed": "726cd773",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 16998,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16965,
+      "artifactPath": "cases/gpt-6-sol/U10",
+      "resultHash": "97c565a560d284bd179a0abfdfdf6a7d509973c99bcc13f8b21b400438441951",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:45.837Z",
+      "seed": "51f9be16",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12998,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12966,
+      "artifactPath": "cases/gpt-6-sol/U11",
+      "resultHash": "255569a3abf4e81dc6d4e3dcdef74f71a003972e5270318ccfe4ee5b9c777c5f",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:58.835Z",
+      "seed": "b4ac7aad",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 13139,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 13109,
+      "artifactPath": "cases/gpt-6-sol/U12",
+      "resultHash": "97e5846fe2e3768bd4a2eadc6d35bffde9a1e01d66321cc7c9e97466b419719f",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U01",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:37.731Z",
+      "seed": "ffdc7381",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10735,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10676,
+      "artifactPath": "cases/gpt-6-luna/U01",
+      "resultHash": "a5e95d7c9d23eccb37fb2bba3e8a087090644efb4d4fee3f8b5d4c0c238adf76",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U02",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:51:48.468Z",
+      "seed": "5a577ba0",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17446,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17391,
+      "artifactPath": "cases/gpt-6-luna/U02",
+      "resultHash": "35a97d25fd8725d4c78b8aec0688b2ca4e9231807a1eed4057d594919d0b8060",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U03",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:05.916Z",
+      "seed": "87089623",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 10986,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 10935,
+      "artifactPath": "cases/gpt-6-luna/U03",
+      "resultHash": "7c6890977d062b3ec6dd0885fc741dab200b96514be639f73b1edc3fd9911c89",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U04",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:16.903Z",
+      "seed": "8102bf7c",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12618,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12541,
+      "artifactPath": "cases/gpt-6-luna/U04",
+      "resultHash": "c980ea041b2b11a7dfcb8e248469770e30cae0b799a6dde823310ebedb7bf63a",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U05",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:29.524Z",
+      "seed": "4d855457",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 16404,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16325,
+      "artifactPath": "cases/gpt-6-luna/U05",
+      "resultHash": "e8c6112a35ed3b9b5665110324140fe1f8acf82b60658e1426fac8d61727f441",
+      "auxiliaryTitleRejections": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U06",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:52:45.930Z",
+      "seed": "3b0bfbc5",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 19139,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 19087,
+      "artifactPath": "cases/gpt-6-luna/U06",
+      "resultHash": "9a6384f8f467d84b50cf7a881f79a0b121c7f262f2840abfcce23f080a651007",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U07",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:05.070Z",
+      "seed": "ef099e7d",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 9286,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 9236,
+      "artifactPath": "cases/gpt-6-luna/U07",
+      "resultHash": "1c50e647c4991f3c437283f3d8c499c0b452cfb770b90e9a6fe71e00ee23ff4a",
+      "auxiliaryTitleRejections": 1
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U08",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:14.357Z",
+      "seed": "607dd60f",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 11619,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 11564,
+      "artifactPath": "cases/gpt-6-luna/U08",
+      "resultHash": "a95cb32578f3eb4181c3e93cb063760b1d600cc3f0d368ef8f92bb0eb3c4578c",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U09",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:25.977Z",
+      "seed": "973a206b",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 17572,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 17539,
+      "artifactPath": "cases/gpt-6-luna/U09",
+      "resultHash": "7c61f9bf3ab66c81431255516fbbe459965c20e9f999f7d71089da2241b345f2",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U10",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:53:43.550Z",
+      "seed": "60f6466a",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 16512,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 16480,
+      "artifactPath": "cases/gpt-6-luna/U10",
+      "resultHash": "dcc41c6b8f2aa3cc33b2ab445ae0ba40bf5477c825857df365004bd3319c44e1",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U11",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:54:00.063Z",
+      "seed": "5558870b",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 12694,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 12664,
+      "artifactPath": "cases/gpt-6-luna/U11",
+      "resultHash": "91350e8ac31c888abced0876c2915fb3c33615809f6cd2fc647328bf34cf2e9b",
+      "auxiliaryTitleRejections": 2
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "U12",
+      "status": "passed",
+      "startedAt": "2026-09-23T05:54:12.758Z",
+      "seed": "61224b97",
+      "supervisor": {
+        "code": 0,
+        "signal": null,
+        "killed": false,
+        "processGroupGone": true,
+        "durationMs": 13493,
+        "error": null
+      },
+      "observedStatus": "passed",
+      "failedChecks": [],
+      "error": null,
+      "durationMs": 13462,
+      "artifactPath": "cases/gpt-6-luna/U12",
+      "resultHash": "31689753db670abd48a81fc214506917497e916ae41d0296c4f5aee1b03498c6",
+      "auxiliaryTitleRejections": 2
+    }
+  ],
+  "summary": {
+    "catalogId": "codex-ghcp-tui-12-v2",
+    "totalCases": 72,
+    "counts": {
+      "passed": 72,
+      "failed": 0,
+      "blocked": 0,
+      "timed-out": 0,
+      "not-run": 0
+    },
+    "passed": 72,
+    "percent": 100,
+    "thresholdPercent": 95,
+    "minimumPassed": 69,
+    "thresholdMet": true,
+    "auxiliaryTitleRejections": 102,
+    "fullMatrixPassed": true,
+    "eligible": true,
+    "perModel": [
+      {
+        "model": "claude-opus-5.5",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v2-passed"
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v2-passed"
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v2-passed"
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v2-passed"
+      },
+      {
+        "model": "gpt-6-sol",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v2-passed"
+      },
+      {
+        "model": "gpt-6-luna",
+        "passed": 12,
+        "total": 12,
+        "verdict": "codex-ghcp-tui-12-v2-passed"
+      }
+    ],
+    "perScenario": [
+      {
+        "scenarioId": "U01",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U02",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U03",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U04",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U05",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U06",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U07",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U08",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U09",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U10",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U11",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "scenarioId": "U12",
+        "passed": 6,
+        "total": 6
+      }
+    ],
+    "driver": "playwright-headless-xterm",
+    "realTuiThroughLauncher": true,
+    "hoursLongSoakCertified": false
+  },
+  "preflight": {
+    "codexVersion": "codex-cli 0.154.0",
+    "copilotSdk": "1.0.14",
+    "modelCalls": 0,
+    "models": [
+      {
+        "id": "claude-opus-5.5",
+        "available": true
+      },
+      {
+        "id": "claude-sonnet-5",
+        "available": true
+      },
+      {
+        "id": "claude-haiku-4.5",
+        "available": true
+      },
+      {
+        "id": "gpt-6-astra",
+        "available": true
+      },
+      {
+        "id": "gpt-6-sol",
+        "available": true
+      },
+      {
+        "id": "gpt-6-luna",
+        "available": true
+      }
+    ]
+  },
+  "interrupted": false,
+  "durationMs": 370648,
+  "implementationUnchanged": true,
+  "frozenSourceUnchanged": true,
+  "userSettingsUnchanged": true
+}

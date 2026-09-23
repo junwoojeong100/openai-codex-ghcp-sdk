@@ -146,6 +146,7 @@ test("subagent text and reasoning events never leak into root response text", ()
   const stream = new ResponsesStream(res, meta);
   delta(stream, "nested", "sub", { agentId: "subagent" });
   stream.handleSdkEvent({ type: "assistant.message_delta", data: { messageId: "sub", deltaContent: "nested", parentToolCallId: "parent" } });
+  stream.handleSdkEvent({ type: "assistant.message_delta", data: { messageId: "sub", deltaContent: "nested", agentId: "subagent" } });
   stream.handleSdkEvent({ type: "assistant.reasoning_delta", data: { deltaContent: "not user-visible" } });
   stream.handleSdkEvent({ type: "assistant.message", data: { content: "ignored event" } });
   assert.equal(res.chunks.length, 0);

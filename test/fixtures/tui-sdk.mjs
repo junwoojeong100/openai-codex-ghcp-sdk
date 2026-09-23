@@ -15,7 +15,20 @@ if (path.resolve(process.argv[1] || "") === path.join(root, "src/server.mjs")) {
   SessionManager.prototype.start = async function () {
     this.clientFactory = () => new FakeClient({
       models: SUPPORTED_MODEL_IDS.map(id => ({ id, name: id, supportedReasoningEfforts: ["low", "high"],
-        capabilities: { supports: { reasoningEffort: true }, limits: { max_context_window_tokens: 65_536, max_prompt_tokens: 49_152 } } })),
+        capabilities: { supports: { reasoningEffort: id !== "claude-haiku-4.5" }, limits: { max_context_window_tokens: 65_536, max_prompt_tokens: 49_152 } },
+        ...(id === "claude-haiku-4.5" ? {} : { billing: { tokenPrices: { maxPromptTokens: 32_768, longContext: { maxPromptTokens: 49_152 } } } }),
+      })),
+      createSession(session) {
+        let selected = { modelId: session.config.model, contextTier: session.config.contextTier, reasoningEffort: session.config.reasoningEffort };
+        session.rpc.model = { getCurrent: async () => ({ ...selected }) };
+        const setModel = session.setModel.bind(session);
+        session.setModel = async (id, options) => {
+          await setModel(id, options);
+          selected = { modelId: id, contextTier: options.contextTier, reasoningEffort: options.reasoningEffort };
+        };
+        const emit = session.emit.bind(session);
+        session.emit = (type, data, extra) => emit(type, type === "assistant.usage" ? { ...data, model: selected.modelId } : data, extra);
+      },
       onSend(session, { prompt }) {
         const text = latest(prompt);
         const wanted = /otherwise reply with only (TUI_[0-9a-f]{8}_\d{6})/.exec(text)?.[1] ?? /Reply with only (TUI_[0-9a-f]{8}_\d{6})/.exec(text)?.[1];

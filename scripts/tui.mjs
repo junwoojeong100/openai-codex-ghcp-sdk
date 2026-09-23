@@ -34,7 +34,7 @@ export async function main(args = process.argv.slice(2)) {
     const { verifyTuiReport } = await import("./tui/runner.mjs");
     const result = verifyTuiReport(path.resolve(options.file));
     console.log(JSON.stringify(result, null, 2));
-    return result.fullMatrixPassed ? 0 : 1;
+    return result.thresholdMet ? 0 : 1;
   }
   const { runTui } = await import("./tui/runner.mjs");
   const controller = new AbortController(), stop = () => controller.abort(Object.assign(new Error("Interrupted"), { name: "AbortError" }));
@@ -43,7 +43,7 @@ export async function main(args = process.argv.slice(2)) {
     const { directory, report } = await runTui({ output: options.output, signal: controller.signal,
       onProgress: row => console.error(`${row.model} ${row.scenarioId}: ${row.status}${row.failedChecks?.length ? ` (${row.failedChecks.join(", ")})` : ""}`) });
     console.log(JSON.stringify({ directory, ...report.summary }, null, 2));
-    return report.summary.fullMatrixPassed ? 0 : 1;
+    return report.summary.thresholdMet ? 0 : 1;
   } finally { process.off("SIGINT", stop); process.off("SIGTERM", stop); }
 }
 

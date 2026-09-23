@@ -56,7 +56,7 @@ function 도구는 JSON 인자를 사용합니다. custom 도구는 SDK에 필�
 
 SDK의 send API는 임의의 Responses 이력을 그대로 복원하는 API가 아닙니다. 과거 대화가 포함된 최초 요청은 지시문을 제외한 이력을 assistant phase와 함께 직렬화하여 새 사용자 프롬프트의 문맥으로 제공합니다. JSON 안의 구분자 문자는 이스케이프하지만 디코딩된 원문은 바꾸지 않습니다. 이는 **역할을 그대로 복원하는 네이티브 replay가 아니며**, 동일한 답변을 보장하지 않습니다. 정상적으로 이어지는 live 세션에서는 이 replay 경로를 사용하지 않습니다.
 
-SDK 세션은 기본 context tier를 사용하고 SDK 자체 압축은 비활성화합니다. 모델 목록의 입력 예산은 기본 tier·prompt 한도·출력 예약량을 반영하며 Codex가 80%에서 로컬 자동 압축을 시작합니다. SDK의 구조화된 문맥 초과 오류는 Responses의 `context_length_exceeded`로 전달하여 단순 전송 실패와 구분합니다. 실행기는 HTTP·스트림 자동 재시도를 끄지만, 클라이언트가 명시적으로 보낸 동일한 최신 요청은 기존 성공 캐시를 사용할 수 있습니다.
+`model-map.mjs`는 모델별로 제공되는 최대 컨텍스트 tier를 선택합니다. `billing.tokenPrices.longContext` 또는 `supportedContextTiers`가 지원을 명시하면 `long_context`, 그렇지 않으면 `default`입니다. 공통 선택 함수를 모델 목록 예산과 SDK 세션 설정에 함께 사용하고, tier를 세션 signature에 포함하여 추론 수준 변경·이력 재구성·무응답 복구에도 유지합니다. 대기 호출이 있으면 tier 변경으로 세션을 교체할 수 없으며, 상위 서비스의 거절을 기본 tier로 조용히 대체하지 않습니다. 입력 예산은 선택한 tier의 prompt 한도와 모델 총 문맥 내 최대 출력 예약량을 반영하며 Codex가 80%에서 로컬 자동 압축을 시작합니다. SDK 자체 압축은 계속 비활성화합니다. SDK의 구조화된 문맥 초과 오류는 Responses의 `context_length_exceeded`로 전달하여 단순 전송 실패와 구분합니다. 실행기는 HTTP·스트림 자동 재시도를 끄지만, 클라이언트가 명시적으로 보낸 동일한 최신 요청은 기존 성공 캐시를 사용할 수 있습니다.
 
 ## 수명주기와 보안 경계
 
@@ -64,7 +64,9 @@ HTTP는 루프백에만 바인딩하고 `/health` 외에는 bridge 전용 인증
 
 세션 수·유휴 시간·본문 크기·이력 크기·응답 시간에 상한을 둡니다. 연결 중단·실패·시간 초과 시 해당 bridge 소유 세션을 제거합니다. abort, disconnect, delete를 각각 시간 제한 안에서 시도하며, 종료 시 정상 정리가 실패하면 이 프로젝트의 SDK client를 강제로 정리합니다. TTL 또는 용량에 따른 제거로 대기 호출이 사라질 수 있으며, 이 경우 가짜 결과를 만들지 않고 명시적으로 오류를 반환합니다.
 
-모델 진행 감시는 유휴 세션 만료와 전체 턴 제한과 별개입니다. 루트 모델의 활동만 갱신하며 추론·도구 입력 조각은 전달하지 않고 생존 확인에만 사용합니다. heartbeat나 하위 에이전트 활동으로 루트 무응답이 가려지지 않습니다. `bridge.turn_stalled` 진단에는 모델·단계·정해진 이벤트 이름·시간만 기록합니다. 세션 생성·모델 설정에는 SDK 시작과 턴 제한 중 짧은 값을 적용하여 제어 RPC 하나가 기본 5분의 전체 턴 시간을 소모하지 않도록 합니다.
+모델 진행 감시는 유휴 세션 만료와 전체 턴 제한과 별개입니다. 루트 텍스트·추론·도구 입력 조각 및 증가하는 안전 정수 `assistant.streaming_delta.totalResponseSizeBytes`가 제한을 갱신하며, 숨겨진 진행 정보는 답변으로 전달하지 않습니다. 바이트 카운터는 루트 턴 시작마다 초기화합니다. 잘못되거나 동일한 카운터, heartbeat, 하위 에이전트 활동으로 루트 무응답이 가려지지 않습니다. `bridge.turn_watchdog`는 `min(SDK_READINESS_INTERVAL_MS, TURN_IDLE_TIMEOUT_MS)` 간격으로 내용 없는 시간 진단을 남기고, 만료 시 `bridge.turn_stalled`에 모델·단계·정해진 이벤트 이름·시간을 기록합니다. 세션 생성·모델 설정에는 SDK 시작과 턴 제한 중 짧은 값을 적용하여 제어 RPC 하나가 기본 5분을 소모하지 않도록 합니다.
+
+입력 접수가 확인된 무응답 요청은 이전 세션의 abort·disconnect·delete 성공과 같은 SDK 연결의 준비 상태를 확인한 뒤, 해당 SDK 세션만 재구성하여 기존 응답 스트림에서 복구할 수 있습니다. `TURN_IDLE_RECOVERY_ATTEMPTS`는 기본 1, 0이면 비활성화, 최대 3입니다. 모델·추론 수준·지시문 권한·완료된 전체 이력·완료 호출 식별자·응답 참조 버전·보고된 사용량을 보존합니다. 완료된 도구 결과는 문맥으로만 전달하고 도구 결과 RPC를 재제출하지 않습니다. 부분 출력, 접수 미확인 입력, 대기 호출, 필터, 취소, 정리 실패, 연결 유실은 재전송하지 않습니다. 원래 턴·요청 제한을 모든 복구 시도와 재설정이 공유하며, 취소는 설정 중 MCP 확인도 중단합니다. `bridge.turn_recovering`, `bridge.turn_recovered`, `bridge.turn_recovery_skipped`는 대화 원문 없이 제한된 진단을 남깁니다. 추가 추론 사용량이 발생할 수 있으며, 완전히 조용한 추론과 정지는 구분할 수 없고 이력 재전송은 모델 행동의 정확히 한 번 실행을 보장하지 않습니다.
 
 bridge의 상관관계·재시도 상태는 메모리에 있습니다. `store:false`는 여기서 Responses 조회용 저장소를 만들지 않는다는 뜻이지, Copilot·Codex·SDK가 로컬 세션 파일이나 서비스 측 데이터를 전혀 남기지 않는다는 보장은 아닙니다. bridge는 요청 본문과 인증정보를 로그에 기록하지 않습니다. SDK 오류에는 서비스 진단 내용이 포함될 수 있습니다.
 
@@ -73,14 +75,14 @@ bridge의 상관관계·재시도 상태는 메모리에 있습니다. `store:fa
 ## 안정성·복구 경계
 
 - `request-queue.mjs`는 대화별 취소 가능한 FIFO와 전체 요청 deadline·상한을 담당합니다. 취소 응답과 정리 완료를 구분하고, 정리가 끝날 때까지 대화 lock을 유지합니다.
-- `sdk-lifecycle.mjs`는 bounded ping·단일 복구 작업·새 client generation을 담당합니다. SDK를 잃은 대화는 명시적으로 실패하고 부작용을 자동 replay하지 않습니다.
+- `sdk-lifecycle.mjs`는 bounded ping·단일 연결 복구 작업·새 client generation을 담당합니다. 연결을 잃은 대화는 명시적으로 실패하고 추론·도구 결과를 자동 재전송하지 않습니다. 정상 연결에서 수행하는 위의 제한적 무응답 복구와는 별개입니다.
 - 도구 목록의 순서만 달라진 경우 허용하지만 실제 정책 변경은 계속 거절합니다. 409 진단은 원문 대신 field·hash·개수를 기록합니다.
 - 스트림의 delta/final 일치 검사를 성공 cache·pending 상태 확정 전에 수행합니다.
-- `/health`는 HTTP 생존과 마지막 준비 상태, 인증된 `/readyz`는 SDK ping 검사입니다. 모델 목록 요청은 필요 시 안전한 연결 복구를 시도합니다.
+- `/health`는 HTTP 생존·마지막 준비 상태·실행 중인 `turnWatchdog` 설정을 반환합니다. 해당 필드가 없는 이전 프로세스는 이 구현을 로드하지 않은 상태입니다. 인증된 `/readyz`는 SDK ping 검사이며 모델 목록 요청은 필요 시 안전한 연결 복구를 시도합니다.
 
 기본값·오류 코드·별도 66건 안정성 계약은 [안정성 검증 안내](STABILITY_TESTING_KO.md)에 있습니다. 과거 v3 안정성 및 v4 호환성 증거는 동결 소스로 검증하며 재채점하지 않습니다.
 
 - SDK 시스템·보호 지시는 append 모드로 유지합니다. 요청 지시문과 대화 중간을 포함한 모든 최상위 system/developer 메시지를 원문 그대로 덧붙입니다. 지시문이 바뀌면 idle 세션을 재구성하고, 도구 대기 중이면 거절합니다. SDK 기본 도구 제외와 권한 요청 거절도 유지합니다.
 - 도구 결과와 함께 온 새 사용자 메시지는 결과를 반환하기 전에 SDK immediate steering으로 별도 전달합니다. 도구 출력에 섞지 않으며 결과 원문과 재시도 멱등성을 보존합니다.
-- 도구 호출을 Codex에 반환하기 전에 SDK pending 요청의 request ID·session ID·도구 이름·JSON 인자를 대조합니다. `agentId`와 구형 `parentToolCallId` 양쪽으로 하위 이벤트를 루트 응답에서 제외합니다.
+- 도구 호출을 Codex에 반환하기 전에 SDK pending 요청의 request ID·session ID·도구 이름·JSON 인자를 대조합니다. 최상위 `agentId`와 구형 payload의 `agentId`·`parentToolCallId`로 하위 이벤트를 루트 응답에서 제외합니다.
 - 텍스트 완료는 중간 `assistant.turn_end`가 아닌 루트 `session.idle`까지 기다립니다. 도구 반환은 SDK가 Codex 결과를 기다리므로 idle 대신 대응하는 pending 요청을 확인합니다. 텍스트와 도구가 모두 없는 빈 응답은 성공 캐시에 저장하지 않고 실패합니다.

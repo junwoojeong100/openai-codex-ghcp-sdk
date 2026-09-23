@@ -16,6 +16,7 @@ import {
 import { configuredMcpServerNames, runningMcpServerNames } from "./mcp-isolation.mjs";
 import {
   DEFAULT_MODEL,
+  resolveContextTier,
   resolveCopilotModel,
   resolveReasoningEffort,
 } from "./model-map.mjs";
@@ -55,8 +56,8 @@ function isInstruction(item) {
 }
 
 function isRootEvent(event) {
-  // Older SDK event shapes use parentToolCallId instead of agentId.
-  return !event.agentId && !event.data?.parentToolCallId;
+  // Older SDK event shapes put agent ownership in the payload.
+  return !event.agentId && !event.data?.agentId && !event.data?.parentToolCallId;
 }
 
 function invalidUpstream(message) {
@@ -72,7 +73,7 @@ function upstreamError(error) {
     );
   }
   if (error?.code === "sdk_operation_timeout") {
-    return new BridgeRequestError("GitHub Copilot session setup timed out. No request was retried.", {
+    return new BridgeRequestError("GitHub Copilot session setup timed out.", {
       status: 504, code: "copilot_setup_timeout",
     });
   }
@@ -201,6 +202,7 @@ export class SessionManager {
     logLevel = "error",
     turnTimeoutMs = 300_000,
     turnIdleTimeoutMs = 90_000,
+    turnIdleRecoveryAttempts = 1,
     requestTimeoutMs = 360_000,
     maxRequestsPerFamily = 8,
     maxRequests = 128,
@@ -215,6 +217,9 @@ export class SessionManager {
     if (!Number.isSafeInteger(turnIdleTimeoutMs) || turnIdleTimeoutMs < 1 || turnIdleTimeoutMs > 2_147_483_647) {
       throw new Error("turnIdleTimeoutMs must be an integer from 1 through 2147483647.");
     }
+    if (!Number.isSafeInteger(turnIdleRecoveryAttempts) || turnIdleRecoveryAttempts < 0 || turnIdleRecoveryAttempts > 3) {
+      throw new Error("turnIdleRecoveryAttempts must be an integer from 0 through 3.");
+    }
     this.clientFactory = clientFactory ?? (client ? null : () => new CopilotClient({
       mode: "empty", baseDirectory, logLevel, enableRemoteSessions: false,
     }));
@@ -222,7 +227,7 @@ export class SessionManager {
     this.copilotHome = baseDirectory;
     this.lateMcpServers = new Set();
     Object.assign(this, {
-      preferredModel, turnTimeoutMs, turnIdleTimeoutMs, requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
+      preferredModel, turnTimeoutMs, turnIdleTimeoutMs, turnIdleRecoveryAttempts, requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
       readinessTimeoutMs, startupTimeoutMs, readinessIntervalMs, recoveryBackoffMs,
       stateIdleTtlMs, maxStates, maxReplayBytes, maxToolResults,
     });
@@ -388,9 +393,11 @@ export class SessionManager {
       models: this.models,
       preferredModel: this.preferredModel,
     });
+    const modelInfo = this.models.find((entry) => entry.id === model);
+    const contextTier = resolveContextTier(modelInfo);
     const reasoningEffort = resolveReasoningEffort({
       requested: request.reasoningEffort,
-      model: this.models.find((entry) => entry.id === model),
+      model: modelInfo,
     }, this.onDiagnostic);
     this.#checkHistorySize(input);
     // Client instruction messages retain their authority even when a resumed
@@ -398,7 +405,7 @@ export class SessionManager {
     // embedded inside a user message or tool result into this channel.
     const system = [instructions, ...input.filter(isInstruction).map((item) => item.content)].filter(Boolean).join("\n\n");
     const signatureTools = state && sameToolDefinitions(state.tools, tools) ? state.tools : tools;
-    const signature = hash({ model, system, tools: signatureTools });
+    const signature = hash({ model, contextTier, system, tools: signatureTools });
     let fresh = !state;
     const historyMatches = !state || historyStartsWith(input, state.history);
     if (state && (signature !== state.signature || !historyMatches)) {
@@ -406,7 +413,7 @@ export class SessionManager {
         // Codex compacts without tools after executing a tool batch. Its full
         // transcript must resolve every live call before retiring that session.
         const completedHandoff = !delta && historyMatches && request.toolsProvided && !tools.length
-          && model === state.model && hash(system) === state.systemHash;
+          && model === state.model && contextTier === state.contextTier && hash(system) === state.systemHash;
         if (completedHandoff) {
           const tail = input.slice(state.history.length);
           this.#validateResults(state, tail.filter(isResult), tail.filter(item => !isResult(item)));
@@ -414,6 +421,7 @@ export class SessionManager {
           // No raw instructions, tool descriptions, arguments, paths or family IDs.
           const changed = [
             ...(model !== state.model ? ["model"] : []),
+            ...(contextTier !== state.contextTier ? ["contextTier"] : []),
             ...(hash(system) !== state.systemHash ? ["instructions"] : []),
             ...(!sameToolDefinitions(state.tools, tools) ? ["tools"] : []),
             ...(!historyMatches ? ["history"] : []),
@@ -422,7 +430,7 @@ export class SessionManager {
             pendingCalls: state.outstanding.size, suppliedResults: input.filter(isResult).length,
             previousToolSetHash: hash(state.tools.map(t => t.name).sort()),
             requestedToolSetHash: hash(tools.map(t => t.name).sort()) });
-          throw new BridgeRequestError("The model, tools, instructions or history changed while tools were pending. Return their results before changing the session.", {
+          throw new BridgeRequestError("The model, context tier, tools, instructions or history changed while tools were pending. Return their results before changing the session.", {
             status: 409, code: "pending_session_changed",
           });
         }
@@ -439,7 +447,7 @@ export class SessionManager {
     }
     if (!state) {
       validateReplay(input);
-      state = await this.#createState({ family, model, system, tools, instructions, signature, reasoningEffort, signal });
+      state = await this.#createState({ family, model, contextTier, system, tools, instructions, signature, reasoningEffort, signal });
     }
     const results = fresh ? [] : newInput.filter(isResult);
     const context = results.length ? newInput.filter((item) => !isResult(item)) : [];
@@ -457,38 +465,103 @@ export class SessionManager {
       assertNotAborted(signal);
       if (reasoningEffort !== state.reasoningEffort) {
         await withinDeadline(() => state.session.setModel(model, {
-          ...(reasoningEffort ? { reasoningEffort } : {}), reasoningSummary: "none", contextTier: "default",
+          ...(reasoningEffort ? { reasoningEffort } : {}), reasoningSummary: "none", contextTier,
         }), Math.min(this.startupTimeoutMs, this.turnTimeoutMs), signal);
         state.reasoningEffort = reasoningEffort;
       }
       assertNotAborted(signal);
       if (state.evicted || state.fault) throw state.fault ?? abortError();
       onReady?.({ model });
-      state.phase = submissions.length ? "tool_result_continuation" : "prompt";
-      const turn = await this.#waitForTurn(state, async () => {
-        if (submissions.length) {
-          // These are real client messages, not tool output. Interject them
-          // while the SDK is blocked on the tools, before releasing any result.
-          // enqueue would run a second turn; changing the result text demotes
-          // the user's instructions into untrusted tool data.
-          for (const item of context) {
-            assertNotAborted(signal);
+      // Retain known phases and instruction authority when rebuilding a silent turn.
+      const recordedInput = fresh ? input : [...state.history, ...input.slice(state.history.length)];
+      const deadline = new AbortController();
+      const turnSignal = AbortSignal.any([signal, deadline.signal]);
+      const timer = setTimeout(() => deadline.abort(new BridgeRequestError("Timed out waiting for GitHub Copilot.", {
+        status: 504, code: "copilot_timeout",
+      })), this.turnTimeoutMs);
+      let recoveries = 0;
+      const usage = [];
+      let turn;
+      try {
+        while (true) {
+          assertNotAborted(turnSignal);
+          state.phase = submissions.length ? "tool_result_continuation" : "prompt";
+          try {
+            turn = await this.#waitForTurn(state, async () => {
+              if (recoveries) {
+                // Completed tool results are history, never another tool-result RPC.
+                await state.session.send({ prompt: renderPrompt(recordedInput.filter(item => !isInstruction(item))), attachments: [] });
+              } else if (submissions.length) {
+                // Preserve steering as user input before releasing any tool results.
+                for (const item of context) {
+                  assertNotAborted(turnSignal);
+                  if (state.evicted || state.fault) throw state.fault ?? abortError();
+                  await state.session.send({ prompt: item.content, attachments: [], mode: "immediate", source: "user" });
+                }
+                assertNotAborted(turnSignal);
+                if (state.evicted || state.fault) throw state.fault ?? abortError();
+                await Promise.all(submissions.map(async ({ item, pending, value, digest }) => {
+                  state.toolResultSubmissions += 1;
+                  await submitToolResult(state.session, { requestId: pending.requestId, result: value });
+                  state.pending.delete(item.call_id);
+                  state.outstanding.delete(item.call_id);
+                  state.completed.set(item.call_id, digest);
+                }));
+              } else {
+                await state.session.send({ prompt: renderPrompt(newInput), attachments: [] });
+              }
+            }, onEvent, turnSignal, usage);
+            break;
+          } catch (error) {
+            assertNotAborted(turnSignal);
             if (state.evicted || state.fault) throw state.fault ?? abortError();
-            await state.session.send({ prompt: item.content, attachments: [], mode: "immediate", source: "user" });
+            if (error.code !== "copilot_idle_timeout") throw error;
+            if (!error.recoverySafe || recoveries >= this.turnIdleRecoveryAttempts) {
+              const reason = !error.recoverySafe ? error.recoveryBlockedReason
+                : this.turnIdleRecoveryAttempts === 0 ? "disabled" : "attempt_limit";
+              this.onDiagnostic({ event: "bridge.turn_recovery_skipped", model, phase: state.phase,
+                attempts: recoveries, reason });
+              error.message += reason === "attempt_limit"
+                ? ` Automatic recovery was exhausted after ${recoveries} attempt(s).`
+                : ` Automatic recovery was skipped (${reason}); recovery attempts: ${recoveries}.`;
+              throw error;
+            }
+            validateReplay(recordedInput);
+            const previousState = state;
+            const previousResponses = previousState.responseIds.map(id => [id, this.responses.get(id).version]);
+            const cleaned = await this.#evict(previousState, error);
+            assertNotAborted(turnSignal);
+            if (!cleaned) {
+              this.onDiagnostic({ event: "bridge.turn_recovery_skipped", model, attempts: recoveries, reason: "cleanup_unconfirmed" });
+              error.message += " Automatic recovery was skipped because prior session cleanup could not be confirmed.";
+              throw error;
+            }
+            const readiness = await withinDeadline(() => this.readiness(), this.readinessTimeoutMs + 100, turnSignal);
+            assertNotAborted(turnSignal);
+            if (!readiness.ready || !this.lifecycle.owns(previousState.client, previousState.generation)) {
+              this.onDiagnostic({ event: "bridge.turn_recovery_skipped", model, attempts: recoveries, reason: "upstream_unavailable" });
+              error.message += " Automatic recovery was skipped because the upstream connection is unavailable.";
+              throw error;
+            }
+            recoveries++;
+            this.onDiagnostic({ event: "bridge.turn_recovering", model, requestId: responseId, attempt: recoveries,
+              maxAttempts: this.turnIdleRecoveryAttempts });
+            state = await this.#createState({ family, model, contextTier, system, tools, instructions, signature, reasoningEffort, signal: turnSignal });
+            state.completed = new Map(previousState.completed);
+            state.version = previousState.version;
+            state.responseIds = [...previousState.responseIds];
+            for (const [id, version] of previousResponses) this.responses.set(id, { state, version });
+            for (const id of previousState.callIds) {
+              const owner = this.callStates.get(id);
+              if (owner && owner !== state) throw invalidUpstream("Copilot reused a tool call ID during recovery.");
+              state.callIds.add(id);
+              this.callStates.set(id, state);
+            }
           }
-          assertNotAborted(signal);
-          if (state.evicted || state.fault) throw state.fault ?? abortError();
-          await Promise.all(submissions.map(async ({ item, pending, value, digest }) => {
-            state.toolResultSubmissions += 1;
-            await submitToolResult(state.session, { requestId: pending.requestId, result: value });
-            state.pending.delete(item.call_id);
-            state.outstanding.delete(item.call_id);
-            state.completed.set(item.call_id, digest);
-          }));
-        } else {
-          await state.session.send({ prompt: renderPrompt(newInput), attachments: [] });
         }
-      }, onEvent, signal);
+      } finally {
+        clearTimeout(timer);
+      }
       assertNotAborted(signal);
       if (state.evicted || state.fault) throw state.fault ?? abortError();
       const output = outputItems(turn.messages, tools);
@@ -498,9 +571,6 @@ export class SessionManager {
           status: 502, code: "parallel_tool_calls_violation",
         });
       }
-      // A client may omit old phase fields; retain the phases already observed
-      // from the SDK so the next cold replay does not turn a preamble into a final.
-      const recordedInput = fresh ? input : [...state.history, ...input.slice(state.history.length)];
       const completeHistory = [...recordedInput, ...output.map(canonicalItem).filter(Boolean)];
       this.#checkHistorySize(completeHistory);
       const result = { model, messages: turn.messages, tools, usage: turn.usage };
@@ -523,6 +593,7 @@ export class SessionManager {
       state.lastResult = result;
       state.phase = state.outstanding.size ? "tool_handoff" : "completed";
       this.#rememberResponse(state, responseId);
+      if (recoveries) this.onDiagnostic({ event: "bridge.turn_recovered", model, requestId: responseId, attempts: recoveries });
       return state.lastResult;
     } catch (error) {
       await this.#evict(state);
@@ -562,7 +633,7 @@ export class SessionManager {
     });
   }
 
-  async #createState({ family, model, system, tools, instructions, signature, reasoningEffort, signal }) {
+  async #createState({ family, model, contextTier, system, tools, instructions, signature, reasoningEffort, signal }) {
     assertNotAborted(signal);
     while (this.states.size >= this.maxStates) {
       const oldest = [...this.states.values()].filter((entry) => !this.busyFamilies.has(entry.family))
@@ -572,12 +643,12 @@ export class SessionManager {
       assertNotAborted(signal);
     }
     if (!this.lifecycle.snapshot().ready || !this.lifecycle.owns(this.client, this.lifecycle.generation)) {
-      throw new BridgeRequestError("The upstream connection changed before session creation. No inference was submitted.", {
+      throw new BridgeRequestError("The upstream connection changed before session creation.", {
         status: 503, code: "upstream_unavailable",
       });
     }
     const state = {
-      family, model, tools, instructions, signature, reasoningEffort, systemHash: hash(system),
+      family, model, contextTier, tools, instructions, signature, reasoningEffort, systemHash: hash(system),
       sessionId: `codex-ghcp-${randomUUID()}`,
       history: [], pending: new Map(), outstanding: new Map(), completed: new Map(),
       callIds: new Set(), responseIds: [], waiters: new Map(), unsubscribers: [],
@@ -601,7 +672,7 @@ export class SessionManager {
         // Match the launcher's disabled summaries at the SDK boundary too.
         // This does not change the requested reasoning effort or safety policy.
         reasoningSummary: "none",
-        contextTier: "default",
+        contextTier,
         availableTools: sdkTools.map((tool) => `custom:${tool.name}`),
         tools: sdkTools,
         // MCP tools are never exposed above, so do not start user/plugin servers.
@@ -627,7 +698,9 @@ export class SessionManager {
       });
       const creationSignal = signal ? AbortSignal.any([signal, state.creationController.signal]) : state.creationController.signal;
       const session = await withinDeadline(() => state.creation, Math.min(this.startupTimeoutMs, this.turnTimeoutMs), creationSignal);
-      await this.#enforceMcpIsolation(session);
+      await this.#enforceMcpIsolation(session, creationSignal);
+      assertNotAborted(creationSignal);
+      if (state.evicted || state.fault) throw state.fault ?? abortError();
       state.unsubscribers.push(session.on("external_tool.requested", (event) => {
         if (!isRootEvent(event)) return;
         try {
@@ -675,7 +748,7 @@ export class SessionManager {
           inputTokens: tokens(data.inputTokens), outputTokens: tokens(data.outputTokens),
         });
         state.fault ??= new BridgeRequestError(
-          "GitHub Copilot blocked or truncated this response with its content filter. No inference or tool result was automatically retried.",
+          "GitHub Copilot blocked or truncated this response with its content filter. Content-filter failures are not automatically retried.",
           { status: 422, code: "upstream_content_filter" },
         );
         state.cancelActive?.(state.fault);
@@ -701,23 +774,24 @@ export class SessionManager {
     }
   }
 
-  #waitForTurn(state, trigger, onEvent, signal) {
+  #waitForTurn(state, trigger, onEvent, signal, usage) {
     return new Promise((resolve, reject) => {
       const messages = [];
-      const usage = [];
       const subscriptions = [];
       let settled = false;
       let started = false;
       let triggerFinished = false;
       let finishing = false;
       let ready = false;
+      let outputStarted = false;
+      let responseBytes = 0;
       let lastActivityAt = performance.now();
       let lastActivity = "request_started";
       const settle = (error) => {
         if (settled) return;
         settled = true;
-        clearTimeout(timeout);
         clearTimeout(idleTimeout);
+        clearInterval(watchdog);
         signal?.removeEventListener("abort", onAbort);
         for (const unsubscribe of subscriptions) unsubscribe();
         state.cancelActive = null;
@@ -725,15 +799,17 @@ export class SessionManager {
         else resolve({ messages, usage: aggregateUsage(usage) });
       };
       const onAbort = () => settle(signal?.reason ?? abortError());
-      const timeout = setTimeout(() => settle(new BridgeRequestError("Timed out waiting for GitHub Copilot.", {
-        status: 504, code: "copilot_timeout",
-      })), this.turnTimeoutMs);
       const idleTimeout = setTimeout(() => {
         this.onDiagnostic({ event: "bridge.turn_stalled", model: state.model, phase: state.phase,
           timeoutMs: this.turnIdleTimeoutMs, idleMs: Math.floor(performance.now() - lastActivityAt), lastActivity });
-        settle(new BridgeRequestError("GitHub Copilot stopped producing model progress. The idle deadline expired; no request was retried.", {
+        const error = new BridgeRequestError(`GitHub Copilot stopped producing model progress. The idle deadline expired after ${this.turnIdleTimeoutMs} ms without root progress (last event: ${lastActivity}).`, {
           status: 504, code: "copilot_idle_timeout",
-        }));
+        });
+        error.recoveryBlockedReason = !triggerFinished ? "input_unacknowledged"
+          : outputStarted || messages.length ? "output_started"
+          : state.pending.size || state.outstanding.size ? "pending_tool_calls" : null;
+        error.recoverySafe = error.recoveryBlockedReason === null;
+        settle(error);
       }, this.turnIdleTimeoutMs);
       const progress = type => {
         if (settled) return;
@@ -741,6 +817,11 @@ export class SessionManager {
         lastActivity = type;
         idleTimeout.refresh();
       };
+      const watchdog = setInterval(() => {
+        this.onDiagnostic({ event: "bridge.turn_watchdog", model: state.model, phase: state.phase,
+          idleMs: Math.floor(performance.now() - lastActivityAt), timeoutMs: this.turnIdleTimeoutMs, lastActivity });
+      }, Math.min(this.readinessIntervalMs, this.turnIdleTimeoutMs));
+      watchdog.unref();
       const finish = () => {
         if (settled || finishing || !started) return;
         finishing = true;
@@ -759,7 +840,11 @@ export class SessionManager {
       };
       subscriptions.push(
         state.session.on("assistant.turn_start", (event) => {
-          if (isRootEvent(event)) { started = true; progress("assistant.turn_start"); }
+          if (isRootEvent(event) && !settled) {
+            started = true;
+            responseBytes = 0;
+            progress("assistant.turn_start");
+          }
         }),
         state.session.on("assistant.message", (event) => {
           if (!isRootEvent(event) || settled) return;
@@ -772,8 +857,19 @@ export class SessionManager {
         }),
         state.session.on("assistant.message_delta", (event) => {
           if (isRootEvent(event) && !settled) {
-            if (typeof event.data?.deltaContent === "string" && event.data.deltaContent.length) progress("assistant.message_delta");
+            if (typeof event.data?.deltaContent === "string" && event.data.deltaContent.length) {
+              outputStarted = true;
+              progress("assistant.message_delta");
+            }
             try { onEvent?.(event); } catch (error) { settle(error); }
+          }
+        }),
+        state.session.on("assistant.streaming_delta", event => {
+          if (!isRootEvent(event) || settled) return;
+          const bytes = event.data?.totalResponseSizeBytes;
+          if (Number.isSafeInteger(bytes) && bytes > responseBytes) {
+            responseBytes = bytes;
+            progress("assistant.streaming_delta");
           }
         }),
         ...[["assistant.reasoning_delta", "deltaContent"], ["assistant.tool_call_delta", "inputDelta"]]
@@ -844,13 +940,14 @@ export class SessionManager {
 
   // Best effort and outside the creation deadline: a server from a source the
   // scan does not know may still start. Stop it and disable it for later sessions.
-  async #enforceMcpIsolation(session) {
+  async #enforceMcpIsolation(session, signal) {
     if (typeof session?.rpc?.mcp?.list !== "function") return;
     const bound = this.readinessTimeoutMs;
     let running;
     try {
-      running = runningMcpServerNames(await withinDeadline(() => session.rpc.mcp.list(), bound));
+      running = runningMcpServerNames(await withinDeadline(() => session.rpc.mcp.list(), bound, signal));
     } catch (error) {
+      assertNotAborted(signal);
       this.onDiagnostic({ event: "bridge.mcp_isolation_unverified",
         failureType: error?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error" });
       return;
@@ -861,15 +958,20 @@ export class SessionManager {
       if (this.lateMcpServers.size < 256) this.lateMcpServers.add(serverName);
       if (typeof session.rpc.mcp.disable !== "function") continue;
       try {
-        await withinDeadline(() => session.rpc.mcp.disable({ serverName }), bound);
+        await withinDeadline(() => session.rpc.mcp.disable({ serverName }), bound, signal);
         stopped += 1;
-      } catch { /* Counted below; the request itself continues. */ }
+      } catch {
+        assertNotAborted(signal);
+        // Other failures are counted below; the request itself continues.
+      }
     }
     this.onDiagnostic({ event: "bridge.mcp_servers_disabled_late", servers: running.length, stopped });
   }
 
   async #disposeSession(state) {
-    if (!state.session) return;
+    if (!state.session) return false;
+    let cleaned = typeof state.session.abort === "function" && typeof state.session.disconnect === "function"
+      && typeof state.client.deleteSession === "function";
     for (const [operationName, operation] of [
       ["abort", () => abortSession(state.session)],
       ["disconnect", () => disconnectSession(state.session)],
@@ -877,9 +979,10 @@ export class SessionManager {
     ]) {
       // deleteSession can auto-start a disconnected SDK client. Never resurrect
       // a retired generation while cleaning a late/failed operation.
-      if (state.upstreamLost || !this.lifecycle.owns(state.client, state.generation)) return;
+      if (state.upstreamLost || !this.lifecycle.owns(state.client, state.generation)) return false;
       const startedAt = Date.now();
       await withinDeadline(operation, this.cleanupTimeoutMs).catch(error => {
+        cleaned = false;
         // SDK messages may contain session identifiers or user content. Log
         // only the owned operation, timing and a bounded failure category.
         this.onDiagnostic({ event: "bridge.session_cleanup_failed", operation: operationName,
@@ -887,6 +990,7 @@ export class SessionManager {
           timeoutMs: this.cleanupTimeoutMs, elapsedMs: Math.max(0, Date.now() - startedAt) });
       });
     }
+    return cleaned;
   }
 
   #evict(state, reason = abortError()) {

@@ -117,7 +117,20 @@ codex-original --help       # GHCP를 거치지 않는 공식 CLI 도움말
 
 Codex 0.154.0은 catalog priority 순서로 피커를 정렬하고 첫 항목에 `(default)`를 표시하므로 `claude-opus-5.5`에 이 표시가 붙습니다. 실행기는 `--ghcp-model`로 다른 모델을 고르지 않는 한 여전히 `gpt-6-astra`로 시작하며, 피커에는 `(current)`로 표시됩니다. `/model`에서 모델을 고르면 실행 중인 세션이 전환됩니다. Codex는 이 선택을 `~/.codex/config.toml`의 `model`/`model_reasoning_effort`로도 저장하고, 더 높은 우선순위 설정이 이를 덮어쓴다고 경고합니다. 다음 GHCP 실행은 여전히 `--ghcp-model` 또는 기본값을 쓰지만, 공식 `codex-original` 실행은 저장된 값을 읽으므로 필요하면 그 값을 되돌리세요.
 
-모델 정보에는 이론적인 long-context 최댓값 대신 **실제로 사용하는 기본 tier의 입력 예산**을 전달합니다. Copilot의 prompt/output 한도와 기본 tier 한도를 반영하고 SDK 세션을 `contextTier: "default"`로 고정하며, 예산의 **80%**에서 Codex의 로컬 자동 압축을 시작합니다. 한도 메타데이터가 없으면 다른 모델의 기본값으로 진행하지 않고 실행을 중단합니다. 대화 이력의 기준을 Codex로 유지하기 위해 SDK 자체 자동 압축은 계속 비활성화합니다.
+6개 모델 모두 **SDK가 제공하는 최대 컨텍스트 tier**를 사용합니다. Copilot이 장문 tier 가격 정보 또는 명시적인 지원 정보를 제공하면 `contextTier: "long_context"`, 그렇지 않으면 `"default"`를 선택합니다. Codex 목록·세션 생성·모델/추론 수준 변경·이력 재구성·무응답 자동 복구에 같은 선택을 적용합니다. 상위 서비스가 tier를 거절하면 오류로 알리며 조용히 기본 tier로 바꾸지 않습니다. 대화 이력의 기준을 Codex로 유지하기 위해 SDK 자체 압축은 계속 비활성화합니다.
+
+Codex에 전달하는 값은 입력·출력을 합친 총 문맥이 아니라 **입력 예산**입니다. 모델/tier의 prompt 한도 중 작은 값을 적용하고 총 문맥 안에 모델의 최대 출력 공간을 예약합니다. 입력 예산의 **80%**에서 Codex의 로컬 자동 압축을 시작합니다. 한도 메타데이터가 없으면 임의의 값으로 진행하지 않고 실행을 중단합니다. 현재 계정 메타데이터(2026-09-23)에 따른 토큰 수는 아래와 같으며, 코드에 고정하지 않고 SDK에서 계산합니다.
+
+| 모델 | 총 컨텍스트 최대 | Codex 입력 예산 | 자동 압축 시작점 |
+|---|---:|---:|---:|
+| `claude-opus-5.5` | 1,000,000 | 872,000 | 697,600 |
+| `claude-sonnet-5` | 1,000,000 | 936,000 | 748,800 |
+| `claude-haiku-4.5` | 200,000 | 136,000 | 108,800 |
+| `gpt-6-astra` | 1,050,000 | 922,000 | 737,600 |
+| `gpt-6-sol` | 1,000,000 | 872,000 | 697,600 |
+| `gpt-6-luna` | 1,000,000 | 872,000 | 697,600 |
+
+Haiku는 기본 tier를 유지하고 나머지 5개는 현재 장문 tier를 제공합니다. 큰 문맥은 지연·메모리·사용 비용을 늘릴 수 있습니다. 현재 GPT 장문 tier 단가는 입력 2배·출력 1.5배이며 Claude Opus/Sonnet은 두 tier 단가가 같습니다. 계정 메타데이터는 바뀔 수 있습니다. Codex의 `model_context_window`만 높여 SDK 한도를 초과하지 마세요. 실행 중인 프로세스는 기존 설정을 유지하므로 Codex를 정상 종료하고 다시 실행해야 적용됩니다.
 
 각 catalog 항목에는 `apply_patch_tool_type: "freeform"`도 선언합니다. 따라서 Codex는 기본 OpenAI 모델과 마찬가지로 Copilot 모델에도 Codex 기본 `apply_patch` 편집 도구를 제공합니다. 이전에는 실제 TUI에 shell 도구만 제공되어, 모델이 shell 명령으로 파일을 쓰거나 `apply_patch`가 없다고 답했습니다. bridge는 freeform patch 원문을 바이트 그대로 전달하고, 적용은 여전히 Codex가 자체 샌드박스·승인 정책 안에서 합니다.
 
@@ -195,9 +208,25 @@ health 외에는 `Authorization: Bearer <bridge-token>` 또는 `x-api-key`가 �
 
 JSON으로 직렬화한 대화 이력 한도(`MAX_REPLAY_BYTES`)와 HTTP 요청 본문 한도(`MAX_BODY_BYTES`)의 기본값은 각각 **33,554,432바이트(32 MiB)**입니다. 이는 실측으로 검증된 최대 처리량이 아닌 운영상 초기 보호 한도이며 모델 문맥 한도와도 별개입니다. 큰 대화는 여전히 메모리나 모델 문맥 한도를 초과할 수 있습니다. 필요하면 양의 정수 환경 변수로 각 한도를 재정의하고 브리지를 재시작하세요. 실행기는 `.env`를 자동으로 읽지 않습니다. 상주 브리지는 연결된 Codex 세션을 닫은 뒤 종료하세요. 재시작하면 메모리의 대화 상태가 사라집니다.
 
-실행기는 Codex의 HTTP·스트림 자동 재시도를 끕니다. 오류나 시간 초과 시 긴 프롬프트·실행 여부가 불확실한 도구 결과를 반복 재전송하지 않고 오류를 표시합니다. **모델 진행이 90초 동안 없으면** `copilot_idle_timeout`으로 종료합니다(`TURN_IDLE_TIMEOUT_MS=90000`). 루트 모델의 텍스트·추론·도구 입력 스트리밍은 대기 시간을 갱신하지만 HTTP keepalive와 하위 에이전트 이벤트는 갱신하지 않습니다. 추론과 미완성 도구 인자는 생존 확인에만 사용하며 클라이언트에 노출하지 않습니다. 정상적으로 조용히 오래 추론하는 모델은 이 값을 늘릴 수 있습니다.
+Codex의 HTTP·스트림 자동 재시도는 계속 비활성화합니다. 브릿지는 **15초마다** SDK 준비 상태를 확인하고 내용 없는 턴 감시 진단을 기록합니다(`SDK_READINESS_INTERVAL_MS`). 루트 모델의 텍스트·추론·도구 입력 스트리밍과 **증가하는** `assistant.streaming_delta` 바이트 수는 **90초** 무진행 제한(`TURN_IDLE_TIMEOUT_MS=90000`)을 갱신합니다. 동일하거나 잘못된 카운터, HTTP keepalive, 하위 에이전트 이벤트는 갱신하지 않으며 숨겨진 진행 정보는 답변으로 노출하지 않습니다. 상위 서비스가 아무 신호도 보내지 않으면 로컬 상태 확인만으로 정지와 긴 비공개 추론을 구분할 수는 없습니다.
 
-세션 생성·모델 설정 RPC는 **SDK 시작 제한 30초**(`SDK_STARTUP_TIMEOUT_MS=30000`, 턴 제한 이하)를 적용하고 `copilot_setup_timeout`으로 알립니다. 전체 모델 턴 제한은 기본 5분(`TURN_TIMEOUT_MS=300000`), 큐 대기 포함 요청 제한은 6분(`REQUEST_TIMEOUT_MS=360000`)이며 정리 작업은 별도 제한을 갖습니다. 변경은 다시 실행한 프로세스부터 적용됩니다. 기존 상주 bridge를 사용 중이면 연결된 Codex를 닫고 `./bin/codex-ghcp-stop`을 실행한 뒤 다시 시작하세요.
+무진행 시 브릿지는 기존 응답 스트림을 유지하면서 해당 SDK 세션을 **요청당 한 번** 재구성할 수 있습니다(`TURN_IDLE_RECOVERY_ATTEMPTS=1`, 범위 0–3; 0은 즉시 실패 방식). 입력 접수 확인, assistant 출력·대기 호출 없음, 이전 세션의 abort·disconnect·delete 성공이 모두 필요합니다. 완료된 도구 결과는 대화 이력으로만 전달하며 **도구 결과 RPC를 다시 제출하지 않습니다.** 모델·추론 수준·지시문을 유지하고 다른 대화는 재시작하지 않습니다. 부분 출력, 접수 여부가 불확실한 도구 결과, 필터, 취소, 정리 실패, SDK 연결 유실은 자동 재전송하지 않습니다. 복구 후 다시 멈추면 무한 반복하지 않고 `copilot_idle_timeout`으로 종료합니다. 복구는 추가 추론 사용량을 소비할 수 있으며 동일한 답변이나 모델 행동의 정확히 한 번 실행을 보장하지 않습니다.
+
+세션 생성·모델 설정 RPC는 **SDK 시작 제한 30초**(`SDK_STARTUP_TIMEOUT_MS=30000`, 턴 제한 이하)를 적용하고 `copilot_setup_timeout`으로 알립니다. 전체 모델 턴 제한은 복구 시도가 공유하는 기본 5분(`TURN_TIMEOUT_MS=300000`), 큐 대기 포함 요청 제한은 6분(`REQUEST_TIMEOUT_MS=360000`)이며 정리 작업은 별도 제한을 갖습니다. 복구해도 두 제한을 초기화하지 않습니다. 변경은 다시 실행한 프로세스부터 적용됩니다. 기존 상주 bridge를 사용 중이면 연결된 Codex를 닫고 `./bin/codex-ghcp-stop`을 실행한 뒤 다시 시작하세요.
+
+**소스 수정만으로 실행 중인 브릿지가 갱신되지는 않습니다.** 기본 foreground 실행에서는 Codex를 정상 종료한 뒤 같은 폴더에서 `./bin/codex-ghcp -- resume --last`를 실행하면 수정 코드를 로드하고 최근 대화를 이어갑니다. 활성 Codex 아래의 브릿지만 강제 종료하지 마세요. `codex-ghcp-status`는 background 브릿지만 확인하므로 `stopped`여도 foreground 브릿지가 실행 중일 수 있습니다. 실행 중인 브릿지의 `/health`는 `turnWatchdog`의 `idleTimeoutMs`, `recoveryAttempts`, `intervalMs`를 반환하며 background 상태에도 표시합니다. 이 필드가 없으면 이전 프로세스이며 새 기본값이 적용됐다는 뜻이 아닙니다. 복구 생략 시에는 재시도하지 않았다는 모호한 문구 대신 구체적인 이유를 알립니다.
+
+**자동 복구 횟수가 소진된 경우:** 재구성한 세션에서도 무진행 제한까지 관측 가능한 진행이 없었다는 뜻입니다. 곧바로 교착을 의미하지는 않습니다. `/health.ready`는 로컬 SDK 연결만 확인하며 Copilot 모델 서비스의 접속 가능 여부는 보장하지 않습니다. `Connect: ... ETIMEDOUT` 같은 연결 오류라면 네트워크·프록시/VPN·서비스 상태를 점검해야 하며 재시도 횟수만 늘려서는 장애가 해결되지 않습니다. 시작 실패는 이제 SDK의 어느 작업(`start`·`ping`·`listModels`)이 실패했는지와 내용 없는 시간 진단을 남깁니다. 무응답 오류에는 설정된 제한과 마지막 루트 진행 이벤트도 표시합니다.
+
+정상적인 긴 무신호 추론에는 정상 종료 후 **지연 허용 실행 설정**을 명시적으로 사용할 수 있습니다. 무진행 제한 3분·안전 조건을 충족한 복구 최대 2회이며 절대 턴 10분·전체 요청 11분 제한은 유지합니다.
+
+```bash
+TURN_IDLE_TIMEOUT_MS=180000 TURN_IDLE_RECOVERY_ATTEMPTS=2 \
+TURN_TIMEOUT_MS=600000 REQUEST_TIMEOUT_MS=660000 \
+./bin/codex-ghcp -- -c 'model_reasoning_effort="low"' resume --last
+```
+
+기본값을 바꾸거나 끊김 방지를 보장하는 설정은 아니며 대기 시간·추론 사용량이 늘 수 있습니다. 무진행 제한만이 아니라 턴·요청 예산을 함께 조정하세요. 도구 결과까지 완료된 턴 사이에 `/compact`로 긴 이력을 줄이면 지연을 줄이는 데 도움이 됩니다. 최대 컨텍스트가 크다고 긴 대화가 빨라지는 것은 아닙니다. keepalive를 모델 진행으로 위장하거나 완료한 도구를 무조건 재실행하지 않습니다. 장시간 검증은 `.runtime`에 독립적으로 진행 기록을 저장하므로 대화가 끊겨도 검증 프로세스가 멈췄다고 단정하지 말고 기존 보고서를 먼저 확인하세요.
 
 ## 로컬 확인과 통합 호환성 검증
 
@@ -215,9 +244,9 @@ npm run test:compatibility:runtime     # 실제 Codex + SDK 테스트 대역, �
 
 단독 실모델 터미널 검사는 `npm run test:terminal -- --execute --driver playwright --model gpt-6-astra --duration-seconds 120`으로 재현하며 `pty` 드라이버도 지원합니다. 먼저 `npx --no-install playwright install chromium`으로 브라우저를 설치하세요. 입력·응답 크기, 취소, 동결 증거, 통합 `test:soak -- --terminal` 경로는 [터미널·내구성 검사](docs/SOAK_TESTING_KO.md)를 참고하세요. 실검증은 Copilot 사용량이 발생하며 기본 `--plan`은 모델을 호출하지 않습니다.
 
-별도 계약 `codex-ghcp-tui-12-v1`은 운영 실행기의 **실제 TUI**를 headless Playwright/xterm.js로 구동합니다. **12개 시나리오 × 6개 모델 = 72건**입니다. 피커 고정과 전환, shell·`apply_patch` 도구, Copilot MCP를 끈 상태의 Codex MCP, 긴 출력, 대용량 붙여넣기, Escape 복구, `/compact`, `resume --last`, reasoning 수준 변경, `/new`·`/quit` 정리를 검사합니다. `npm run test:tui`(계획), `npm run test:tui:runtime`(오프라인), `npm run test:tui -- --execute`로 실행합니다. [실제 TUI 시나리오](docs/TUI_SCENARIOS_KO.md)를 참고하세요.
+별도 계약 `codex-ghcp-tui-12-v2`는 **실제 TUI → bridge → Copilot SDK → 지정 모델** 경로를 headless Playwright/xterm.js로 구동합니다. **12개 시나리오 × 6개 모델 = 72건**이며 전체 실검증 한 회에서 **95%(69/72) 이상**을 목표로 합니다. 피커 전환, shell·`apply_patch`, Codex MCP 격리, 긴 출력·대용량 붙여넣기, Escape 복구, `/compact`, 재개, 추론 수준 변경·종료를 검사합니다. SDK 실제 모델·컨텍스트 tier, Responses SSE 완료, 운영 watchdog 설정·정상 정리도 공통으로 요구합니다. `npm run test:tui`(계획), `npm run test:tui:runtime`(오프라인), `npm run test:tui -- --execute`로 실행합니다. [실제 TUI 시나리오](docs/TUI_SCENARIOS_KO.md)를 참고하세요.
 
-**최신 실제 TUI 검증(한국 시간 2026-09-23): `codex-ghcp-tui-12-v1` 70/72(97.22%)**입니다. 구현 `54c7eb77`로 실행했고 현재·동결 소스로 검증했습니다. Opus 5.5, Sonnet 5, Haiku 4.5, Astra는 12/12입니다. 실패 2건은 Sol과 Luna가 U03 픽스처 문구(`token=`)를 거절한 경우로, 도구 호출과 필터 신호가 모두 없었습니다. 이 검증에서 운영 실행기가 Codex 기본 `apply_patch` 도구를 제공하지 않는다는 사실이 드러났습니다. 이제 모델 목록이 이를 선언하며, 최종 실행에서 6개 모델 모두 이 도구를 사용했습니다. 1,282회 표본 동안 bridge의 Copilot 런타임 아래 MCP 프로세스는 없었습니다. [TUI 결과·증거](docs/validation/2026-09-23-tui-scenarios/README_KO.md)를 참고하세요.
+**최신 실제 TUI 검증(한국 시간 2026-09-23): v2 72/72(100%)**, 6개 모델 모두 12/12이며 구현 `fe500d78`을 현재·동결 소스로 검증했습니다. 실제 Copilot API 연결 시간 초과가 포함된 최초 실행의 **45/72**도 보존합니다. 최종 실행은 운영 watchdog 기본값을 그대로 사용했고 실패 스트림·무응답 턴·SDK 정리 오류가 없었습니다. 향후 네트워크 가용성을 보장하는 결과는 아닙니다. [v2 증거와 한계](docs/validation/2026-09-23-tui-connection-v2/README_KO.md)를 참고하세요. [과거 v1의 70/72](docs/validation/2026-09-23-tui-scenarios/README_KO.md)는 별도 계약이며 재채점하거나 합산하지 않았습니다.
 
 18개 시나리오 호환성 계약은 11개 시나리오 안정성 계약과 별개이며, 안정성 결과를 이 실모델 행렬의 통과 증거로 사용하지 않습니다.
 **시나리오 18개 × GHCP 6모델 = 총 108건**이며, 별도 기준선·빠른 모드·부분 모델 선택은 없습니다.

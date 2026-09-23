@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog, resolveCopilotModel, resolveReasoningEffort, supportedModels } from "../src/model-map.mjs";
+import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog, resolveContextTier, resolveCopilotModel, resolveReasoningEffort, supportedModels } from "../src/model-map.mjs";
 
 const models = SUPPORTED_MODEL_IDS.map((id) => ({ id, policy: { state: "enabled" } }));
 
@@ -54,7 +54,7 @@ test("catalog serves both OpenAI IDs and Codex model metadata from the live SDK 
   }
 });
 
-test("context budgets use the active default tier and reserve output space before automatic compaction", () => {
+test("context budgets use the largest advertised tier and reserve output space before automatic compaction", () => {
   const catalog = modelCatalog([
     { id: "gpt-6-astra", capabilities: { limits: {
       max_context_window_tokens: 1_178_000, max_prompt_tokens: 1_050_000, max_output_tokens: 128_000,
@@ -70,7 +70,7 @@ test("context budgets use the active default tier and reserve output space befor
   ]);
   const byId = new Map(catalog.models.map(entry => [entry.slug, entry]));
   for (const [id, window, threshold] of [
-    ["gpt-6-astra", 272_000, 217_600],
+    ["gpt-6-astra", 872_000, 697_600],
     ["claude-haiku-4.5", 136_000, 108_800],
     ["claude-sonnet-5", 24_576, 19_660],
   ]) {
@@ -79,6 +79,51 @@ test("context budgets use the active default tier and reserve output space befor
     assert.equal(entry.max_context_window, window);
     assert.equal(entry.auto_compact_token_limit, threshold);
   }
+});
+
+test("all six models expose their maximum tier input budgets, not a forced one-million-token input limit", () => {
+  for (const [id, total, output, prompt, standard, extended, budget, threshold] of [
+    ["claude-opus-5.5", 1_000_000, 128_000, 872_000, 200_000, 872_000, 872_000, 697_600],
+    ["claude-sonnet-5", 1_000_000, 64_000, 936_000, 200_000, 936_000, 936_000, 748_800],
+    ["claude-haiku-4.5", 200_000, 64_000, 136_000, undefined, undefined, 136_000, 108_800],
+    ["gpt-6-astra", 1_050_000, 128_000, 1_050_000, 272_000, 1_050_000, 922_000, 737_600],
+    ["gpt-6-sol", 1_000_000, 128_000, 872_000, 272_000, 872_000, 872_000, 697_600],
+    ["gpt-6-luna", 1_000_000, 128_000, 872_000, 272_000, 872_000, 872_000, 697_600],
+  ]) {
+    const entry = { id, capabilities: { limits: {
+      max_context_window_tokens: total, max_prompt_tokens: prompt, max_output_tokens: output,
+    } }, billing: { tokenPrices: {
+      maxPromptTokens: standard, contextMax: standard,
+      ...(extended ? { longContext: { maxPromptTokens: extended, contextMax: extended } } : {}),
+    } } };
+    assert.equal(resolveContextTier(entry), extended ? "long_context" : "default", id);
+    const [actual] = modelCatalog([entry]).models;
+    assert.equal(actual.context_window, budget, id);
+    assert.equal(actual.max_context_window, budget, id);
+    assert.equal(actual.auto_compact_token_limit, threshold, id);
+  }
+});
+
+test("context tiers follow provider support, including legacy budgets and unpriced tiers", () => {
+  const entry = { id: DEFAULT_MODEL, capabilities: { limits: {
+    max_context_window_tokens: 1_000_000, max_output_tokens: 128_000,
+  } } };
+  for (const longContext of [undefined, null, false, true, "long_context", []]) {
+    const candidate = { ...entry, billing: { tokenPrices: { maxPromptTokens: 200_000, longContext } } };
+    assert.equal(resolveContextTier(candidate), "default");
+    assert.equal(modelCatalog([candidate]).models[0].context_window, 200_000);
+  }
+  const legacy = { ...entry, billing: { tokenPrices: {
+    contextMax: 200_000, longContext: { contextMax: 800_000 },
+  } } };
+  assert.equal(resolveContextTier(legacy), "long_context");
+  assert.equal(modelCatalog([legacy]).models[0].context_window, 800_000);
+  const unpriced = { ...entry, supportedContextTiers: ["default", "long_context"] };
+  assert.equal(resolveContextTier(unpriced), "long_context");
+  assert.equal(modelCatalog([unpriced]).models[0].context_window, 872_000);
+  assert.equal(resolveContextTier({ ...entry, supportedContextTiers: ["default"] }), "default");
+  assert.equal(resolveContextTier({ ...entry, supportedContextTiers: "long_context" }), "default");
+  assert.equal(resolveContextTier({ ...entry, billing: { tokenPrices: { longContext: {} } } }), "long_context");
 });
 
 test("missing or invalid token limits are not replaced with Codex's unrelated fallback window", () => {

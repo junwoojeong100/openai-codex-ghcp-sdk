@@ -4,7 +4,7 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { writeJson, sha, scrubber } from "../compatibility/util.mjs";
 import { TUI_SCENARIOS } from "./catalog.mjs";
-import { TuiSession } from "./session.mjs";
+import { TuiSession, isExpectedTitleRejection } from "./session.mjs";
 import { evaluate, runScenario, sessionOptions } from "./scenarios.mjs";
 
 export async function runCase(config, { signal } = {}) {
@@ -21,7 +21,7 @@ export async function runCase(config, { signal } = {}) {
   const onAbort = () => { void session.closeLaunch(); };
   signal?.addEventListener("abort", onAbort, { once: true });
   try {
-    facts = await runScenario(scenario, session, { model: config.model, seed: config.seed, launchModel: options.model });
+    facts = await runScenario(scenario, session, { model: config.model, seed: config.seed, launchModel: options.model, facts });
   } catch (caught) {
     error = clean({ name: caught.name, message: caught.message });
   } finally {
@@ -35,7 +35,8 @@ export async function runCase(config, { signal } = {}) {
   fs.writeFileSync(path.join(config.directory, "facts.json"), factsText, { mode: 0o600 });
   const result = { runId: config.runId, catalogHash: config.catalogHash, implementationHash: config.implementationHash, executionKind: config.executionKind,
     model: config.model, scenarioId: scenario.id, seed: config.seed, status: checks.every(c => c.passed) ? "passed" : "failed",
-    checks, error, durationMs: Math.ceil(performance.now() - started), factsHash: sha(factsText) };
+    checks, error, auxiliaryTitleRejections: facts.observer.http.filter(isExpectedTitleRejection).length,
+    durationMs: Math.ceil(performance.now() - started), factsHash: sha(factsText) };
   writeJson(path.join(config.directory, "result.json"), result);
   return result;
 }

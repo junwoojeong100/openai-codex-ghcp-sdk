@@ -1,8 +1,9 @@
+import { performance } from "node:perf_hooks";
 import { BridgeRequestError } from "./request-policy.mjs";
 import { withinDeadline } from "./copilot-session-rpc.mjs";
 import { supportedModels } from "./model-map.mjs";
 
-const unavailable = () => new BridgeRequestError("The Copilot connection is unavailable. No inference was retried.", {
+const unavailable = detail => new BridgeRequestError(`The Copilot connection is unavailable${detail ? ` (${detail})` : ""}. No inference was retried.`, {
   status: 503, code: "upstream_unavailable",
 });
 
@@ -55,15 +56,19 @@ export class SdkLifecycle {
 
   async #connect(client) {
     const generation = ++this.generation;
+    const startedAt = performance.now();
+    let operationName = "start";
     const controller = new AbortController();
     this.connectController = controller;
     const operation = (async () => {
       controller.signal.throwIfAborted();
       await client.start();
       controller.signal.throwIfAborted();
+      operationName = "ping";
       if (typeof client.ping !== "function") throw new Error("SDK ping is required for readiness.");
       await client.ping("codex-ghcp-readiness");
       controller.signal.throwIfAborted();
+      operationName = "listModels";
       const models = supportedModels(await client.listModels());
       controller.signal.throwIfAborted();
       return models;
@@ -75,6 +80,10 @@ export class SdkLifecycle {
       this.onReady({ client, models, generation });
       this.state = "ready";
     } catch (error) {
+      const failureType = this.stopped || controller.signal.aborted ? "cancelled"
+        : error?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error";
+      this.#diagnostic({ event: "bridge.upstream_connect_failed", generation, operation: operationName,
+        failureType, timeoutMs: this.startupTimeoutMs, elapsedMs: Math.floor(performance.now() - startedAt) });
       controller.abort(error);
       this.state = this.stopped ? "stopped" : "unavailable";
       this.retired.add(client);
@@ -84,7 +93,7 @@ export class SdkLifecycle {
       const lateCleanup = () => this.#forceStop(client).catch(() => {});
       void operation.then(lateCleanup, lateCleanup);
       await this.#forceStop(client).catch(() => {});
-      throw unavailable();
+      throw unavailable(`SDK ${operationName} ${failureType === "timeout" ? "timed out" : failureType === "cancelled" ? "cancelled" : "failed"}`);
     } finally {
       if (this.connectController === controller) this.connectController = null;
     }

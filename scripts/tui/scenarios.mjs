@@ -2,9 +2,10 @@
 // recorded facts so a verifier can recompute every check from saved evidence.
 import fs from "node:fs";
 import path from "node:path";
-import { SUPPORTED_MODEL_IDS } from "../../src/model-map.mjs";
+import { SUPPORTED_MODEL_IDS, modelCatalog, resolveContextTier } from "../../src/model-map.mjs";
 import { ROOT } from "../compatibility/util.mjs";
-import { TuiSession, pickerRows } from "./session.mjs";
+import { TUI_CATALOG } from "./catalog.mjs";
+import { TuiSession, isExpectedTitleRejection, pickerRows } from "./session.mjs";
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export const marker = (seed, n) => `TUI_${seed}_${String(n).padStart(6, "0")}`;
@@ -70,8 +71,8 @@ async function ask(s, facts, prompt, expected, timeoutMs) {
   facts.seen.push(expected);
 }
 
-export async function runScenario(scenario, s, { model, seed, launchModel }) {
-  const m = n => marker(seed, n), facts = { seen: [], launchModel, markers: {} };
+export async function runScenario(scenario, s, { model, seed, launchModel, facts = { seen: [], launchModel, markers: {} } }) {
+  const m = n => marker(seed, n);
   const reply = n => `Reply with only ${m(n)}. Do not use tools.`;
   const code = n => `The launch code for this conversation is ${m(n)}. Keep it verbatim in any summary of this conversation.`;
   const recall = "What is the launch code for this conversation? Do not use tools. Reply with only the launch code.";
@@ -92,10 +93,10 @@ export async function runScenario(scenario, s, { model, seed, launchModel }) {
       break;
     case "U03": {
       fs.mkdirSync(path.join(s.workspace, "notes"));
-      fs.writeFileSync(path.join(s.workspace, "notes", "token.txt"), `token=${m(1)}\n`);
+      fs.writeFileSync(path.join(s.workspace, "notes", "sample.txt"), `sample_id=${m(1)}\n`);
       await s.launch();
-      const prompt = "Use the shell tool to run: cat notes/token.txt . Then reply with only the value after token= on its own line.";
-      facts.promptContainsToken = prompt.includes(m(1));
+      const prompt = "Read the synthetic application fixture with the shell tool: cat notes/sample.txt . Reply with only the value of sample_id on its own line.";
+      facts.promptContainsSampleId = prompt.includes(m(1));
       await ask(s, facts, prompt, m(1));
       break;
     }
@@ -175,14 +176,41 @@ export function evaluate(scenario, model, facts) {
   const sdk = facts.observer?.sdk ?? [], usage = usageRows(sdk), http = facts.observer?.http ?? [], answers = facts.observer?.answers ?? [];
   const ev = facts.evidence ?? {}, m = n => marker(facts.seed, n), seen = new Set(facts.seen ?? []);
   const expected = scenario.id === "U02" ? [facts.launchModel, model] : [model];
-  check("routing", usage.length > 0 && usage.every(r => expected.includes(r.model)) && (sdk.filter(r => r.type === "session.created").every(r => expected.includes(r.model))),
+  const sessions = sdk.filter(r => r.type === "session.created" || r.type === "session.setModel");
+  const verified = sdk.filter(r => r.type === "session.model_verified");
+  check("routing", sessions.length > 0 && usage.length > 0 && usage.every(r => expected.includes(r.model)) && sessions.every(r => expected.includes(r.model))
+    && verified.length === sessions.length && sessions.every(r => verified.some(v => v.sessionId === r.sessionId
+      && v.operation === r.type.slice("session.".length) && v.requestedModel === r.model && v.requestedTier === r.contextTier))
+    && verified.every(r => r.model === r.requestedModel && expected.includes(r.model)),
     `Every SDK session and usage record uses ${expected.join(" then ")}`);
+  const responses = http.filter(r => r.method === "POST" && r.path === "/v1/responses" && !isExpectedTitleRejection(r));
+  check("connection", sdk.some(r => r.type === "session.send") && answers.length > 0 && responses.some(r => r.terminal === "response.completed")
+    && responses.every(r => r.status === 200 && (/^text\/event-stream\b/.test(r.contentType ?? ""))
+      && (r.finished && r.terminal === "response.completed" || scenario.id === "U08" && !r.finished && r.startedAt < facts.escapeAt)),
+    "Actual SDK input, model output and successful Responses SSE reached the TUI; only U08 permits its explicit cancellation");
+  const models = sdk.filter(r => r.type === "models.list").flatMap(r => r.models);
+  const catalogs = http.filter(r => r.path === "/v1/models" && r.status === 200).flatMap(r => r.body?.models ?? []);
+  check("context-tier", sessions.length > 0 && verified.length === sessions.length && !sdk.some(r => r.type === "session.model_verification_failed")
+    && sessions.every(r => {
+      const info = models.find(entry => entry.id === r.model), budget = info && modelCatalog([info]).models[0];
+      const published = catalogs.filter(entry => entry.slug === r.model);
+      return info && budget && r.contextTier === resolveContextTier(info) && published.length > 0
+        && published.every(entry => entry.context_window === budget.context_window && entry.max_context_window === budget.max_context_window
+        && entry.auto_compact_token_limit === budget.auto_compact_token_limit);
+    }) && verified.every(r => r.contextTier === r.requestedTier && r.contextTier === resolveContextTier(models.find(entry => entry.id === r.model))),
+    "The published input budget and authoritative SDK model snapshot agree with the maximum advertised context tier");
+  const health = http.filter(r => r.path === "/health" && r.status === 200);
+  check("watchdog", health.length > 0 && health.every(r => r.body?.ready === true && r.body?.protocol === "responses"
+    && Object.entries(TUI_CATALOG.watchdog).every(([key, value]) => r.body?.turnWatchdog?.[key] === value)),
+    "The newly launched bridge reports the production watchdog and bounded recovery settings");
   check("upstream", !usage.some(r => r.contentFilterTriggered === true || r.finishReason === "content_filter") && !sdk.some(r => r.type === "session.error")
-    && !http.some(r => r.terminal === "response.failed"), "No upstream filter, SDK error or failed stream");
+    && !http.some(r => r.terminal === "response.failed" || r.status >= 400 && !isExpectedTitleRejection(r)),
+    "No upstream filter, SDK error or failed supported request; the exact unsupported auxiliary title rejection is reported separately");
   check("mcp-isolation", (ev.samples?.count ?? 0) > 0 && ev.samples.maxRuntimes >= 1 && ev.samples.maxRuntimeMcp === 0,
     "No MCP server process ever ran under the bridge's Copilot runtime");
   const launches = ev.launches ?? [];
-  check("cleanup", launches.length > 0 && launches.every(l => l.cleanup?.childReaped && l.cleanup?.processGroupGone && !l.browserError && !l.rendererCloseError)
+  check("cleanup", launches.length > 0 && launches.every(l => l.cleanup?.childReaped && l.cleanup?.processGroupGone && !l.browserError && !l.rendererCloseError && !l.quitError)
+    && !(facts.observer?.diagnostics ?? []).some(r => r.event === "bridge.session_cleanup_failed")
     && (ev.leftovers ?? ["unknown"]).length === 0 && (ev.catalogLeft ?? ["unknown"]).length === 0 && !facts.error,
     "PTY group, launcher, bridge, runtime and browser gone; private catalog removed; no harness error");
   const answerWith = token => answers.find(a => typeof a.content === "string" && a.content.includes(token));
@@ -204,7 +232,7 @@ export function evaluate(scenario, model, facts) {
     }
     case "U03":
       check("U03.tool", toolNames.some(name => SHELL_TOOLS.has(name)) && sdk.some(r => r.type === "external_tool.requested"), "Codex executed a shell tool handed off by the bridge");
-      check("U03.value", seen.has(m(1)) && facts.promptContainsToken === false && answerWith(m(1)), "The hidden file token came back only through the tool result");
+      check("U03.value", seen.has(m(1)) && facts.promptContainsSampleId === false && answerWith(m(1)), "The hidden synthetic sample id came back only through the tool result");
       break;
     case "U04":
       check("U04.patch", (toolNames.includes("apply_patch") || (ev.rollout?.patchApplies ?? 0) > 0) && sdk.some(r => r.type === "external_tool.requested"),

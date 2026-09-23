@@ -1,0 +1,363 @@
+{
+  "catalogId": "codex-ghcp-tui-12-v2",
+  "catalogHash": "1d3f0d44d22063b11552397a0f02ddcb2feff627f3a6060676e1ce3bdde89992",
+  "versions": {
+    "codex": "0.154.0",
+    "copilotSdk": "1.0.14",
+    "playwright": "1.63.0",
+    "xterm": "6.0.0"
+  },
+  "scope": "Actual Codex TUI through the production launcher, bridge and real Copilot SDK; 12 scenarios for each of six models.",
+  "thresholdPercent": 95,
+  "minimumPassed": 69,
+  "totalCases": 72,
+  "automaticCaseRetries": 0,
+  "runsCombined": false,
+  "originalFailuresPreserved": true,
+  "scoredRunsUseProductionTimeoutDefaults": true,
+  "userBridgeRestarted": false,
+  "runs": [
+    {
+      "label": "initial",
+      "directory": ".runtime/tui-connection-v2-run1",
+      "runId": "6c752e9e-1ed1-4c32-91c7-ab8e237d7917",
+      "catalogHash": "1d3f0d44d22063b11552397a0f02ddcb2feff627f3a6060676e1ce3bdde89992",
+      "implementationHash": "e483271a61063beb13e7b85051cef0cfa53cdae8b8daf668821a583f53e6a0f5",
+      "originalReportSha256": "e2edede40ed2f17a80d787c0acf31924cf46d1116a519e1883a53717f48e6c6f",
+      "publishedReportSha256": "e2edede40ed2f17a80d787c0acf31924cf46d1116a519e1883a53717f48e6c6f",
+      "startedAt": "2026-09-23T05:34:08.352Z",
+      "finishedAt": "2026-09-23T05:45:21.138Z",
+      "durationMs": 672843,
+      "implementationUnchanged": true,
+      "frozenSourceUnchanged": true,
+      "userSettingsUnchanged": true,
+      "verified": {
+        "evidenceIntegrity": true,
+        "catalogId": "codex-ghcp-tui-12-v2",
+        "totalCases": 72,
+        "counts": {
+          "passed": 45,
+          "failed": 27,
+          "blocked": 0,
+          "timed-out": 0,
+          "not-run": 0
+        },
+        "passed": 45,
+        "percent": 62.5,
+        "thresholdPercent": 95,
+        "minimumPassed": 69,
+        "thresholdMet": false,
+        "auxiliaryTitleRejections": 69,
+        "fullMatrixPassed": false,
+        "eligible": true,
+        "perModel": [
+          {
+            "model": "claude-opus-5.5",
+            "passed": 10,
+            "total": 12,
+            "verdict": "not-established"
+          },
+          {
+            "model": "claude-sonnet-5",
+            "passed": 12,
+            "total": 12,
+            "verdict": "codex-ghcp-tui-12-v2-passed"
+          },
+          {
+            "model": "claude-haiku-4.5",
+            "passed": 11,
+            "total": 12,
+            "verdict": "not-established"
+          },
+          {
+            "model": "gpt-6-astra",
+            "passed": 2,
+            "total": 12,
+            "verdict": "not-established"
+          },
+          {
+            "model": "gpt-6-sol",
+            "passed": 4,
+            "total": 12,
+            "verdict": "not-established"
+          },
+          {
+            "model": "gpt-6-luna",
+            "passed": 6,
+            "total": 12,
+            "verdict": "not-established"
+          }
+        ],
+        "perScenario": [
+          {
+            "scenarioId": "U01",
+            "passed": 3,
+            "total": 6
+          },
+          {
+            "scenarioId": "U02",
+            "passed": 3,
+            "total": 6
+          },
+          {
+            "scenarioId": "U03",
+            "passed": 3,
+            "total": 6
+          },
+          {
+            "scenarioId": "U04",
+            "passed": 3,
+            "total": 6
+          },
+          {
+            "scenarioId": "U05",
+            "passed": 3,
+            "total": 6
+          },
+          {
+            "scenarioId": "U06",
+            "passed": 3,
+            "total": 6
+          },
+          {
+            "scenarioId": "U07",
+            "passed": 4,
+            "total": 6
+          },
+          {
+            "scenarioId": "U08",
+            "passed": 4,
+            "total": 6
+          },
+          {
+            "scenarioId": "U09",
+            "passed": 5,
+            "total": 6
+          },
+          {
+            "scenarioId": "U10",
+            "passed": 5,
+            "total": 6
+          },
+          {
+            "scenarioId": "U11",
+            "passed": 5,
+            "total": 6
+          },
+          {
+            "scenarioId": "U12",
+            "passed": 4,
+            "total": 6
+          }
+        ],
+        "driver": "playwright-headless-xterm",
+        "realTuiThroughLauncher": true,
+        "hoursLongSoakCertified": false
+      },
+      "failedReasons": {
+        "Codex exited while waiting for ready": 26,
+        "The bridge request failed; see the recorded HTTP and SDK evidence.": 1
+      }
+    },
+    {
+      "label": "final",
+      "directory": ".runtime/tui-connection-v2-run2",
+      "runId": "f3125bc0-f65d-4c68-86db-38db21fb31f4",
+      "catalogHash": "1d3f0d44d22063b11552397a0f02ddcb2feff627f3a6060676e1ce3bdde89992",
+      "implementationHash": "fe500d787afb80635a311ff92f7a5846ed73c90dc7407ad7f6593524ef5e9661",
+      "originalReportSha256": "425616306231da1bc72df109086de1d38fb6cad3e740b0d8c58ff2b3b26e0e2d",
+      "publishedReportSha256": "425616306231da1bc72df109086de1d38fb6cad3e740b0d8c58ff2b3b26e0e2d",
+      "startedAt": "2026-09-23T05:48:34.990Z",
+      "finishedAt": "2026-09-23T05:54:45.597Z",
+      "durationMs": 370648,
+      "implementationUnchanged": true,
+      "frozenSourceUnchanged": true,
+      "userSettingsUnchanged": true,
+      "verified": {
+        "evidenceIntegrity": true,
+        "catalogId": "codex-ghcp-tui-12-v2",
+        "totalCases": 72,
+        "counts": {
+          "passed": 72,
+          "failed": 0,
+          "blocked": 0,
+          "timed-out": 0,
+          "not-run": 0
+        },
+        "passed": 72,
+        "percent": 100,
+        "thresholdPercent": 95,
+        "minimumPassed": 69,
+        "thresholdMet": true,
+        "auxiliaryTitleRejections": 102,
+        "fullMatrixPassed": true,
+        "eligible": true,
+        "perModel": [
+          {
+            "model": "claude-opus-5.5",
+            "passed": 12,
+            "total": 12,
+            "verdict": "codex-ghcp-tui-12-v2-passed"
+          },
+          {
+            "model": "claude-sonnet-5",
+            "passed": 12,
+            "total": 12,
+            "verdict": "codex-ghcp-tui-12-v2-passed"
+          },
+          {
+            "model": "claude-haiku-4.5",
+            "passed": 12,
+            "total": 12,
+            "verdict": "codex-ghcp-tui-12-v2-passed"
+          },
+          {
+            "model": "gpt-6-astra",
+            "passed": 12,
+            "total": 12,
+            "verdict": "codex-ghcp-tui-12-v2-passed"
+          },
+          {
+            "model": "gpt-6-sol",
+            "passed": 12,
+            "total": 12,
+            "verdict": "codex-ghcp-tui-12-v2-passed"
+          },
+          {
+            "model": "gpt-6-luna",
+            "passed": 12,
+            "total": 12,
+            "verdict": "codex-ghcp-tui-12-v2-passed"
+          }
+        ],
+        "perScenario": [
+          {
+            "scenarioId": "U01",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U02",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U03",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U04",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U05",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U06",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U07",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U08",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U09",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U10",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U11",
+            "passed": 6,
+            "total": 6
+          },
+          {
+            "scenarioId": "U12",
+            "passed": 6,
+            "total": 6
+          }
+        ],
+        "driver": "playwright-headless-xterm",
+        "realTuiThroughLauncher": true,
+        "hoursLongSoakCertified": false
+      },
+      "failedReasons": {}
+    }
+  ],
+  "observedConnectionIncident": {
+    "run": 1,
+    "model": "claude-haiku-4.5",
+    "scenarioId": "U12",
+    "errorCode": "ETIMEDOUT",
+    "phase": "Connect",
+    "host": "api.enterprise.githubcopilot.com",
+    "sdkReportedRetries": 5,
+    "concurrentStartupFailures": 26,
+    "caveat": "The isolated query confirms a transport failure; the exact causes of each startup failure and the separate user-conversation stall are not established."
+  },
+  "finalMetrics": {
+    "modelUsageEvents": 126,
+    "authoritativeModelSnapshots": 113,
+    "processSamples": 828,
+    "maximumRuntimeMcpProcesses": 0,
+    "leftoverProcesses": 0,
+    "privateCatalogsLeft": 0,
+    "sdkCleanupErrors": 0,
+    "stalledTurns": 0,
+    "automaticTurnRecoveries": 0,
+    "failedStreams": 0,
+    "completedStreams": 126,
+    "auxiliaryTitleRejections": 102,
+    "contextTiers": {
+      "claude-opus-5.5": [
+        "long_context"
+      ],
+      "claude-sonnet-5": [
+        "long_context"
+      ],
+      "claude-haiku-4.5": [
+        "default"
+      ],
+      "gpt-6-astra": [
+        "long_context"
+      ],
+      "gpt-6-sol": [
+        "long_context"
+      ],
+      "gpt-6-luna": [
+        "long_context"
+      ]
+    }
+  },
+  "localChecks": {
+    "unitAndOracleChecks": "passed",
+    "realCodexWithSdkDoubleRuntimeCases": 14,
+    "realCodexWithSdkDoubleRuntimePassed": 14,
+    "generatedScenarioDocs": "passed",
+    "whitespaceCheck": "passed",
+    "currentAndFrozenFinalVerification": "passed",
+    "latencyTolerantLaunchParsing": "passed",
+    "latencyTolerantLaunchLiveMatrix": "not run; neither scored run used it"
+  },
+  "limitations": [
+    "No guarantee of future network availability or overall product reliability.",
+    "No full-context-window inference or multi-hour endurance claim.",
+    "Optional generated titles remain unsupported and their exact rejections are separately counted.",
+    "Raw facts, transcripts and frozen sources remain local under the recorded .runtime directories."
+  ]
+}

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
+import { StringDecoder } from "node:string_decoder";
 import { SessionManager } from "../../src/session-manager.mjs";
 import { observeSdk } from "../compatibility/instrumentation.mjs";
 import { ROOT, safeRead, scrubber, writeJson } from "../compatibility/util.mjs";
@@ -19,13 +20,14 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
   const append = (name, row) => fs.appendFileSync(path.join(config.output, name),
     JSON.stringify(clean({ ...row, at: row.at ?? Date.now() })) + "\n", { mode: 0o600 });
   const records = { push(row) {
-    const root = !row.agentId && !row.data?.parentToolCallId;
+    const root = !row.agentId && !row.data?.agentId && !row.data?.parentToolCallId;
     if (row.type === "session.created") {
       metrics.sessions++;
       if (row.model !== config.model) metrics.modelMismatches++;
       roles.set(row.sessionId, row.tools.length ? "turn" : "compaction");
       if (!row.tools.length) metrics.compactions++;
-      append("sdk.jsonl", { type: row.type, model: row.model, effort: row.effort ?? null, sessionId: row.sessionId, toolCount: row.tools.length });
+      append("sdk.jsonl", { type: row.type, model: row.model, effort: row.effort ?? null,
+        contextTier: row.contextTier, sessionId: row.sessionId, toolCount: row.tools.length });
     } else if (row.type === "assistant.usage" && root) {
       const data = row.data;
       metrics.modelCalls++;
@@ -47,8 +49,11 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
     } else if (row.type === "external_tool.requested" && root) {
       metrics.toolRequests++;
       append("sdk.jsonl", { type: row.type, sessionId: row.sessionId, toolName: row.data?.toolName });
-    } else if (["session.setModel", "session.abort"].includes(row.type)) {
-      append("sdk.jsonl", { type: row.type, sessionId: row.sessionId, ...(row.type === "session.setModel" ? { model: row.model, effort: row.effort ?? null } : {}) });
+    } else if (["session.setModel", "session.abort", "session.send", "tool.submit"].includes(row.type)) {
+      append("sdk.jsonl", { type: row.type, sessionId: row.sessionId,
+        ...(row.type === "session.setModel" ? { model: row.model, effort: row.effort ?? null, contextTier: row.contextTier } : {}) });
+    } else if (["models.list", "session.model_verified", "session.model_verification_failed"].includes(row.type)) {
+      append("sdk.jsonl", row);
     } else if (row.type === "client.deleteSession") {
       roles.delete(row.sessionId);
     }
@@ -58,8 +63,9 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
   SessionManager.prototype.start = async function () {
     manager = this;
     const factory = this.clientFactory;
-    this.clientFactory = factory ? () => observeSdk(factory(), records) : null;
-    this.client = observeSdk(this.client, records);
+    const options = { verifyModelState: config.verifyModelState === true };
+    this.clientFactory = factory ? () => observeSdk(factory(), records, options) : null;
+    this.client = observeSdk(this.client, records, options);
     const diagnostic = this.onDiagnostic;
     this.onDiagnostic = event => { append("diagnostics.jsonl", event); diagnostic(event); };
     return start.call(this);
@@ -70,19 +76,47 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
       seen.add(this);
       this.prependListener("request", (req, res) => {
         const row = { method: req.method, path: req.url, startedAt: Date.now(), requestBytes: 0, responseBytes: 0 };
-        req.on("data", chunk => { row.requestBytes += chunk.length; metrics.requestBytes += chunk.length; });
+        const control = config.verifyModelState === true && ["/health", "/v1/models"].includes(req.url);
+        let controlBody = "", requestBody = "";
+        const decoder = new StringDecoder("utf8");
+        req.on("data", chunk => {
+          row.requestBytes += chunk.length; metrics.requestBytes += chunk.length;
+          if (config.verifyModelState === true && row.requestBytes <= 1024 * 1024) requestBody += decoder.write(chunk);
+        });
+        req.on("end", () => {
+          if (config.verifyModelState !== true || !requestBody) return;
+          requestBody += decoder.end();
+          try {
+            if (row.requestBytes > 1024 * 1024) throw new Error("Request exceeds observation limit");
+            const body = JSON.parse(requestBody);
+            row.requestShape = { model: body.model, stream: body.stream, format: body.text?.format,
+              toolCount: body.tools?.length ?? 0 };
+          } catch { row.invalidRequestShape = true; }
+        });
         const write = res.write.bind(res), end = res.end.bind(res);
         const capture = chunk => {
           if (typeof chunk !== "string" && !Buffer.isBuffer(chunk)) return;
           const text = typeof chunk === "string" ? chunk : chunk.toString("utf8");
           const bytes = Buffer.byteLength(text);
           row.responseBytes += bytes; metrics.responseBytes += bytes;
+          if ((control || config.verifyModelState === true && res.statusCode >= 400) && row.responseBytes <= 1024 * 1024) controlBody += text;
           if (text.startsWith("event: response.completed\n")) { row.terminal = "response.completed"; metrics.streamCompletions++; }
           if (text.startsWith("event: response.failed\n")) { row.terminal = "response.failed"; metrics.streamFailures++; }
         };
         res.write = (chunk, ...rest) => { capture(chunk); return write(chunk, ...rest); };
         res.end = (chunk, ...rest) => { capture(chunk); return end(chunk, ...rest); };
-        res.once("close", () => append("http.jsonl", { ...row, finishedAt: Date.now(), status: res.statusCode, finished: res.writableFinished }));
+        res.once("close", () => {
+          if (control || config.verifyModelState === true && res.statusCode >= 400) {
+            try {
+              if (row.responseBytes > 1024 * 1024) throw new Error("Control response exceeds observation limit");
+              const body = JSON.parse(controlBody);
+              if (control) row.body = body;
+              else row.error = body.error;
+            } catch { row.invalidControlBody = true; }
+          }
+          append("http.jsonl", { ...row, finishedAt: Date.now(), status: res.statusCode,
+            contentType: res.getHeader("content-type"), finished: res.writableFinished });
+        });
       });
     }
     return emit.call(this, event, ...args);

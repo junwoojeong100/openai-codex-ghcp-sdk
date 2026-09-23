@@ -2,9 +2,11 @@
 
 [English](TUI_SCENARIOS.md) · [안정성 계약](STABILITY_TESTING_KO.md) · [터미널·내구성 검사](SOAK_TESTING_KO.md)
 
-`codex-ghcp-tui-12-v1`은 최근 브릿지 개선을 **실제 Codex TUI**에서 확인하는 별도 계약입니다. **12개 시나리오 × 6개 모델 = 72건**이며, 안정성(v4)·호환성(v5) 결과와 합산하지 않습니다.
+`codex-ghcp-tui-12-v2`는 **실제 Codex TUI → 운영 브릿지 → Copilot SDK → 지정 모델** 연결을 검증합니다. **12개 시나리오 × 6개 모델 = 72건**을 유지하며 안정성·호환성·이전 TUI 결과와 합산하지 않습니다. 목표는 **변경되지 않은 구현의 전체 실검증 한 회에서 95% 이상, 즉 69/72건 이상 통과**입니다.
 
-**최신 결과(한국 시간 2026-09-23): 70/72(97.22%)**, 구현 `54c7eb77`. [검증 기록](validation/2026-09-23-tui-scenarios/README_KO.md)을 참고하세요.
+[이전 v1 기록](validation/2026-09-23-tui-scenarios/README_KO.md)의 70/72(구현 `54c7eb77`)는 v2나 새 컨텍스트·복구 구현의 검증 결과가 아닙니다.
+
+**최신 v2 결과(한국 시간 2026-09-23): 72/72(100%)**, 구현 `fe500d78`이며 현재·동결 소스로 검증했습니다. Copilot 연결 시간 초과가 확인된 최초 독립 실행의 45/72도 별도로 보존합니다. [v2 결과와 한계](validation/2026-09-23-tui-connection-v2/README_KO.md)를 참고하세요.
 
 ## 실행 경로
 
@@ -14,7 +16,7 @@
 - 실제 Codex 0.154.0 TUI를 전용 PTY에 띄우고 headless Chromium의 xterm.js로 렌더링
 - 입력은 Playwright 키보드(`/model`, 방향키, Enter, Escape)와 붙여넣기로 보내며, 화면은 xterm.js 버퍼에서 읽습니다
 
-케이스마다 격리된 `HOME`·`CODEX_HOME`·작업 폴더를 쓰며, 실제로 공유하는 것은 Copilot 인증뿐입니다. 승인 정책은 `never`이고 샌드박스는 시나리오마다 고정합니다. 표식은 케이스마다 무작위로 만듭니다. 자동 재시도, 출력 재작성, 셀 대체는 없습니다.
+케이스마다 격리된 `HOME`·`CODEX_HOME`·작업 폴더를 쓰며, 실제로 공유하는 것은 Copilot 인증뿐입니다. 승인 정책은 `never`이고 샌드박스는 시나리오마다 고정합니다. 표식은 케이스마다 무작위로 만듭니다. 케이스 자동 재시도, 출력 재작성, 셀 대체는 없습니다. 운영 브릿지의 제한적인 출력 전 복구는 활성화하고 관측하며, 하네스 재시도와 구분합니다. 사용 중인 브릿지·사용자 설정은 재시작하거나 변경하지 않습니다.
 
 ## 시나리오
 
@@ -22,7 +24,7 @@
 |---|---|---|
 | U01 | `/model` 피커가 6개 모델을 고정 순서로 표시하고 첫 턴에 응답 | 실행기 `model_catalog_json` 고정, 시작 모델 라우팅 |
 | U02 | 피커로 모델을 바꾸면 다음 턴이 선택한 모델로 라우팅 | 대화 중 모델 변경과 bridge 모델 해석 |
-| U03 | 읽기 전용 샌드박스에서 Codex shell 도구가 작업 폴더 파일을 읽음 | handler 없는 도구 handoff, Codex 실행, 대기 결과 제출 |
+| U03 | 읽기 전용 샌드박스에서 Codex shell 도구가 합성 애플리케이션 샘플을 읽음 | handler 없는 도구 handoff, Codex 실행, 대기 결과 제출 |
 | U04 | workspace-write 샌드박스에서 `apply_patch`로 파일 생성 | freeform 도구 입력의 바이트 단위 보존 |
 | U05 | Codex 자체 MCP 도구가 동작하고 Copilot 런타임 MCP는 꺼져 있음 | `disabledMcpServers` 격리, Codex MCP 무영향 |
 | U06 | 긴 답변(약 700단어)을 렌더링한 뒤에도 마지막 표식이 보임 | 긴 SSE, delta/final 대조, TUI 스크롤 영역 |
@@ -37,25 +39,34 @@ U04에는 Codex 기본 `apply_patch` 도구가 필요합니다. 이 계약의 �
 
 ## 판정
 
+v2에서는 U03의 자격 증명처럼 보이던 `notes/token.txt`·`token=`을 `notes/sample.txt`·`sample_id=`로 바꿉니다. 무작위 값은 여전히 프롬프트에 없으며 실제 Codex 도구를 통해 읽어야 합니다. 안전 필터·승인을 우회하지 않으며 v1의 거절은 과거 결과에서 실패로 유지합니다.
+
 모든 케이스에 다음 **공통 검사**가 적용됩니다.
-- **routing:** 모든 SDK 세션·usage가 기대 모델을 씀
+- **routing:** 모든 SDK 세션·`session.rpc.model.getCurrent()`의 실제 모델 상태·usage가 기대 모델을 씀
+- **connection:** 실제 SDK 입력·모델 출력·HTTP 200의 Responses SSE 완료가 기록됨. U08의 명시적 진행 중 취소만 예외
+- **context-tier:** 세션 생성·추론 수준 변경에서 최대 지원 tier가 유지되고 SDK 실제 상태·공개 catalog의 입력 예산·압축 기준이 일치함
+- **watchdog:** 새 브릿지의 `/health`가 운영 기본값인 무진행 90초·복구 1회·감시 15초를 보고함
 - **upstream:** 필터, SDK 오류, 실패 스트림이 없음
 - **mcp-isolation:** 표본을 채취하는 동안 브릿지 Copilot 런타임 아래에 MCP 프로세스가 한 번도 없음
-- **cleanup:** PTY 그룹, 실행기, bridge, 런타임, 브라우저가 종료되고 임시 catalog가 삭제됐으며 harness 오류가 없음
+- **cleanup:** PTY 그룹, 실행기, bridge, 런타임, 브라우저가 종료되고 임시 catalog가 삭제됐으며 하네스·SDK 세션 정리 오류가 없음. 대기 중 TUI는 `/quit`으로 정상 종료한 뒤에만 제한적인 강제 종료를 고려함
 
 시나리오 검사는 다음 증거를 함께 씁니다.
 - Codex가 저장한 rollout: 도구 호출, 파일 변경, 압축, turn별 모델·effort
 - bridge SDK 관측 기록, HTTP 기록, MCP fixture ledger
 - 작업 폴더 파일, 화면 스냅샷
 
-검사는 저장된 `facts.json`에서 계산하는 순수 함수입니다. `--verify`는 저장된 통과 flag를 믿지 않고 hash를 대조한 뒤 모든 검사를 다시 계산합니다. 실패·차단·시간 초과·미실행도 분모 72에 남습니다.
+Codex의 선택적인 자동 제목 생성은 여전히 미지원인 구조화 JSON 출력을 요청합니다. 정확한 제목 전용 스키마와 명시적 HTTP 400 거절만 `auxiliaryTitleRejections`로 별도 집계하며 성공한 모델 응답으로 인정하지 않습니다. 다른 HTTP 4xx/5xx, 제목 형태이지만 다른 오류인 요청, 모든 실패 스트림은 본 요청 검사를 실패시킵니다. 자동 제목은 계속 미지원입니다. [호환성 범위](COMPATIBILITY_KO.md)를 참고하세요.
+
+검사는 저장된 `facts.json`에서 계산하는 순수 함수입니다. `--verify`는 실제 동결 소스·실행 및 케이스 identity·파일 hash·프로세스 종료 증거를 확인하고 모든 검사를 다시 계산합니다. 실패·차단·시간 초과·미실행도 분모 72에 남습니다. 중단·구현 변경·미완료 실행은 목표를 달성할 수 없습니다. `thresholdMet`는 69/72 이상, `fullMatrixPassed`는 계속 72/72를 요구하며 모델별·시나리오별 실패를 표시합니다.
+
+기대와 다른 답변으로 완료되거나 HTTP·스트림 오류가 발생하면 원래 증거를 남기고 즉시 실패 처리합니다. 시나리오 제한 시간까지 기다렸다가 무응답으로 오분류하지 않습니다. 실패 전 관측값도 보존합니다. 개선 후에는 새 출력 폴더에서 72건 전체를 다시 실행하며, 다른 구현의 성공 셀을 합치거나 이전 보고서를 덮어쓰지 않습니다.
 
 ## 명령
 
 ```sh
 npx --no-install playwright install chromium
 npm run test:tui                    # 계약 목록만 출력, 모델 호출 없음
-npm run test:tui:runtime            # 실제 Codex TUI + Playwright + SDK 대역(U01·U12)
+npm run test:tui:runtime            # 실제 Codex TUI + Playwright + SDK 대역(U01·U02·U11·U12)
 npm run test:tui -- --execute --output .runtime/tui-new   # Copilot 사용량 발생
 npm run test:tui -- --verify .runtime/tui-new/report.json
 ```
@@ -64,8 +75,8 @@ npm run test:tui -- --verify .runtime/tui-new/report.json
 
 | 코드 | 의미 |
 |---|---|
-| 0 | 정상 plan, 또는 72/72 전체 통과 |
-| 1 | 유효한 증거의 미통과 실행 |
+| 0 | 정상 plan, 또는 전체 실검증의 95% 목표 달성 |
+| 1 | 실행에서 95% 목표를 확립하지 못함 |
 | 2 | 인자·증거 오류 |
 
 ## 한계
@@ -73,4 +84,5 @@ npm run test:tui -- --verify .runtime/tui-new/report.json
 - 제한된 시간의 실행이며 수시간 내구성 인증이 아닙니다.
 - 데스크톱 터미널 앱 자체는 검증하지 않습니다.
 - U09·U10의 회상은 모델의 요약·응답 품질에도 영향을 받습니다.
+- tier·watchdog 설정 검사는 최대 문맥을 채운 추론이나 장애 주입 복구를 입증하지 않습니다. 무응답·바이트 진행·설정 제한·취소의 결정적 회귀 검사는 `npm run test:context:runtime`으로 따로 실행하며 실검증 점수에 합산하지 않습니다.
 - 오프라인 runtime 검사에는 Copilot 런타임 프로세스가 없으므로, 런타임 MCP 격리는 실검증에서만 확정합니다.
