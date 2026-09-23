@@ -2,7 +2,15 @@
 
 [한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
 
-## Latest: pending-result handoff and release verification — 2026-09-23 KST
+## Latest: published handoff, Linux repairs and failure iterations — 2026-09-23 KST
+
+[Iteration history, source hashes, CI and remaining failure](2026-09-23-failure-iterations.json)
+
+The handoff change was committed/pushed as requested. Further diagnosis found three Linux harness failures: captured Node child-stdio, sandbox measurement output, and namespace-local PID interpretation. The versioned repairs passed all **six Linux/macOS CI jobs** without loosening the OS sandbox. Failures now carry verified categories rather than remaining undetermined.
+
+The preserved `application-data-v3` full run scored **62/66**. An opt-in `application-data-v4` contract explicitly requests complete file lines including labels; its fresh full run scored **65/66 (98.48%)**, with **448/448** local unit/integration checks and **11/11** offline native stability cases. The remaining Opus S11 filter is still a failure (exit code 1), not a 66/66 pass. Default v5 remains unchanged at its recorded 57/66; scores are not combined or regraded.
+
+## Earlier: pending-result handoff and release verification — 2026-09-23 KST
 
 [Verification summary, failures and release gate](2026-09-23-pending-handoff.json)
 

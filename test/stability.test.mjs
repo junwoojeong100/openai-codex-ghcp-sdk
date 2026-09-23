@@ -7,6 +7,7 @@ import { CATALOG, SCENARIOS, FLOW, PROMPTS, catalogHash } from "../scripts/stabi
 import { StabilityExecutor } from "../scripts/stability/execute.mjs";
 import { evaluate, metrics } from "../scripts/stability/oracles.mjs";
 import { parseArguments } from "../scripts/stability.mjs";
+import { PROFILE_IDS } from "../scripts/stability/profiles.mjs";
 import { newReport, summarize, artifacts, readCase, implementationHash } from "../scripts/stability/report.mjs";
 import { sha } from "../scripts/compatibility/util.mjs";
 import { stabilityEvidence } from "./helpers/stability-evidence.mjs";
@@ -45,7 +46,7 @@ test("native fixture metadata describes unchanged plain text for every model and
   const file = path.join(directory, "fixture-data.txt");
   fs.writeFileSync(file, content);
   const descriptions = new Set();
-  for (const profile of ["v5", "application-data-v3"]) for (const model of CATALOG.models) {
+  for (const profile of PROFILE_IDS) for (const model of CATALOG.models) {
     const executor = new StabilityExecutor({ model, profile, scenario: SCENARIOS[0] });
     executor.fixture = { cwd: directory, workspace: directory };
     let declaration;

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "scope": "Post-publication failure diagnosis, Linux verification repairs, and independently versioned literal-file stability validation.",
+  "verifiedAt": "2026-09-23T14:23:00.471Z",
+  "initialPublication": {
+    "commit": "da7256a19d84c50af97243aa965f4ec24146b19b",
+    "branch": "main",
+    "pushed": true,
+    "authorization": "The user explicitly requested commit/push before further repairs, superseding the earlier conditional release gate.",
+    "priorFailedEvidencePreserved": true
+  },
+  "repairs": [
+    {
+      "commit": "2c049d17b620671e2538817670c8523c3a367740",
+      "change": "Classify explicit native Responses filter errors, literal-output failures and cleanup failures from evidence; independently verify the categories without changing acceptance. Separate CI suites and retain scrubbed diagnostics so a compatibility failure cannot hide stability results.",
+      "localUnitAndIntegration": { "passed": 430, "failed": 0 },
+      "ciRun": "https://github.com/junwoojeong100/openai-codex-ghcp-sdk/actions/runs/35869797426",
+      "ciConclusion": "failure",
+      "remainingCiFailures": ["Linux C05", "Linux C08", "Linux C15"]
+    },
+    {
+      "commit": "2617d042f4e27f73f1b278838be652ed7a9a9b48",
+      "change": "Version compatibility as v6: run the same immutable three-test fixture in one Node process, emit sandbox measurements via the stdout file descriptor, and correlate namespace-local PIDs with unique owned host descendants before checking termination.",
+      "upstreamStdioIssue": "https://github.com/openai/codex/issues/18473",
+      "osSandboxRelaxed": false,
+      "localUnitAndIntegration": { "passed": 436, "failed": 0 },
+      "localTargetedNativeCases": ["C05", "C08", "C15"],
+      "localTargetedNativeCasesPassed": 3,
+      "localActualTuiCasesWithSdkDoublesPassed": 5,
+      "ciRun": "https://github.com/junwoojeong100/openai-codex-ghcp-sdk/actions/runs/35872289448",
+      "ciConclusion": "success",
+      "ciJobsPassed": 6,
+      "ciJobsTotal": 6,
+      "ciScope": "Unit/coverage on Linux and macOS with Node 22/24, plus full actual-Codex/PTY/headless-browser, 18 compatibility and 11 stability offline suites on both OSes. No live model calls in CI."
+    }
+  ],
+  "upstreamDiagnostic": {
+    "model": "claude-opus-5.5",
+    "report": ".runtime/failure-iteration-20260923-2243/diagnostic/report.json",
+    "reportSha256": "9c35a5d927eee6ac1891aa7099ee488b337f4921ab38fab6ad5283fc6fe2e739",
+    "sourceHash": "320d502ccc9c0786851b630a216cbc18b7e12af6cad976a9513efc913073f254",
+    "exactFixtureProbes": { "total": 4, "filtered": 4, "routes": ["direct-sdk", "production-manager"], "oldResultRpcSubmissions": 0 },
+    "wireEvidence": "All four exact-fixture probes returned native Anthropic Messages stop_reason=refusal. The allowlisted category was other, not the reasoning_extraction category observed in an earlier investigation.",
+    "simpleToolControls": { "total": 2, "filtered": 0, "literalMismatches": 2, "valuesPreserved": true },
+    "arithmeticControl": "completed",
+    "cleanupPassed": true,
+    "policyChanged": false,
+    "automaticProbeRetries": 0,
+    "scopeLimit": "These separate unscored probes do not retroactively assign provider refusal categories to matrix failures or establish the provider's internal reason."
+  },
+  "preservedApplicationV3": {
+    "profile": "application-data-v3",
+    "catalogHash": "671e0371a73ccc6634c0129fd94e9c5fed558fe96ed6d76af75b39abea606057",
+    "sourceHash": "0401d9d13f078e14e6b1882bcd97dc3b4896429a150bce55835f0b6fe267d175",
+    "report": ".runtime/failure-iteration-20260923-2243/application-live/report.json",
+    "reportSha256": "f07401169fcd5f038e47ae1ca74325bfbfd1d5e109be9b0c315b192c772d6b4c",
+    "passed": 62,
+    "totalCases": 66,
+    "percent": 93.93939393939394,
+    "fullMatrixPassed": false,
+    "exitCode": 1,
+    "failures": [
+      { "model": "claude-opus-5.5", "scenario": "S09", "category": "upstream-content-filter" },
+      { "model": "claude-opus-5.5", "scenario": "S11", "category": "upstream-content-filter" },
+      { "model": "claude-haiku-4.5", "scenario": "S04", "category": "literal-output", "detail": "The values survived but the value:/receipt: labels were omitted." },
+      { "model": "claude-haiku-4.5", "scenario": "S07", "category": "literal-output", "detail": "The recovery answer omitted the value:/receipt: labels." }
+    ],
+    "frozenSourceVerified": true,
+    "regraded": false
+  },
+  "literalFileIteration": {
+    "profile": "application-data-v4",
+    "catalogHash": "87ef7f727b09fe7d0f33731b5325416de631ba91b654ba7b5246969d859da767",
+    "sourceHash": "1f07ae19f89e39162a8794e8de63a9d990e703a9b049fa47f7fe1002688b64e8",
+    "change": "A new opt-in prompt contract explicitly requests the entire plain-text file, including labels, colons and whitespace, rather than extracted application values. Existing v3 and default v5 hashes, production requests, fixtures, models, fault flows and oracles remain unchanged.",
+    "unitAndIntegration": { "passed": 448, "failed": 0, "log": ".runtime/failure-iteration-20260923-2243/final-ci.log", "logSha256": "0a2a984373d68d1c2dc674ca3008d85a5736e8db218083c87ebe4e785e8a0174" },
+    "offlineNativeStability": { "passed": 11, "failed": 0, "report": ".runtime/failure-iteration-20260923-2243/literal-profile-offline/report.json", "reportSha256": "14181b76efc0fe260d01474999201aca2b6fa3b9283cc5eade143e14cc2c05cb" },
+    "liveReport": ".runtime/failure-iteration-20260923-2243/literal-profile-live/report.json",
+    "liveReportSha256": "109235bf87ede5c7349d8191d29b7f3638536c720261589a35fb5da79a4e8259",
+    "verification": ".runtime/failure-iteration-20260923-2243/literal-profile-live/verification.json",
+    "startedAt": "2026-09-23T14:15:08.318Z",
+    "finishedAt": "2026-09-23T14:22:17.071Z",
+    "passed": 65,
+    "totalCases": 66,
+    "percent": 98.48484848484848,
+    "referenceThreshold": { "percent": 95, "minimumPassed": 63, "met": true },
+    "fullMatrixPassed": false,
+    "exitCode": 1,
+    "currentAndFrozenSourceVerified": true,
+    "sourceAndUserSettingsUnchanged": true,
+    "cleanupPassedCases": 66,
+    "literalOutputFailures": 0,
+    "remainingFailure": {
+      "model": "claude-opus-5.5",
+      "scenario": "S11",
+      "turn": "repeat-2",
+      "category": "upstream-content-filter",
+      "phase": "tool_result_continuation",
+      "contentFilterTriggered": true,
+      "finishReason": "content_filter",
+      "reportedOutputTokens": 0,
+      "nativeRefusalCategoryInThisMatrix": null,
+      "automaticallyRetried": false
+    }
+  },
+  "limitations": [
+    "The original default v5 result remains 57/66 with nine filter failures. Neither application profile fixes or regrades that original contract.",
+    "The 65/66 result meets the 95% reference only for the new application-data-v4 full run; it is not 66/66 or a whole-product reliability percentage. Successful cells are never combined across runs.",
+    "Provider-filter frequency is nondeterministic; this experiment does not prove why it changed. The remaining filter cannot be repaired by disabling safeguards, silently rewriting production requests, or retrying side effects.",
+    "Production src/ code is unchanged after the initial handoff publication; its session-manager SHA256 remains 6185f3250b585de8d9e7873e5dea9d501f961a52c8932c9f3cc043165fe58b3d.",
+    "No user bridge restart, user settings change, original conversation takeover, multi-hour soak or new 108-case live compatibility certification was performed."
+  ]
+}

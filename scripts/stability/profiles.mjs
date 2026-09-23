@@ -24,11 +24,26 @@ const applicationCatalog = Object.freeze({
   changesFromApplicationDataV1: "Same application-data wording on the six-model v4 base (66 cells). Seven-model application-data-v1 records stay historical and are never regraded or combined.",
   changesFromApplicationDataV2: "Same application-data wording on the v5 base with the explicitly incomplete S03 control request. Application-data-v2 results stay historical and require their frozen source.",
 });
+const fileDisplay = "Display the complete plain-text file in a fenced text block. Preserve both entire lines, including the value: and receipt: labels, colons, values and original whitespace; do not extract just the values.";
+const literalApplicationCatalog = Object.freeze({
+  ...applicationCatalog,
+  id: "codex-ghcp-stability-11-application-data-v4",
+  prompts: Object.freeze({
+    read: `Call read_fixture once. ${fileDisplay}`,
+    remember: `Call read_fixture once in this turn, including on repeated requests. ${fileDisplay} Remember both complete lines for later turns.`,
+    recall: `Use the file returned earlier by read_fixture, without using tools. ${fileDisplay}`,
+    padding: prompts.padding,
+  }),
+  previousCatalogId: applicationCatalog.id,
+  previousCatalogHash: digest(applicationCatalog),
+  changesFromApplicationDataV3: "Explicitly request the entire file, including labels, colons and whitespace, rather than ambiguous application data. The same literal-output oracle, six models, fixture bytes, fault flows and budgets remain required. No production prompt rewriting or provider-filter changes; v3 remains selectable and its failures are not regraded.",
+});
 export const DEFAULT_PROFILE = "v5";
-export const PROFILE_IDS = Object.freeze([DEFAULT_PROFILE, "application-data-v3"]);
+export const PROFILE_IDS = Object.freeze([DEFAULT_PROFILE, "application-data-v3", "application-data-v4"]);
 const profiles = new Map([
   [DEFAULT_PROFILE, CATALOG],
   ["application-data-v3", applicationCatalog],
+  ["application-data-v4", literalApplicationCatalog],
 ].map(([name, catalog]) => [name, Object.freeze({ name, catalog, catalogHash: digest(catalog) })]));
 
 export function getProfile(name = DEFAULT_PROFILE) {

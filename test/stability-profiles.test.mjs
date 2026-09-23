@@ -13,6 +13,7 @@ import { stabilityEvidence } from "./helpers/stability-evidence.mjs";
 import { sha } from "../scripts/compatibility/util.mjs";
 
 const alternate = "application-data-v3";
+const literal = "application-data-v4";
 const identity = name => { const p = getProfile(name); return { profile: p.name, catalogId: p.catalog.id, catalogHash: p.catalogHash }; };
 const temp = t => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "stability-profiles-test-"));
@@ -37,7 +38,7 @@ test("the six-model v5 catalog is the exact immutable default", () => {
   assert.equal(getProfile().catalog, CATALOG);
   assert.equal(getProfile().catalogHash, catalogHash());
   assert.equal(catalogHash(), "d70a068e8de450b1df08366b44e14e06607d5313d769d2af251884fa06f0edb1");
-  assert.deepEqual(PROFILE_IDS, ["v5", alternate]);
+  assert.deepEqual(PROFILE_IDS, ["v5", alternate, literal]);
   for (const name of PROFILE_IDS) {
     const p = getProfile(name);
     assert.ok(Object.isFrozen(p) && Object.isFrozen(p.catalog) && Object.isFrozen(p.catalog.prompts));
@@ -72,6 +73,34 @@ test("profile selection still requires live opt-in and cannot override a recorde
   assert.equal(plan.profile, alternate);
   assert.equal(plan.catalogHash, getProfile(alternate).catalogHash);
   assert.equal(plan.totalCases, 66);
+});
+
+test("literal-file wording is an opt-in contract that preserves the prior profile and all gates", () => {
+  const old = getProfile(alternate), next = getProfile(literal);
+  assert.equal(next.catalog.previousCatalogId, old.catalog.id);
+  assert.equal(next.catalog.previousCatalogHash, old.catalogHash);
+  const changed = new Set(["id", "prompts", "previousCatalogId", "previousCatalogHash", "changesFromApplicationDataV3"]);
+  for (const key of Object.keys(next.catalog).filter(key => !changed.has(key))) assert.deepEqual(next.catalog[key], old.catalog[key], key);
+  assert.equal(next.catalog.prompts.padding, old.catalog.prompts.padding);
+  assert.equal(DEFAULT_PROFILE, "v5");
+  assert.deepEqual(matrix("live", literal), matrix("live", alternate));
+  for (const name of ["read", "remember", "recall"]) {
+    assert.match(next.catalog.prompts[name], /value: and receipt: labels, colons, values and original whitespace/);
+    assert.match(next.catalog.prompts[name], /do not extract just the values/);
+    assert.doesNotMatch(next.catalog.prompts[name], /N_[a-f0-9]{20}/);
+  }
+  assert.deepEqual(parseArguments(["--execute", "--profile", literal]), { mode: "execute", profile: literal });
+  assert.throws(() => profileForRecord({ ...identity(literal), catalogHash: old.catalogHash }));
+});
+
+for (const scenario of SCENARIOS) test(`${scenario.id}: literal-file profile cannot borrow passes or waive missing labels`, () => {
+  const evidence = stabilityEvidence(scenario.id, literal);
+  assert.deepEqual(evaluate(scenario, evidence, literal), evaluate(scenario, stabilityEvidence(scenario.id, alternate), alternate));
+  assert.ok(evaluate(scenario, evidence, alternate).some(check => !check.passed));
+  assert.ok(evaluate(scenario, stabilityEvidence(scenario.id, alternate), literal).some(check => !check.passed));
+  const item = evidence.native.findLast(row => row.message.params?.item?.type === "agentMessage").message.params.item;
+  item.text = item.text.replaceAll("value:", "").replaceAll("receipt:", "");
+  assert.equal(evaluate(scenario, evidence, literal).find(check => check.id === "final-values").passed, false);
 });
 
 test("profile identity cannot be switched, inferred from success, or supplied with another catalog hash", () => {

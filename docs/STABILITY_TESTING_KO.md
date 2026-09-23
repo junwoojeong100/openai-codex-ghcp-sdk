@@ -10,9 +10,13 @@
 
 기본값은 `v5`(`codex-ghcp-stability-11-v5`)입니다. `--profile application-data-v3`를 명시하면 `codex-ghcp-stability-11-application-data-v3`를 선택합니다. 이는 기존 application-data의 read/remember/recall 문구를 v5 기반에 적용한 별도 catalog ID·hash입니다. 두 프로필은 6개 모델·11개 시나리오·fixture·장애 주입·예산·literal-output·정리 판정이 같습니다. production 사용자 요청을 재작성하지 않습니다. 보고서·worker·artifact에 프로필 identity를 전달하며, 다른 프로필의 통과 셀 대입이나 `--verify --profile` 재채점을 거절합니다.
 
+추가 옵션 `--profile application-data-v4`는 추출한 값만이 아닌 **파일 전체**를 요청하며 `value:`/`receipt:` 레이블·콜론·공백 보존을 명시합니다. 관측된 v3 작업 문구의 모호함을 보완하는 것이지 브릿지 전송 오류 수정은 아닙니다. v3는 원래 hash로 계속 선택할 수 있고 기본값은 v5를 유지합니다. 전체 66건과 기존 literal-output 판정은 그대로이며 명시적 상위 필터도 실패로 남습니다. v4 결과는 새 전체 실행으로만 확인하며 v3·v5 점수를 대체할 수 없습니다.
+
+구현 `1f07ae19`의 첫 v4 전체 실행은 **65/66(98.48%)**이며 현재·동결 소스로 독립 검증했습니다. 95% 참고 기준(63/66)은 충족하지만 66/66은 아닙니다. Opus S11 `repeat-2`의 명시적 상위 필터 실패와 종료 코드 1을 유지합니다. 앞선 v3 실행은 Opus 필터 2건과 Haiku 레이블 누락 2건을 포함한 **62/66**으로 보존합니다. 실패를 감추기 위해 production 코드·보호 정책·판정을 바꾸지 않았습니다. [반복 검증 증거](validation/2026-09-23-failure-iterations.json).
+
 v5는 S03의 거절 경계만 바꿉니다. 정책 변경 제어 요청에서 도구 결과를 의도적으로 누락하고, 대기 상태를 잃지 않은 채 `tool_result_mismatch`를 반환해야 합니다. 올바른 결과가 모두 있으면 기존의 일괄 409 대신 안전한 설정 핸드오프를 허용합니다. `v4`/`application-data-v2`와 이전 프로필은 더 이상 선택할 수 없습니다. 해당 66건 또는 과거 77건 기록은 각 실행의 동결된 `source-snapshot/scripts/stability.mjs`로만 검증하며 v5로 재채점하거나 합산하지 않습니다.
 
-최신 배포 전 확인에서 구현 `320d502c`의 기본 **v5 전체 행렬은 57/66(86.36%)**이며 Opus 5.5의 명시적 상위 필터 실패 9건과 종료 코드 1을 유지합니다. 나머지 5개 모델은 각각 11/11입니다. 별도 실제 TUI 행렬은 72/72이며 점수를 합산하지 않습니다. 두 보고서 모두 현재·동결 소스로 독립 검증했습니다. 요청된 '이상없으면 커밋·푸시' 조건은 충족하지 못했습니다. [증거와 커밋 조건](validation/2026-09-23-pending-handoff.json).
+앞선 배포 전 확인에서 구현 `320d502c`의 기본 **v5 전체 행렬은 57/66(86.36%)**이며 Opus 5.5의 명시적 상위 필터 실패 9건과 종료 코드 1을 유지합니다. 나머지 5개 모델은 각각 11/11입니다. 별도 실제 TUI 행렬은 72/72이며 점수를 합산하지 않습니다. 두 보고서 모두 현재·동결 소스로 독립 검증했습니다. 당시 '이상없으면 커밋·푸시' 조건은 충족하지 못했지만 이후 사용자가 실패 기록을 유지한 게시를 승인했습니다. [증거와 커밋 조건](validation/2026-09-23-pending-handoff.json).
 
 6개 모델 구현 `68f92d74`의 독립 전체 실측은 **v4 57/66(86.36%)**, **application-data-v2 63/66(95.45%)**입니다. 두 실행 모두 실패·`fullMatrixPassed=false`·종료 코드 1을 유지합니다. application-data-v2는 95% 참고 기준(63/66 이상)을 충족하지만, v4는 Opus 5.5의 읽기 턴이 모두 상위 필터에 걸려 미달입니다. 이후 freeform `apply_patch` 목록 변경(`54c7eb77`)은 이 행렬을 다시 돌리지 않고 별도 [실제 TUI 행렬](validation/2026-09-23-tui-scenarios/README_KO.md)로 검증했습니다. [결과·실행 이력·MCP 격리](validation/2026-09-23-six-model-switch/README_KO.md)를 참고하세요.
 

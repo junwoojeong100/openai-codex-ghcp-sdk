@@ -131,6 +131,12 @@
     "originalUserConversationResumedByVerifier": false,
     "remoteCiExecuted": false
   },
+  "publicationAfterUserOverride": {
+    "commit": "da7256a19d84c50af97243aa965f4ec24146b19b",
+    "pushed": true,
+    "originalGateAndFailureRecordsUnchanged": true,
+    "followUpRecord": "2026-09-23-failure-iterations.json"
+  },
   "limitations": [
     "The focused six-case run and the later full release matrices are independent results. The 57/66 stability run does not meet the earlier 95% target; no scores were combined or failures waived.",
     "Preserving completed IDs and avoiding duplicate result RPCs does not prevent a model from proposing the same semantic operation under a new call ID.",
