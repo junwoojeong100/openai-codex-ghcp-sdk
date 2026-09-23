@@ -4,6 +4,8 @@
 
 This is the implementation reference. For running, configuring or restarting the bridge, use the [usage guide](USAGE.md).
 
+**Jump to:** [Source map](#modules) · [Tool ownership](#tool-handoff) · [Conversation state](#conversation-continuity) · [Timeouts and recovery](#model-progress-and-recovery) · [Data retention](#data-retention).
+
 ## Request path
 
 ```text
@@ -19,18 +21,29 @@ The bridge adapts protocols. It does not replace Codex's tool executor with Copi
 
 ## Modules
 
-- `server.mjs`: loopback HTTP server, local credential checks, request limits, JSON/SSE responses, disconnect cancellation.
-- `request-policy.mjs`: supported request semantics, Codex `additional_tools` and namespaces, deterministic SDK-safe tool names.
-- `responses.mjs`: Responses output items and streaming events; preserves tool `call_id`, namespace, and custom input strings.
-- `session-manager.mjs`: per-conversation queues, history matching, cached retries, pending tool results, deadlines, expiry and cleanup.
-- `copilot-session-rpc.mjs`: narrow wrappers over SDK abort/disconnect/delete and pending-tool-result RPCs.
-- `mcp-isolation.mjs`: exact MCP server names configured for the Copilot runtime (user `mcp-config.json` and installed plugins), passed as `disabledMcpServers` on every bridge SDK session.
-- `model-map.mjs`: the six allowed IDs, default selection, OpenAI/Codex catalog metadata and reasoning-effort checks. Model context limits and supported efforts come from the SDK catalog; there is no automatic model fallback.
-- `copilot-home.mjs` and `list-models.mjs`: existing Copilot home resolution and account-specific model listing.
-- Launcher/daemon modules and `bin/`: start a project-owned bridge, pass per-process Codex configuration and a private temporary model catalog, and manage optional background operation. Catalog entries declare `apply_patch_tool_type: "freeform"`, so Codex offers its native `apply_patch` tool. The catalog replaces bundled/cached picker entries and is removed on Codex exit.
-- `scripts/terminal.mjs` and `scripts/soak/terminal-lane.mjs`: explicit live terminal validation, frozen-source workers, isolated environments and SDK-correlated outcome checks. The soak worker uses the same terminal lane.
-- `scripts/tui.mjs` and `scripts/tui/`: the [real-TUI matrix](TUI_SCENARIOS.md). Each case runs `bin/codex-ghcp` in a private PTY rendered and driven by headless Playwright/xterm.js, samples processes under the bridge's Copilot runtime, reads Codex's own rollout, and recomputes checks from saved facts.
-- `scripts/soak/terminal.mjs` and `browser.mjs`: one owned PTY lifecycle with either the independent parser or a Playwright/xterm renderer. Browser input and output use the real PTY, not a simulated assistant; cancellation reaps both the terminal group and owned browser.
+| Source | Responsibility |
+| --- | --- |
+| [server.mjs](../src/server.mjs) | Loopback HTTP, local credentials, request limits, JSON/SSE and disconnect cancellation. |
+| [request-policy.mjs](../src/request-policy.mjs) | Request validation, `additional_tools`, namespaces and SDK-safe tool names. |
+| [responses.mjs](../src/responses.mjs) | Response items/events; preserve `call_id`, namespace and custom input bytes. |
+| [session-manager.mjs](../src/session-manager.mjs) | Conversation identity, history, retries, pending results, deadlines and cleanup. |
+| [request-queue.mjs](../src/request-queue.mjs) | Bounded, cancellable per-conversation FIFO queues and total request deadlines. |
+| [sdk-lifecycle.mjs](../src/sdk-lifecycle.mjs) | SDK readiness and connection recovery, distinct from silent-turn recovery. |
+| [copilot-session-rpc.mjs](../src/copilot-session-rpc.mjs) | Bounded abort/disconnect/delete and pending-tool-result RPCs. |
+| [mcp-isolation.mjs](../src/mcp-isolation.mjs) | Read Copilot user/plugin MCP names and pass `disabledMcpServers` on every bridge session. |
+| [model-map.mjs](../src/model-map.mjs) | Allowed IDs, default model, Codex catalog and SDK-derived context/effort limits; no fallback model. |
+| [copilot-home.mjs](../src/copilot-home.mjs), [list-models.mjs](../src/list-models.mjs) | Resolve the existing Copilot home and list account models. |
+| [launcher.mjs](../src/launcher.mjs), [bridge-daemon.mjs](../src/bridge-daemon.mjs), [bin/](../bin/) | Owned bridge lifecycle, per-process Codex configuration, private model catalog and optional background operation. |
+
+The temporary catalog replaces bundled/cached picker entries and is removed on Codex exit. Entries declare `apply_patch_tool_type: "freeform"`, so Codex offers its native `apply_patch` tool.
+
+### Verification harnesses
+
+These are test entry points, not extra production services:
+
+- [Terminal runner](../scripts/terminal.mjs) and [shared terminal lane](../scripts/soak/terminal-lane.mjs): frozen-source workers, isolated environments and SDK-correlated outcomes. The soak worker reuses this lane; see [terminal/endurance checks](SOAK_TESTING.md).
+- [TUI runner](../scripts/tui.mjs) and [implementation](../scripts/tui/): each [TUI case](TUI_SCENARIOS.md) runs the launcher in a private PTY with headless Playwright/xterm.js, samples runtime MCP processes, reads Codex's rollout and recomputes checks from saved facts.
+- [PTY lifecycle](../scripts/soak/terminal.mjs) and [browser driver](../scripts/soak/browser.mjs): one real PTY with an independent parser or Playwright/xterm renderer. Cancellation reaps both the terminal group and owned browser.
 
 ## Tool handoff
 
@@ -72,9 +85,13 @@ The HTTP listener is loopback-only and requires a bridge-specific credential exc
 
 Session count, idle lifetime, body size, history size and turn duration are bounded. Client disconnect or a failed/timed-out turn evicts its bridge-owned SDK session. Cleanup attempts abort, disconnect and delete with deadlines. Shutdown stops this project's SDK client, with a forced stop fallback if graceful cleanup fails. TTL/capacity eviction can invalidate pending calls; clients receive an explicit error rather than a fabricated tool result.
 
+### Model progress and recovery
+
 The model-progress watchdog is separate from idle-session expiry and the absolute turn deadline. Each attempt starts with a non-refreshing `TURN_FIRST_PROGRESS_TIMEOUT_MS` allowance (180 seconds). `assistant.turn_start` is initialization, not inference progress. Real root text, reasoning/tool-input fragments and increasing safe-integer `assistant.streaming_delta.totalResponseSizeBytes` switch to and refresh `TURN_IDLE_TIMEOUT_MS` (90 seconds). Byte counters reset on distinct root turn IDs, not duplicate starts. Registered Fusion phases in the root conversation additionally count increasing private-output bytes and one successful completion; phase starts alone, phase tools, review/subordinate events and duplicate/invalid counters cannot extend the deadline. At most 64 phase identities are tracked per root turn; private phase content is never read or forwarded. `bridge.turn_watchdog` runs every `min(SDK_READINESS_INTERVAL_MS, TURN_IDLE_TIMEOUT_MS, TURN_FIRST_PROGRESS_TIMEOUT_MS)` and records `waitPhase` (`first_progress` or `streaming`); `bridge.turn_stalled` records the applicable limit and last real progress. Root `model.call_failure` metadata is diagnostic only, restricted to a bounded failure category and numeric HTTP status. Session creation and model-setting retain the smaller of the SDK startup and turn deadlines; recovery does not reset the five-minute absolute turn or six-minute request budget.
 
 A silent, acknowledged request can recover on the original response stream by rebuilding only its SDK session after confirmed abort/disconnect/delete and a healthy same-generation readiness check. `TURN_IDLE_RECOVERY_ATTEMPTS` defaults to 1 (0 disables; maximum 3). Recovery preserves model, effort, instruction authority, complete resolved history, completed-call identities, response-handle versions and reported usage. Completed tool results are context, never another tool-result RPC. Partial output, unacknowledged input, pending calls, filtering, cancellation, failed cleanup and connection loss forbid replay. The original absolute turn/request deadlines cover all recovery attempts, including replacement setup; cancellation also interrupts setup's MCP checks. `bridge.turn_recovering`, `bridge.turn_recovered` and `bridge.turn_recovery_skipped` expose bounded diagnostics without conversation text. Recovery may consume additional inference usage; completely silent reasoning remains indistinguishable from a stall, and history replay is not exactly-once model execution.
+
+### Data retention
 
 Bridge correlation and retry state live in memory. `store:false` means there is no Responses retrieval store here; it does **not** promise that Copilot, Codex or the SDK never writes local session files or retains service-side data. The bridge avoids logging request bodies and credentials. SDK errors may still contain service diagnostics.
 
@@ -89,6 +106,8 @@ No sibling project's tests, validation runner or validation results are used. Of
 - `/health` reports HTTP liveness, last-known readiness and the running `turnWatchdog` settings; an older process without that field has not loaded this implementation. Authenticated `/readyz` probes the SDK. Catalog requests may trigger safe connection recovery.
 
 Defaults, errors and the separate 66-cell stability contract are documented in the [stability guide](STABILITY_TESTING.md). Historical v3 stability and v4 compatibility evidence is verified with frozen source, never regraded.
+
+### Instruction and response boundaries
 
 - SDK-managed system/safety instructions are retained with append mode. All top-level client system/developer messages, including mid-history ones, are collected with request instructions; their text is appended unchanged. A changed instruction policy rebuilds an idle session or uses a validated complete-result handoff. SDK built-in tools remain excluded and permission requests remain rejected.
 - New user messages accompanying tool results use SDK immediate steering before results are released, not text appended to a tool output. Tool-result text remains byte-exact and exact retries do not repeat either operation.

@@ -12,8 +12,8 @@ Codex → 로컬 HTTP/SSE bridge → GitHub Copilot SDK → 선택한 Copilot �
 
 ## 준비 사항
 
-- Node.js `^20.19.0` 또는 `>=22.12.0`, npm, Bash.
-- 설치·인증된 Copilot CLI. `copilot --version`으로 확인하고 필요하면 `copilot login`을 실행합니다.
+- Node.js `^20.19.0` 또는 `>=22.12.0`, npm, Git, Bash. 예시는 Bash/zsh 기준이며 CI는 Linux와 macOS에서 실행합니다.
+- 설치·인증된 [Copilot CLI](https://github.com/github/copilot-cli). `copilot --version`으로 확인하고 필요하면 `copilot login`을 실행합니다.
 - 원하는 모델에 접근할 수 있는 GitHub Copilot 계정.
 - 공식 Codex CLI **0.154.0**. 아래 설치 명령을 사용합니다.
 
@@ -21,25 +21,47 @@ Codex → 로컬 HTTP/SSE bridge → GitHub Copilot SDK → 선택한 Copilot �
 
 ## 빠른 시작
 
-clone한 저장소 루트에서 실행합니다. Codex 0.154.0이 이미 설치돼 있다면 전역 설치 명령은 생략하세요.
+### 1. 저장소 받기
+
+이미 clone했다면 해당 저장소를 열고 2단계부터 진행하세요.
+
+```bash
+git clone https://github.com/junwoojeong100/openai-codex-ghcp-sdk.git
+cd openai-codex-ghcp-sdk
+```
+
+### 2. 의존성 설치
+
+저장소 루트에서 실행합니다. Codex 0.154.0이 이미 설치돼 있다면 전역 설치 명령은 생략하세요.
 
 ```bash
 npm install -g @openai/codex@0.154.0
 npm ci
 command codex --version
+```
+
+버전 출력은 `codex-cli 0.154.0`이어야 합니다. 실행기는 더 새 버전도 허용하지만 이 안내와 검증 기록의 기준은 **0.154.0**입니다. SDK는 **1.0.14**로 고정하며, 업그레이드하면 프로토콜 수정이 필요할 수 있습니다.
+
+### 3. 설치와 계정 접근 확인
+
+```bash
 ./bin/ghcp-doctor
 ./bin/ghcp-models
 ```
 
-doctor가 알리는 오류를 해결한 뒤 Codex를 시작합니다.
+doctor의 각 도구 `ok`와 Codex의 `supportedVersion`이 모두 `true`여야 합니다. doctor는 **로그인을 검사하지 않습니다.** 모델 명령은 프롬프트를 보내지 않고 Copilot 목록 접근만 확인합니다. `gpt-6-astra`가 `disabled`나 `not available`이 아닌지 확인하세요. 실패했다면 [문제 해결](docs/USAGE_KO.md#제한과-문제-해결)을 먼저 확인합니다.
+
+### 4. Codex 시작
 
 ```bash
 ./bin/codex-ghcp
 ```
 
-실행기는 빈 루프백 포트에 bridge를 시작하고 준비 상태를 확인한 뒤 Codex를 실행합니다. Codex가 종료되면 자신이 시작한 bridge도 정리합니다. **`.env` 파일이나 셸 설정은 필요하지 않습니다.** 기본 모델은 `gpt-6-astra`이며, 다른 모델은 `--ghcp-model`로 선택합니다.
+Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`처럼 계정에서 사용 가능한 모델을 지정하세요.
 
-의존성은 이 프로젝트에 `@github/copilot-sdk@1.0.14`, `proper-lockfile@4.1.2`로 고정합니다. Codex나 SDK를 업그레이드하면 프로토콜 수정이 필요할 수 있습니다.
+**완료 기준:** Codex가 열리고 첫 프롬프트에 답합니다. 예를 들어 `OK라고만 답해줘.`를 입력해 확인하세요. 이 요청은 Copilot 사용량을 소비합니다. 종료하려면 `/quit`을 입력합니다.
+
+실행기는 빈 루프백 포트에 bridge를 시작하고 준비 상태를 확인한 뒤 Codex를 실행합니다. Codex가 종료되면 자신이 시작한 bridge도 정리합니다. **`.env` 파일이나 셸 설정은 필요하지 않습니다.** 다른 저장소에서 작업하려면 [해당 프로젝트에서 실행기를 호출](docs/USAGE_KO.md#codex-실행)하세요.
 
 ## 기본 사용법
 
@@ -81,14 +103,14 @@ doctor가 알리는 오류를 해결한 뒤 Codex를 시작합니다.
 ## 사용 전 알아둘 제한
 
 - 텍스트와 Codex가 실행하는 function/custom 도구를 지원합니다. 기본 `apply_patch`와 Codex MCP 도구도 포함하지만 custom 도구의 grammar는 생성 강제가 아닌 안내입니다.
-- 이미지·음성·영상·파일 입력, 공급자 호스팅 도구, 구조화 JSON 출력, WebSocket, 원격 Responses 압축은 지원하지 않습니다. Codex의 선택적 제목 생성 요청은 거절하지만 대화는 제목 없이 계속할 수 있습니다.
+- 이미지·음성·영상·파일을 모델에 직접 첨부하는 입력, 공급자 호스팅 도구, 구조화 JSON 출력, WebSocket, 원격 Responses 압축은 지원하지 않습니다. **Codex 도구를 통한 로컬 파일 읽기·편집은 지원합니다.** Codex의 선택적 제목 생성 요청은 거절하지만 대화는 제목 없이 계속할 수 있습니다.
 - bridge 대화 상태는 메모리에 있습니다. 상주 bridge를 중지하기 전에 Codex 세션을 닫으세요. 재시작하면 대기 중 호출이 사라집니다. 실행기는 승인·샌드박스를 우회하지 않습니다.
 
 고급 기능을 사용하기 전에 [전체 호환성 범위](docs/COMPATIBILITY_KO.md)를 확인하세요. 모델 목록이나 TUI 통과 결과가 Codex 전체 기능 지원을 뜻하지는 않습니다. [실모델 기록](docs/validation/README_KO.md)에는 미해결 상위 필터 실패도 있으며, 서로 다른 계약의 점수를 합산하지 않습니다.
 
 ## 개발과 검증
 
-단위 검사·소스 커버리지·시나리오 및 문서 정합성을 **모델 호출 없이** 확인합니다.
+검증은 **실행기를 사용하기 위한 필수 절차가 아닙니다.** `npm ci` 후 기본 개발 검사로 단위 검사·소스 커버리지·시나리오 및 문서 정합성을 확인합니다. **모델 호출이나 Copilot 로그인은 필요하지 않습니다.**
 
 ```bash
 npm run test:ci
@@ -96,18 +118,25 @@ npm run test:ci
 
 단위·실행 제어 검사만 필요하면 `npm test`, 생성 문서 정합성만 확인하려면 `npm run docs:scenarios:check`를 사용하세요. `coverage/lcov.info`는 관측한 소스 커버리지이며 제품 기능 지원율이 아닙니다.
 
-`npm run test:runtime`은 기본적으로 SDK 대역으로 Codex/PTY/브라우저·워크플로·안정성을 검사합니다. Node 22.12 이상, Codex 0.154.0, Python 3, `npx --no-install playwright install chromium`으로 설치한 Chromium이 필요합니다. **오프라인 검사에서는 `GHCP_LIVE_HANDOFF_OUTPUT`을 설정하지 마세요.** 이 변수를 설정하면 핸드오프 검사가 실모델을 호출합니다. CI는 오프라인 검사를 Linux/macOS의 단위 커버리지 작업과 분리해 실행합니다.
+더 넓은 범위의 **오프라인 runtime 검사**에는 Node 22.12 이상, Codex 0.154.0, Python 3를 설치한 뒤 다음을 실행합니다.
 
-측정 목적에 맞는 안내를 선택하세요. **아래 계획 명령은 모델을 호출하지 않습니다. 실모델 `--execute`와 soak의 `--smoke`는 Copilot 사용량이 발생합니다.** 각 문서에서 실행 단계를 분리하고 판정 기준을 설명합니다.
+```bash
+npx --no-install playwright install chromium
+env -u GHCP_LIVE_HANDOFF_OUTPUT npm run test:runtime
+```
 
-| 목적 | 계획 명령 | 안내 |
+실제 Codex/PTY/브라우저·워크플로·안정성 경로를 SDK 대역으로 검사하며 Copilot 로그인은 필요하지 않습니다. `env -u`는 이번 호출에서만 실모델 핸드오프 옵션을 제거하므로, 기존 `GHCP_LIVE_HANDOFF_OUTPUT` 설정 때문에 모델을 호출하지 않습니다. CI는 이 오프라인 검사를 Linux/macOS의 단위 커버리지 작업과 분리해 실행합니다.
+
+특정 기능만 검사하려면 아래 안내 중 **하나를 선택**하세요. 모든 행을 순서대로 실행하는 설치 절차가 아닙니다. 계획 명령에는 프로젝트 의존성만 필요하며 Codex·브라우저·Copilot 로그인은 필요하지 않습니다. **실모델 `--execute`와 soak의 `--smoke`는 Copilot 사용량이 발생합니다.** 검사별 실모델 통과 기준은 서로 다릅니다.
+
+| 목적과 실모델 통과 기준 | 계획 명령 (모델 호출 없음) | 안내 |
 | --- | --- | --- |
-| 개발 워크플로 18개 × 6개 모델 | `npm run test:compatibility -- --plan` | [호환성 실행·해석](docs/COMPATIBILITY_TESTING_KO.md) · [시나리오 사양](docs/NATIVE_SCENARIOS_KO.md) |
-| bridge 장애·복구 11개 × 6개 모델 | `npm run test:stability -- --plan` | [안정성](docs/STABILITY_TESTING_KO.md) |
-| 실제 대화형 TUI 12개 × 6개 모델 | `npm run test:tui -- --plan` | [TUI 시나리오](docs/TUI_SCENARIOS_KO.md) |
-| 제한된 시간의 PTY·브라우저 작업 | `npm run test:terminal -- --plan` | [터미널 검사](docs/SOAK_TESTING_KO.md) |
-| 장기 대화 | `npm run test:soak -- --plan` | [내구성](docs/SOAK_TESTING_KO.md#통합-soak-실행기) |
-| Opus 상위 필터 원인 조사 | `npm run diagnose:opus` | [진단](docs/OPUS_DIAGNOSTICS_KO.md) |
+| 개발 워크플로: **108/108** (18개 × 6개 모델) | `npm run test:compatibility -- --plan` | [호환성 실행·해석](docs/COMPATIBILITY_TESTING_KO.md) · [시나리오 사양](docs/NATIVE_SCENARIOS_KO.md) |
+| bridge 장애·복구: **66/66** (11개 × 6개 모델) | `npm run test:stability -- --plan` | [안정성](docs/STABILITY_TESTING_KO.md) |
+| 실제 대화형 TUI: 목표 **69/72**, 전체 통과 **72/72** | `npm run test:tui -- --plan` | [TUI 시나리오](docs/TUI_SCENARIOS_KO.md) |
+| PTY·브라우저: 선언한 작업 완료, 관측한 실패 없음 | `npm run test:terminal -- --plan` | [터미널 검사](docs/SOAK_TESTING_KO.md) |
+| 내구성: 모든 실행 경로 5시간 이상, 관측한 실패 없음 | `npm run test:soak -- --plan` | [내구성](docs/SOAK_TESTING_KO.md#통합-soak-실행기) |
+| Opus 필터: 진단 증거 수집이며 호환성 판정 아님 | `npm run diagnose:opus` | [진단](docs/OPUS_DIAGNOSTICS_KO.md) |
 
 과거 점수·구현 hash·보존한 실패는 설치 절차가 아닌 [검증 목록](docs/validation/README_KO.md)에 정리합니다. 생성 시나리오 문서는 `scripts/compatibility/documentation.mjs`와 catalog가 원본입니다. 생성 파일을 직접 편집하지 말고 `npm run docs:scenarios`로 갱신하세요.
 

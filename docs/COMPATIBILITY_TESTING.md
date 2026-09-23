@@ -6,24 +6,33 @@ Test end-to-end development workflows with **18 scenarios × six models = 108 ca
 
 ## Prepare and run
 
-Run from the repository root after [installation](../README.md#quick-start). Runtime/live checks need Node 22.12+, Codex 0.154.0 and a working OS sandbox. The bridge's application engine requirements are unchanged.
+Run from the repository root after `npm ci`. Choose a check below; a live matrix is not part of installation.
 
-**Offline checks — no model calls:**
+**Plan and design checks — no model calls, Codex or Copilot login:**
 
 ```bash
 npm run test:scenarios
 npm run docs:scenarios:check
 npm run test:compatibility -- --plan
+```
+
+The default is `--plan`. A successful plan describes the 108-case contract; it does not execute those cases.
+
+**Offline runtime — no model calls:** install Node 22.12+, Codex **0.154.0** and a working OS sandbox. No Copilot login or browser is required.
+
+```bash
 npm run test:compatibility:runtime
 ```
 
-The default is `--plan`. Runtime checks use real Codex with mechanical SDK peers and isolated credentials, including the actual launcher in C11. They check the harness, not live model compatibility.
+This uses real Codex with mechanical SDK peers and isolated credentials, including the actual launcher in C11. It checks the harness, not live model compatibility. The bridge's application engine requirements are unchanged.
 
-**Live run — Copilot authentication and usage required:** choose a new output directory for every run. No OpenAI API key is needed. Run this once, then verify its report even if the run exits with failures.
+**Live run — optional, consumes Copilot usage:** use the runtime prerequisites above and complete the [Copilot account check](../README.md#quick-start). No OpenAI API key is needed. Choose a new output directory and execute once:
 
 ```bash
 npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
 ```
+
+Then verify the saved report **without model calls**, even if execution failed. Keep this separate from the execution command so a nonzero exit does not skip verification:
 
 ```bash
 npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
@@ -34,6 +43,8 @@ Existing output folders are never overwritten. There is no model subset, automat
 Up to four model lanes run concurrently. Each case includes an eight-second cleanup reserve. Exhausting every deadline gives 2,220 seconds/model and a **75.5-minute** scheduling estimate including preflight, excluding OS/I/O overhead. One hour is a target, not a global cutoff.
 
 ## Read the result
+
+Open `.runtime/compatibility-new-run/report.md` for the human-readable summary. `report.json` is the evidence-verification input; use the same output directory in both commands.
 
 | Exit code | Meaning |
 | --- | --- |

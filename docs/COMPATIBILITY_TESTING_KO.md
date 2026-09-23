@@ -6,24 +6,33 @@
 
 ## 준비와 실행
 
-[설치](../README_KO.md#빠른-시작) 후 저장소 루트에서 실행합니다. runtime·실모델 검사에는 Node 22.12 이상, Codex 0.154.0, 동작하는 OS 샌드박스가 필요합니다. bridge 자체의 엔진 요구사항은 바꾸지 않습니다.
+`npm ci` 후 저장소 루트에서 필요한 검사를 선택하세요. 실모델 행렬은 설치 절차가 아닙니다.
 
-**오프라인 검사 — 모델 호출 없음:**
+**계획·설계 검사 — 모델 호출·Codex·Copilot 로그인 불필요:**
 
 ```bash
 npm run test:scenarios
 npm run docs:scenarios:check
 npm run test:compatibility -- --plan
+```
+
+기본 동작은 `--plan`입니다. 계획이 성공하면 108건의 검사 사양을 출력하며, 해당 검사들을 실행하지는 않습니다.
+
+**오프라인 runtime — 모델 호출 없음:** Node 22.12 이상, Codex **0.154.0**, 동작하는 OS 샌드박스를 준비하세요. Copilot 로그인이나 브라우저는 필요하지 않습니다.
+
+```bash
 npm run test:compatibility:runtime
 ```
 
-기본 동작은 `--plan`입니다. runtime은 실제 Codex와 기계적인 SDK 대역·격리된 인증 환경을 사용하며, C11에서는 실제 실행기도 시작합니다. 실행기 검사이지 실모델 호환성 통과는 아닙니다.
+실제 Codex와 기계적인 SDK 대역·격리된 인증 환경을 사용하며, C11에서는 실제 실행기도 시작합니다. 실행기 검사이지 실모델 호환성 통과는 아닙니다. bridge 자체의 엔진 요구사항은 바꾸지 않습니다.
 
-**실모델 실행 — Copilot 인증·사용량 필요:** 실행마다 새 출력 디렉터리를 선택하세요. OpenAI API 키는 필요하지 않습니다. 아래 실행은 한 번만 수행하고, 실패로 종료돼도 보고서를 검증하세요.
+**실모델 실행 — 선택 사항, Copilot 사용량 발생:** 위 runtime 준비 사항과 [Copilot 계정 확인](../README_KO.md#빠른-시작)을 마치세요. OpenAI API 키는 필요하지 않습니다. 새 출력 디렉터리를 선택하고 한 번 실행합니다.
 
 ```bash
 npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
 ```
+
+실행이 실패해도 저장된 보고서를 **모델 호출 없이** 검증하세요. 실행 명령과 별도로 수행해야 실패 종료 코드 때문에 검증이 생략되지 않습니다.
 
 ```bash
 npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
@@ -34,6 +43,8 @@ npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.jso
 최대 4개 모델을 병렬 실행하고 케이스마다 정리 예비 8초를 포함합니다. 모든 제한을 소진하면 모델당 2,220초이며 사전 점검을 포함한 배정 추정치는 **75.5분**입니다(OS·I/O 지연 별도). 1시간은 목표이지 전체 강제 종료 제한이 아닙니다.
 
 ## 결과 읽기
+
+사람이 읽는 요약은 `.runtime/compatibility-new-run/report.md`, 증거 검증의 입력은 `report.json`입니다. 실행과 검증 명령에 같은 출력 디렉터리를 사용하세요.
 
 | 종료 코드 | 의미 |
 | --- | --- |

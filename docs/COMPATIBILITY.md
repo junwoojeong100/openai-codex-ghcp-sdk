@@ -6,7 +6,21 @@
 
 The target is Codex CLI **0.154.0** with `@github/copilot-sdk` **1.0.14**. This is a text-and-client-tools adapter, not a complete OpenAI Responses implementation. A model being enabled in Copilot does not certify every Codex feature. Offline test results and authenticated model runs are distinct checks.
 
-Only `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4.5`, `gpt-6-astra`, `gpt-6-sol` and `gpt-6-luna` are allowed, in that picker order. Account policy still controls availability. Removed IDs (`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `claude-opus-5`) are rejected by the launcher and bridge. Model IDs are passed to the SDK without cross-provider renaming or fallback.
+Only the [six supported model IDs](../README.md#models) are allowed, in the documented picker order. Account policy still controls availability. Other IDs, including retired models, are rejected. IDs are passed to the SDK without cross-provider renaming or fallback.
+
+## Can I use this feature?
+
+| Task | Support and boundary |
+| --- | --- |
+| Chat, read/edit local files and run shell commands | Supported through **Codex's tools**, with Codex's approvals and sandbox. File access is not a direct file attachment to the model. |
+| Use Codex MCP tools | Supported. The Copilot runtime's separate MCP servers stay disabled. |
+| Switch models, compact locally or resume | Supported with [context and state limits](USAGE.md#model-selection-and-context). A bridge restart loses unresolved calls. |
+| Use `apply_patch` or another custom tool | Supported, but grammar is guidance rather than decoder enforcement. |
+| Attach images, audio, video or files directly | Unsupported; model input and tool results must be text. |
+| Require schema-constrained JSON or use provider-hosted web search | Unsupported. A prompt asking for JSON is not a schema guarantee. Native reviewer paths that require structured output can also fail. |
+| Use WebSockets or remote Responses compaction | Unsupported; use the launcher's HTTP/SSE and local-compaction defaults. |
+
+The remaining sections describe the protocol details and failure behavior, not additional setup steps.
 
 ## Implemented behavior
 

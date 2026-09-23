@@ -4,27 +4,38 @@
 
 실제 Codex 경로에서 bridge 장애·도구 결과 전달·복구를 **11개 시나리오 × 6개 모델 = 66건**으로 검사합니다. 기본 계약은 `codex-ghcp-stability-11-v5`이며 워크플로 호환성·TUI·내구성 검사와 별개입니다.
 
+일반 실행의 제한 시간 설정만 찾는다면 [운영 기본값](#운영-기본값)으로 바로 이동하세요. 이 행렬을 실행할 필요는 없습니다.
+
 ## 준비와 실행
 
-[설치](../README_KO.md#빠른-시작) 후 저장소 루트에서 실행합니다. 네이티브 runtime·실모델 검사에는 Codex 0.154.0과 동작하는 OS 샌드박스가 필요합니다. runtime 검증은 Node 22.12 이상을 사용하세요.
+`npm ci` 후 저장소 루트에서 실행합니다. 실모델 행렬은 선택 사항이지 설치 절차가 아닙니다.
 
-**오프라인 — 모델 호출 없음:** 기본은 계획 출력입니다. stress는 기계적인 반복, runtime은 실제 Codex와 SDK 대역을 사용합니다.
+**계획·stress 검사 — 모델 호출·Codex·Copilot 로그인 불필요:** 기본은 계획 출력이며, stress는 기계적인 SDK 대역을 반복 실행합니다.
 
 ```bash
 npm run test:stability -- --plan
 npm run test:stability:stress
+```
+
+**오프라인 runtime — 모델 호출 없음:** Node 22.12 이상, Codex **0.154.0**, 동작하는 OS 샌드박스를 준비하세요. 실제 Codex와 SDK 대역을 사용하며 Copilot 로그인이나 브라우저는 필요하지 않습니다.
+
+```bash
 npm run test:stability:runtime
 ```
 
-**실모델 — Copilot 인증·사용량 필요:** 새 출력 폴더에서 전체 행렬을 한 번 실행하고, 실패가 있어도 보고서를 검증하세요.
+**실모델 — Copilot 사용량 발생:** 위 runtime 준비 사항과 [Copilot 계정 확인](../README_KO.md#빠른-시작)을 마치세요. 새 출력 디렉터리에서 전체 행렬을 한 번 실행합니다.
 
 ```bash
 npm run test:stability -- --execute --output .runtime/stability-new-run
 ```
 
+실패가 있어도 저장된 보고서를 **모델 호출 없이** 검증하세요. 실행할 때와 같은 출력 디렉터리를 사용합니다.
+
 ```bash
 npm run test:stability -- --verify .runtime/stability-new-run/report.json
 ```
+
+요약과 보존한 실패는 `.runtime/stability-new-run/report.md`에서 읽고, 증거 검증에는 `report.json`을 사용합니다.
 
 **전체 통과는 66/66입니다.** 95% 참고 기준(63/66)을 넘겨도 이 판정이나 종료 코드는 바뀌지 않습니다. 기록에는 미해결 상위 필터 실패가 있습니다. 여러 실행의 점수를 합치지 말고 [개별 결과와 보존한 실패](validation/README_KO.md)를 확인하세요.
 

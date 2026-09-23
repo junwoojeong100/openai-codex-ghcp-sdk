@@ -8,8 +8,10 @@ Start with the [quick start](../README.md#quick-start). This guide covers option
 | --- | --- |
 | Run interactively, use a background bridge or stop it | [Run Codex](#run-codex) |
 | Understand `/model` and context limits | [Model selection and context](#model-selection-and-context) |
-| Understand configuration changes or run the server directly | [Configuration](#configuration-stays-local-to-the-launch) |
-| Resolve errors, adjust timeouts or load updated code | [Troubleshooting](#boundaries-and-troubleshooting) |
+| Set a model, port or executable path | [Launcher settings](#launcher-settings) |
+| Manage the HTTP server without Codex | [Direct server (advanced)](#direct-server-advanced) |
+| Resolve errors | [Troubleshooting](#boundaries-and-troubleshooting) |
+| Adjust timeouts or apply source/configuration changes | [Timeouts](#timeouts-and-recovery) · [Restart safely](#load-updated-code) |
 | Make `codex` use this launcher | [Optional zsh integration](#optional-zsh-integration) |
 
 ## Run Codex
@@ -37,7 +39,7 @@ To work in another project, open a terminal **in that project** and use the laun
 "$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp"
 ```
 
-Adjust the path if your clone is elsewhere. The launcher preserves the working directory, starts a bridge on a free loopback port, and cleans up that bridge when Codex exits.
+Adjust the path if your clone is elsewhere. The launcher preserves the working directory, starts a bridge on a free loopback port, and cleans up that bridge when Codex exits. Type `/quit` in an idle Codex session to exit normally; no separate stop command is needed for this default foreground mode.
 
 ### Optional background bridge
 
@@ -47,7 +49,7 @@ Keep the bridge after Codex exits only if you want to reuse it:
 ./bin/codex-ghcp --bridge-background --ghcp-model gpt-6-astra
 ```
 
-Check it with `./bin/codex-ghcp-status`. These are project commands, not built-in Codex options. **Stop only after closing its Codex sessions:** stopping discards in-memory conversations, including pending tool calls.
+Check it with `./bin/codex-ghcp-status`. It reports **background bridges only**: `stopped` does not mean a foreground bridge is absent. These are project commands, not built-in Codex options. **Stop only after closing its Codex sessions:** stopping discards in-memory conversations, including pending tool calls.
 
 ```bash
 ./bin/codex-ghcp-stop
@@ -73,7 +75,7 @@ A catalog entry is not a guarantee that every Codex feature works with that mode
 
 Codex 0.154.0 labels the first picker entry `(default)`. When all six models are available, that label appears on `claude-opus-5.5`; it does not change the launcher's default. The active model is marked `(current)`.
 
-**`/model` can change your Codex configuration.** It switches the running session and saves `model`/`model_reasoning_effort` in `~/.codex/config.toml`. The next GHCP launch still uses `--ghcp-model`, `GHCP_MODEL` or the launcher default, but native `codex-original` runs read the saved value. Reset it there if needed.
+**`/model` can change your Codex configuration.** It switches the running session and saves `model`/`model_reasoning_effort` in `~/.codex/config.toml`. The next GHCP launch still uses `--ghcp-model`, `GHCP_MODEL` or the launcher default. Direct CLI runs through `command codex` read the saved value; so does `codex-original` if you add the [optional zsh integration](#optional-zsh-integration). Reset the saved model before a direct CLI run if needed.
 
 ### Context limits
 
@@ -102,6 +104,20 @@ Copilot/GitHub authentication is not copied into Codex. The local bridge token i
 
 Bridge SDK sessions disable the Copilot runtime's own MCP servers, including user and plugin configuration. Codex's own MCP servers are unaffected: Codex runs them and declares their tools to the bridge like any other tool. See [tool handoff](ARCHITECTURE.md#tool-handoff) for the isolation mechanism.
 
+### Launcher settings
+
+All settings below are optional. Set environment variables in the invoking shell or prefix a command with them; the launcher does **not** read `.env`.
+
+| What to change | Option or environment variable | Default |
+| --- | --- | --- |
+| Initial model | `--ghcp-model` overrides `GHCP_MODEL` | `gpt-6-astra` |
+| Loopback port | `--bridge-port` overrides `GHCP_BRIDGE_PORT` | `0` (choose a free port); `PORT` is for direct-server runs |
+| Official Codex executable | `CODEX_BIN` | `codex` on PATH |
+| Existing Copilot login directory | `COPILOT_HOME` | `~/.copilot` |
+| Turn/request limits | [Timeout environment variables](STABILITY_TESTING.md#operational-defaults) | [Default timeouts](#timeouts-and-recovery) |
+
+A retained background bridge keeps the settings it started with. To change its environment or load edited source, [close its Codex sessions and restart it](#load-updated-code).
+
 ### Direct server (advanced)
 
 Use this only if you need to manage the HTTP bridge yourself; it does not start Codex. Normal launcher runs already manage a bridge and select a free port.
@@ -115,6 +131,14 @@ HOST=127.0.0.1 PORT=4143 npm run bridge
 ```
 
 Alternatively, create your own `.env` from `.env.example`, replace its token placeholder, and run `node --env-file=.env src/server.mjs`. The default direct-server port is `4143`; normal launcher runs select a free port instead.
+
+In a second terminal, check that the HTTP listener responds:
+
+```bash
+curl --fail --silent --show-error http://127.0.0.1:4143/health
+```
+
+An HTTP 200 proves local liveness, not model-service availability. Stop this direct server with `Ctrl+C` in its terminal after closing any clients.
 
 Routes:
 
@@ -131,37 +155,53 @@ See [Compatibility](COMPATIBILITY.md) before relying on advanced Codex features.
 
 | Symptom | Action |
 | --- | --- |
+| `./bin/...`: file not found | Run from this repository's root, or use [the absolute launcher path](#run-codex) from your project. |
+| Doctor reports `ok: false` or `supportedVersion: false` | Read the failing field. Run `npm ci` for an SDK mismatch; install/fix the named CLI or Node version for a tool failure. Use the [pinned setup](../README.md#quick-start). |
 | Copilot authentication error | Run `copilot login`, then `./bin/ghcp-models`. Do not paste credentials into a prompt or source file. |
-| Model unavailable | Confirm the exact ID, Copilot entitlement and organization policy. There is no fallback model. |
+| Model unavailable | Run `./bin/ghcp-models` and choose an ID that is neither `disabled` nor `not available` with `--ghcp-model`. If none qualify, check Copilot entitlement and organization policy. There is no fallback. |
+| `.env` or source changes have no effect | `.env` is not loaded automatically. Use [launcher settings](#launcher-settings), then [restart safely](#load-updated-code); an existing bridge keeps its old settings and code. |
 | Unsupported reasoning effort | Choose a catalog-supported level with `-c 'model_reasoning_effort="low"'` after `--`. Haiku 4.5 has no configurable effort; the bridge logs that limitation. |
 | Port already used | Let the launcher choose a free port, or change `PORT` for a direct server. Do not stop another project's process. |
 | Unknown response/tool call | The bridge may have restarted or expired the session. Start a new conversation; never fabricate a tool result. |
+| Repeated 409 after tools finish | Check [tool-result conflicts](#tool-result-conflicts-409). Do not rerun completed tools to manufacture a replacement result. |
+| No response, timeout or `ETIMEDOUT` | Check network/proxy/service availability, then [the applicable deadline](#timeouts-and-recovery) and [slow-upstream guidance](#slow-or-disconnected-upstream). Local readiness does not prove model availability. |
 | Long turn or context-limit error | Local auto-compaction also handles completed tool-result batches. Use `/compact` between turns or start a shorter conversation if the model still reports `context_length_exceeded`; increasing a byte limit does not increase model context. |
 | History too large | Start a shorter conversation or explicitly raise `MAX_REPLAY_BYTES` with awareness of memory/context limits. |
+| Task-title request gets HTTP 400 `Structured output is not supported` | The optional automatic title is unsupported; the conversation can continue. Other structured-output requests are also unsupported, not successful responses. See [compatibility](COMPATIBILITY.md#rejected-or-disabled). |
 | Unsupported input or transport | Use the launcher defaults and text-only requests. Upgrading Codex can introduce new request forms. |
-| Custom tool parse error | Grammar is advisory through the SDK, not native constrained decoding. Try again or choose another allowed model; raw tool text is never silently rewritten. |
+| Custom tool parse error | Grammar is advisory through the SDK, not native constrained decoding. Check whether the tool ran before retrying, or choose another allowed model. Raw tool text is never silently rewritten. |
 
 Both the serialized-history limit (`MAX_REPLAY_BYTES`) and HTTP body limit (`MAX_BODY_BYTES`) default to **32 MiB (33,554,432 bytes)**. They are memory/request safeguards, not model token limits or measured capacity guarantees. Override them with positive integer environment variables and restart the bridge after closing its Codex sessions. The launcher does not load `.env` automatically.
 
 ### Timeouts and recovery
 
-The defaults allow **180 seconds before first model progress**, then **90 seconds without progress**. SDK setup has a **30-second** bound. The absolute turn budget is **five minutes**, and the total request budget, including queue wait, is **six minutes**. A 15-second watchdog records content-free diagnostics; keepalives are not model progress. [All settings and error codes](STABILITY_TESTING.md#operational-defaults).
+| Deadline | Default |
+| --- | --- |
+| SDK setup | 30 seconds |
+| Wait for first model progress | 180 seconds |
+| Inactivity after progress begins | 90 seconds |
+| Entire model turn, including recovery | 5 minutes |
+| Entire request, including queue wait | 6 minutes |
+
+These clocks overlap; they are not added together. A 15-second watchdog records content-free diagnostics; keepalives are not model progress. [All settings and error codes](STABILITY_TESTING.md#operational-defaults).
 
 The bridge can rebuild a silent SDK session **once per request** while keeping the response stream open. This requires acknowledged input, no assistant output or pending calls, and confirmed cleanup of the old session. Completed tool results become history, **never duplicate result RPCs**. Partial output, uncertain submissions, filters, cancellation, cleanup failure and lost SDK connections prohibit replay. Recovery can consume extra inference usage and resets neither deadline; it is not an exactly-once guarantee. Set `TURN_IDLE_RECOVERY_ATTEMPTS=0` to disable it. Codex's automatic HTTP/stream retries remain disabled.
 
-**Repeated 409 after tools finish:** configuration changes require every pending result exactly once and unchanged non-instruction history. Complete matching batches permit a session handoff; missing, duplicate or mismatched results remain errors. See [handoff boundaries](ARCHITECTURE.md#conversation-continuity). Never fabricate results or blindly rerun completed tools.
+### Tool-result conflicts (409)
+
+Configuration changes require every pending result exactly once and unchanged non-instruction history. Complete matching batches permit a session handoff; missing, duplicate or mismatched results remain errors. If 409 repeats after tools finish, check the error code and [handoff boundaries](ARCHITECTURE.md#conversation-continuity). Never fabricate results or blindly rerun completed tools.
 
 ### Load updated code
 
-**Source edits do not update a running bridge.** For the default foreground launcher, exit Codex normally, then resume from the same directory:
+**Source or environment edits do not update a running bridge.** Finish or cancel the current turn, then exit Codex normally with `/quit`. If you used `--bridge-background`, close all of that bridge's Codex sessions and run `./bin/codex-ghcp-stop` before relaunching. For the default foreground launcher, no separate stop is needed.
+
+Resume from the same working directory:
 
 ```bash
 ./bin/codex-ghcp -- resume --last
 ```
 
-Do not kill the bridge beneath an active Codex session. `codex-ghcp-status` reports background bridges only; `stopped` does not mean a foreground bridge is absent. `/health.turnWatchdog` and background status show the running timeout/recovery settings, not the current source defaults.
-
-For a background bridge, close its Codex sessions before running `./bin/codex-ghcp-stop`, then relaunch. Restarting discards the bridge's in-memory state, including unresolved tool calls.
+This command starts a fresh foreground bridge. Add `--bridge-background` before `--` if you want to retain it again. Do not kill the bridge beneath an active Codex session: restarting discards in-memory state, including unresolved tool calls. `/health.turnWatchdog` and background status show the running timeout/recovery settings, not the current source defaults.
 
 ### Slow or disconnected upstream
 

@@ -14,7 +14,7 @@ Run from the repository root after `npm ci`. Live execution requires Copilot SDK
 npm run diagnose:opus
 ```
 
-**Live diagnostic — consumes Copilot usage:** use a new or empty evidence directory; existing reports cannot be overwritten.
+**Live diagnostic — consumes Copilot usage:** run `./bin/ghcp-models` first and confirm `claude-opus-5.5` is neither `disabled` nor `not available`. If catalog access fails, use [authentication troubleshooting](USAGE.md#boundaries-and-troubleshooting). Use a new or empty evidence directory; existing reports cannot be overwritten.
 
 ```sh
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
@@ -26,7 +26,7 @@ The model, low reasoning effort, SDK foundation and provider filter policy are r
 
 ## Read the evidence
 
-`report.json` distinguishes:
+Open `.runtime/opus-diagnostic-new/report.json` (or the output directory you chose). This diagnostic has no `--verify` mode; inspect its recorded observations, not a matrix pass score. The report distinguishes:
 
 - Chat Completions `finish_reason: content_filter`.
 - Anthropic Messages `stop_reason: refusal` and allowlisted `stop_details.category`.

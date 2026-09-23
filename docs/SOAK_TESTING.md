@@ -6,6 +6,8 @@ Use `test:terminal` for a bounded, single-model terminal workload. Use `test:soa
 
 These are reproducibility instructions, not a claim of five-hour reliability. Interrupted runs remain incomplete. The Playwright path renders real Codex PTY bytes in xterm.js; it does not certify a desktop terminal application.
 
+**Choose a path:** [Prerequisites](#prerequisites-and-offline-checks) · [Short terminal run](#reproducible-terminal-checks) · [Smoke or five-hour run](#combined-soak-runner) · [Read the result](#read-the-result).
+
 ## Prerequisites and offline checks
 
 After `npm ci`, inspect either plan from the repository root. Plans make **no model calls** and need no Codex, Python, Chromium or Copilot login:
@@ -15,13 +17,13 @@ npm run test:terminal -- --plan --driver playwright
 npm run test:soak -- --plan
 ```
 
-To execute workloads, complete the [CLI setup](../README.md#quick-start). Native soak needs Codex 0.154.0; terminal paths also need Python 3. Only the Playwright driver and terminal runtime suite require Chromium:
+For execution/runtime checks, use **Node 22.12+ and Codex 0.154.0**; terminal paths also need **Python 3**. Install the pinned CLI as shown in the [quick start](../README.md#quick-start), but skip Copilot login/catalog checks for offline testing. Only the Playwright driver and terminal runtime suite require Chromium:
 
 ```sh
 npx --no-install playwright install chromium
 ```
 
-Check both terminal drivers with real Codex and an SDK double, **without model calls**:
+For Linux library errors, see the [Chromium setup note](TUI_SCENARIOS.md#prepare-and-run). Check both terminal drivers with real Codex and an SDK double, **without model calls or Copilot login**:
 
 ```sh
 npm run test:terminal:runtime
@@ -29,7 +31,7 @@ npm run test:terminal:runtime
 
 ## Reproducible terminal checks
 
-**Live opt-in:** Copilot authentication is required and usage is consumed. Choose **one** driver example, not both as setup steps. Each output directory must be new.
+**Live opt-in:** complete the [Copilot account check](../README.md#quick-start); these runs consume usage. Choose **one** driver example, not both as setup steps. Each output directory must be new.
 
 PTY driver, 120 seconds of measured traffic:
 

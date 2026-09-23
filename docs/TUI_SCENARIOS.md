@@ -4,6 +4,8 @@
 
 `codex-ghcp-tui-12-v3` verifies the **actual Codex TUI → production bridge → Copilot SDK → exact model** connection. It retains **12 scenarios × 6 models = 72 cases** and is never combined with stability, compatibility or earlier TUI results. The target is **at least 95%: 69/72 cases in one complete, unchanged live run**. V3 additionally requires separate first-progress and streaming watchdog settings; older results verify only with their frozen source.
 
+**Jump to:** [Run](#prepare-and-run) · [Scenario list](#scenarios) · [Pass criteria](#acceptance) · [Verification and exit codes](#verify-an-older-run-and-read-exit-codes).
+
 ## Prepare and run
 
 After `npm ci`, inspect the plan from the repository root. This is the default action; it needs no Codex installation, browser or Copilot login and makes no model calls:
@@ -12,11 +14,13 @@ After `npm ci`, inspect the plan from the repository root. This is the default a
 npm run test:tui -- --plan
 ```
 
-To run the tests, complete the [CLI setup](../README.md#quick-start) and install Python 3. The runtime and live paths both need Codex 0.154.0 and headless Chromium. Install the browser once:
+Runtime and live checks need **Node 22.12+, Codex 0.154.0, Python 3 and headless Chromium**. Install the pinned Codex CLI as shown in the [quick start](../README.md#quick-start), but skip the Copilot login/catalog check for offline testing. Install the browser once:
 
 ```sh
 npx --no-install playwright install chromium
 ```
+
+On Linux, if Chromium reports missing system libraries, use `npx --no-install playwright install --with-deps chromium`; installing OS packages may require administrator privileges.
 
 **Offline — no model calls:** the runtime check drives real Codex with an SDK double for U01, U02, U11 and U12.
 
@@ -24,15 +28,19 @@ npx --no-install playwright install chromium
 npm run test:tui:runtime
 ```
 
-**Live — Copilot authentication and usage required:** run all 72 cases in a new output directory, then verify the report, including any failures.
+**Live — optional, consumes Copilot usage:** complete the [Copilot account check](../README.md#quick-start), then run all 72 cases in a new output directory:
 
 ```sh
 npm run test:tui -- --execute --output .runtime/tui-new
 ```
 
+Then verify the report **without model calls**, including failed runs. Use the same output directory:
+
 ```sh
 npm run test:tui -- --verify .runtime/tui-new/report.json
 ```
+
+Open `.runtime/tui-new/report.md` for the summary and per-case failures. Meeting the 95% target does **not** mean all 72 cases passed; see [exit codes](#verify-an-older-run-and-read-exit-codes).
 
 See [verification records](validation/README.md) for dated v3 results and preserved v1/v2 runs. A past 72/72 result is not a guarantee of future service availability or evidence for a different implementation.
 

@@ -4,27 +4,38 @@
 
 Test bridge faults, tool-result handoff and recovery through real Codex: **11 scenarios × 6 models = 66 cases**. The default contract is `codex-ghcp-stability-11-v5`. It is separate from workflow compatibility, TUI and endurance checks.
 
+Only looking for normal-launch timeout settings? Go to [operational defaults](#operational-defaults); you do not need to run this matrix.
+
 ## Prepare and run
 
-Run from the repository root after [installation](../README.md#quick-start). Native runtime/live checks need Codex 0.154.0 and a working OS sandbox; use Node 22.12+ for runtime verification.
+Run from the repository root after `npm ci`. A live matrix is optional, not a setup step.
 
-**Offline — no model calls:** plan is the default. Stress tests use mechanical cycles; runtime tests use real Codex with an SDK double.
+**Plan and stress checks — no model calls, Codex or Copilot login:** plan is the default; stress tests use mechanical SDK cycles.
 
 ```bash
 npm run test:stability -- --plan
 npm run test:stability:stress
+```
+
+**Offline runtime — no model calls:** use Node 22.12+, Codex **0.154.0** and a working OS sandbox. This drives real Codex with an SDK double; no Copilot login or browser is required.
+
+```bash
 npm run test:stability:runtime
 ```
 
-**Live — Copilot authentication and usage required:** choose a new output directory, execute one full matrix, then verify its report even if cases failed.
+**Live — consumes Copilot usage:** use the runtime prerequisites above and complete the [Copilot account check](../README.md#quick-start). Choose a new output directory and execute one full matrix:
 
 ```bash
 npm run test:stability -- --execute --output .runtime/stability-new-run
 ```
 
+Then verify the saved report **without model calls**, even if cases failed. Use the same output directory:
+
 ```bash
 npm run test:stability -- --verify .runtime/stability-new-run/report.json
 ```
+
+Read `.runtime/stability-new-run/report.md` for the summary and retained failures; `report.json` is the evidence-verification input.
 
 **A full pass requires 66/66.** The 95% reference (63/66) does not change that verdict or exit code. Recorded runs still include upstream-filter failures; see the [results and retained failures](validation/README.md), not a score combined from different runs.
 

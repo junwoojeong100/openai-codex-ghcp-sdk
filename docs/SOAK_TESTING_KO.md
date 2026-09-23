@@ -6,6 +6,8 @@
 
 아래는 재현 안내이지 5시간 안정성의 증거가 아닙니다. 중단한 실행은 미완료로 유지합니다. Playwright는 실제 Codex PTY 바이트를 xterm.js로 표시하며 데스크톱 터미널 앱 자체를 검증하지는 않습니다.
 
+**목적별 바로가기:** [준비 사항](#준비-사항과-오프라인-검사) · [짧은 터미널 실행](#재현-가능한-터미널-검사) · [smoke·5시간 실행](#통합-soak-실행기) · [결과 읽기](#결과-읽기).
+
 ## 준비 사항과 오프라인 검사
 
 `npm ci` 후 저장소 루트에서 필요한 계획을 확인합니다. 계획은 **모델 호출 없이** 실행하며 Codex·Python·Chromium이나 Copilot 로그인이 필요하지 않습니다.
@@ -15,13 +17,13 @@ npm run test:terminal -- --plan --driver playwright
 npm run test:soak -- --plan
 ```
 
-작업을 실행하려면 [CLI 설치](../README_KO.md#빠른-시작)를 마치세요. 네이티브 soak에는 Codex 0.154.0, 터미널 경로에는 Python 3도 필요합니다. Chromium은 Playwright 드라이버와 터미널 runtime 검사에만 필요합니다.
+실행·runtime 검사에는 **Node 22.12 이상과 Codex 0.154.0**, 터미널 경로에는 **Python 3**도 필요합니다. [빠른 시작](../README_KO.md#빠른-시작)에 따라 고정 버전 CLI를 설치하되, 오프라인 검사에는 Copilot 로그인·모델 목록 확인을 생략하세요. Chromium은 Playwright 드라이버와 터미널 runtime 검사에만 필요합니다.
 
 ```sh
 npx --no-install playwright install chromium
 ```
 
-실제 Codex와 SDK 대역으로 두 터미널 드라이버를 **모델 호출 없이** 확인합니다.
+Linux의 라이브러리 오류는 [Chromium 설치 안내](TUI_SCENARIOS_KO.md#준비와-실행)를 참고하세요. 실제 Codex와 SDK 대역으로 두 터미널 드라이버를 **모델 호출·Copilot 로그인 없이** 확인합니다.
 
 ```sh
 npm run test:terminal:runtime
@@ -29,7 +31,7 @@ npm run test:terminal:runtime
 
 ## 재현 가능한 터미널 검사
 
-**실모델 옵션:** Copilot 인증이 필요하고 사용량이 발생합니다. 아래 두 예시는 준비 절차가 아니라 **하나를 선택하는 대안**입니다. 출력 폴더는 매번 새로 선택하세요.
+**실모델 옵션:** [Copilot 계정 확인](../README_KO.md#빠른-시작)을 마치세요. 사용량이 발생합니다. 아래 두 예시는 준비 절차가 아니라 **하나를 선택하는 대안**입니다. 출력 디렉터리는 매번 새로 선택하세요.
 
 PTY 드라이버로 실측 대화 120초:
 

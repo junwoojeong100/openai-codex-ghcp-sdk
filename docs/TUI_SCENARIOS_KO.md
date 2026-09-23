@@ -4,6 +4,8 @@
 
 `codex-ghcp-tui-12-v3`는 **실제 Codex TUI → 운영 브릿지 → Copilot SDK → 지정 모델** 연결을 검증합니다. **12개 시나리오 × 6개 모델 = 72건**을 유지하며 안정성·호환성·이전 TUI 결과와 합산하지 않습니다. 목표는 **변경되지 않은 구현의 전체 실검증 한 회에서 95% 이상, 즉 69/72건 이상 통과**입니다. v3는 첫 진행·스트리밍 제한의 분리를 추가로 요구하며 이전 결과는 당시 동결 소스로만 검증합니다.
 
+**바로가기:** [실행](#준비와-실행) · [시나리오 목록](#시나리오) · [통과 기준](#판정) · [검증과 종료 코드](#과거-실행-검증과-종료-코드).
+
 ## 준비와 실행
 
 `npm ci` 후 저장소 루트에서 계획을 확인합니다. 기본 동작이며 Codex·브라우저 설치나 Copilot 로그인 없이 모델 호출 0회로 실행합니다.
@@ -12,11 +14,13 @@
 npm run test:tui -- --plan
 ```
 
-검사를 실행하려면 [CLI 설치](../README_KO.md#빠른-시작)를 마치고 Python 3를 준비하세요. runtime·실모델 경로 모두 Codex 0.154.0과 headless Chromium이 필요합니다. 브라우저는 한 번 설치합니다.
+runtime·실모델 검사에는 **Node 22.12 이상, Codex 0.154.0, Python 3, headless Chromium**이 필요합니다. [빠른 시작](../README_KO.md#빠른-시작)에 따라 고정 버전 Codex CLI를 설치하되, 오프라인 검사에는 Copilot 로그인·모델 목록 확인을 생략하세요. 브라우저는 한 번 설치합니다.
 
 ```sh
 npx --no-install playwright install chromium
 ```
+
+Linux에서 Chromium이 시스템 라이브러리 누락을 알리면 `npx --no-install playwright install --with-deps chromium`을 사용하세요. OS 패키지 설치에는 관리자 권한이 필요할 수 있습니다.
 
 **오프라인 — 모델 호출 없음:** runtime은 실제 Codex와 SDK 대역으로 U01·U02·U11·U12를 검사합니다.
 
@@ -24,15 +28,19 @@ npx --no-install playwright install chromium
 npm run test:tui:runtime
 ```
 
-**실모델 — Copilot 인증·사용량 필요:** 새 출력 폴더에서 72건 전체를 한 번 실행한 뒤 실패를 포함한 보고서를 검증합니다.
+**실모델 — 선택 사항, Copilot 사용량 발생:** [Copilot 계정 확인](../README_KO.md#빠른-시작)을 마친 뒤 새 출력 디렉터리에서 72건 전체를 한 번 실행합니다.
 
 ```sh
 npm run test:tui -- --execute --output .runtime/tui-new
 ```
 
+실행이 실패해도 보고서를 **모델 호출 없이** 검증하세요. 실행할 때와 같은 출력 디렉터리를 사용합니다.
+
 ```sh
 npm run test:tui -- --verify .runtime/tui-new/report.json
 ```
+
+요약과 케이스별 실패는 `.runtime/tui-new/report.md`에서 읽으세요. 95% 목표 달성은 72건 전체 통과와 **다릅니다.** [종료 코드](#과거-실행-검증과-종료-코드)를 참고하세요.
 
 날짜별 v3 결과와 보존한 v1/v2 실행은 [검증 기록](validation/README_KO.md)에 있습니다. 과거 72/72 결과가 향후 서비스 가용성이나 다른 구현의 동작을 보장하지는 않습니다.
 

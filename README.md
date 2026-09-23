@@ -12,8 +12,8 @@ Codex still executes tools and enforces approvals and sandboxing. The bridge tra
 
 ## Requirements
 
-- Node.js `^20.19.0` or `>=22.12.0`, npm and Bash.
-- Copilot CLI installed and authenticated: check `copilot --version`, then use `copilot login` if needed.
+- Node.js `^20.19.0` or `>=22.12.0`, npm, Git and Bash. The examples use Bash/zsh; CI covers Linux and macOS.
+- [Copilot CLI](https://github.com/github/copilot-cli) installed and authenticated: check `copilot --version`, then use `copilot login` if needed.
 - A GitHub Copilot account with access to the desired model.
 - Official Codex CLI **0.154.0**; installation is shown below.
 
@@ -21,25 +21,47 @@ The bridge uses your existing Copilot login. **No OpenAI API key or copied GitHu
 
 ## Quick start
 
-Run from the cloned repository root. Skip the global install if Codex 0.154.0 is already installed.
+### 1. Get the repository
+
+Already cloned it? Open that repository and continue at step 2.
+
+```bash
+git clone https://github.com/junwoojeong100/openai-codex-ghcp-sdk.git
+cd openai-codex-ghcp-sdk
+```
+
+### 2. Install dependencies
+
+Run from the repository root. Skip the global install if Codex 0.154.0 is already installed.
 
 ```bash
 npm install -g @openai/codex@0.154.0
 npm ci
 command codex --version
+```
+
+The version should be `codex-cli 0.154.0`. The launcher accepts newer releases, but this guide and recorded checks target **0.154.0**. The SDK is pinned to **1.0.14**; upgrades may require protocol changes.
+
+### 3. Check installation and account access
+
+```bash
 ./bin/ghcp-doctor
 ./bin/ghcp-models
 ```
 
-Resolve any doctor errors, then start Codex:
+The doctor should report every tool's `ok` and Codex's `supportedVersion` as `true`. It **does not check login**. The model command checks Copilot catalog access without sending a model prompt; confirm `gpt-6-astra` is neither `disabled` nor `not available`. If a check fails, use [troubleshooting](docs/USAGE.md#boundaries-and-troubleshooting) before continuing.
+
+### 4. Start Codex
 
 ```bash
 ./bin/codex-ghcp
 ```
 
-The launcher starts a bridge on a free loopback port, waits for readiness, runs Codex, and removes its bridge when Codex exits. **No `.env` file or shell configuration is required.** The default model is `gpt-6-astra`; choose another available model with `--ghcp-model`.
+If Astra is unavailable, select an available model instead, for example `./bin/codex-ghcp --ghcp-model claude-sonnet-5`.
 
-Dependencies are pinned to `@github/copilot-sdk@1.0.14` and `proper-lockfile@4.1.2` in this project. Upgrading Codex or the SDK may require protocol changes.
+**Ready when:** Codex opens and answers your first prompt. For example, send `Reply with OK.`; this consumes Copilot usage. Type `/quit` to exit.
+
+The launcher starts a bridge on a free loopback port, waits for readiness, runs Codex, and removes its bridge when Codex exits. **No `.env` file or shell configuration is required.** To work on a different repository, use [the launcher from that project](docs/USAGE.md#run-codex).
 
 ## Everyday use
 
@@ -81,14 +103,14 @@ Initial selection is `--ghcp-model`, then `GHCP_MODEL`, otherwise **`gpt-6-astra
 ## Limits to know before use
 
 - Supports text and Codex-executed function/custom tools, including native `apply_patch` and Codex MCP tools. Custom-tool grammar is guidance, not decoder enforcement.
-- Does not support image/audio/video/file inputs, provider-hosted tools, structured JSON output, WebSockets or remote Responses compaction. Codex's optional task-title request is rejected; the conversation can continue without a generated title.
+- Does not support image/audio/video/file attachments as model input, provider-hosted tools, structured JSON output, WebSockets or remote Responses compaction. **Reading and editing local files through Codex tools still works.** Codex's optional task-title request is rejected; the conversation can continue without a generated title.
 - Bridge conversation state is in memory. Close Codex sessions before stopping a background bridge; a restart loses pending calls. The launcher does not bypass approvals or sandboxing.
 
 Read the [full compatibility boundaries](docs/COMPATIBILITY.md) before relying on advanced features. A model listing or passing TUI run does not certify all Codex features. [Recorded live runs](docs/validation/README.md) include unresolved upstream-filter failures; results from different contracts are not combined.
 
 ## Testing
 
-For unit checks, source coverage and scenario/document consistency, with **no model calls**:
+Testing is **not required to use the launcher**. After `npm ci`, the default development check covers units, source coverage and scenario/document consistency, with **no model calls or Copilot login**:
 
 ```bash
 npm run test:ci
@@ -96,18 +118,25 @@ npm run test:ci
 
 Use `npm test` for unit/controller checks only, or `npm run docs:scenarios:check` for generated-document consistency. `coverage/lcov.info` measures observed source coverage, not product-feature support.
 
-`npm run test:runtime` runs the Codex/PTY/browser, workflow and stability suites with SDK doubles by default. It needs Node 22.12+, Codex 0.154.0, Python 3 and Chromium installed with `npx --no-install playwright install chromium`. **Leave `GHCP_LIVE_HANDOFF_OUTPUT` unset for offline checks**; setting it opts the handoff suite into real-model calls. CI runs the offline suites separately from unit coverage on Linux/macOS.
+For the larger **offline runtime** check, install Node 22.12+, Codex 0.154.0 and Python 3, then run:
 
-Choose the guide matching what you want to measure. **The plan commands below make no model calls. Live `--execute` commands and soak `--smoke` runs consume Copilot usage.** Each guide separates those steps and explains its own pass criteria.
+```bash
+npx --no-install playwright install chromium
+env -u GHCP_LIVE_HANDOFF_OUTPUT npm run test:runtime
+```
 
-| Goal | Plan command | Guide |
+These suites drive real Codex/PTY/browser, workflow and stability paths with SDK doubles; no Copilot login is needed. `env -u` removes the live-handoff opt-in for this invocation, so an inherited `GHCP_LIVE_HANDOFF_OUTPUT` cannot enable model calls. CI runs these offline suites separately from unit coverage on Linux/macOS.
+
+For a focused check, choose **one** guide below; the rows are not a setup sequence. The plan commands require only the project dependencies, not Codex, a browser or Copilot login. **Live `--execute` commands and soak `--smoke` runs consume Copilot usage.** Each suite has its own live pass criterion:
+
+| Goal and live pass criterion | Plan command (no model calls) | Guide |
 | --- | --- | --- |
-| Development workflows: 18 × 6 models | `npm run test:compatibility -- --plan` | [Run and interpret compatibility](docs/COMPATIBILITY_TESTING.md) · [Scenario reference](docs/NATIVE_SCENARIOS.md) |
-| Bridge faults and recovery: 11 × 6 models | `npm run test:stability -- --plan` | [Stability](docs/STABILITY_TESTING.md) |
-| Real interactive TUI: 12 × 6 models | `npm run test:tui -- --plan` | [TUI scenarios](docs/TUI_SCENARIOS.md) |
-| Bounded PTY/browser workload | `npm run test:terminal -- --plan` | [Terminal checks](docs/SOAK_TESTING.md) |
-| Long-lived conversations | `npm run test:soak -- --plan` | [Endurance](docs/SOAK_TESTING.md#combined-soak-runner) |
-| Investigate Opus upstream filtering | `npm run diagnose:opus` | [Diagnostics](docs/OPUS_DIAGNOSTICS.md) |
+| Development workflows: **108/108** (18 × 6 models) | `npm run test:compatibility -- --plan` | [Run and interpret compatibility](docs/COMPATIBILITY_TESTING.md) · [Scenario reference](docs/NATIVE_SCENARIOS.md) |
+| Bridge faults and recovery: **66/66** (11 × 6 models) | `npm run test:stability -- --plan` | [Stability](docs/STABILITY_TESTING.md) |
+| Real interactive TUI: **69/72** target; **72/72** full pass | `npm run test:tui -- --plan` | [TUI scenarios](docs/TUI_SCENARIOS.md) |
+| PTY/browser: declared workload completed without observed failures | `npm run test:terminal -- --plan` | [Terminal checks](docs/SOAK_TESTING.md) |
+| Endurance: every lane ≥5 hours without observed failures | `npm run test:soak -- --plan` | [Endurance](docs/SOAK_TESTING.md#combined-soak-runner) |
+| Opus filtering: diagnostic evidence, not a compatibility verdict | `npm run diagnose:opus` | [Diagnostics](docs/OPUS_DIAGNOSTICS.md) |
 
 Historical scores, implementation hashes and retained failures live in the [verification index](docs/validation/README.md), not in the setup steps. Generated scenario documents come from `scripts/compatibility/documentation.mjs` and the catalog; update them with `npm run docs:scenarios` rather than editing the generated files.
 

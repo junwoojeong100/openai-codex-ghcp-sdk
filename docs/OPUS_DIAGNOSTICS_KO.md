@@ -14,7 +14,7 @@
 npm run diagnose:opus
 ```
 
-**실모델 진단 — Copilot 사용량 발생:** 새 디렉터리나 비어 있는 디렉터리만 사용합니다. 기존 보고서는 덮어쓰지 않습니다.
+**실모델 진단 — Copilot 사용량 발생:** 먼저 `./bin/ghcp-models`에서 `claude-opus-5.5`가 `disabled`나 `not available`이 아닌지 확인하세요. 목록 접근이 실패하면 [인증 문제 해결](USAGE_KO.md#제한과-문제-해결)을 참고하세요. 새 디렉터리나 비어 있는 디렉터리만 사용하며 기존 보고서는 덮어쓰지 않습니다.
 
 ```sh
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
@@ -32,6 +32,8 @@ npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
 차단·불일치·오류·정리 실패가 있으면 종료 코드는 1입니다. 종료 코드 0도 정식 안정성 행렬 통과를 의미하지 않습니다.
 
 ## 기록과 판독
+
+`.runtime/opus-diagnostic-new/report.json` 또는 직접 지정한 출력 디렉터리의 보고서를 여세요. 이 진단에는 `--verify` 모드가 없습니다. 행렬 통과 점수가 아니라 기록한 관측 내용을 읽습니다.
 
 `report.json`은 다음을 구분합니다.
 
