@@ -2,7 +2,13 @@
 
 [한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
 
-## Latest: TUI → bridge → Copilot SDK connection, v2 — 2026-09-23 KST
+## Latest: first-progress watchdog and real TUI v3 — 2026-09-23 KST
+
+[Machine-readable verification summary and limits](2026-09-23-first-progress.json)
+
+The bridge now distinguishes an initial 180-second first-progress allowance from the subsequent 90-second streaming inactivity limit. A fresh v3 live matrix passed **72/72 (100%)** on implementation `793e852c`; current and frozen-source verification passed. A separate SDK-double regression waited 95 measured seconds in the actual TUI without replay. CI and environment reporting were added, but remote CI, full-window inference and multi-hour reliability are not claimed.
+
+## Earlier: TUI → bridge → Copilot SDK connection, v2 — 2026-09-23 KST
 
 [Full results, connection failures, improvements and evidence](2026-09-23-tui-connection-v2/README.md)
 

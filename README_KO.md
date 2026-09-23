@@ -208,20 +208,20 @@ health 외에는 `Authorization: Bearer <bridge-token>` 또는 `x-api-key`가 �
 
 JSON으로 직렬화한 대화 이력 한도(`MAX_REPLAY_BYTES`)와 HTTP 요청 본문 한도(`MAX_BODY_BYTES`)의 기본값은 각각 **33,554,432바이트(32 MiB)**입니다. 이는 실측으로 검증된 최대 처리량이 아닌 운영상 초기 보호 한도이며 모델 문맥 한도와도 별개입니다. 큰 대화는 여전히 메모리나 모델 문맥 한도를 초과할 수 있습니다. 필요하면 양의 정수 환경 변수로 각 한도를 재정의하고 브리지를 재시작하세요. 실행기는 `.env`를 자동으로 읽지 않습니다. 상주 브리지는 연결된 Codex 세션을 닫은 뒤 종료하세요. 재시작하면 메모리의 대화 상태가 사라집니다.
 
-Codex의 HTTP·스트림 자동 재시도는 계속 비활성화합니다. 브릿지는 **15초마다** SDK 준비 상태를 확인하고 내용 없는 턴 감시 진단을 기록합니다(`SDK_READINESS_INTERVAL_MS`). 루트 모델의 텍스트·추론·도구 입력 스트리밍과 **증가하는** `assistant.streaming_delta` 바이트 수는 **90초** 무진행 제한(`TURN_IDLE_TIMEOUT_MS=90000`)을 갱신합니다. 동일하거나 잘못된 카운터, HTTP keepalive, 하위 에이전트 이벤트는 갱신하지 않으며 숨겨진 진행 정보는 답변으로 노출하지 않습니다. 상위 서비스가 아무 신호도 보내지 않으면 로컬 상태 확인만으로 정지와 긴 비공개 추론을 구분할 수는 없습니다.
+Codex의 HTTP·스트림 자동 재시도는 계속 비활성화합니다. 브릿지는 **15초마다** SDK 준비 상태를 확인하고 내용 없는 턴 감시 진단을 기록합니다(`SDK_READINESS_INTERVAL_MS`). 각 시도는 프롬프트 처리·무신호 추론을 포함해 **첫 모델 진행까지 180초**를 허용합니다(`TURN_FIRST_PROGRESS_TIMEOUT_MS=180000`). `assistant.turn_start`는 초기화 알림일 뿐이며 반복된 턴 시작·SDK 재시도·keepalive는 이 시간을 초기화하지 않습니다. 실제 진행 이후에는 **90초 무진행 제한**(`TURN_IDLE_TIMEOUT_MS=90000`)을 적용합니다. 루트 텍스트·추론·도구 입력과 증가하는 `assistant.streaming_delta` 바이트 수가 제한을 갱신합니다. 등록된 루트 Fusion 단계의 증가하는 비공개 출력 바이트와 단계당 한 번의 성공 완료 신호도 반영하되 중복·review·하위 에이전트 활동은 제외합니다. 비공개 내용은 전달하지 않습니다. 상위 서비스가 아무 신호도 보내지 않으면 로컬 상태 확인만으로 정지와 긴 비공개 추론을 구분할 수는 없습니다.
 
 무진행 시 브릿지는 기존 응답 스트림을 유지하면서 해당 SDK 세션을 **요청당 한 번** 재구성할 수 있습니다(`TURN_IDLE_RECOVERY_ATTEMPTS=1`, 범위 0–3; 0은 즉시 실패 방식). 입력 접수 확인, assistant 출력·대기 호출 없음, 이전 세션의 abort·disconnect·delete 성공이 모두 필요합니다. 완료된 도구 결과는 대화 이력으로만 전달하며 **도구 결과 RPC를 다시 제출하지 않습니다.** 모델·추론 수준·지시문을 유지하고 다른 대화는 재시작하지 않습니다. 부분 출력, 접수 여부가 불확실한 도구 결과, 필터, 취소, 정리 실패, SDK 연결 유실은 자동 재전송하지 않습니다. 복구 후 다시 멈추면 무한 반복하지 않고 `copilot_idle_timeout`으로 종료합니다. 복구는 추가 추론 사용량을 소비할 수 있으며 동일한 답변이나 모델 행동의 정확히 한 번 실행을 보장하지 않습니다.
 
 세션 생성·모델 설정 RPC는 **SDK 시작 제한 30초**(`SDK_STARTUP_TIMEOUT_MS=30000`, 턴 제한 이하)를 적용하고 `copilot_setup_timeout`으로 알립니다. 전체 모델 턴 제한은 복구 시도가 공유하는 기본 5분(`TURN_TIMEOUT_MS=300000`), 큐 대기 포함 요청 제한은 6분(`REQUEST_TIMEOUT_MS=360000`)이며 정리 작업은 별도 제한을 갖습니다. 복구해도 두 제한을 초기화하지 않습니다. 변경은 다시 실행한 프로세스부터 적용됩니다. 기존 상주 bridge를 사용 중이면 연결된 Codex를 닫고 `./bin/codex-ghcp-stop`을 실행한 뒤 다시 시작하세요.
 
-**소스 수정만으로 실행 중인 브릿지가 갱신되지는 않습니다.** 기본 foreground 실행에서는 Codex를 정상 종료한 뒤 같은 폴더에서 `./bin/codex-ghcp -- resume --last`를 실행하면 수정 코드를 로드하고 최근 대화를 이어갑니다. 활성 Codex 아래의 브릿지만 강제 종료하지 마세요. `codex-ghcp-status`는 background 브릿지만 확인하므로 `stopped`여도 foreground 브릿지가 실행 중일 수 있습니다. 실행 중인 브릿지의 `/health`는 `turnWatchdog`의 `idleTimeoutMs`, `recoveryAttempts`, `intervalMs`를 반환하며 background 상태에도 표시합니다. 이 필드가 없으면 이전 프로세스이며 새 기본값이 적용됐다는 뜻이 아닙니다. 복구 생략 시에는 재시도하지 않았다는 모호한 문구 대신 구체적인 이유를 알립니다.
+**소스 수정만으로 실행 중인 브릿지가 갱신되지는 않습니다.** 기본 foreground 실행에서는 Codex를 정상 종료한 뒤 같은 폴더에서 `./bin/codex-ghcp -- resume --last`를 실행하면 수정 코드를 로드하고 최근 대화를 이어갑니다. 활성 Codex 아래의 브릿지만 강제 종료하지 마세요. `codex-ghcp-status`는 background 브릿지만 확인하므로 `stopped`여도 foreground 브릿지가 실행 중일 수 있습니다. 실행 중인 `/health.turnWatchdog`에는 `firstProgressTimeoutMs`, `idleTimeoutMs`, `recoveryAttempts`, `intervalMs`가 표시됩니다. `firstProgressTimeoutMs`가 없으면 첫 진행·스트리밍 제한을 분리한 수정이 적용되지 않은 프로세스입니다. 이전의 첫 대기 90초를 명시적으로 사용하려면 `TURN_FIRST_PROGRESS_TIMEOUT_MS=90000`을 설정하세요. 복구 생략 시에는 구체적인 이유를 알립니다.
 
-**자동 복구 횟수가 소진된 경우:** 재구성한 세션에서도 무진행 제한까지 관측 가능한 진행이 없었다는 뜻입니다. 곧바로 교착을 의미하지는 않습니다. `/health.ready`는 로컬 SDK 연결만 확인하며 Copilot 모델 서비스의 접속 가능 여부는 보장하지 않습니다. `Connect: ... ETIMEDOUT` 같은 연결 오류라면 네트워크·프록시/VPN·서비스 상태를 점검해야 하며 재시도 횟수만 늘려서는 장애가 해결되지 않습니다. 시작 실패는 이제 SDK의 어느 작업(`start`·`ping`·`listModels`)이 실패했는지와 내용 없는 시간 진단을 남깁니다. 무응답 오류에는 설정된 제한과 마지막 루트 진행 이벤트도 표시합니다.
+**자동 복구 횟수가 소진된 경우:** 재구성한 세션에서도 해당 단계의 제한까지 관측 가능한 진행이 없었다는 뜻입니다. 곧바로 교착을 의미하지는 않습니다. `/health.ready`는 로컬 SDK 연결만 확인하며 Copilot 모델 서비스 접속은 보장하지 않습니다. `Connect: ... ETIMEDOUT` 같은 연결 오류라면 네트워크·프록시/VPN·서비스 상태를 점검해야 하며 재시도 횟수만 늘려서는 장애가 해결되지 않습니다. 시작 실패는 SDK 작업(`start`·`ping`·`listModels`)을 구분합니다. 감시 진단·무응답 오류는 `first_progress`와 `streaming` 단계를 구분하고, 루트 `model.call_failure` 신호가 있으면 API/transport 분류와 HTTP 상태만 기록합니다. 공급자 원문·상관관계 ID는 남기지 않으며 SDK 내부 재시도를 성급히 중단하거나 실패 신호를 진행으로 위장하지 않습니다. 전체 턴 5분 예산은 유지하므로 복구 세션에 3분이 추가 보장되지는 않습니다. 전체 제한 오류에는 실제 복구 시도 횟수를 표시합니다.
 
-정상적인 긴 무신호 추론에는 정상 종료 후 **지연 허용 실행 설정**을 명시적으로 사용할 수 있습니다. 무진행 제한 3분·안전 조건을 충족한 복구 최대 2회이며 절대 턴 10분·전체 요청 11분 제한은 유지합니다.
+더 느린 작업에는 정상 종료 후 **지연 허용 실행 설정**을 명시적으로 사용할 수 있습니다. 첫 진행 전후 모두 3분·안전 조건을 충족한 복구 최대 2회이며 절대 턴 10분·전체 요청 11분 제한은 유지합니다.
 
 ```bash
-TURN_IDLE_TIMEOUT_MS=180000 TURN_IDLE_RECOVERY_ATTEMPTS=2 \
+TURN_FIRST_PROGRESS_TIMEOUT_MS=180000 TURN_IDLE_TIMEOUT_MS=180000 TURN_IDLE_RECOVERY_ATTEMPTS=2 \
 TURN_TIMEOUT_MS=600000 REQUEST_TIMEOUT_MS=660000 \
 ./bin/codex-ghcp -- -c 'model_reasoning_effort="low"' resume --last
 ```
@@ -232,6 +232,8 @@ TURN_TIMEOUT_MS=600000 REQUEST_TIMEOUT_MS=660000 \
 
 ```bash
 npm test                              # 단위/실행 제어 테스트, 모델 호출 없음
+npm run test:ci                       # 소스 커버리지 + 시나리오/문서 정합성
+npm run test:runtime                  # 오프라인 Codex/PTY/브라우저·워크플로·안정성 검사 전체
 npm run test:context:runtime           # 실제 Codex/PTY: 압축·120회 도구·무응답/설정/Esc 복구, SDK 대역
 npm run test:terminal:runtime          # 통합 PTY/Playwright 경로·취소·정리, SDK 대역
 npm run test:scenarios                 # 18개 통합 시나리오 계약 검사
@@ -244,9 +246,9 @@ npm run test:compatibility:runtime     # 실제 Codex + SDK 테스트 대역, �
 
 단독 실모델 터미널 검사는 `npm run test:terminal -- --execute --driver playwright --model gpt-6-astra --duration-seconds 120`으로 재현하며 `pty` 드라이버도 지원합니다. 먼저 `npx --no-install playwright install chromium`으로 브라우저를 설치하세요. 입력·응답 크기, 취소, 동결 증거, 통합 `test:soak -- --terminal` 경로는 [터미널·내구성 검사](docs/SOAK_TESTING_KO.md)를 참고하세요. 실검증은 Copilot 사용량이 발생하며 기본 `--plan`은 모델을 호출하지 않습니다.
 
-별도 계약 `codex-ghcp-tui-12-v2`는 **실제 TUI → bridge → Copilot SDK → 지정 모델** 경로를 headless Playwright/xterm.js로 구동합니다. **12개 시나리오 × 6개 모델 = 72건**이며 전체 실검증 한 회에서 **95%(69/72) 이상**을 목표로 합니다. 피커 전환, shell·`apply_patch`, Codex MCP 격리, 긴 출력·대용량 붙여넣기, Escape 복구, `/compact`, 재개, 추론 수준 변경·종료를 검사합니다. SDK 실제 모델·컨텍스트 tier, Responses SSE 완료, 운영 watchdog 설정·정상 정리도 공통으로 요구합니다. `npm run test:tui`(계획), `npm run test:tui:runtime`(오프라인), `npm run test:tui -- --execute`로 실행합니다. [실제 TUI 시나리오](docs/TUI_SCENARIOS_KO.md)를 참고하세요.
+별도 계약 `codex-ghcp-tui-12-v3`는 **실제 TUI → bridge → Copilot SDK → 지정 모델** 경로를 headless Playwright/xterm.js로 구동합니다. **12개 시나리오 × 6개 모델 = 72건**이며 전체 실검증 한 회에서 **95%(69/72) 이상**을 목표로 합니다. 피커 전환, shell·`apply_patch`, Codex MCP 격리, 긴 출력·대용량 붙여넣기, Escape 복구, `/compact`, 재개, 추론 수준 변경·종료를 검사합니다. SDK 실제 모델·컨텍스트 tier, Responses SSE 완료, 분리된 첫 진행·스트리밍 제한·정상 정리도 공통으로 요구합니다. `npm run test:tui`(계획), `npm run test:tui:runtime`(오프라인), `npm run test:tui -- --execute`로 실행합니다. [실제 TUI 시나리오](docs/TUI_SCENARIOS_KO.md)를 참고하세요. v2 기록은 과거 결과로 유지하고 당시 동결 소스로만 검증하며 v3로 재채점하지 않습니다.
 
-**최신 실제 TUI 검증(한국 시간 2026-09-23): v2 72/72(100%)**, 6개 모델 모두 12/12이며 구현 `fe500d78`을 현재·동결 소스로 검증했습니다. 실제 Copilot API 연결 시간 초과가 포함된 최초 실행의 **45/72**도 보존합니다. 최종 실행은 운영 watchdog 기본값을 그대로 사용했고 실패 스트림·무응답 턴·SDK 정리 오류가 없었습니다. 향후 네트워크 가용성을 보장하는 결과는 아닙니다. [v2 증거와 한계](docs/validation/2026-09-23-tui-connection-v2/README_KO.md)를 참고하세요. [과거 v1의 70/72](docs/validation/2026-09-23-tui-scenarios/README_KO.md)는 별도 계약이며 재채점하거나 합산하지 않았습니다.
+**공개된 과거 TUI 결과(한국 시간 2026-09-23): v2 72/72(100%)**, 6개 모델 모두 12/12이며 구현 `fe500d78`을 당시 소스·동결 소스로 검증했습니다. Copilot API 연결 시간 초과가 포함된 최초 실행의 **45/72**도 보존합니다. 첫 진행 제한 분리 전 결과이므로 v3 결과나 향후 네트워크 가용성 보장이 아닙니다. [v2 증거와 한계](docs/validation/2026-09-23-tui-connection-v2/README_KO.md)를 참고하세요. [과거 v1의 70/72](docs/validation/2026-09-23-tui-scenarios/README_KO.md)는 별도 계약이며 재채점하거나 합산하지 않았습니다.
 
 18개 시나리오 호환성 계약은 11개 시나리오 안정성 계약과 별개이며, 안정성 결과를 이 실모델 행렬의 통과 증거로 사용하지 않습니다.
 **시나리오 18개 × GHCP 6모델 = 총 108건**이며, 별도 기준선·빠른 모드·부분 모델 선택은 없습니다.
@@ -263,6 +265,10 @@ npm run test:compatibility -- --verify .runtime/compatibility-<run-id>/report.js
 **90%는 일상 개발 작업의 커버리지 목표이지 실측된 제품 기능 지원율이 아닙니다.** 검토자가 정한 핵심 기능군 20개의 **설계 점수는 75%**이며 실모델 지원율이 아닙니다.
 
 ## 브릿지 안정성·복구 검사
+
+**최신 제한 분리 검증(한국 시간 2026-09-23): v3 72/72(100%)**로 새 실모델 TUI 행렬을 실행하고 현재·동결 소스로 독립 검증했습니다. 실제 TUI + SDK 대역의 첫 응답 지연 검사도 **실측 95초** 이후 SDK 세션 1개·재제출 없이 완료됐습니다. 사용자 대화에서 발생한 상위 정체의 정확한 원인을 확정하거나 향후 서비스 가용성을 보장하는 결과는 아닙니다. [증거와 남은 한계](docs/validation/2026-09-23-first-progress.json).
+
+GitHub Actions는 Linux/macOS·Node 22/24에서 단위 검사와 Node 내장 소스 커버리지를 실행하고, 별도 Linux/macOS 작업에서 고정된 Codex·SDK 대역으로 실제 TUI/PTY/브라우저·워크플로 회귀 검사를 수행하도록 구성했습니다. CI는 Copilot 자격 증명이나 실모델 호출을 사용하지 않습니다. `coverage/lcov.info`는 단위 실행기가 관측한 `src` 모듈의 측정치이며 실행되지 않은 진입점까지 포함하거나 제품 기능 커버리지를 인증하지 않습니다. 워크플로 추가만으로 원격 CI 통과가 입증되지는 않습니다. 검증 보고서는 로컬 OS·아키텍처·Node·프록시 설정 유무도 기록하되 주소·비밀은 남기지 않습니다.
 
 별도 계약 `codex-ghcp-stability-11-v4`는 **11개 시나리오 × 6개 모델 = 66건**입니다. 도구 순서 변경, pending 정책 거절, HTTP 중복·취소, SDK 연결 상실, 스트림 불일치, resume·문맥 압축을 실제 Codex 경로에서 검사합니다. 장애 주입과 실제 모델 결과를 구분합니다. [범위·판정 기준·설정·명령](docs/STABILITY_TESTING_KO.md)을 참고하세요.
 

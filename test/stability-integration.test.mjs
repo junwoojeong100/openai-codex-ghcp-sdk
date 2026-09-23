@@ -17,6 +17,7 @@ async function setup(t, { client = new FakeClient(), managerOptions = {} } = {})
   const diagnostics = [];
   const manager = new SessionManager({ client, turnTimeoutMs: 1000, requestTimeoutMs: 1500,
     readinessTimeoutMs: 100, startupTimeoutMs: 500, readinessIntervalMs: 60_000, cleanupTimeoutMs: 50,
+    turnFirstProgressTimeoutMs: managerOptions.turnIdleTimeoutMs ?? 90_000,
     onDiagnostic: event => diagnostics.push(event), ...managerOptions });
   await manager.start();
   const server = createBridgeServer({ manager, apiKey: token, onDiagnostic: e => diagnostics.push(e) });
@@ -54,6 +55,27 @@ test("idle recovery completes the original SSE response with one header and no f
   assert.equal(sends, 2);
   assert.ok(diagnostics.some(event => event.event === "bridge.turn_watchdog"));
   assert.ok(diagnostics.some(event => event.event === "bridge.turn_recovered"));
+});
+
+test("slow first progress keeps one response stream open without replaying the prompt", async t => {
+  let timer;
+  t.after(() => clearTimeout(timer));
+  const client = new FakeClient({ onSend: session => {
+    session.emit("assistant.turn_start", {});
+    timer = setTimeout(() => session.reply("DELAYED_FIRST_RESPONSE"), 180);
+  } });
+  const { post, diagnostics } = await setup(t, { client, managerOptions: {
+    turnFirstProgressTimeoutMs: 350, turnIdleTimeoutMs: 70, readinessIntervalMs: 20,
+  } });
+  const events = parseEvents(await (await post({ model, input: "wait for the response", stream: true })).text());
+  assert.equal(events.filter(event => event.type === "response.created").length, 1);
+  assert.equal(events.filter(event => event.type === "response.completed").length, 1);
+  assert.ok(!events.some(event => event.type === "response.failed"));
+  assert.equal(events.at(-1).response.id, events[0].response.id);
+  assert.equal(events.at(-1).response.output[0].content[0].text, "DELAYED_FIRST_RESPONSE");
+  assert.equal(client.sessions.length, 1);
+  assert.equal(client.sessions[0].sent.length, 1);
+  assert.ok(!diagnostics.some(event => event.event === "bridge.turn_recovering"));
 });
 
 test("idle recovery exhaustion emits one failure and the next prompt works on the same bridge", async t => {

@@ -11,6 +11,7 @@ async function setup(t, overrides = {}, serverOptions = {}) {
   const manager = {
     preferredModel: model,
     turnIdleTimeoutMs: 90_000,
+    turnFirstProgressTimeoutMs: 180_000,
     turnIdleRecoveryAttempts: 1,
     readinessIntervalMs: 15_000,
     async readiness() { return { ready: true, state: "ready" }; },
@@ -43,7 +44,7 @@ test("health is public, model catalog requires the bridge credential and exclude
   assert.equal(health.ok, true);
   assert.equal(health.protocol, "responses");
   assert.equal(health.instanceId, "test-instance");
-  assert.deepEqual(health.turnWatchdog, { idleTimeoutMs: 90_000, recoveryAttempts: 1, intervalMs: 15_000 });
+  assert.deepEqual(health.turnWatchdog, { idleTimeoutMs: 90_000, firstProgressTimeoutMs: 180_000, recoveryAttempts: 1, intervalMs: 15_000 });
   assert.equal(JSON.stringify(health).includes(token), false);
   assert.equal((await fetch(`${base}/v1/models`)).status, 401);
   assert.equal((await request("/v1/models", { headers: { authorization: "Bearer wrong" } })).status, 401);
@@ -54,9 +55,9 @@ test("health is public, model catalog requires the bridge credential and exclude
 });
 
 test("health reports the running watchdog settings, including disabled recovery", async t => {
-  const { base } = await setup(t, { turnIdleTimeoutMs: 500, turnIdleRecoveryAttempts: 0, readinessIntervalMs: 1000 });
+  const { base } = await setup(t, { turnIdleTimeoutMs: 500, turnFirstProgressTimeoutMs: 300, turnIdleRecoveryAttempts: 0, readinessIntervalMs: 1000 });
   const health = await (await fetch(`${base}/health`)).json();
-  assert.deepEqual(health.turnWatchdog, { idleTimeoutMs: 500, recoveryAttempts: 0, intervalMs: 500 });
+  assert.deepEqual(health.turnWatchdog, { idleTimeoutMs: 500, firstProgressTimeoutMs: 300, recoveryAttempts: 0, intervalMs: 300 });
 });
 
 test("non-streaming and streaming responses share final output shape", async (t) => {
@@ -184,11 +185,13 @@ test("byte limit overrides must remain positive safe integers", () => {
 });
 
 test("request, queue and SDK lifecycle bounds validate independently of turn duration", () => {
-  const config = bridgeConfig({ BRIDGE_API_KEY: token, TURN_TIMEOUT_MS: "9000", TURN_IDLE_TIMEOUT_MS: "4000", REQUEST_TIMEOUT_MS: "15000",
+  const config = bridgeConfig({ BRIDGE_API_KEY: token, TURN_TIMEOUT_MS: "9000", TURN_IDLE_TIMEOUT_MS: "4000", TURN_FIRST_PROGRESS_TIMEOUT_MS: "7000", REQUEST_TIMEOUT_MS: "15000",
     MAX_REQUESTS_PER_SESSION: "3", MAX_REQUESTS: "9", SDK_READINESS_TIMEOUT_MS: "500", SDK_STARTUP_TIMEOUT_MS: "8000",
     SDK_READINESS_INTERVAL_MS: "4000", SDK_RECOVERY_BACKOFF_MS: "2000" });
   assert.equal(config.managerOptions.requestTimeoutMs, 15000);
   assert.equal(config.managerOptions.turnIdleTimeoutMs, 4000);
+  assert.equal(config.managerOptions.turnFirstProgressTimeoutMs, 7000);
+  assert.equal(bridgeConfig({ BRIDGE_API_KEY: token }).managerOptions.turnFirstProgressTimeoutMs, 180_000);
   assert.equal(bridgeConfig({ BRIDGE_API_KEY: token }).managerOptions.turnIdleTimeoutMs, 90_000);
   assert.equal(bridgeConfig({ BRIDGE_API_KEY: token }).managerOptions.turnIdleRecoveryAttempts, 1);
   for (const value of ["0", "1", "3"]) {
@@ -198,9 +201,10 @@ test("request, queue and SDK lifecycle bounds validate independently of turn dur
     assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, TURN_IDLE_RECOVERY_ATTEMPTS: value }), /TURN_IDLE_RECOVERY_ATTEMPTS/);
   }
   assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, TURN_IDLE_TIMEOUT_MS: "2147483648" }), /TURN_IDLE_TIMEOUT_MS/);
+  assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, TURN_FIRST_PROGRESS_TIMEOUT_MS: "2147483648" }), /TURN_FIRST_PROGRESS_TIMEOUT_MS/);
   assert.equal(config.managerOptions.maxRequestsPerFamily, 3); assert.equal(config.managerOptions.maxRequests, 9);
   assert.equal(config.managerOptions.readinessTimeoutMs, 500); assert.equal(config.managerOptions.startupTimeoutMs, 8000);
-  for (const name of ["TURN_IDLE_TIMEOUT_MS", "REQUEST_TIMEOUT_MS", "MAX_REQUESTS_PER_SESSION", "MAX_REQUESTS", "SDK_READINESS_TIMEOUT_MS", "SDK_STARTUP_TIMEOUT_MS", "SDK_READINESS_INTERVAL_MS", "SDK_RECOVERY_BACKOFF_MS"]) {
+  for (const name of ["TURN_IDLE_TIMEOUT_MS", "TURN_FIRST_PROGRESS_TIMEOUT_MS", "REQUEST_TIMEOUT_MS", "MAX_REQUESTS_PER_SESSION", "MAX_REQUESTS", "SDK_READINESS_TIMEOUT_MS", "SDK_STARTUP_TIMEOUT_MS", "SDK_READINESS_INTERVAL_MS", "SDK_RECOVERY_BACKOFF_MS"]) {
     for (const value of ["0", "-1", "0.5", "Infinity"]) assert.throws(() => bridgeConfig({ BRIDGE_API_KEY: token, [name]: value }), new RegExp(name));
   }
 });

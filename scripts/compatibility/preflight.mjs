@@ -1,10 +1,18 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { CopilotClient } from "@github/copilot-sdk";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
 import { NATIVE_SCENARIO_CATALOG as C } from "./catalog.mjs";
 import { run, bounded, CaseError, deadline } from "./util.mjs";
+
+export function verificationEnvironment(env = process.env) {
+  return { platform: os.platform(), release: os.release(), architecture: os.arch(), node: process.version,
+    cpuCount: os.availableParallelism(), totalMemoryBytes: os.totalmem(),
+    proxyConfigured: ["HTTPS_PROXY", "HTTP_PROXY", "ALL_PROXY", "https_proxy", "http_proxy", "all_proxy"].some(key => Boolean(env[key])),
+    ci: Boolean(env.CI) };
+}
 
 export function installedSdkVersion() {
   let directory = path.dirname(createRequire(import.meta.url).resolve("@github/copilot-sdk"));
@@ -29,7 +37,7 @@ export async function preflight({ bin, models, signal, env = process.env }) {
     await bounded(client.start(), signal);
     const catalog = await bounded(client.listModels(), signal);
     return { codexVersion: version.stdout.trim(),
-      copilotSdk: sdkVersion, modelCalls: 0,
+      copilotSdk: sdkVersion, modelCalls: 0, environment: verificationEnvironment(env),
       models: models.map(id => ({ id, available: catalog.some(m => m.id === id && m.policy?.state !== "disabled") })) };
   } finally {
     try { await bounded(client.stop(), AbortSignal.timeout(2000)); }

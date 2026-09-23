@@ -19,7 +19,7 @@ Only `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4.5`, `gpt-6-astra`, `g
 - Exact retries of the latest request without duplicate prompt/result submission.
 - Client cancellation, SDK deadlines, bounded in-memory state and idle/capacity eviction.
 - Reasoning effort only when supported by the selected model's catalog. Haiku 4.5 is not effort-configurable.
-- A launch-owned main-model picker catalog, default-tier context budgets, and native local auto-compaction after complete tool-result handoffs. `npm run test:context:runtime` covers these with the actual Codex CLI and a fake SDK, not maximum-context or endurance inference.
+- A launch-owned main-model picker catalog, maximum-advertised-tier input budgets, and native local auto-compaction after complete tool-result handoffs. `npm run test:context:runtime` covers these with the actual Codex CLI and a fake SDK, not maximum-context or endurance inference.
 
 ## Important approximations
 
@@ -58,7 +58,7 @@ Explicit root SDK content-filter metadata is reported as `upstream_content_filte
 
 - Choose the initial model with `--ghcp-model`; `/model` uses the launch's account-enabled subset of the six allowed models in pinned order. The launch-owned catalog is temporary and does not change the user's Codex configuration files.
 - A result batch must include every outstanding call exactly once. Model/instruction/history changes while calls are pending remain rejected. Tool-less full-history compaction may retire a session only after validating its complete result batch with the unchanged model, instructions and history.
-- SDK sessions stay on the default context tier; Codex compacts at 80% of the catalog's effective input budget. Context overflow keeps the `context_length_exceeded` error code, and the launcher disables automatic HTTP/stream inference retries.
+- SDK sessions select the maximum advertised context tier (`long_context` where available, otherwise `default`); Codex compacts at 80% of the catalog's effective input budget. Context overflow keeps the `context_length_exceeded` error code, and the launcher disables automatic HTTP/stream inference retries. First progress has a separate 180-second allowance, followed by the 90-second streaming inactivity limit; both remain capped by the absolute turn/request deadlines.
 - The most recent result is retryable, but arbitrary historical response branches are not. Start a new full-history conversation to branch.
 - Codex retains its normal sandbox and approval behavior. The bridge never substitutes an approval-bypass option.
 - Background-daemon state is specific to this project. Status/stop must verify the owned instance before reuse or termination.

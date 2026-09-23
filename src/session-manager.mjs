@@ -202,6 +202,7 @@ export class SessionManager {
     logLevel = "error",
     turnTimeoutMs = 300_000,
     turnIdleTimeoutMs = 90_000,
+    turnFirstProgressTimeoutMs = 180_000,
     turnIdleRecoveryAttempts = 1,
     requestTimeoutMs = 360_000,
     maxRequestsPerFamily = 8,
@@ -214,8 +215,10 @@ export class SessionManager {
     maxToolResults = 32,
     onDiagnostic = () => {},
   } = {}) {
-    if (!Number.isSafeInteger(turnIdleTimeoutMs) || turnIdleTimeoutMs < 1 || turnIdleTimeoutMs > 2_147_483_647) {
-      throw new Error("turnIdleTimeoutMs must be an integer from 1 through 2147483647.");
+    for (const [name, value] of Object.entries({ turnIdleTimeoutMs, turnFirstProgressTimeoutMs })) {
+      if (!Number.isSafeInteger(value) || value < 1 || value > 2_147_483_647) {
+        throw new Error(`${name} must be an integer from 1 through 2147483647.`);
+      }
     }
     if (!Number.isSafeInteger(turnIdleRecoveryAttempts) || turnIdleRecoveryAttempts < 0 || turnIdleRecoveryAttempts > 3) {
       throw new Error("turnIdleRecoveryAttempts must be an integer from 0 through 3.");
@@ -227,7 +230,8 @@ export class SessionManager {
     this.copilotHome = baseDirectory;
     this.lateMcpServers = new Set();
     Object.assign(this, {
-      preferredModel, turnTimeoutMs, turnIdleTimeoutMs, turnIdleRecoveryAttempts, requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
+      preferredModel, turnTimeoutMs, turnIdleTimeoutMs, turnFirstProgressTimeoutMs, turnIdleRecoveryAttempts,
+      requestTimeoutMs, cleanupTimeoutMs, pendingToolWaitMs,
       readinessTimeoutMs, startupTimeoutMs, readinessIntervalMs, recoveryBackoffMs,
       stateIdleTtlMs, maxStates, maxReplayBytes, maxToolResults,
     });
@@ -476,10 +480,10 @@ export class SessionManager {
       const recordedInput = fresh ? input : [...state.history, ...input.slice(state.history.length)];
       const deadline = new AbortController();
       const turnSignal = AbortSignal.any([signal, deadline.signal]);
-      const timer = setTimeout(() => deadline.abort(new BridgeRequestError("Timed out waiting for GitHub Copilot.", {
+      let recoveries = 0;
+      const timer = setTimeout(() => deadline.abort(new BridgeRequestError(`Timed out waiting for GitHub Copilot. The absolute ${this.turnTimeoutMs} ms turn deadline expired after ${recoveries} recovery attempt(s).`, {
         status: 504, code: "copilot_timeout",
       })), this.turnTimeoutMs);
-      let recoveries = 0;
       const usage = [];
       let turn;
       try {
@@ -784,9 +788,20 @@ export class SessionManager {
       let finishing = false;
       let ready = false;
       let outputStarted = false;
+      let progressSeen = false;
       let responseBytes = 0;
+      let activeTurnId;
+      const fusionPhases = new Map();
       let lastActivityAt = performance.now();
       let lastActivity = "request_started";
+      let lastFailure = null;
+      let idleTimeout;
+      const timing = () => ({
+        waitPhase: progressSeen ? "streaming" : "first_progress",
+        timeoutMs: progressSeen ? this.turnIdleTimeoutMs : this.turnFirstProgressTimeoutMs,
+        idleMs: Math.floor(performance.now() - lastActivityAt), lastActivity,
+        ...(lastFailure ? { upstreamFailure: lastFailure } : {}),
+      });
       const settle = (error) => {
         if (settled) return;
         settled = true;
@@ -799,10 +814,13 @@ export class SessionManager {
         else resolve({ messages, usage: aggregateUsage(usage) });
       };
       const onAbort = () => settle(signal?.reason ?? abortError());
-      const idleTimeout = setTimeout(() => {
+      const stalled = () => {
+        if (settled) return;
+        const details = timing();
         this.onDiagnostic({ event: "bridge.turn_stalled", model: state.model, phase: state.phase,
-          timeoutMs: this.turnIdleTimeoutMs, idleMs: Math.floor(performance.now() - lastActivityAt), lastActivity });
-        const error = new BridgeRequestError(`GitHub Copilot stopped producing model progress. The idle deadline expired after ${this.turnIdleTimeoutMs} ms without root progress (last event: ${lastActivity}).`, {
+          ...details });
+        const failure = lastFailure ? ` Last upstream failure: ${lastFailure.kind}${lastFailure.statusCode === null ? "" : ` (HTTP ${lastFailure.statusCode})`}.` : "";
+        const error = new BridgeRequestError(`GitHub Copilot stopped producing model progress. The idle deadline expired after ${details.timeoutMs} ms without root progress (last event: ${lastActivity}; phase: ${details.waitPhase}).${failure}`, {
           status: 504, code: "copilot_idle_timeout",
         });
         error.recoveryBlockedReason = !triggerFinished ? "input_unacknowledged"
@@ -810,18 +828,30 @@ export class SessionManager {
           : state.pending.size || state.outstanding.size ? "pending_tool_calls" : null;
         error.recoverySafe = error.recoveryBlockedReason === null;
         settle(error);
-      }, this.turnIdleTimeoutMs);
+      };
+      idleTimeout = setTimeout(stalled, this.turnFirstProgressTimeoutMs);
       const progress = type => {
         if (settled) return;
+        if (progressSeen) idleTimeout.refresh();
+        else {
+          clearTimeout(idleTimeout);
+          idleTimeout = setTimeout(stalled, this.turnIdleTimeoutMs);
+        }
+        progressSeen = true;
         lastActivityAt = performance.now();
         lastActivity = type;
-        idleTimeout.refresh();
       };
       const watchdog = setInterval(() => {
         this.onDiagnostic({ event: "bridge.turn_watchdog", model: state.model, phase: state.phase,
-          idleMs: Math.floor(performance.now() - lastActivityAt), timeoutMs: this.turnIdleTimeoutMs, lastActivity });
-      }, Math.min(this.readinessIntervalMs, this.turnIdleTimeoutMs));
+          ...timing() });
+      }, Math.min(this.readinessIntervalMs, this.turnIdleTimeoutMs, this.turnFirstProgressTimeoutMs));
       watchdog.unref();
+      const fusionKey = event => {
+        const data = event.data;
+        return isRootEvent(event) && data?.conversationScope === "root"
+          && [data.fusionId, data.phaseId].every(id => typeof id === "string" && id.length > 0 && id.length <= 512)
+          ? JSON.stringify([data.fusionId, data.phaseId]) : null;
+      };
       const finish = () => {
         if (settled || finishing || !started) return;
         finishing = true;
@@ -841,10 +871,49 @@ export class SessionManager {
       subscriptions.push(
         state.session.on("assistant.turn_start", (event) => {
           if (isRootEvent(event) && !settled) {
+            const turnId = event.data?.turnId;
+            if (!started || typeof turnId !== "string" || turnId !== activeTurnId) {
+              responseBytes = 0;
+              fusionPhases.clear();
+            }
+            activeTurnId = turnId;
             started = true;
-            responseBytes = 0;
-            progress("assistant.turn_start");
+            // Turn metadata is not a response byte and must not restart prefill.
+            if (!progressSeen) lastActivity = "assistant.turn_start";
           }
+        }),
+        state.session.on("assistant.fusion_phase_started", event => {
+          if (settled) return;
+          const key = fusionKey(event);
+          if (!key || fusionPhases.has(key)) return;
+          if (fusionPhases.size >= 64) { settle(invalidUpstream("Copilot exceeded the root phase tracking limit.")); return; }
+          fusionPhases.set(key, { bytes: 0, completed: false });
+        }),
+        state.session.on("assistant.fusion_phase_activity", event => {
+          if (settled) return;
+          const phase = fusionPhases.get(fusionKey(event));
+          const bytes = event.data?.totalResponseSizeBytes;
+          if (!phase || phase.completed || event.data.activity !== "model_output"
+              || !Number.isSafeInteger(bytes) || bytes <= phase.bytes) return;
+          phase.bytes = bytes;
+          progress("assistant.fusion_phase_activity");
+        }),
+        state.session.on("assistant.fusion_phase_completed", event => {
+          if (settled) return;
+          const phase = fusionPhases.get(fusionKey(event));
+          if (!phase || phase.completed || event.data.status !== "succeeded") return;
+          phase.completed = true;
+          // The event's private content is never read or forwarded.
+          progress("assistant.fusion_phase_completed");
+        }),
+        state.session.on("model.call_failure", event => {
+          if (settled || !isRootEvent(event) || event.data?.source !== "top_level" || event.data.fusion
+              || event.data.initiator || (event.data.interactionType && event.data.interactionType !== "conversation-agent")) return;
+          const { failureKind, statusCode } = event.data;
+          lastFailure = { kind: ["api", "transport"].includes(failureKind) ? failureKind : "unknown",
+            statusCode: Number.isInteger(statusCode) && statusCode >= 100 && statusCode <= 599 ? statusCode : null };
+          this.onDiagnostic({ event: "bridge.model_call_failed", model: state.model, phase: state.phase,
+            ...lastFailure });
         }),
         state.session.on("assistant.message", (event) => {
           if (!isRootEvent(event) || settled) return;

@@ -238,6 +238,22 @@ test("preflight locates the actual SDK version through its CJS/ESM entry layout"
   const { installedSdkVersion } = await import("../scripts/compatibility/preflight.mjs");
   assert.equal(installedSdkVersion(), C.versions.copilotSdk);
 });
+
+test("verification records the runtime environment without credentials or proxy addresses", async () => {
+  const { verificationEnvironment } = await import("../scripts/compatibility/preflight.mjs");
+  const plain = verificationEnvironment({});
+  assert.equal(plain.platform, process.platform);
+  assert.equal(plain.architecture, process.arch);
+  assert.equal(plain.node, process.version);
+  assert.equal(plain.proxyConfigured, false);
+  assert.equal(plain.ci, false);
+  assert.ok(plain.cpuCount > 0 && plain.totalMemoryBytes > 0);
+  const configured = verificationEnvironment({ CI: "1", HTTPS_PROXY: "https://private-user:private-token@private-host:1234",
+    GITHUB_TOKEN: "private-credential", HOME: "/private-home" });
+  assert.equal(configured.proxyConfigured, true);
+  assert.equal(configured.ci, true);
+  assert.doesNotMatch(JSON.stringify(configured), /private-/);
+});
 test("retired provider path cannot be used and subset injection is rejected", async () => {
   assert.throws(() => new Backend({ provider: "openai" }), /GHCP/);
   await assert.rejects(runCompatibility({ models: ["gpt-6-astra"] }), /complete current scenario matrix/);

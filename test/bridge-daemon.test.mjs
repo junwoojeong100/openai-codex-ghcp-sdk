@@ -88,7 +88,7 @@ test("daemon status verifies authentication without returning the stored token",
   assert.equal(status.pid, bridge.pid);
   assert.equal(status.turnWatchdog, null, "older processes must not claim the new watchdog is active");
   assert.equal(JSON.stringify(status).includes(bridge.token), false);
-  health.turnWatchdog = { idleTimeoutMs: 90_000, recoveryAttempts: 1, intervalMs: 15_000 };
+  health.turnWatchdog = { idleTimeoutMs: 90_000, firstProgressTimeoutMs: 180_000, recoveryAttempts: 1, intervalMs: 15_000 };
   assert.deepEqual((await daemonStatus(env)).turnWatchdog, health.turnWatchdog);
   writeRegistry(paths, { ...bridge, token: "c".repeat(64) });
   const unverified = await daemonStatus(env);

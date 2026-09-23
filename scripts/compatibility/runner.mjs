@@ -9,6 +9,7 @@ import { supervise, killOwnedGroup } from "./supervisor.mjs";
 import { newReport, summarize, readCase, markdownReport } from "./report.mjs";
 import { ROOT, mkdir, writeJson, sha, safeRead, scrubber, implementationHash } from "./util.mjs";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
+import { verificationEnvironment } from "./preflight.mjs";
 
 function settingsSnapshot(env) {
   const home = env.CODEX_HOME || path.join(env.HOME || os.homedir(), ".codex");
@@ -39,6 +40,7 @@ export async function runCompatibility({ output, bin = process.env.CODEX_BIN || 
   validateDesign(); signal?.throwIfAborted();
   const runId = randomUUID(), started = performance.now(), clean = scrubber(env), beforeSettings = settingsSnapshot(env);
   const report = newReport({ runId, executionKind: workerSupervisor === supervise ? "live" : "offline-self-test" });
+  report.environment = verificationEnvironment(env);
   const directory = freshDirectory(output ?? path.join(ROOT, ".runtime", `compatibility-${runId}`));
   const workRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-workflows-")));
   fs.chmodSync(workRoot, 0o700);

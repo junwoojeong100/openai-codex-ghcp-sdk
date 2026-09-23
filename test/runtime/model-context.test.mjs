@@ -307,13 +307,15 @@ test("one native turn can complete 120 sequential tools across repeated automati
   t.diagnostic(JSON.stringify({ toolExecutions, compactions: compactions.length, sdkSessions: client.sessions.length }));
 });
 
-async function terminalFixture(t, { turns, hangFirstSetup = false, turnIdleRecoveryAttempts = 1 }) {
+async function terminalFixture(t, { turns, hangFirstSetup = false, turnIdleRecoveryAttempts = 1,
+  firstReplyDelayMs = 2200, firstProgressTimeoutMs = 1500, idleTimeoutMs = 1500, turnTimeoutMs = 4000,
+  readinessIntervalMs = 250, probeTimeoutMs = 20000, probeTurnTimeoutMs = 6000 }) {
   const f = fixture(t);
   const tmp = path.join(f.directory, "tmp");
   fs.mkdirSync(tmp, { mode: 0o700 });
   const output = path.join(f.directory, "sdk.json");
   const configuration = path.join(f.directory, "fixture.json");
-  fs.writeFileSync(configuration, JSON.stringify({ output, hangFirstSetup }), { mode: 0o600 });
+  fs.writeFileSync(configuration, JSON.stringify({ output, hangFirstSetup, firstReplyDelayMs }), { mode: 0o600 });
   const result = await runTerminalProbe({
     bin: path.join(root, "bin/codex-ghcp"),
     args: ["--", "-a", "never", "--sandbox", "read-only",
@@ -322,10 +324,11 @@ async function terminalFixture(t, { turns, hangFirstSetup = false, turnIdleRecov
     cwd: f.directory, ownedRoot: f.directory, directory: path.join(f.directory, "terminal"),
     env: { ...f.env, TMPDIR: tmp, CODEX_BIN: bin, COPILOT_HOME: path.join(f.directory, "copilot"),
       GHCP_DAEMON_DIR: path.join(f.directory, "daemon"), GHCP_TERMINAL_FIXTURE: configuration,
-      TURN_TIMEOUT_MS: "4000", TURN_IDLE_TIMEOUT_MS: "1500", SDK_STARTUP_TIMEOUT_MS: "500",
-      TURN_IDLE_RECOVERY_ATTEMPTS: String(turnIdleRecoveryAttempts), SDK_READINESS_INTERVAL_MS: "250",
+      TURN_TIMEOUT_MS: String(turnTimeoutMs), TURN_IDLE_TIMEOUT_MS: String(idleTimeoutMs), SDK_STARTUP_TIMEOUT_MS: "500",
+      TURN_FIRST_PROGRESS_TIMEOUT_MS: String(firstProgressTimeoutMs),
+      TURN_IDLE_RECOVERY_ATTEMPTS: String(turnIdleRecoveryAttempts), SDK_READINESS_INTERVAL_MS: String(readinessIntervalMs),
       NODE_OPTIONS: `--import=${JSON.stringify(path.join(root, "test/fixtures/terminal-sdk.mjs"))}` },
-    turns, timeoutMs: 20000, readyTimeoutMs: 8000, turnTimeoutMs: 6000, stopGraceMs: 1000,
+    turns, timeoutMs: probeTimeoutMs, readyTimeoutMs: 8000, turnTimeoutMs: probeTurnTimeoutMs, stopGraceMs: 1000,
     allowOwnedTrust: true, allowOwnedSetup: true, columns: 160, rows: 45,
   });
   const sdk = fs.existsSync(output) ? JSON.parse(fs.readFileSync(output, "utf8")) : null;
@@ -367,6 +370,40 @@ test("the real TUI automatically resumes a silent turn and accepts byte-only pro
   assert.equal(sdk.diagnostics.filter(event => event.event === "bridge.turn_stalled").length, 1);
   assert.equal(sdk.diagnostics.filter(event => event.event === "bridge.turn_recovered").length, 1);
   assert.ok(sdk.diagnostics.some(event => event.event === "bridge.turn_watchdog"));
+});
+
+test("the real TUI waits for slow first progress and accepts private root-phase activity", { timeout: 25_000 }, async t => {
+  const { result, sdk } = await terminalFixture(t, { firstProgressTimeoutMs: 3000, turnTimeoutMs: 5000, turns: [
+    { prompt: "Run DELAYED_FIRST_FIXTURE.", expectedMarker: "DELAYED_FIRST_OK" },
+    { prompt: "Run FUSION_FIXTURE.", expectedMarker: "FUSION_PROGRESS_OK" },
+    { prompt: "Reply with AFTER_RECOVERY_OK.", expectedMarker: "AFTER_RECOVERY_OK" },
+  ] });
+  assert.equal(sdk.sends, 3);
+  assert.equal(sdk.sessions, 1);
+  assert.equal(sdk.fusionDeltas, 8);
+  assert.ok(sdk.firstProgressDelays[0] >= 2200);
+  assert.ok(result.turns.every(turn => turn.markerObserved && !turn.errorObserved));
+  assert.ok(!sdk.diagnostics.some(event => /turn_stalled|turn_recovering/.test(event.event)));
+});
+
+test("production watchdog tolerates first progress after 90000 ms in the actual TUI without replay", { timeout: 130_000 }, async t => {
+  const { result, sdk } = await terminalFixture(t, {
+    firstReplyDelayMs: 95_000, firstProgressTimeoutMs: 180_000, idleTimeoutMs: 90_000, turnTimeoutMs: 300_000,
+    readinessIntervalMs: 15_000, probeTimeoutMs: 120_000, probeTurnTimeoutMs: 110_000, turns: [
+      { prompt: "Run DELAYED_FIRST_FIXTURE.", expectedMarker: "DELAYED_FIRST_OK" },
+      { prompt: "Reply with AFTER_RECOVERY_OK.", expectedMarker: "AFTER_RECOVERY_OK" },
+    ],
+  });
+  assert.deepEqual(sdk.watchdog, { firstProgressTimeoutMs: 180_000, idleTimeoutMs: 90_000,
+    turnTimeoutMs: 300_000, recoveryAttempts: 1 });
+  assert.equal(sdk.sends, 2);
+  assert.equal(sdk.sessions, 1);
+  assert.ok(sdk.firstProgressDelays[0] >= 95_000, JSON.stringify({ delays: sdk.firstProgressDelays }));
+  assert.ok(result.turns.every(turn => turn.markerObserved && !turn.errorObserved));
+  assert.ok(sdk.diagnostics.some(event => event.event === "bridge.turn_watchdog"
+    && event.waitPhase === "first_progress" && event.idleMs >= 90_000 && event.timeoutMs === 180_000));
+  assert.ok(!sdk.diagnostics.some(event => /turn_stalled|turn_recovering/.test(event.event)));
+  t.diagnostic(JSON.stringify({ firstProgressDelayMs: sdk.firstProgressDelays[0], sends: sdk.sends, sdkSessions: sdk.sessions }));
 });
 
 test("the real TUI surfaces a stalled session setup and accepts the next prompt", { timeout: 25_000 }, async t => {

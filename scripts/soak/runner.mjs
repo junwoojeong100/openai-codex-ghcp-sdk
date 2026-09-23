@@ -5,7 +5,7 @@ import { performance } from "node:perf_hooks";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { sourceManifest, implementationHash } from "../stability/report.mjs";
-import { preflight } from "../compatibility/preflight.mjs";
+import { preflight, verificationEnvironment } from "../compatibility/preflight.mjs";
 import { supervise, killOwnedGroup } from "../compatibility/supervisor.mjs";
 import { ROOT, writeJson, sha } from "../compatibility/util.mjs";
 
@@ -69,6 +69,7 @@ export async function runSoak({ output, smoke = false, durationSeconds = smoke ?
   const runId = randomUUID(), before = implementationHash(), manifest = snapshotSources(directory);
   const declaredAt = Date.now(), groups = new Set(), started = performance.now();
   const report = { kind: smoke ? "real-codex-soak-smoke" : "real-codex-five-hour-soak", scored: false,
+    environment: verificationEnvironment(),
     runId, declaredAt: new Date(declaredAt).toISOString(), requiredSeconds: durationSeconds,
     implementationHash: before, sourceHash: sha(JSON.stringify(manifest)), mockModelCalls: 0,
     scope: "Long-lived native conversations and separately labelled controlled context/compaction stress; not a stability-matrix score.",

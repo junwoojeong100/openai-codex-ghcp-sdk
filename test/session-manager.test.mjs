@@ -116,7 +116,8 @@ class FakeClient {
 
 async function setup(t, options = {}, clientOptions = {}) {
   const client = new FakeClient(clientOptions);
-  const manager = new SessionManager({ client, turnTimeoutMs: 500, pendingToolWaitMs: 100, cleanupTimeoutMs: 100, ...options });
+  const manager = new SessionManager({ client, turnTimeoutMs: 500, pendingToolWaitMs: 100, cleanupTimeoutMs: 100,
+    turnFirstProgressTimeoutMs: options.turnIdleTimeoutMs ?? 90_000, ...options });
   await manager.start();
   t.after(() => manager.stop());
   return { manager, client };
@@ -1200,7 +1201,7 @@ test("idle recovery has a finite attempt budget and never reports a false succes
   }, { onSend: session => session.emit("assistant.turn_start", {}) });
   await assert.rejects(manager.execute(body()), error => {
     assert.equal(error.code, "copilot_idle_timeout");
-    assert.match(error.message, /expired after 35 ms without root progress \(last event: assistant.turn_start\)/);
+    assert.match(error.message, /expired after 35 ms without root progress \(last event: assistant.turn_start; phase: first_progress\)/);
     assert.match(error.message, /exhausted after 1 attempt/);
     assert.doesNotMatch(error.message, /no request was retried/i);
     return true;

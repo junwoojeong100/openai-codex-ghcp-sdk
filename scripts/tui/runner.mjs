@@ -5,7 +5,7 @@ import path from "node:path";
 import { randomBytes, randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
-import { preflight } from "../compatibility/preflight.mjs";
+import { preflight, verificationEnvironment } from "../compatibility/preflight.mjs";
 import { pool, freshDirectory } from "../compatibility/runner.mjs";
 import { supervise, killOwnedGroup } from "../compatibility/supervisor.mjs";
 import { ROOT, safeRead, scrubber, sha, writeJson } from "../compatibility/util.mjs";
@@ -57,7 +57,7 @@ export async function runTui({ output, bin = process.env.CODEX_BIN || "codex", e
   const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-tui-")));
   const sources = snapshotSources(directory), before = implementationHash(), beforeSettings = settings(env);
   const report = { schemaVersion: C.schemaVersion, catalogId: C.id, catalogHash: tuiCatalogHash(), implementationHash: before, runId,
-    executionKind: "live", startedAt: new Date().toISOString(), finishedAt: null, cases: tuiMatrix() };
+    executionKind: "live", environment: verificationEnvironment(env), startedAt: new Date().toISOString(), finishedAt: null, cases: tuiMatrix() };
   const owned = new Set();
   const checkpoint = () => { report.summary = summarizeTui(report); writeJson(path.join(directory, "report.json"), clean(report));
     fs.writeFileSync(path.join(directory, "report.md"), clean(markdown(report)), { mode: 0o600 }); };

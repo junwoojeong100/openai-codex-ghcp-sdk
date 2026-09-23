@@ -10,6 +10,8 @@ For a bounded, offline regression, `npm run test:context:runtime` exercises 120 
 
 ## Reproducible terminal checks
 
+The context runtime suite also holds a real Codex TUI response silent for **95 measured seconds** with the production 180-second first-progress and 90-second streaming limits. It requires one SDK session, one submission for the delayed prompt, no recovery, the eventual answer and a successful next prompt. This is a labelled SDK-double regression, not evidence of remote-model uptime. Shorter checks cover root-phase private-byte progress without exposing private content.
+
 Node/npm, Python 3, the pinned Codex CLI, and Copilot authentication are required for live checks. `npm ci` installs the pinned development dependencies (`playwright@1.63.0`, `@xterm/xterm@6.0.0`); install the owned headless browser once:
 
 ```sh

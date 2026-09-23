@@ -11,6 +11,7 @@ import { pool, freshDirectory } from "../compatibility/runner.mjs";
 import { supervise, killOwnedGroup } from "../compatibility/supervisor.mjs";
 import { ROOT, mkdir, writeJson, sha, safeRead, scrubber } from "../compatibility/util.mjs";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
+import { verificationEnvironment } from "../compatibility/preflight.mjs";
 
 function settings(env) {
   const codex = env.CODEX_HOME || path.join(env.HOME || os.homedir(), ".codex");
@@ -28,6 +29,7 @@ export async function runStability({ output, bin = process.env.CODEX_BIN || "cod
   signal?.throwIfAborted();
   const runId = randomUUID(), started = performance.now(), clean = scrubber(env);
   const report = newReport({ runId, executionKind, profile });
+  report.environment = verificationEnvironment(env);
   const before = executionKind === "live" ? settings(env) : null;
   const directory = freshDirectory(output || path.join(ROOT, ".runtime", `stability-${executionKind}-${runId}`));
   const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-stability-")));

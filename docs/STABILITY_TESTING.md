@@ -98,7 +98,8 @@ The bridge uses structured SDK metadata, not matching refusal-like prose. It doe
 | Setting | Default | Meaning |
 |---|---:|---|
 | `TURN_TIMEOUT_MS` | 300000 | Absolute model-turn budget shared across all recovery attempts and replacement setup |
-| `TURN_IDLE_TIMEOUT_MS` | 90000 | No root-model progress; text, reasoning, tool-input and increasing SDK byte counts refresh it, not keepalives |
+| `TURN_FIRST_PROGRESS_TIMEOUT_MS` | 180000 | Initial wait per attempt; turn-start metadata, retry notices and keepalives do not restart it |
+| `TURN_IDLE_TIMEOUT_MS` | 90000 | Inactivity after first real progress; root text, reasoning, tool-input and increasing SDK/root-phase bytes refresh it |
 | `TURN_IDLE_RECOVERY_ATTEMPTS` | 1 | Maximum session recoveries per request; integer 0–3, 0 disables |
 | `REQUEST_TIMEOUT_MS` | 360000 | Manager request, including queue wait, SDK work and recovery; not HTTP body reception |
 | `MAX_REQUESTS_PER_SESSION` | 8 | Admitted active + queued requests per family |

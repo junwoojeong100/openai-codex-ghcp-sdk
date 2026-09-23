@@ -2,13 +2,15 @@
 
 [한국어](TUI_SCENARIOS_KO.md) · [Stability contract](STABILITY_TESTING.md) · [Terminal/endurance checks](SOAK_TESTING.md)
 
-`codex-ghcp-tui-12-v2` verifies the **actual Codex TUI → production bridge → Copilot SDK → exact model** connection. It retains **12 scenarios × 6 models = 72 cases** and is never combined with stability, compatibility or earlier TUI results. The target is **at least 95%: 69/72 cases in one complete, unchanged live run**.
+`codex-ghcp-tui-12-v3` verifies the **actual Codex TUI → production bridge → Copilot SDK → exact model** connection. It retains **12 scenarios × 6 models = 72 cases** and is never combined with stability, compatibility or earlier TUI results. The target is **at least 95%: 69/72 cases in one complete, unchanged live run**. V3 additionally requires separate first-progress and streaming watchdog settings; older results verify only with their frozen source.
 
-The [historical v1 result](validation/2026-09-23-tui-scenarios/README.md), 70/72 on implementation `54c7eb77`, is not evidence for v2 or the newer context/recovery implementation.
+The [historical v1 result](validation/2026-09-23-tui-scenarios/README.md), 70/72 on implementation `54c7eb77`, is not evidence for v3 or the newer context/recovery implementation.
 
-**Latest v2 result (2026-09-23 KST): 72/72 (100%)** on implementation `fe500d78`, verified with current and frozen source. The first independent run's 45/72, including a confirmed Copilot connection timeout, is preserved separately. See the [v2 results and limits](validation/2026-09-23-tui-connection-v2/README.md).
+**Historical v2 result (2026-09-23 KST): 72/72 (100%)** on implementation `fe500d78`, verified with its then-current and frozen source. The first independent run's 45/72, including a confirmed Copilot connection timeout, is preserved separately. These are not v3 scores. See the [v2 results and limits](validation/2026-09-23-tui-connection-v2/README.md).
 
 ## Execution path
+
+**Latest v3 run (2026-09-23 KST): 72/72 (100%)**, all six models 12/12 on implementation `793e852c`. Current and frozen-source evidence verification passed. A separate actual-TUI regression held first progress for 95 measured seconds using an SDK double without restarting or replaying its prompt. The live matrix itself had no stalled turns and does not establish recovery from a real provider outage. See the [verification summary](validation/2026-09-23-first-progress.json).
 
 Every case runs through the following path:
 - the repository's real launcher, `bin/codex-ghcp`;
@@ -45,7 +47,7 @@ Every case gets these **common checks**:
 - **routing:** every SDK session, authoritative `session.rpc.model.getCurrent()` snapshot and usage record uses the expected model;
 - **connection:** real SDK input, model output and a completed HTTP 200 Responses SSE stream are recorded; only U08 permits its deliberate in-flight cancellation;
 - **context-tier:** model creation and effort changes retain the maximum advertised tier; the SDK snapshot and published catalog agree with its input budget and compaction threshold;
-- **watchdog:** the new bridge's `/health` reports the production 90-second idle limit, one recovery attempt and 15-second monitoring interval;
+- **watchdog:** the new bridge's `/health` reports a 180-second first-progress allowance, 90-second streaming inactivity limit, one recovery attempt and 15-second monitoring interval;
 - **upstream:** no filter, SDK error or failed stream;
 - **mcp-isolation:** no MCP process ever appears under the bridge's Copilot runtime while samples are taken;
 - **cleanup:** the PTY group, launcher, bridge, runtime and browser are gone, the private catalog is removed, and there is no harness or SDK-session cleanup error. An idle TUI exits through `/quit` before any bounded fallback termination.
@@ -54,6 +56,8 @@ Scenario checks combine this evidence:
 - Codex's own rollout: tool calls, file changes, compaction, and per-turn model and effort;
 - bridge SDK observations, HTTP records and the MCP fixture ledger;
 - workspace files and screen snapshots.
+
+Reports record the OS/kernel release, architecture, Node version, available CPUs, memory and whether a proxy/CI environment is configured. Proxy addresses, credentials and host/user identities are not recorded. The metadata describes the measured machine; it does not establish support for unmeasured environments.
 
 Codex's optional automatic title generation still requests unsupported structured JSON output. Its exact title-only schema and explicit HTTP 400 rejection are separately counted as `auxiliaryTitleRejections`, not accepted as a successful model response. Other HTTP 4xx/5xx responses, title-shaped requests with a different error, and all failed streams fail the supported-turn checks. Generated titles remain unsupported; see [compatibility](COMPATIBILITY.md).
 
@@ -84,5 +88,5 @@ After changing source, verify with the run folder's `source-snapshot/scripts/tui
 - These are bounded runs, not multi-hour endurance certification.
 - Desktop terminal applications themselves are not tested.
 - Recall in U09 and U10 also depends on the model's summary and answer quality.
-- Tier and watchdog configuration checks do not establish full-window inference capacity or fault-injected recovery. Deterministic idle/byte-progress/setup/cancellation regressions remain in `npm run test:context:runtime` and are not added to the live score.
+- Tier and watchdog configuration checks do not establish full-window inference capacity or fault-injected recovery. `npm run test:context:runtime` separately includes a real 95-second first-progress delay with production deadlines, root-phase private-byte progress, idle/setup/cancellation and repeated-tool regressions using an SDK double; they are not added to the live score.
 - The offline runtime check has no Copilot runtime process, so runtime MCP isolation is established only by live runs.

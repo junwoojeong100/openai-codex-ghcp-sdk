@@ -96,8 +96,9 @@ export function createBridgeServer({
         modelCount: manager.listModels().length,
         turnWatchdog: {
           idleTimeoutMs: manager.turnIdleTimeoutMs,
+          firstProgressTimeoutMs: manager.turnFirstProgressTimeoutMs,
           recoveryAttempts: manager.turnIdleRecoveryAttempts,
-          intervalMs: Math.min(manager.readinessIntervalMs, manager.turnIdleTimeoutMs),
+          intervalMs: Math.min(manager.readinessIntervalMs, manager.turnIdleTimeoutMs, manager.turnFirstProgressTimeoutMs),
         },
       });
       return;
@@ -202,6 +203,8 @@ export function bridgeConfig(env = process.env) {
   if (!SUPPORTED_MODEL_IDS.includes(preferredModel)) throw new Error(`Unsupported GHCP_MODEL: ${preferredModel}.`);
   const turnIdleTimeoutMs = integerEnv(env, "TURN_IDLE_TIMEOUT_MS", 90_000);
   if (turnIdleTimeoutMs > 2_147_483_647) throw new Error("TURN_IDLE_TIMEOUT_MS must not exceed 2147483647.");
+  const turnFirstProgressTimeoutMs = integerEnv(env, "TURN_FIRST_PROGRESS_TIMEOUT_MS", 180_000);
+  if (turnFirstProgressTimeoutMs > 2_147_483_647) throw new Error("TURN_FIRST_PROGRESS_TIMEOUT_MS must not exceed 2147483647.");
   const turnIdleRecoveryAttempts = integerEnv(env, "TURN_IDLE_RECOVERY_ATTEMPTS", 1, 0);
   if (turnIdleRecoveryAttempts > 3) throw new Error("TURN_IDLE_RECOVERY_ATTEMPTS must not exceed 3.");
   return {
@@ -214,6 +217,7 @@ export function bridgeConfig(env = process.env) {
       logLevel: env.LOG_LEVEL || "error",
       turnTimeoutMs: integerEnv(env, "TURN_TIMEOUT_MS", 300_000),
       turnIdleTimeoutMs,
+      turnFirstProgressTimeoutMs,
       turnIdleRecoveryAttempts,
       requestTimeoutMs: integerEnv(env, "REQUEST_TIMEOUT_MS", 360_000),
       maxRequestsPerFamily: integerEnv(env, "MAX_REQUESTS_PER_SESSION", 8),

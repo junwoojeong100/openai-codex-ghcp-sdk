@@ -33,13 +33,14 @@ export const TUI_SCENARIOS = freeze([
     covers: "conversation identity, launcher shutdown, child bridge/runtime exit and private catalog removal" },
 ]);
 export const TUI_CATALOG = freeze({
-  id: "codex-ghcp-tui-12-v2", schemaVersion: 2, driver: "playwright-headless-xterm",
+  id: "codex-ghcp-tui-12-v3", schemaVersion: 3, driver: "playwright-headless-xterm",
   versions: { codex: "0.154.0", copilotSdk: "1.0.14", playwright: "1.63.0", xterm: "6.0.0" },
   models: [...SUPPORTED_MODEL_IDS], scenarios: TUI_SCENARIOS, totalCases: TUI_SCENARIOS.length * SUPPORTED_MODEL_IDS.length,
   concurrency: 3, automaticCaseRetries: 0, preflightSeconds: 60, rows: 45, columns: 140,
   commonChecks: ["routing", "connection", "context-tier", "watchdog", "upstream", "mcp-isolation", "cleanup"],
   thresholdPercent: 95,
-  watchdog: { idleTimeoutMs: 90000, recoveryAttempts: 1, intervalMs: 15000 },
+  watchdog: { firstProgressTimeoutMs: 180000, idleTimeoutMs: 90000, recoveryAttempts: 1, intervalMs: 15000 },
+  changesFromV2: "Separate first-progress and streaming deadlines are required in runtime health. Historical v2 results remain unchanged and verify only with their frozen source.",
   acceptance: "A case passes only when every scenario and common check passes from recorded evidence. The target is at least 95% (69/72) in one complete live run of an unchanged implementation. Failed, blocked, timed-out and not-run cells stay in the denominator; unrun or interrupted matrices cannot meet the target. No automatic case retries, output rewriting, combining runs or cell substitution. fullMatrixPassed still requires 72/72.",
   isolation: "Owned HOME/CODEX_HOME/workspace per case, real Copilot authentication only, approval policy never, no user Codex configuration, plugins or MCP servers.",
   statuses: ["passed", "failed", "blocked", "timed-out", "not-run"],

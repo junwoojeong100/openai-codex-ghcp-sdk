@@ -98,7 +98,8 @@ v4의 분모 66건, 정확한 모델 라우팅, 원문 value/receipt 검사, 필
 | 설정 | 기본값 | 의미 |
 |---|---:|---|
 | `TURN_TIMEOUT_MS` | 300000 | 모든 복구 시도·재설정이 공유하는 절대 모델 턴 예산 |
-| `TURN_IDLE_TIMEOUT_MS` | 90000 | 루트 모델 진행이 없는 시간; 텍스트·추론·도구 입력·증가하는 SDK 바이트 수는 갱신하고 keepalive는 제외 |
+| `TURN_FIRST_PROGRESS_TIMEOUT_MS` | 180000 | 시도별 첫 진행 대기; 턴 시작 메타데이터·재시도 안내·keepalive는 초기화하지 않음 |
+| `TURN_IDLE_TIMEOUT_MS` | 90000 | 실제 첫 진행 이후 무진행 제한; 루트 텍스트·추론·도구 입력·증가하는 SDK/루트 단계 바이트로 갱신 |
 | `TURN_IDLE_RECOVERY_ATTEMPTS` | 1 | 요청당 최대 세션 복구 횟수; 정수 0–3, 0은 비활성화 |
 | `REQUEST_TIMEOUT_MS` | 360000 | 대기열·SDK 작업·복구를 포함한 manager 요청; HTTP 본문 수신은 별도 |
 | `MAX_REQUESTS_PER_SESSION` | 8 | 대화별 실행 중 + 대기 요청 수 |

@@ -37,7 +37,7 @@ function passingFacts(id, model = "gpt-6-astra") {
 }
 
 test("the TUI contract is a fixed 12-by-6 Playwright matrix with no subset or retry option", () => {
-  assert.equal(TUI_CATALOG.id, "codex-ghcp-tui-12-v2");
+  assert.equal(TUI_CATALOG.id, "codex-ghcp-tui-12-v3");
   assert.equal(TUI_SCENARIOS.length, 12);
   assert.deepEqual(TUI_SCENARIOS.map(s => s.id), Array.from({ length: 12 }, (_, i) => `U${String(i + 1).padStart(2, "0")}`));
   assert.deepEqual(TUI_CATALOG.models, SUPPORTED_MODEL_IDS);
