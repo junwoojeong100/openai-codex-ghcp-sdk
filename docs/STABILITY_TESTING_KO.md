@@ -127,6 +127,8 @@ GHCP_LIVE_HANDOFF_OUTPUT=.runtime/pending-handoff-live-new \
 
 핸드오프 정리·준비 상태를 확인하지 못하면 `session_handoff_failed`(503)입니다. 취소·연결 유실·대체 세션 실패 후에는 결과 재시도를 새 대화로 처리하지 않고 해당 대화를 유실 상태로 유지합니다. 결과 누락·불일치는 `tool_result_mismatch`(409), 기존 대화 변조는 `pending_session_changed`(409)로 거절합니다.
 
+실패 보고서는 이제 `upstream-content-filter`, `literal-output`, `cleanup`을 원인 미확정 실패와 구분합니다. 필터 분류에는 실제 native Responses 오류 코드가 필요하며 거절처럼 보이는 문구·제어 요청·SDK 힌트만으로 판단하지 않습니다. 정리 실패를 우선 표시하고, 분류가 실패 판정·상태·분모·종료 코드를 바꾸지는 않습니다. 검증기는 증거로 분류를 다시 계산하며 과거 보고서는 동결된 검증기를 사용합니다. CI에서는 한 검사 실패가 이후 결과를 가리지 않도록 오프라인 검사를 나눠 실행하고 민감정보를 제거한 실패 진단을 artifact로 보존합니다.
+
 ```bash
 npm test
 npm run test:stability:stress       # 기계적 100회 반복, 모델 호출 없음

@@ -127,6 +127,8 @@ GHCP_LIVE_HANDOFF_OUTPUT=.runtime/pending-handoff-live-new \
 
 Unconfirmed handoff cleanup/readiness is `session_handoff_failed` (503). Cancellation, connection loss or replacement failure keeps that family unavailable rather than treating a result retry as a fresh conversation. Missing/mismatched pending results remain `tool_result_mismatch` (409); rewritten history remains `pending_session_changed` (409).
 
+Failure reports now distinguish `upstream-content-filter`, `literal-output` and `cleanup` from undetermined failures. Filter classification requires an actual native Responses error code, not refusal-like prose, a control request or an SDK hint alone. Cleanup failures take precedence; category labels never alter failed checks, status, the denominator or exit codes. The verifier recomputes evidence-derived categories. Earlier reports still require their frozen verifier. CI runs the offline suites separately so one failed suite does not hide later results, and retains scrubbed failure diagnostics as artifacts.
+
 ```bash
 npm test
 npm run test:stability:stress       # 100 mechanical cycles, no model calls

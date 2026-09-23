@@ -3,7 +3,7 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { CATALOG, SCENARIOS } from "./catalog.mjs";
 import { getProfile, profileForRecord, DEFAULT_PROFILE } from "./profiles.mjs";
-import { evaluate, metrics } from "./oracles.mjs";
+import { evaluate, failureCategory, metrics } from "./oracles.mjs";
 import { ROOT, sha, safeRead } from "../compatibility/util.mjs";
 
 export function sourceManifest(root = ROOT) {
@@ -95,6 +95,8 @@ export function readCase(directory, config) {
   assert.equal(evidence.executionKind, config.executionKind);
   const checks = evaluate(scenario, evidence, selected.name), diagnostic = metrics(evidence);
   assert.deepEqual(manifest.checks, checks); assert.deepEqual(manifest.metrics, diagnostic);
+  const category = failureCategory(evidence, checks);
+  if (category) assert.equal(manifest.category, category, "Failure category differs from recorded evidence");
   const expected = artifacts(config, evidence, checks, manifest.status);
   assert.deepEqual(Object.keys(manifest.files).sort(), Object.keys(expected).sort());
   for (const [name, text] of Object.entries(expected)) assert.equal(safeRead(path.join(directory, name), 64 * 1024 * 1024).toString(), text, name);
@@ -122,6 +124,7 @@ export function verifyReport(file) {
     assert.equal(row.observedStatus, manifest.status);
     assert.deepEqual(row.failedChecks, manifest.checks.filter(c => !c.passed).map(c => c.id));
     assert.deepEqual(row.metrics, manifest.metrics);
+    assert.equal(row.category, manifest.category, "Report failure category differs from case evidence");
     if (row.status === "passed") {
       assert.equal(manifest.status, "passed"); assert.equal(row.supervisor?.processGroupGone, true);
       assert.equal(row.supervisor.code, 0); assert.equal(row.supervisor.killed, false); assert.ok(!row.supervisor.error);

@@ -6,6 +6,7 @@ import { sha } from "../compatibility/util.mjs";
 import { completedItems, answer, streamEvents, streamValid, wireOutputs } from "../compatibility/oracles.mjs";
 
 const parse = text => { try { return JSON.parse(text); } catch { return null; } };
+const errorCode = row => parse(row.responseText)?.error?.code ?? streamEvents(row).find(event => event.type === "response.failed")?.response?.error?.code;
 const includes = (text, value) => typeof value === "string" && value.length > 12 && typeof text === "string" && text.includes(value);
 const toolTypes = new Set(["commandExecution", "command_execution", "fileChange", "file_change", "dynamicToolCall", "mcpToolCall", "collabAgentToolCall"]);
 function validTree(tree) {
@@ -25,6 +26,16 @@ export function metrics(e) {
     presentation: turns.filter(p => p.result?.status === "completed" && p.label !== "padding").map(p => ({ label: p.label,
       exactFixtureText: answer(phaseRecords(e, p)) === `${e.fixture?.expectedValue}\n${e.fixture?.expectedReceipt}` })) };
 }
+export function failureCategory(e, checks) {
+  const failed = checks.filter(check => !check.passed);
+  if (!failed.length) return null;
+  if (failed.some(check => check.id === "cleanup")) return "cleanup";
+  if (failed.some(check => check.id === "transport-outcomes") && (e.transport ?? []).some(row =>
+    row.origin === "native" && row.method === "POST" && row.path === "/v1/responses" &&
+    (row.status >= 400 || streamEvents(row).some(event => event.type === "response.failed")) &&
+    errorCode(row) === "upstream_content_filter")) return "upstream-content-filter";
+  return failed.every(check => check.id === "final-values") ? "literal-output" : null;
+}
 export function evaluate(scenario, e, profile = DEFAULT_PROFILE) {
   const PROMPTS = getProfile(profile).catalog.prompts;
   const checks = [], check = (id, passed, detail) => checks.push({ id, passed: passed === true, detail });
@@ -37,7 +48,6 @@ export function evaluate(scenario, e, profile = DEFAULT_PROFILE) {
   const posts = transport.filter(r => r.method === "POST" && r.path === "/v1/responses");
   const nativePosts = posts.filter(r => r.origin === "native");
   const successfulPosts = posts.filter(r => streamEvents(r).at(-1)?.type === "response.completed");
-  const errorCode = r => parse(r.responseText)?.error?.code ?? streamEvents(r).find(v => v.type === "response.failed")?.response?.error?.code;
   const sends = sdk.filter(r => r.type === "session.send"), submissions = sdk.filter(r => r.type === "tool.submit");
   const sessions = sdk.filter(r => r.type === "session.created");
   const usages = sdk.filter(r => r.type === "assistant.usage" && !r.agentId);

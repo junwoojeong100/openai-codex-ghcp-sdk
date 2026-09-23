@@ -4,7 +4,7 @@ import { performance } from "node:perf_hooks";
 import { SCENARIOS } from "./catalog.mjs";
 import { profileForRecord } from "./profiles.mjs";
 import { StabilityExecutor } from "./execute.mjs";
-import { evaluate, metrics } from "./oracles.mjs";
+import { evaluate, failureCategory, metrics } from "./oracles.mjs";
 import { artifacts, implementationHash } from "./report.mjs";
 import { preflight } from "../compatibility/preflight.mjs";
 import { safeRead, writeJson, mkdir, sha, scrubber, statusFor, run } from "../compatibility/util.mjs";
@@ -50,7 +50,8 @@ async function main() {
     profile: selected.name, catalogId: selected.catalog.id,
     executionKind: config.executionKind, catalogHash: config.catalogHash, implementationHash: config.implementationHash,
     durationMs: Math.ceil(performance.now() - started), status, error: error ? scrubber()(error.message) : null,
-    category: error?.category ?? (status === "passed" ? null : "undetermined"), checks, metrics: metrics(evidence), files: {} };
+    category: status === "passed" ? null : failureCategory(evidence, checks) ?? error?.category ?? "undetermined",
+    checks, metrics: metrics(evidence), files: {} };
   mkdir(config.directory);
   for (const [name, text] of Object.entries(artifacts(config, evidence, checks, status))) {
     fs.writeFileSync(path.join(config.directory, name), text, { mode: 0o600 });
