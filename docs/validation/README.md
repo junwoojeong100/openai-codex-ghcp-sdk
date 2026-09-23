@@ -1,6 +1,8 @@
 # Verification records
 
-[한국어](README_KO.md) · [Stability contract](../STABILITY_TESTING.md)
+[한국어](README_KO.md) · [Guide map](../../README.md#testing) · [Stability contract](../STABILITY_TESTING.md)
+
+This is a dated evidence archive, not a setup guide or a certification of the current worktree. Read each result with its contract, profile and implementation hash. Offline checks, live matrices and different runs cannot be added together. Reproduction commands are in the [guide map](../../README.md#testing); verify an older run with its saved source.
 
 ## Latest: published handoff, Linux repairs and failure iterations — 2026-09-23 KST
 

@@ -1,6 +1,6 @@
 # Compatibility
 
-[한국어](COMPATIBILITY_KO.md) · [Usage](../README.md) · [Architecture](ARCHITECTURE.md)
+[한국어](COMPATIBILITY_KO.md) · [Quick start](../README.md) · [Usage](USAGE.md) · [Architecture](ARCHITECTURE.md)
 
 ## Scope
 
@@ -10,7 +10,7 @@ Only `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4.5`, `gpt-6-astra`, `g
 
 ## Implemented behavior
 
-- `POST /v1/responses`, with either JSON or HTTP/SSE text output; authenticated `GET /v1/models` and public `GET /health`.
+- `POST /v1/responses`, with either JSON or HTTP/SSE text output; authenticated `GET /v1/models` and `GET /readyz`; public `GET /health`.
 - Text messages, system/developer instructions throughout the supplied transcript, client function tools, and custom/freeform tools.
 - Codex tool namespaces and `additional_tools` declarations. Function arguments retain JSON meaning; custom tool input retains the original string.
 - Multiple pending calls and a following batch containing all corresponding outputs.
@@ -56,7 +56,7 @@ Explicit root SDK content-filter metadata is reported as `upstream_content_filte
 
 ## Operational notes
 
-- Choose the initial model with `--ghcp-model`; `/model` uses the launch's account-enabled subset of the six allowed models in pinned order. The launch-owned catalog is temporary and does not change the user's Codex configuration files.
+- Choose the initial model with `--ghcp-model`; `/model` uses the launch's account-enabled subset of the six allowed models in pinned order. The temporary catalog does not edit Codex configuration, but Codex's `/model` selection can be saved to `~/.codex/config.toml`. See [selection and persistence](USAGE.md#model-selection-and-context).
 - A result batch must include every outstanding call exactly once. Configuration changes, including tool-less compaction, require a complete-result handoff with unchanged non-instruction history and confirmed cleanup/readiness. Completed IDs and stale response versions survive; old result RPCs are never resubmitted. Serialized history cannot guarantee that a model will not request the same operation under a new ID.
 - SDK sessions select the maximum advertised context tier (`long_context` where available, otherwise `default`); Codex compacts at 80% of the catalog's effective input budget. Context overflow keeps the `context_length_exceeded` error code, and the launcher disables automatic HTTP/stream inference retries. First progress has a separate 180-second allowance, followed by the 90-second streaming inactivity limit; both remain capped by the absolute turn/request deadlines.
 - The most recent result is retryable, but arbitrary historical response branches are not. Start a new full-history conversation to branch.

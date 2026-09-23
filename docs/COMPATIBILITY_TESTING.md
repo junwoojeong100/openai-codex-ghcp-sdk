@@ -1,14 +1,54 @@
 # Integrated compatibility verification
 
-[한국어](COMPATIBILITY_TESTING_KO.md) · [Scenarios and checklist](NATIVE_SCENARIOS.md) · [Product boundaries](COMPATIBILITY.md)
+[한국어](COMPATIBILITY_TESTING_KO.md) · [Guide map](../README.md#testing) · [Scenario reference](NATIVE_SCENARIOS.md) · [Product boundaries](COMPATIBILITY.md)
 
-## Current contract and verification records
+Test end-to-end development workflows with **18 scenarios × six models = 108 cases**. The current contract is `codex-ghcp-workflows-18-v6` (schemaVersion 6). It is separate from the 66-case stability and 72-case TUI suites; passing either of those does not pass this suite.
 
-`codex-ghcp-workflows-18-v6` (schemaVersion 6): **18 scenarios × six exact GHCP models = 108 cases**. Matrix dimensions, report denominators and documentation are derived from the catalog. There is one full suite, no live subset, no automatic case reruns and no native OpenAI baseline. Runtime verification uses Node 22.12+; the bridge's application engine requirements are unchanged.
+## Prepare and run
 
-Historical v5 108-case and v4 126-case reports verify only with their original runner revision. See the [verification records](validation/README.md). The separate 11-scenario stability contract cannot be credited as a pass of this 18-workflow contract.
+Run from the repository root after [installation](../README.md#quick-start). Runtime/live checks need Node 22.12+, Codex 0.154.0 and a working OS sandbox. The bridge's application engine requirements are unchanged.
 
-v6 corrects three Linux verification assumptions without relaxing the OS sandbox. C05 explicitly runs `node --test --experimental-test-isolation=none`: the same three immutable tests execute in one Node process, avoiding the pinned sandbox's loss of captured child-stdio ([upstream issue](https://github.com/openai/codex/issues/18473)). The oracle still requires the real failing and passing exits, all three tests and independent inputs. C08 writes its unchanged measurements directly to stdout's file descriptor instead of the affected Node stream. C15 maps the receipt's namespace PID to a unique descendant of the owned native host with the same working directory before checking that the host process exits; it never probes host PID 2 on the assumption that a sandbox PID is global. Old failed runs are preserved, not regraded.
+**Offline checks — no model calls:**
+
+```bash
+npm run test:scenarios
+npm run docs:scenarios:check
+npm run test:compatibility -- --plan
+npm run test:compatibility:runtime
+```
+
+The default is `--plan`. Runtime checks use real Codex with mechanical SDK peers and isolated credentials, including the actual launcher in C11. They check the harness, not live model compatibility.
+
+**Live run — Copilot authentication and usage required:** choose a new output directory for every run. No OpenAI API key is needed. Run this once, then verify its report even if the run exits with failures.
+
+```bash
+npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
+```
+
+```bash
+npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
+```
+
+Existing output folders are never overwritten. There is no model subset, automatic case rerun or native OpenAI baseline. An unavailable model retains 18 blocked cells; shared prerequisite failure retains all 108 cells. Case failures do not skip later cases. Interruption stops scheduling and preserves incomplete evidence.
+
+Up to four model lanes run concurrently. Each case includes an eight-second cleanup reserve. Exhausting every deadline gives 2,220 seconds/model and a **75.5-minute** scheduling estimate including preflight, excluding OS/I/O overhead. One hour is a target, not a global cutoff.
+
+## Read the result
+
+| Exit code | Meaning |
+| --- | --- |
+| 0 | Valid plan, passing runtime self-test, or **108/108** live cases passed |
+| 1 | Failed, blocked, unsupported or incomplete execution |
+| 2 | Invalid arguments or evidence |
+
+Use the report's execution kind to distinguish an offline pass from a live pass. After source changes, verify old evidence with that run's saved source and the same dependencies:
+
+```bash
+node .runtime/compatibility-new-run/source-snapshot/scripts/compatibility.mjs \
+  --verify .runtime/compatibility-new-run/report.json
+```
+
+Recorded results and failures are in the [verification index](validation/README.md). Older v5/v4 reports require their original runner; do not regrade them as v6.
 
 ## Three separate metrics
 
@@ -18,19 +58,7 @@ v6 corrects three Linux verification assumptions without relaxing the OS sandbox
 
 Reports also show feature-group evidence per model. Offline runs never establish live feature evidence. Partial scope remains partial even if its linked scenarios pass.
 
-## Checks without live inference
-
-```bash
-npm test
-npm run test:scenarios
-npm run docs:scenarios:check
-npm run test:compatibility -- --plan
-npm run test:compatibility:runtime
-```
-
-Unit tests use synthetic evidence, owned subprocesses and loopback HTTP. The runtime check uses **real Codex 0.154.0 + mechanical SDK peers**, not real models. C11 starts the actual launcher and child bridge with explicit, offline-labelled observation instrumentation and isolated credentials. A valid OS sandbox is required. Runtime success is a harness check, never live compatibility credit.
-
-## New native paths
+## Native paths covered
 
 - **C11:** actual `bin/codex-ghcp`, production bridge lifecycle and default tool catalog; no injected `model_catalog_json`/patch profile. This does not certify interactive `/model` or every reasoning effort.
 - **C12:** native `review/start` and reviewer lifecycle, not a review-like prompt. If the native reviewer requires structured output unsupported by the bridge, that is an **unsupported** case, not a pass.
@@ -48,21 +76,7 @@ C03 now explicitly specifies field types and distinguishes semantic JSON checks 
 - C12 reads the native completed review's rendered findings or JSON. It still requires exactly one actionable finding at `review.mjs:3`, an actual diff read, the correlated reviewer lifecycle and unchanged files.
 - C13 reads the authoritative completed native `plan` item, not an incidental assistant message. The hidden host answer must be correlated and appear in the final plan; only read-only exploration is allowed, with no edits, mutating commands or broad permission grant.
 - Git-diff evidence recognizes grouped shell invocations and Git global options, but a quoted `git diff` string is not execution evidence. Negative tests reject wrong paths/turns, extra findings, missing diffs and uncorrelated or unsafe plans.
-- These C12/C13 and Git rules were fixed for v4 and carry over unchanged to v6; they are not post-run exceptions. The C05 command and C15 host-PID evidence changes are explicitly versioned above. Freeze catalog and implementation hashes before live execution; preserve failures and do not rerun cells to improve the score.
-
-## Live execution: explicit opt-in and usage
-
-Copilot authentication is required and inference consumes usage. No OpenAI API key is needed.
-
-```bash
-npm run test:compatibility -- --execute
-npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
-npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
-```
-
-The default is offline `--plan`. Existing output folders are never overwritten. An unavailable model retains 18 blocked cells. Shared prerequisite failure retains all 108 cells. Failures do not skip subsequent cases. User interruption stops scheduling and preserves incomplete evidence.
-
-Up to four model lanes run concurrently. Each case includes preparation, native/model/tool work and an eight-second cleanup reserve. The sum of worst-case slots is 2,220 seconds/model; including preflight and two scheduling waves gives **75.5 minutes**, excluding I/O/OS overhead. One hour is a target, **not a global cutoff**. Normal runs need not consume every deadline.
+- These C12/C13 and Git rules were fixed for v4 and carry over unchanged to v6; they are not post-run exceptions. The C05 command and C15 host-PID evidence changes are described in [v6 runner changes](#v6-runner-changes). Freeze catalog and implementation hashes before live execution; preserve failures and do not rerun cells to improve the score.
 
 ## Isolation and evidence
 
@@ -72,4 +86,6 @@ C11 instrumentation wraps the actual SDK and HTTP boundaries in live mode withou
 
 Reports retain native JSONL, HTTP/SSE, SDK, state, assertion, cleanup and scenario-specific evidence. Verification checks contract and implementation hashes, every matrix slot, artifact ownership/hashes, recomputed assertions and metrics. Hashes are not third-party attestation. Inspect evidence for private information before publishing; raw evidence can stay under ignored `.runtime`.
 
-Exit codes: `0` valid plan or **108/108** live pass; `1` failed/blocked/unsupported/incomplete matrix; `2` invalid arguments or evidence. A runtime self-test has its own non-live verdict.
+## v6 runner changes
+
+v6 corrects three Linux verification assumptions without relaxing the OS sandbox. C05 runs `node --test --experimental-test-isolation=none`: the same three immutable tests execute in one Node process, avoiding the pinned sandbox's loss of captured child-stdio ([upstream issue](https://github.com/openai/codex/issues/18473)). The oracle still requires the real failing and passing exits, all three tests and independent inputs. C08 writes its unchanged measurements directly to stdout's file descriptor instead of the affected Node stream. C15 maps the receipt's namespace PID to a unique descendant of the owned native host with the same working directory before checking that the host process exits; it never assumes a sandbox PID is global. Old failed runs remain unchanged.

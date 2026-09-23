@@ -17,7 +17,7 @@ import { Backend } from "../scripts/compatibility/backend.mjs";
 import { safeApprovalCommand } from "../scripts/compatibility/fixtures.mjs";
 import { supervise, workerEnvironment } from "../scripts/compatibility/supervisor.mjs";
 import { ROOT, writeJson, sha, safeRead, scrubber, environment, bounded, run } from "../scripts/compatibility/util.mjs";
-import { updateDocumentation } from "../scripts/compatibility/documentation.mjs";
+import { scenarioDocument, updateDocumentation } from "../scripts/compatibility/documentation.mjs";
 import { CoreScriptedSdk } from "./helpers/core-scripted-sdk.mjs";
 import { syntheticEvidence, writeSyntheticCase } from "./helpers/core-evidence.mjs";
 
@@ -236,9 +236,21 @@ test("user cancellation stops new cases, preserves incomplete cells and cannot c
   assert.equal(cases, 1); assert.equal(report.interrupted, true); assert.equal(report.cases.length, TOTAL_CASES);
   assert.equal(report.summary.fullMatrixPassed, false); assert.ok(report.cases.every(r => r.status === "not-run"));
 });
+test("scenario documentation links every index entry to its detailed contract in both languages", () => {
+  for (const language of ["en", "ko"]) {
+    const document = scenarioDocument(language);
+    for (const { id, name } of NATIVE_SCENARIOS) {
+      const anchor = id.toLowerCase();
+      assert.ok(document.includes(`| [${id}](#${anchor}) | ${name[language]} |`));
+      assert.ok(document.includes(`<a id="${anchor}"></a>\n\n### ${id} — ${name[language]}\n`));
+    }
+  }
+});
+
 test("scenario documentation is generated from the contract and local links resolve", () => {
   updateDocumentation({ check: true });
-  for (const file of ["README.md", "README_KO.md", "docs/NATIVE_SCENARIOS.md", "docs/NATIVE_SCENARIOS_KO.md", "docs/COMPATIBILITY_TESTING.md", "docs/COMPATIBILITY_TESTING_KO.md"]) {
+  const guides = fs.readdirSync(path.join(ROOT, "docs")).filter(file => file.endsWith(".md")).map(file => path.join("docs", file));
+  for (const file of ["README.md", "README_KO.md", ...guides, "docs/validation/README.md", "docs/validation/README_KO.md"]) {
     const full = path.join(ROOT, file);
     for (const match of fs.readFileSync(full, "utf8").matchAll(/\]\(([^\s)]+)\)/g)) {
       const target = match[1].split("#")[0];

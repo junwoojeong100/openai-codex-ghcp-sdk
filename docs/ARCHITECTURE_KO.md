@@ -1,6 +1,8 @@
 # 구조
 
-[English](ARCHITECTURE.md) · [사용법](../README_KO.md) · [호환성](COMPATIBILITY_KO.md)
+[English](ARCHITECTURE.md) · [빠른 시작](../README_KO.md) · [사용법](USAGE_KO.md) · [호환성](COMPATIBILITY_KO.md)
+
+구현 참조 문서입니다. 실행·설정·재시작 방법은 [사용 안내](USAGE_KO.md)를 참고하세요.
 
 ## 요청 경로
 
@@ -27,7 +29,7 @@ Codex CLI — 승인·샌드박스·도구 실행 담당
 - `copilot-home.mjs`, `list-models.mjs`: 기존 Copilot 홈 경로 해석과 계정별 모델 조회.
 - 실행기·daemon 모듈 및 `bin/`: 프로젝트 소유 bridge 시작, 프로세스별 Codex 설정과 비공개 임시 모델 목록 전달, 선택적 백그라운드 실행 관리. 임시 목록은 피커의 내장·캐시 목록을 대체하며 Codex 종료 시 삭제합니다. 목록 항목에 `apply_patch_tool_type: "freeform"`을 선언하므로 Codex가 기본 `apply_patch` 도구를 제공합니다.
 - `scripts/terminal.mjs`, `scripts/soak/terminal-lane.mjs`: 명시적 실모델 터미널 실행, 소스 동결 worker, 격리 환경과 SDK 응답 대조. 통합 soak worker도 같은 terminal lane을 사용합니다.
-- `scripts/tui.mjs`와 `scripts/tui/`: 실제 TUI 행렬 `codex-ghcp-tui-12-v1`입니다. 케이스마다 `bin/codex-ghcp`를 전용 PTY에서 실행하고 headless Playwright/xterm.js로 렌더링·구동합니다. bridge Copilot 런타임 아래 프로세스를 표본 채취하고, Codex 자체 rollout을 읽으며, 저장한 fact에서 검사를 다시 계산합니다.
+- `scripts/tui.mjs`와 `scripts/tui/`: [실제 TUI 행렬](TUI_SCENARIOS_KO.md)입니다. 케이스마다 `bin/codex-ghcp`를 전용 PTY에서 실행하고 headless Playwright/xterm.js로 렌더링·구동합니다. bridge Copilot 런타임 아래 프로세스를 표본 채취하고, Codex 자체 rollout을 읽으며, 저장한 fact에서 검사를 다시 계산합니다.
 - `scripts/soak/terminal.mjs`, `browser.mjs`: 동일한 소유 PTY 수명주기에 독립 파서 또는 Playwright/xterm 표시기를 연결합니다. 브라우저 입출력은 실제 PTY를 사용하며 모의 assistant 화면이 아닙니다. 취소 시 터미널 그룹과 소유 브라우저를 함께 정리합니다.
 
 ## 도구 호출 왕복
@@ -58,7 +60,11 @@ function 도구는 JSON 인자를 사용합니다. custom 도구는 SDK에 필�
 
 SDK의 send API는 임의의 Responses 이력을 그대로 복원하는 API가 아닙니다. 과거 대화가 포함된 최초 요청은 지시문을 제외한 이력을 assistant phase와 함께 직렬화하여 새 사용자 프롬프트의 문맥으로 제공합니다. JSON 안의 구분자 문자는 이스케이프하지만 디코딩된 원문은 바꾸지 않습니다. 이는 **역할을 그대로 복원하는 네이티브 replay가 아니며**, 동일한 답변을 보장하지 않습니다. 정상적으로 이어지는 live 세션에서는 이 replay 경로를 사용하지 않습니다.
 
-`model-map.mjs`는 모델별로 제공되는 최대 컨텍스트 tier를 선택합니다. `billing.tokenPrices.longContext` 또는 `supportedContextTiers`가 지원을 명시하면 `long_context`, 그렇지 않으면 `default`입니다. 공통 선택 함수를 모델 목록 예산과 SDK 세션 설정에 함께 사용하고, tier를 세션 signature에 포함하여 추론 수준 변경·이력 재구성·무응답 복구에도 유지합니다. 대기 호출이 있으면 tier 변경으로 세션을 교체할 수 없으며, 상위 서비스의 거절을 기본 tier로 조용히 대체하지 않습니다. 입력 예산은 선택한 tier의 prompt 한도와 모델 총 문맥 내 최대 출력 예약량을 반영하며 Codex가 80%에서 로컬 자동 압축을 시작합니다. SDK 자체 압축은 계속 비활성화합니다. SDK의 구조화된 문맥 초과 오류는 Responses의 `context_length_exceeded`로 전달하여 단순 전송 실패와 구분합니다. 실행기는 HTTP·스트림 자동 재시도를 끄지만, 클라이언트가 명시적으로 보낸 동일한 최신 요청은 기존 성공 캐시를 사용할 수 있습니다.
+### 문맥 예산
+
+`model-map.mjs`는 모델별 최대 지원 tier를 선택합니다. `billing.tokenPrices.longContext` 또는 `supportedContextTiers`가 지원을 명시하면 `long_context`, 그렇지 않으면 `default`입니다. 공통 선택 함수를 모델 목록 예산과 SDK 세션 설정에 함께 사용하고, tier를 세션 signature에 포함하여 추론 수준 변경·이력 재구성·무응답 복구에도 유지합니다. 대기 호출이 있으면 위의 완료 결과 핸드오프 조건을 충족해야 tier를 바꿀 수 있으며, 상위 서비스의 거절을 기본 tier로 자동 대체하지 않습니다.
+
+입력 예산은 선택한 tier의 prompt 한도와 모델 총 문맥 내 최대 출력 예약량을 반영하며 Codex가 80%에서 로컬 자동 압축을 시작합니다. SDK 자체 압축은 계속 비활성화합니다. SDK의 구조화된 문맥 초과 오류는 Responses의 `context_length_exceeded`로 전달하여 단순 전송 실패와 구분합니다. 실행기는 HTTP·스트림 자동 재시도를 끄지만, 클라이언트가 명시적으로 보낸 동일한 최신 요청은 기존 성공 캐시를 사용할 수 있습니다.
 
 ## 수명주기와 보안 경계
 

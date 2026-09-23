@@ -1,16 +1,42 @@
 # 실제 Codex TUI 시나리오(Playwright headless)
 
-[English](TUI_SCENARIOS.md) · [안정성 계약](STABILITY_TESTING_KO.md) · [터미널·내구성 검사](SOAK_TESTING_KO.md)
+[English](TUI_SCENARIOS.md) · [검증 안내](../README_KO.md#개발과-검증) · [안정성 계약](STABILITY_TESTING_KO.md) · [터미널·내구성 검사](SOAK_TESTING_KO.md)
 
 `codex-ghcp-tui-12-v3`는 **실제 Codex TUI → 운영 브릿지 → Copilot SDK → 지정 모델** 연결을 검증합니다. **12개 시나리오 × 6개 모델 = 72건**을 유지하며 안정성·호환성·이전 TUI 결과와 합산하지 않습니다. 목표는 **변경되지 않은 구현의 전체 실검증 한 회에서 95% 이상, 즉 69/72건 이상 통과**입니다. v3는 첫 진행·스트리밍 제한의 분리를 추가로 요구하며 이전 결과는 당시 동결 소스로만 검증합니다.
 
-[이전 v1 기록](validation/2026-09-23-tui-scenarios/README_KO.md)의 70/72(구현 `54c7eb77`)는 v3나 새 컨텍스트·복구 구현의 검증 결과가 아닙니다.
+## 준비와 실행
 
-**과거 v2 결과(한국 시간 2026-09-23): 72/72(100%)**, 구현 `fe500d78`이며 당시 소스·동결 소스로 검증했습니다. Copilot 연결 시간 초과가 확인된 최초 독립 실행의 45/72도 별도로 보존하며 v3 점수로 사용하지 않습니다. [v2 결과와 한계](validation/2026-09-23-tui-connection-v2/README_KO.md)를 참고하세요.
+`npm ci` 후 저장소 루트에서 계획을 확인합니다. 기본 동작이며 Codex·브라우저 설치나 Copilot 로그인 없이 모델 호출 0회로 실행합니다.
+
+```sh
+npm run test:tui -- --plan
+```
+
+검사를 실행하려면 [CLI 설치](../README_KO.md#빠른-시작)를 마치고 Python 3를 준비하세요. runtime·실모델 경로 모두 Codex 0.154.0과 headless Chromium이 필요합니다. 브라우저는 한 번 설치합니다.
+
+```sh
+npx --no-install playwright install chromium
+```
+
+**오프라인 — 모델 호출 없음:** runtime은 실제 Codex와 SDK 대역으로 U01·U02·U11·U12를 검사합니다.
+
+```sh
+npm run test:tui:runtime
+```
+
+**실모델 — Copilot 인증·사용량 필요:** 새 출력 폴더에서 72건 전체를 한 번 실행한 뒤 실패를 포함한 보고서를 검증합니다.
+
+```sh
+npm run test:tui -- --execute --output .runtime/tui-new
+```
+
+```sh
+npm run test:tui -- --verify .runtime/tui-new/report.json
+```
+
+날짜별 v3 결과와 보존한 v1/v2 실행은 [검증 기록](validation/README_KO.md)에 있습니다. 과거 72/72 결과가 향후 서비스 가용성이나 다른 구현의 동작을 보장하지는 않습니다.
 
 ## 실행 경로
-
-**최신 v3 실행(한국 시간 2026-09-23): 72/72(100%)**, 구현 `793e852c`에서 6개 모델 모두 12/12이며 현재·동결 소스로 증거 검증을 통과했습니다. 별도 실제 TUI 회귀 검사에서는 SDK 대역으로 첫 진행을 실측 95초 지연시키고도 재시작·프롬프트 재제출 없이 완료했습니다. 실모델 행렬 자체에서는 정체가 발생하지 않았으므로 실제 공급자 장애 복구를 입증하는 결과는 아닙니다. [검증 요약](validation/2026-09-23-first-progress.json)을 참고하세요.
 
 모든 케이스는 다음 경로를 거칩니다.
 - 저장소의 실제 실행기 `bin/codex-ghcp`
@@ -65,17 +91,14 @@ Codex의 선택적인 자동 제목 생성은 여전히 미지원인 구조화 J
 
 기대와 다른 답변으로 완료되거나 HTTP·스트림 오류가 발생하면 원래 증거를 남기고 즉시 실패 처리합니다. 시나리오 제한 시간까지 기다렸다가 무응답으로 오분류하지 않습니다. 실패 전 관측값도 보존합니다. 개선 후에는 새 출력 폴더에서 72건 전체를 다시 실행하며, 다른 구현의 성공 셀을 합치거나 이전 보고서를 덮어쓰지 않습니다.
 
-## 명령
+## 과거 실행 검증과 종료 코드
 
 ```sh
-npx --no-install playwright install chromium
-npm run test:tui                    # 계약 목록만 출력, 모델 호출 없음
-npm run test:tui:runtime            # 실제 Codex TUI + Playwright + SDK 대역(U01·U02·U11·U12)
-npm run test:tui -- --execute --output .runtime/tui-new   # Copilot 사용량 발생
-npm run test:tui -- --verify .runtime/tui-new/report.json
+node .runtime/tui-new/source-snapshot/scripts/tui.mjs \
+  --verify .runtime/tui-new/report.json
 ```
 
-소스를 바꾼 뒤에는 실행 폴더의 `source-snapshot/scripts/tui.mjs --verify`로 검증하세요. 종료 코드는 다음과 같습니다.
+작업 트리를 바꾼 뒤에는 동결 소스를 사용하며 같은 의존성이 필요합니다. `--verify`는 모델 호출 없이 증거를 확인합니다. 계획·실모델 실행·검증의 종료 코드는 다음과 같습니다.
 
 | 코드 | 의미 |
 |---|---|

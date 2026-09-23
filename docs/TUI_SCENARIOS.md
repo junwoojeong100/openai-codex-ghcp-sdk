@@ -1,16 +1,42 @@
 # Real Codex TUI scenarios (Playwright headless)
 
-[한국어](TUI_SCENARIOS_KO.md) · [Stability contract](STABILITY_TESTING.md) · [Terminal/endurance checks](SOAK_TESTING.md)
+[한국어](TUI_SCENARIOS_KO.md) · [Guide map](../README.md#testing) · [Stability contract](STABILITY_TESTING.md) · [Terminal/endurance checks](SOAK_TESTING.md)
 
 `codex-ghcp-tui-12-v3` verifies the **actual Codex TUI → production bridge → Copilot SDK → exact model** connection. It retains **12 scenarios × 6 models = 72 cases** and is never combined with stability, compatibility or earlier TUI results. The target is **at least 95%: 69/72 cases in one complete, unchanged live run**. V3 additionally requires separate first-progress and streaming watchdog settings; older results verify only with their frozen source.
 
-The [historical v1 result](validation/2026-09-23-tui-scenarios/README.md), 70/72 on implementation `54c7eb77`, is not evidence for v3 or the newer context/recovery implementation.
+## Prepare and run
 
-**Historical v2 result (2026-09-23 KST): 72/72 (100%)** on implementation `fe500d78`, verified with its then-current and frozen source. The first independent run's 45/72, including a confirmed Copilot connection timeout, is preserved separately. These are not v3 scores. See the [v2 results and limits](validation/2026-09-23-tui-connection-v2/README.md).
+After `npm ci`, inspect the plan from the repository root. This is the default action; it needs no Codex installation, browser or Copilot login and makes no model calls:
+
+```sh
+npm run test:tui -- --plan
+```
+
+To run the tests, complete the [CLI setup](../README.md#quick-start) and install Python 3. The runtime and live paths both need Codex 0.154.0 and headless Chromium. Install the browser once:
+
+```sh
+npx --no-install playwright install chromium
+```
+
+**Offline — no model calls:** the runtime check drives real Codex with an SDK double for U01, U02, U11 and U12.
+
+```sh
+npm run test:tui:runtime
+```
+
+**Live — Copilot authentication and usage required:** run all 72 cases in a new output directory, then verify the report, including any failures.
+
+```sh
+npm run test:tui -- --execute --output .runtime/tui-new
+```
+
+```sh
+npm run test:tui -- --verify .runtime/tui-new/report.json
+```
+
+See [verification records](validation/README.md) for dated v3 results and preserved v1/v2 runs. A past 72/72 result is not a guarantee of future service availability or evidence for a different implementation.
 
 ## Execution path
-
-**Latest v3 run (2026-09-23 KST): 72/72 (100%)**, all six models 12/12 on implementation `793e852c`. Current and frozen-source evidence verification passed. A separate actual-TUI regression held first progress for 95 measured seconds using an SDK double without restarting or replaying its prompt. The live matrix itself had no stalled turns and does not establish recovery from a real provider outage. See the [verification summary](validation/2026-09-23-first-progress.json).
 
 Every case runs through the following path:
 - the repository's real launcher, `bin/codex-ghcp`;
@@ -65,17 +91,14 @@ Checks are pure functions of the saved `facts.json`. `--verify` checks the actua
 
 A completed unexpected answer or an HTTP/stream failure fails promptly with its original evidence rather than waiting until a scenario deadline and being mislabelled as a timeout. Partial scenario observations survive failure. After fixing an issue, use a fresh output directory and rerun all 72 cells; do not merge passing cells from different implementations or overwrite earlier reports.
 
-## Commands
+## Verify an older run and read exit codes
 
 ```sh
-npx --no-install playwright install chromium
-npm run test:tui                    # print the contract only; no model calls
-npm run test:tui:runtime            # real Codex TUI + Playwright + SDK double (U01, U02, U11, U12)
-npm run test:tui -- --execute --output .runtime/tui-new   # consumes Copilot usage
-npm run test:tui -- --verify .runtime/tui-new/report.json
+node .runtime/tui-new/source-snapshot/scripts/tui.mjs \
+  --verify .runtime/tui-new/report.json
 ```
 
-After changing source, verify with the run folder's `source-snapshot/scripts/tui.mjs --verify`. Exit codes:
+Use the saved source after changing the worktree; the same dependencies are required. `--verify` checks evidence without making model calls. Plan/live/verify exit codes are:
 
 | Code | Meaning |
 |---|---|

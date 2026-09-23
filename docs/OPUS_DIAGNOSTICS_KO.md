@@ -1,29 +1,35 @@
 # Opus 상위 응답 진단
 
-[English](OPUS_DIAGNOSTICS.md) · [안정성 계약](STABILITY_TESTING_KO.md)
+[English](OPUS_DIAGNOSTICS.md) · [검증 안내](../README_KO.md#개발과-검증) · [안정성 계약](STABILITY_TESTING_KO.md)
 
 `content_filter`라는 SDK 오류만으로 원인을 추정하지 않고, **동일 요청의 상위 프로토콜 응답과 SDK 이벤트를 대조**하기 위한 별도 진단입니다. 안정성 행렬의 실패 셀을 대체하거나 재채점하지 않습니다.
 
 ## 실행
 
-```sh
-# 계획만 출력. 모델 호출 0회.
-npm run diagnose:opus
+저장소 루트에서 `npm ci`를 마친 뒤 실행합니다. 실모델 진단에는 Copilot SDK 1.0.14와 `claude-opus-5.5`를 사용할 수 있는 인증된 계정이 필요합니다. 이 진단은 Codex TUI나 브라우저를 사용하지 않습니다.
 
-# 실제 claude-opus-5.5 호출. 비어 있거나 아직 없는 증거 디렉터리만 허용.
+**계획만 출력 — 모델 호출 없음:**
+
+```sh
+npm run diagnose:opus
+```
+
+**실모델 진단 — Copilot 사용량 발생:** 새 디렉터리나 비어 있는 디렉터리만 사용합니다. 기존 보고서는 덮어쓰지 않습니다.
+
+```sh
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
 ```
 
-Copilot SDK 1.0.14와 `claude-opus-5.5`에 접근할 수 있는 기존 Copilot 인증이 필요합니다. `claude-opus-5`에 대한 기존 refusal/filter 분석은 과거 기록으로 남습니다. 일곱 개의 새 세션에서 다음을 비교합니다.
+`claude-opus-5`에 대한 기존 분석은 과거 기록으로 남습니다. 일곱 개의 새 세션에서 다음을 비교합니다.
 
 - 변경하지 않은 v4 `read_fixture` 요청: SDK 직접 호출 / production `SessionManager` 경로.
 - 같은 요청에서 SDK streaming 옵션과 reasoning summary 옵션의 영향.
 - 별도 단순 도구 호출 대조군: SDK / 브릿지.
 - 별도 산술 대조군.
 
-대조군의 문구는 **진단 전용**이며 production 요청이나 66개 시나리오를 치환하지 않습니다. 모델 ID·추론 강도(low)를 유지하고 SDK 기본 보호 지시를 제거하지 않습니다. 모든 SDK 권한 요청은 거절하며, 프로그램이 수행하는 유일한 도구 작업은 메모리에서 생성한 합성 fixture 문자열 반환입니다. 자동 재시도, 모델 fallback, 사용자 설정 변경은 없습니다.
+대조군의 문구는 **진단 전용**이며 운영 요청이나 66건 안정성 검사를 치환하지 않습니다. 모델 ID·추론 강도(low)를 유지하고 SDK 기본 보호 지시를 제거하지 않습니다. 모든 SDK 권한 요청은 거절하며, 유일한 도구 작업은 메모리에서 생성한 합성 fixture 문자열 반환입니다. 자동 재시도, 모델 fallback, 사용자 설정 변경은 없습니다.
 
-`--execute`는 실제 모델 사용량을 발생시킵니다. 실패를 재실행해 같은 보고서를 덮어쓰지 않습니다. 차단·불일치·오류·정리 실패가 있으면 종료 코드는 1입니다. 종료 코드 0도 정식 안정성 행렬 통과를 의미하지 않습니다.
+차단·불일치·오류·정리 실패가 있으면 종료 코드는 1입니다. 종료 코드 0도 정식 안정성 행렬 통과를 의미하지 않습니다.
 
 ## 기록과 판독
 

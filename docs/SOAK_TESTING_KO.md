@@ -1,27 +1,46 @@
 # 실제 Codex 장기 대화 내구성 검증
 
-[English](SOAK_TESTING.md)
+[English](SOAK_TESTING.md) · [검증 안내](../README_KO.md#개발과-검증) · [TUI 시나리오](TUI_SCENARIOS_KO.md) · [검증 기록](validation/README_KO.md)
 
-네이티브·소유 PTY·Playwright Headless 터미널 경로를 구현했습니다. 과거 중단된 실행은 그대로 중단 기록으로 남습니다. 아래 명령은 재현 안내이지 5시간 안정성이 입증됐다는 뜻이 아닙니다. Playwright 경로는 실제 Codex PTY 바이트를 xterm.js로 표시하며 모델 출력을 대체하지 않습니다. 다른 데스크톱 터미널 에뮬레이터까지 인증하는 검사는 아닙니다.
+한 모델의 제한된 시간 터미널 작업은 `test:terminal`, 장기 네이티브 대화와 선택적 터미널 검사는 `test:soak`를 사용합니다. 둘 다 66건 안정성 행렬과 별개입니다. **soak의 `--smoke`도 실모델을 호출합니다.** 계획과 SDK 대역 runtime 검사만 추론 사용량이 없습니다.
 
-`npm run test:soak`는 66건 안정성 행렬과 별개입니다. 실제 경과시간, 오래 유지한 네이티브 Codex 대화, 실제 Copilot SDK 호출, 문맥 증가, 압축, 대기열, 메모리 및 소유 프로세스 응답 상태를 측정합니다. 짧은 실행기 검사는 5시간 안정성의 증거가 아닙니다.
+아래는 재현 안내이지 5시간 안정성의 증거가 아닙니다. 중단한 실행은 미완료로 유지합니다. Playwright는 실제 Codex PTY 바이트를 xterm.js로 표시하며 데스크톱 터미널 앱 자체를 검증하지는 않습니다.
 
-짧은 오프라인 회귀 검사는 `npm run test:context:runtime`으로 실행합니다. 120회 연속 네이티브 도구 호출·반복 압축과 실제 TUI의 무응답 제한·설정 제한·Escape 이후 동일 프로세스 복구를 확인합니다. 기존 스트림 안의 무응답 자동 복구, 무진행 제한보다 길게 이어지는 SDK 바이트 전용 진행, TUI 재시작 없는 다음 요청 성공도 검사합니다. 의도적인 즉시 실패 항목은 `TURN_IDLE_RECOVERY_ATTEMPTS=0`을 명시합니다. SDK는 실모델이 아닌 기계적인 대역입니다. PTY 관측기는 Codex의 model/directory 로딩 표시가 사라질 때까지 기다리고, 출력 바이트가 완전히 멈추는 대신 논리적인 준비·완료 상태를 확인합니다. 장식용 화면 갱신을 터미널 먹통으로 오인하지 않으며, 예상 오류 항목도 실제 오류 문구와 다음 요청의 성공을 요구합니다.
+## 준비 사항과 오프라인 검사
 
-## 재현 가능한 터미널 검사
+`npm ci` 후 저장소 루트에서 필요한 계획을 확인합니다. 계획은 **모델 호출 없이** 실행하며 Codex·Python·Chromium이나 Copilot 로그인이 필요하지 않습니다.
 
-컨텍스트 runtime 검사는 실제 Codex TUI 응답을 **실측 95초** 동안 지연시킨 뒤 운영 기본값인 첫 진행 180초·스트리밍 제한 90초에서 완료되는지도 확인합니다. SDK 세션 1개·지연 프롬프트 제출 1회·복구 없음·최종 답변·후속 요청 성공을 요구합니다. SDK 대역을 명시한 회귀 검사이며 원격 모델의 가용성 증거는 아닙니다. 짧은 항목에서는 비공개 내용을 노출하지 않는 루트 단계 바이트 진행도 검사합니다.
+```sh
+npm run test:terminal -- --plan --driver playwright
+npm run test:soak -- --plan
+```
 
-실검증에는 Node/npm·Python 3·고정된 Codex CLI·Copilot 인증이 필요합니다. `npm ci`는 고정 개발 의존성(`playwright@1.63.0`, `@xterm/xterm@6.0.0`)을 설치합니다. Headless 브라우저는 최초 한 번 설치합니다.
+작업을 실행하려면 [CLI 설치](../README_KO.md#빠른-시작)를 마치세요. 네이티브 soak에는 Codex 0.154.0, 터미널 경로에는 Python 3도 필요합니다. Chromium은 Playwright 드라이버와 터미널 runtime 검사에만 필요합니다.
 
 ```sh
 npx --no-install playwright install chromium
-npm run test:terminal:runtime  # 실제 Codex + 두 터미널 드라이버 + SDK 대역, 모델 호출 없음
-npm run test:terminal -- --plan --driver playwright
+```
 
-# 명시적인 실모델 실행. 선택한 모델의 Copilot 사용량이 발생합니다.
+실제 Codex와 SDK 대역으로 두 터미널 드라이버를 **모델 호출 없이** 확인합니다.
+
+```sh
+npm run test:terminal:runtime
+```
+
+## 재현 가능한 터미널 검사
+
+**실모델 옵션:** Copilot 인증이 필요하고 사용량이 발생합니다. 아래 두 예시는 준비 절차가 아니라 **하나를 선택하는 대안**입니다. 출력 폴더는 매번 새로 선택하세요.
+
+PTY 드라이버로 실측 대화 120초:
+
+```sh
 npm run test:terminal -- --execute --driver pty --model gpt-6-astra \
   --duration-seconds 120 --output .runtime/terminal-pty-new
+```
+
+또는 더 큰 입력·출력으로 Playwright 드라이버 실행:
+
+```sh
 npm run test:terminal -- --execute --driver playwright --model claude-sonnet-5 \
   --duration-seconds 120 --payload-bytes 24576 --response-words 1000 \
   --output .runtime/terminal-browser-new
@@ -37,17 +56,39 @@ npm run test:terminal -- --execute --driver playwright --model claude-sonnet-5 \
 
 ## 통합 soak 실행기
 
+**smoke는 짧은 실행이지 오프라인 검사가 아닙니다.** 실제 GPT-6 Luna와 Claude Sonnet 5를 호출합니다. 먼저 인증하고 새 출력 폴더를 사용하세요.
+
 ```sh
-npm run test:soak -- --plan
 npm run test:soak -- --smoke --duration-seconds 60 --output .runtime/soak-smoke-new
-npm run test:soak -- --smoke --duration-seconds 60 --terminal --output .runtime/soak-pty-new
-npm run test:soak -- --smoke --duration-seconds 60 --terminal --terminal-driver playwright \
-  --output .runtime/soak-browser-new
-# 준비 완료 후 lane마다 최소 18,000초. 실제 모델 사용량 발생.
+```
+
+PTY를 추가하려면 `--terminal`, 브라우저 렌더링을 추가하려면 `--terminal --terminal-driver playwright`를 붙입니다. 새 실행의 선택 사항이지 장기 검사 전에 모두 수행해야 하는 단계가 아닙니다. smoke 기간은 1~600초이며 내구성 통과로 계산하지 않습니다.
+
+**5시간 실행 — 별도 선택, 지속적인 모델 사용량 발생:** 준비 완료 후 선언한 모든 lane에서 최소 18,000초를 측정해야 하며 준비·정리 시간은 별도입니다.
+
+```sh
 npm run test:soak -- --execute --output .runtime/soak-five-hours-new
 ```
 
 출력 폴더는 매번 새로 만듭니다. 실행 전에 소스를 동결하고 그 복사본에서 소유 worker를 실행합니다. `implementationUnchanged`는 개발 작업 트리의 변경 여부, `frozenSourceUnchanged`는 실제 실행한 동결 소스의 무결성을 각각 나타냅니다. 개발 중 파일을 바꿔도 실행 중인 worker의 코드가 몰래 바뀌지 않습니다. 결과를 66건 점수에 합산하거나 과거 실행에 대입하지 않습니다.
+
+## 결과 읽기
+
+선택한 출력 폴더의 `report.json`을 확인하세요. 이 두 실행기는 별도 `--verify` 명령을 제공하지 않습니다.
+
+| 실행 | 확인할 필드 | 통과의 의미 |
+| --- | --- | --- |
+| `test:terminal -- --execute` | `passed: true` | 지정한 단기 작업·시간·증거·정리 조건 충족. 5시간 내구성은 아님 |
+| `test:soak -- --smoke` | `allLanesCompleted`·`noObservedFailures`·`frozenSourceUnchanged`가 모두 `true` | 짧은 작업 통과. 최상위 `durationMet`는 의도적으로 `false` 유지 |
+| `test:soak -- --execute` | 위 세 필드와 `durationMet: true` | 모든 lane에서 관측된 실패 없이 최소 5시간 충족. 최대 문맥 인증은 아님 |
+
+종료 코드 **0**은 유효한 계획 또는 선택한 모드 통과, **1**은 실패·미완료, **2**는 인자·실행기 오류입니다. smoke 성공도 내구성 통과는 아닙니다. 중단 후 다시 실행하기 전에 기존 보고서를 먼저 확인하세요.
+
+## 오프라인 회귀 검사 범위
+
+`npm run test:context:runtime`은 기계적인 SDK 대역으로 네이티브 도구 120회·반복 압축과 무응답 제한·설정 제한·Escape 후 같은 TUI의 복구를 검사합니다. 예상 오류 항목은 실제 오류 문구와 다음 요청 성공을 요구하며 터미널 재시작으로 대신하지 않습니다. 장식용 화면 갱신을 준비·완료로 판단하지 않습니다.
+
+운영 기본값인 첫 진행 180초·스트리밍 제한 90초에서 첫 진행을 **실측 95초** 지연시키고, SDK 세션 1개·프롬프트 제출 1회·복구 없음·다음 요청 성공도 요구합니다. 다른 항목은 무응답 복구·바이트 전용 및 루트 단계 진행을 확인하며 비공개 단계 내용은 노출하지 않습니다. 제한된 SDK 대역 회귀 검사이지 원격 모델 가용성·최대 문맥 인증이 아닙니다.
 
 ## 네이티브 작업
 

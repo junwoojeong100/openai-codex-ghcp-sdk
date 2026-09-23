@@ -1,6 +1,6 @@
 # 호환성
 
-[English](COMPATIBILITY.md) · [사용법](../README_KO.md) · [구조](ARCHITECTURE_KO.md)
+[English](COMPATIBILITY.md) · [빠른 시작](../README_KO.md) · [사용법](USAGE_KO.md) · [구조](ARCHITECTURE_KO.md)
 
 ## 범위
 
@@ -10,7 +10,7 @@
 
 ## 구현한 동작
 
-- JSON 또는 HTTP/SSE 텍스트 응답의 `POST /v1/responses`, 인증된 `GET /v1/models`, 공개 `GET /health`.
+- JSON 또는 HTTP/SSE 텍스트 응답의 `POST /v1/responses`, 인증된 `GET /v1/models`·`GET /readyz`, 공개 `GET /health`.
 - 텍스트 메시지, 대화 이력 전체의 system/developer 지시문, 클라이언트 function/custom 도구.
 - Codex namespace와 `additional_tools` 선언. function 인자는 JSON 의미를, custom 입력은 문자열 원문을 유지합니다.
 - 여러 도구 호출과 그 호출 모두에 대한 후속 결과 배치.
@@ -56,7 +56,7 @@ Codex 0.154는 대화의 첫 프롬프트 뒤에 짧은 작업 제목을 만들�
 
 ## 운영 시 주의
 
-- 초기 모델은 `--ghcp-model`로 선택하고, `/model` 피커는 실행 시점의 허용 6개 중 계정에서 사용 가능한 목록을 고정 순서로 사용합니다. 임시 모델 목록은 사용자 Codex 설정 파일을 수정하지 않습니다.
+- 초기 모델은 `--ghcp-model`로 선택하고, `/model`은 계정에서 사용 가능한 모델을 고정 순서로 표시합니다. 임시 목록은 Codex 설정을 편집하지 않지만, Codex가 `/model` 선택을 `~/.codex/config.toml`에 저장할 수 있습니다. [모델 선택과 저장](USAGE_KO.md#모델-선택과-문맥)을 참고하세요.
 - 결과 배치는 대기 중 호출을 모두 정확히 한 번 포함해야 합니다. 도구 없는 압축을 포함한 설정 변경은 지시문을 제외한 이력이 그대로이고 정리·준비 상태가 확인된 완료 결과 핸드오프를 요구합니다. 완료 ID와 stale 응답 버전을 보존하고 기존 결과 RPC를 다시 제출하지 않습니다. 직렬화된 이력은 모델이 새 ID로 같은 작업을 요청하지 않는다는 보장은 아닙니다.
 - SDK 세션은 최대 지원 context tier(지원 시 `long_context`, 아니면 `default`)를 선택하고 Codex는 목록의 유효 입력 예산 80%에서 압축합니다. 문맥 초과는 `context_length_exceeded`로 전달하며 실행기는 HTTP·스트림 자동 추론 재시도를 끕니다. 첫 진행에는 별도 180초, 이후 스트리밍 무진행에는 90초를 적용하고 모두 절대 턴·요청 제한 안에서 처리합니다.
 - 가장 최근 결과 재시도는 가능하지만 임의의 과거 response 분기는 지원하지 않습니다. 분기하려면 전체 이력을 가진 새 대화를 시작하세요.

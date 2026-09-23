@@ -1,6 +1,8 @@
 # Architecture
 
-[한국어](ARCHITECTURE_KO.md) · [Usage](../README.md) · [Compatibility](COMPATIBILITY.md)
+[한국어](ARCHITECTURE_KO.md) · [Quick start](../README.md) · [Usage](USAGE.md) · [Compatibility](COMPATIBILITY.md)
+
+This is the implementation reference. For running, configuring or restarting the bridge, use the [usage guide](USAGE.md).
 
 ## Request path
 
@@ -27,7 +29,7 @@ The bridge adapts protocols. It does not replace Codex's tool executor with Copi
 - `copilot-home.mjs` and `list-models.mjs`: existing Copilot home resolution and account-specific model listing.
 - Launcher/daemon modules and `bin/`: start a project-owned bridge, pass per-process Codex configuration and a private temporary model catalog, and manage optional background operation. Catalog entries declare `apply_patch_tool_type: "freeform"`, so Codex offers its native `apply_patch` tool. The catalog replaces bundled/cached picker entries and is removed on Codex exit.
 - `scripts/terminal.mjs` and `scripts/soak/terminal-lane.mjs`: explicit live terminal validation, frozen-source workers, isolated environments and SDK-correlated outcome checks. The soak worker uses the same terminal lane.
-- `scripts/tui.mjs` and `scripts/tui/`: the `codex-ghcp-tui-12-v1` real-TUI matrix. Each case runs `bin/codex-ghcp` in a private PTY rendered and driven by headless Playwright/xterm.js, samples processes under the bridge's Copilot runtime, reads Codex's own rollout, and recomputes checks from saved facts.
+- `scripts/tui.mjs` and `scripts/tui/`: the [real-TUI matrix](TUI_SCENARIOS.md). Each case runs `bin/codex-ghcp` in a private PTY rendered and driven by headless Playwright/xterm.js, samples processes under the bridge's Copilot runtime, reads Codex's own rollout, and recomputes checks from saved facts.
 - `scripts/soak/terminal.mjs` and `browser.mjs`: one owned PTY lifecycle with either the independent parser or a Playwright/xterm renderer. Browser input and output use the real PTY, not a simulated assistant; cancellation reaps both the terminal group and owned browser.
 
 ## Tool handoff
@@ -58,7 +60,11 @@ Completed call identities and response versions survive the handoff: exact retri
 
 The SDK's send interface is not a general Responses transcript-import API. Cold starts with historical messages serialize non-instruction history into context for a new user prompt, preserving assistant phases. Delimiter characters inside the JSON are escaped without changing the decoded text. This is an approximation, not native role-preserving replay or a guarantee of identical answers. Ordinary matching live turns do not use that replay path.
 
-`model-map.mjs` selects the largest advertised context tier for each model: `long_context` when `billing.tokenPrices.longContext` or `supportedContextTiers` advertises support, otherwise `default`. The shared selector drives both catalog budgets and SDK session configuration; tier identity is part of the session signature and survives effort changes, history rebuilds and idle recovery. Tier changes cannot replace a session with pending calls, and an upstream rejection never silently falls back. Catalog input budgets respect the selected tier's prompt limits and reserve maximum output space within the model's total context window; Codex starts local automatic compaction at 80% of that budget. Independent SDK compaction remains disabled. Structured SDK context-limit failures retain the Responses `context_length_exceeded` code, allowing Codex to distinguish overflow from retryable transport failure. The launcher disables automatic HTTP/stream retries; exact client retries can still use the bridge's existing success cache.
+### Context budgets
+
+`model-map.mjs` selects the largest advertised context tier for each model: `long_context` when `billing.tokenPrices.longContext` or `supportedContextTiers` advertises support, otherwise `default`. The shared selector drives both catalog budgets and SDK session configuration; tier identity is part of the session signature and survives effort changes, history rebuilds and idle recovery. Tier changes with pending calls require the complete-result handoff above; an upstream rejection never silently falls back.
+
+Catalog input budgets respect the selected tier's prompt limits and reserve maximum output space within the model's total context window; Codex starts local automatic compaction at 80% of that budget. Independent SDK compaction remains disabled. Structured SDK context-limit failures retain the Responses `context_length_exceeded` code, allowing Codex to distinguish overflow from retryable transport failure. The launcher disables automatic HTTP/stream retries; exact client retries can still use the bridge's existing success cache.
 
 ## Lifetime and security boundaries
 

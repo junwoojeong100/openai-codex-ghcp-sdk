@@ -1,41 +1,54 @@
 # Bridge stability and recovery verification
 
-[한국어](STABILITY_TESTING_KO.md) · [Architecture](ARCHITECTURE.md) · [New verification records](validation/README.md)
+[한국어](STABILITY_TESTING_KO.md) · [Guide map](../README.md#testing) · [Architecture](ARCHITECTURE.md) · [Verification records](validation/README.md)
 
-## Fresh live verification
+Test bridge faults, tool-result handoff and recovery through real Codex: **11 scenarios × 6 models = 66 cases**. The default contract is `codex-ghcp-stability-11-v5`. It is separate from workflow compatibility, TUI and endurance checks.
 
-New full 11-scenario × 6-model (66-cell) runs use the v5 criteria frozen before each execution. Earlier reports, including failures, remain historical; no old scores or selective failed-cell reruns are reused. The [verification records](validation/README.md) distinguish each implementation and contract.
+## Prepare and run
 
-## Optional application-data profile and current status
+Run from the repository root after [installation](../README.md#quick-start). Native runtime/live checks need Codex 0.154.0 and a working OS sandbox; use Node 22.12+ for runtime verification.
 
-`v5` is the default (`codex-ghcp-stability-11-v5`). `--profile application-data-v3` explicitly selects `codex-ghcp-stability-11-application-data-v3`: the existing application-data read/remember/recall wording on the v5 base under a distinct catalog ID and hash. Both profiles retain the same six models, 11 scenarios, fixtures, fault schedule, budgets, literal-output and cleanup checks. Production user requests are not rewritten. Reports, workers and artifacts carry profile identity; verification rejects cross-profile case substitution and cannot be overridden with `--profile`.
+**Offline — no model calls:** plan is the default. Stress tests use mechanical cycles; runtime tests use real Codex with an SDK double.
 
-`--profile application-data-v4` additionally offers explicit **whole-file** wording: include the `value:`/`receipt:` labels, colons and whitespace, not just extracted values. This addresses an observed ambiguity in the v3 task wording, not a bridge transport fix. v3 stays selectable with its original hash; v5 stays the default. All 66 cells and the original literal-output checks remain mandatory, and explicit provider filters remain failures. New v4 results must come from a fresh full run and cannot replace v3 or v5 scores.
+```bash
+npm run test:stability -- --plan
+npm run test:stability:stress
+npm run test:stability:runtime
+```
 
-The first full v4 run on implementation `1f07ae19` scored **65/66 (98.48%)**, independently verified with current/frozen source. It meets the 95% reference (63/66), not the 66/66 contract: Opus S11 `repeat-2` still failed with explicit upstream filtering and exit code 1. The preceding v3 run remains **62/66**, with two Opus filters and two Haiku label omissions. No production code, safety policy or acceptance checks were changed to suppress these failures. [Iteration evidence](validation/2026-09-23-failure-iterations.json).
+**Live — Copilot authentication and usage required:** choose a new output directory, execute one full matrix, then verify its report even if cases failed.
 
-v5 changes only S03's rejection boundary: its policy-change control request deliberately omits tool results and must receive `tool_result_mismatch` without losing pending work. Complete matching results now permit a safe configuration handoff instead of the former blanket 409. `v4`/`application-data-v2` and earlier profiles are no longer selectable. Their 66-cell or older 77-cell records require each run's frozen `source-snapshot/scripts/stability.mjs`; they are never regraded or combined with v5.
+```bash
+npm run test:stability -- --execute --output .runtime/stability-new-run
+```
 
-The earlier release check on implementation `320d502c` completed the full default **v5 matrix at 57/66 (86.36%)**, with nine explicit Opus 5.5 upstream-filter failures and exit code 1. The other five models passed 11/11 each. A separate actual-TUI matrix passed 72/72; these scores are not combined. Both reports were independently verified with current and frozen source. The original no-problems release gate failed; the user subsequently authorized publication with those failures preserved. [Evidence and release gate](validation/2026-09-23-pending-handoff.json).
+```bash
+npm run test:stability -- --verify .runtime/stability-new-run/report.json
+```
 
-The six-model implementation `68f92d74` was tested with two independent full matrices: **v4 57/66 (86.36%)** and **application-data-v2 63/66 (95.45%)**. Both retain failed cases, `fullMatrixPassed=false` and exit code 1. application-data-v2 meets the 95% reference (≥63/66); v4 does not, because every Opus 5.5 read turn was upstream-filtered. The later freeform `apply_patch` catalog change (`54c7eb77`) was verified by the separate [real-TUI matrix](validation/2026-09-23-tui-scenarios/README.md), not by rerunning these matrices. See [results, run history and MCP isolation](validation/2026-09-23-six-model-switch/README.md).
+**A full pass requires 66/66.** The 95% reference (63/66) does not change that verdict or exit code. Recorded runs still include upstream-filter failures; see the [results and retained failures](validation/README.md), not a score combined from different runs.
 
-The previous terminal-integration implementation was tested under the historical 7-model v3/application-data-v1 contract with two independent full matrices: **v3 66/77 (85.71%)** and **application-data-v1 72/77 (93.51%)**. Both retain failed cases, `fullMatrixPassed=false` and exit code 1. The 95% target is not met by these runs. See [current results, diagnosis and additional live terminal checks](validation/2026-09-22-terminal-integration/README.md).
+## Choose a profile only if needed
 
-An earlier fixture-tool metadata repair under the historical 7-model v3 contract scored **74/77 (96.10%), Opus 9/11** and met that run's target. Its changed model-visible metadata and three failures remain documented; it is not the score of the current implementation. Earlier 50/77 and v3 66/77 historical records also remain separate. The default profile, fixed contracts and historical failures are not rewritten. [Historical target-meeting run](validation/2026-09-22-runner-repair/README.md) · [Earlier follow-up](validation/2026-09-22-fidelity-followup/README.md).
+| Profile | Selection | Model-visible task |
+| --- | --- | --- |
+| `v5` | Default | Standard synthetic-marker copy task |
+| `application-data-v3` | `--profile application-data-v3` | Application-data read/remember/recall wording on the v5 base |
+| `application-data-v4` | `--profile application-data-v4` | Explicit whole-file wording, including `value:`/`receipt:` labels, colons and whitespace |
+
+For example, inspect an optional profile without model calls:
 
 ```sh
-# Plan only; no model calls
-npm run test:stability -- --plan --profile application-data-v3
-# Mechanical SDK / explicit live opt-in; each needs a new directory
-npm run test:stability -- --runtime --profile application-data-v3 --output .runtime/application-offline-new
-npm run test:stability -- --execute --profile application-data-v3 --output .runtime/application-live-new
-npm run test:stability -- --verify .runtime/application-live-new/report.json
+npm run test:stability -- --plan --profile application-data-v4
 ```
+
+Add the same `--profile` option to a new `--runtime` or `--execute` run to select it. Each profile has a distinct catalog ID/hash but keeps the six models, 11 scenarios, fixtures, faults, budgets and literal-output/cleanup checks. Production requests and safety policies are not rewritten. A profile's result cannot replace another's; `--verify` uses the recorded profile and rejects a `--profile` override.
+
+v5 changes S03 to reject a policy-change request with missing tool results while accepting a complete matching result handoff. Older `v4`/`application-data-v2` and 77-cell contracts are no longer selectable. Verify those records with their saved source; they are not regraded as v5.
 
 ## Scope and fixed criteria
 
-`codex-ghcp-stability-11-v5` is a **separate 11-scenario × 6-model = 66-cell** matrix, using Codex **0.154.0** and Copilot SDK **1.0.14**. It does not replace, regrade, or enlarge the historical 18-workflow v4 compatibility result. No automatic case retries, model substitution, subset mode, or native OpenAI baseline.
+The matrix uses Codex **0.154.0** and Copilot SDK **1.0.14**. There are no automatic case retries, model substitutions, subsets or native OpenAI baseline.
 
 Each passing live case requires native Codex app-server → the production Responses bridge → the real SDK → the exact model, plus native fixture-tool callbacks, independent checks, and owned-resource cleanup. A labelled proxy/instrumentation layer injects the specific faults below. It does not fabricate model output or replace the SDK in live mode. Extra duplicate/rejected/cancelled HTTP control requests are not additional live matrix cells.
 
@@ -57,32 +70,24 @@ Successful read/recall answers must contain both complete literal `value:` and `
 
 Every check and artifact is required. Failed, unsupported, blocked, timed-out and unrun cells remain in the **66** denominator. Maximum four model lanes, 30s cleanup reserve per case, and no global cutoff. Worst-case scheduling estimate: 90s preflight + two 1,470s waves (6 models, 4 lanes) = **50.5 minutes**, excluding OS/I/O overhead. A passing matrix is **not a multi-hour soak, a product support percentage, or proof that all historical freezes are resolved**.
 
-## Fixture tool return-type metadata
+## Fixture and instruction rules
 
-The native `read_fixture` description identifies its actual return type: the entire unchanged UTF-8 file contents as plain text, not extracted field values. Labels and separators are part of those contents. Every model and both profiles receive this same tool metadata; the callback still returns the original file bytes as a native text result.
+`read_fixture` returns the **entire unchanged UTF-8 file**, including labels and separators, not extracted values. Every model and supported profile uses this same tool description. Tool-description changes are recorded by the implementation hash and frozen source, not just the catalog hash. A matching catalog hash alone therefore does not establish identical model-visible input; see the [historical metadata repair](validation/2026-09-22-runner-repair/README.md).
 
-This changes model-visible **tool-description text**, not the user prompts, fixture values, schemas, fault flows, budgets, acceptance checks or production bridge. The profile hashes remain unchanged, while the implementation hash and frozen source identify the revised description. Equal profile hashes therefore do not imply that all model-visible implementation metadata is identical. Only a fresh full run can measure the change; earlier cases retain their original descriptions and results in their source snapshots. The production bridge does not rewrite callers' tool descriptions or repair model output.
+Within each profile, all six models receive the same synthetic-marker tasks. The default profile requests the original two tool-result lines in a text fence. Fences or added prose are allowed; altered literal prefixes or values are not. The production bridge does not rewrite callers' tool descriptions or repair model output.
 
-## SDK foundation preservation
+Client instructions are appended unchanged to the SDK-managed system foundation. SDK built-in tools stay excluded and SDK permission requests are rejected. These rules apply to every model and profile; provider-filtered turns remain failures.
 
-The bridge now appends complete client instructions to the SDK-managed system foundation instead of replacing it. The installed SDK documents replacement as removing its guardrails; protocol adaptation must preserve them. No client instruction is stripped, and SDK built-in tools remain excluded with permission requests rejected. This production fix applies to every model. The prompts (identical in v3 and v4) and the acceptance oracle are unchanged; only a fresh full live run can establish the result.
+## Harness timing and iteration policy
 
-## Historical v3 prompt clarification
-
-The common prompt now describes the actual benign task: copying generated, non-sensitive Unicode test markers. It asks for the unchanged two tool-result lines in a fenced text block rather than using imperative plain-text-only wording. The existing oracle already allowed fences and is **unchanged**: inserting a space into a literal prefix still fails. All six current models receive the same prompts; historical v3 used seven models. Fixtures, tool requirements, safety settings and failure accounting are unchanged; provider-filtered responses remain failures, never bypassed or rewritten.
-
-The earlier v2 operational corrections below remain in effect.
-
-## v2 corrections and iteration policy
-
-The 66-cell denominator, exact model routing, literal value/receipt checks, required tool work, fault evidence and cleanup requirements remain unchanged for v4. No response rewriting, removed failures or offline credit is allowed. v2 changes are explicit before running:
+The harness uses the following fixed bounds in addition to the per-case limits above:
 
 - Read, remember and recall prompts all require verbatim two-line output; remember explicitly echoes now and requires a fresh read once **in this turn**. This aligns the instructions with the existing oracle rather than weakening the oracle.
-- Case cleanup uses the production **5,000ms** per-operation default, with a **30s** cleanup reserve. Cleanup errors still fail; diagnostics now distinguish abort/disconnect/delete and timeout/RPC failure without logging error text.
+- Case cleanup uses the production **5,000ms** per-operation default, with a **30s** cleanup reserve. Cleanup errors still fail; diagnostics distinguish abort/disconnect/delete and timeout/RPC failure without logging error text.
 - ACK readiness allows **45s**; SDK client startup/catalog initialization has a **30s** bound. Session creation is additionally governed by the turn/request deadlines; reaching the ACK gate must still be proved, never assumed. S06 uses a **45s** total request deadline and a **60s** bounded ACK gate, keeping the request deadline as the intended fault source. S05/S06 case limits are 120s/180s.
 - The supervisor waits for asynchronous owned-process-group exit only inside the remaining case slot (at most 2s). Groups that remain alive still fail.
 
-The historical user-requested v3 iteration target was **at least 74/77 (96.1%)**; 73/77 was below 95%. On the current 66-cell v4 matrix, the same 95% reference corresponds to at least 63/66 (95.45%). This reference does not change `fullMatrixPassed`, which requires 66/66. Archived verification records were removed before the current repair at the user’s request. The [repair record](validation/2026-09-22-bridge-repair/README.md) retains its preliminary and final full runs separately, including failures and timeouts; the latest score is not assembled from earlier cells. No individual failed cell is selectively rerun or replaced within a matrix.
+Historical 77-cell targets and results remain in the [verification records](validation/README.md). Each score belongs to one complete run of one implementation and contract. Failed cells are not selectively rerun or replaced within a matrix.
 
 ## Explicit upstream filtering
 
@@ -117,14 +122,19 @@ The bridge uses structured SDK metadata, not matching refusal-like prose. It doe
 
 All are positive integers except `TURN_IDLE_RECOVERY_ATTEMPTS`, which accepts 0–3. Recovery resets neither the absolute turn deadline nor the total request deadline. Existing byte/session/cleanup limits remain. `copilot_idle_timeout`, `copilot_timeout` and `request_timeout` are 504 errors, `request_queue_full` is 429, and `upstream_session_lost` is 409 asking for a new conversation. Do not blindly replay tool side effects. To apply updated bridge code, first close its Codex sessions, then relaunch the project-owned bridge; the development/test runner never restarts a user's active bridge. `/health.turnWatchdog` reports runtime settings, not the current source file's defaults. Background status also exposes them, but does not discover foreground bridges.
 
-## Commands and evidence
+## Focused handoff regression
 
-The dedicated pending-handoff regression uses the actual Codex TUI, launcher, fixture MCP server and headless Playwright. It injects a labelled top-level instruction update on a complete result batch, requires one fixture execution, zero old result RPCs, exact result retention, and a second successful turn in the same TUI without `/new`. The normal runtime suite uses an SDK double. Live opt-in runs all six models and preserves each case's evidence in a new directory; this focused regression is not a rerun of the 66-cell stability matrix.
+The `pending-result-instruction-handoff-v2` regression drives the actual Codex TUI, launcher, fixture MCP server and headless Playwright. It injects a labelled top-level instruction update with a complete result batch. A pass requires one fixture execution, zero old result RPCs, the exact sample on a standalone line, and a successful next turn without `/new`. This is separate from the 66-cell stability matrix; [earlier probe failures](validation/2026-09-23-pending-handoff.json) remain recorded.
 
-Its `pending-result-instruction-handoff-v2` prompts explicitly request the sample on a standalone line, matching the existing strict TUI marker oracle. The initial probe omitted that formatting requirement: all six handoffs were accepted, but two correct inline answers failed the screen check and prevented their follow-up turns, leaving that run at 4/6. Those failed records are preserved, not regraded. The revised probe requires a fresh six-model run; production prompts and output are not rewritten.
+Both modes require the [TUI prerequisites](TUI_SCENARIOS.md#prepare-and-run). **Offline — no model calls:** explicitly remove the live-mode environment variable for this invocation.
 
 ```sh
-node --test test/runtime/pending-handoff.test.mjs
+env -u GHCP_LIVE_HANDOFF_OUTPUT node --test test/runtime/pending-handoff.test.mjs
+```
+
+**Live — consumes Copilot usage across all six models:** use a new output directory. `GHCP_LIVE_HANDOFF_OUTPUT` enables live mode even when this file is run through `npm run test:runtime`; do not export it for routine offline checks.
+
+```sh
 GHCP_LIVE_HANDOFF_OUTPUT=.runtime/pending-handoff-live-new \
   node --test --test-concurrency=1 test/runtime/pending-handoff.test.mjs
 ```
@@ -133,17 +143,7 @@ Unconfirmed handoff cleanup/readiness is `session_handoff_failed` (503). Cancell
 
 Failure reports now distinguish `upstream-content-filter`, `literal-output` and `cleanup` from undetermined failures. Filter classification requires an actual native Responses error code, not refusal-like prose, a control request or an SDK hint alone. Cleanup failures take precedence; category labels never alter failed checks, status, the denominator or exit codes. The verifier recomputes evidence-derived categories. Earlier reports still require their frozen verifier. CI runs the offline suites separately so one failed suite does not hide later results, and retains scrubbed failure diagnostics as artifacts.
 
-```bash
-npm test
-npm run test:stability:stress       # 100 mechanical cycles, no model calls
-npm run test:compatibility:runtime # existing 18 workflows, real Codex + SDK double
-npm run test:stability:runtime     # 11 scenarios, real Codex + SDK double
-npm run test:stability -- --plan   # offline catalog, no credential access
-
-# Explicit opt-in: Copilot authentication required; consumes model usage.
-npm run test:stability -- --execute --output .runtime/stability-new-run
-npm run test:stability -- --verify .runtime/stability-new-run/report.json
-```
+## Evidence and exit codes
 
 The offline stress run covers 100 tool round trips, 100 exact retries, ten queued cancellations, ten SDK recoveries, state capacity and final listener/queue cleanup. It accelerates transitions; it is not elapsed-time endurance certification. Offline passes never earn live compatibility credit.
 

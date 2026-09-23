@@ -1,27 +1,46 @@
 # Real Codex long-conversation endurance
 
-[한국어](SOAK_TESTING_KO.md)
+[한국어](SOAK_TESTING_KO.md) · [Guide map](../README.md#testing) · [TUI scenarios](TUI_SCENARIOS.md) · [Verification records](validation/README.md)
 
-The native, owned-PTY and Playwright Headless terminal paths are implemented. Historical interrupted runs remain interrupted: the commands below are reproducibility instructions, not a claim of five-hour reliability. The Playwright path renders actual Codex PTY bytes in xterm.js; it does not substitute model output or certify another desktop terminal emulator.
+Use `test:terminal` for a bounded, single-model terminal workload. Use `test:soak` for long-lived native conversations, optionally with a terminal lane. Both are separate from the 66-case stability matrix. **Soak `--smoke` also calls real models**; only plans and SDK-double runtime checks avoid inference usage.
 
-`npm run test:soak` is separate from the 66-case stability matrix. It measures real elapsed time, long-lived native Codex conversations, real Copilot SDK calls, context growth, compaction, queues, memory and owned-process liveness. A short harness check never establishes five-hour reliability.
+These are reproducibility instructions, not a claim of five-hour reliability. Interrupted runs remain incomplete. The Playwright path renders real Codex PTY bytes in xterm.js; it does not certify a desktop terminal application.
 
-For a bounded, offline regression, `npm run test:context:runtime` exercises 120 sequential native tool calls with repeated compaction and the actual TUI's same-process recovery from idle timeout, setup timeout and Escape. It also checks automatic silent-turn recovery on the original stream, byte-only SDK progress lasting beyond the idle limit, and a successful subsequent prompt without restarting the TUI. The deliberate fail-fast case explicitly sets `TURN_IDLE_RECOVERY_ATTEMPTS=0`. These cases use a mechanical SDK, not live inference. The PTY observer waits until Codex's model/directory loading placeholders disappear and debounces logical readiness/completion rather than raw output silence: cosmetic redraws must not look like a terminal hang. Expected error cases require an actual error line and a successful subsequent prompt, not a stopped/restarted terminal.
+## Prerequisites and offline checks
 
-## Reproducible terminal checks
+After `npm ci`, inspect either plan from the repository root. Plans make **no model calls** and need no Codex, Python, Chromium or Copilot login:
 
-The context runtime suite also holds a real Codex TUI response silent for **95 measured seconds** with the production 180-second first-progress and 90-second streaming limits. It requires one SDK session, one submission for the delayed prompt, no recovery, the eventual answer and a successful next prompt. This is a labelled SDK-double regression, not evidence of remote-model uptime. Shorter checks cover root-phase private-byte progress without exposing private content.
+```sh
+npm run test:terminal -- --plan --driver playwright
+npm run test:soak -- --plan
+```
 
-Node/npm, Python 3, the pinned Codex CLI, and Copilot authentication are required for live checks. `npm ci` installs the pinned development dependencies (`playwright@1.63.0`, `@xterm/xterm@6.0.0`); install the owned headless browser once:
+To execute workloads, complete the [CLI setup](../README.md#quick-start). Native soak needs Codex 0.154.0; terminal paths also need Python 3. Only the Playwright driver and terminal runtime suite require Chromium:
 
 ```sh
 npx --no-install playwright install chromium
-npm run test:terminal:runtime  # actual Codex + both terminal drivers + mechanical SDK; no model calls
-npm run test:terminal -- --plan --driver playwright
+```
 
-# Explicit live opt-in; uses the selected real model and consumes Copilot usage.
+Check both terminal drivers with real Codex and an SDK double, **without model calls**:
+
+```sh
+npm run test:terminal:runtime
+```
+
+## Reproducible terminal checks
+
+**Live opt-in:** Copilot authentication is required and usage is consumed. Choose **one** driver example, not both as setup steps. Each output directory must be new.
+
+PTY driver, 120 seconds of measured traffic:
+
+```sh
 npm run test:terminal -- --execute --driver pty --model gpt-6-astra \
   --duration-seconds 120 --output .runtime/terminal-pty-new
+```
+
+Alternatively, Playwright with larger input and output:
+
+```sh
 npm run test:terminal -- --execute --driver playwright --model claude-sonnet-5 \
   --duration-seconds 120 --payload-bytes 24576 --response-words 1000 \
   --output .runtime/terminal-browser-new
@@ -37,17 +56,39 @@ Only generated non-sensitive data is sent. Each run owns its `HOME`, `CODEX_HOME
 
 ## Combined soak runner
 
+**A smoke run is short, not offline.** It calls the real GPT-6 Luna and Claude Sonnet 5 models; authenticate first and use a new output directory.
+
 ```sh
-npm run test:soak -- --plan
 npm run test:soak -- --smoke --duration-seconds 60 --output .runtime/soak-smoke-new
-npm run test:soak -- --smoke --duration-seconds 60 --terminal --output .runtime/soak-pty-new
-npm run test:soak -- --smoke --duration-seconds 60 --terminal --terminal-driver playwright \
-  --output .runtime/soak-browser-new
-# At least 18,000 seconds per lane after readiness; consumes real model usage.
+```
+
+Add `--terminal` for a PTY lane, or `--terminal --terminal-driver playwright` for a browser-rendered lane. These are alternatives for a new run, not extra commands required before endurance testing. Smoke duration accepts 1–600 seconds and never earns endurance credit.
+
+**Five-hour run — separate opt-in, sustained model usage:** every declared lane must run for at least 18,000 measured seconds after readiness. Preparation and cleanup add time.
+
+```sh
 npm run test:soak -- --execute --output .runtime/soak-five-hours-new
 ```
 
 Each output directory must be new. The runner freezes source before execution and runs owned workers from the saved copy. `implementationUnchanged` reports whether the development worktree changed; `frozenSourceUnchanged` independently checks the code actually executed. Changing a development file does not silently change a running frozen worker. No result is an addition to, or regrade of, the 66-case matrix.
+
+## Read the result
+
+Read `report.json` in the chosen output directory. These two runners do not provide a separate `--verify` command.
+
+| Run | Fields to check | What a pass establishes |
+| --- | --- | --- |
+| `test:terminal -- --execute` | `passed: true` | The declared bounded workload, duration, evidence and cleanup checks passed; not five-hour endurance |
+| `test:soak -- --smoke` | `allLanesCompleted`, `noObservedFailures` and `frozenSourceUnchanged` are all `true` | The short workload passed; top-level `durationMet` remains `false` by design |
+| `test:soak -- --execute` | The same three fields, plus `durationMet: true` | Every declared lane reached at least five hours without observed failures; not maximum-context certification |
+
+Exit **0** means a valid plan or a passing run of the selected mode, **1** means failed/incomplete execution, and **2** means an argument or runner error. A successful smoke run is still not an endurance pass. Inspect the existing report before starting another run after an interruption.
+
+## Offline regression scope
+
+`npm run test:context:runtime` uses a mechanical SDK to check 120 sequential native tool calls, repeated compaction and same-TUI recovery after idle timeout, setup timeout and Escape. Expected error cases require an actual error line and a successful subsequent prompt; restarting the terminal does not count. Cosmetic redraws do not count as readiness or completion.
+
+It also delays first progress for **95 measured seconds** under production 180-second first-progress and 90-second streaming limits, requiring one SDK session, one prompt submission, no recovery and a successful follow-up. Other cases check silent-turn recovery, byte-only and root-phase progress; private phase content is never exposed. These are bounded SDK-double regressions, not remote-model uptime or maximum-context certification.
 
 ## Native workloads
 

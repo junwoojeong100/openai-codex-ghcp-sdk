@@ -1,14 +1,54 @@
 # 통합 호환성 검증 실행 안내
 
-[English](COMPATIBILITY_TESTING.md) · [시나리오·기능 체크리스트](NATIVE_SCENARIOS_KO.md) · [제품 경계](COMPATIBILITY_KO.md)
+[English](COMPATIBILITY_TESTING.md) · [검증 안내](../README_KO.md#개발과-검증) · [시나리오 사양](NATIVE_SCENARIOS_KO.md) · [제품 경계](COMPATIBILITY_KO.md)
 
-## 현재 계약과 검증 기록
+실제 개발 워크플로를 **18개 시나리오 × 6개 모델 = 108건**으로 검사합니다. 현재 계약은 `codex-ghcp-workflows-18-v6`(schemaVersion 6)입니다. 안정성 66건·TUI 72건과는 별도 검사이며, 다른 행렬의 통과로 이 검사를 대신할 수 없습니다.
 
-`codex-ghcp-workflows-18-v6`(schemaVersion 6): **시나리오 18개 × GHCP 모델 6개 = 108건**입니다. 행렬 크기·리포트 분모·생성 문서는 카탈로그에서 계산합니다. 실검증 부분 선택·자동 케이스 재실행·OpenAI 기준선 실행은 없습니다. runtime 검증은 Node 22.12 이상을 사용하며 브릿지 자체의 엔진 요구사항은 바꾸지 않습니다.
+## 준비와 실행
 
-과거 v5 108건과 v4 126건 보고서는 원래 runner revision으로만 검증합니다. [검증 기록](validation/README_KO.md)을 참고하세요. 별도 안정성 11개 시나리오의 결과를 이 18개 워크플로 계약의 통과 증거로 사용할 수 없습니다.
+[설치](../README_KO.md#빠른-시작) 후 저장소 루트에서 실행합니다. runtime·실모델 검사에는 Node 22.12 이상, Codex 0.154.0, 동작하는 OS 샌드박스가 필요합니다. bridge 자체의 엔진 요구사항은 바꾸지 않습니다.
 
-v6는 OS 샌드박스를 완화하지 않고 Linux 검증의 세 가지 가정을 바로잡습니다. C05는 `node --test --experimental-test-isolation=none`을 명시하여 고정된 테스트 3개를 같은 Node 프로세스에서 실행합니다. 고정 버전 샌드박스가 자식 프로세스의 캡처 stdout을 잃는 문제([상위 이슈](https://github.com/openai/codex/issues/18473))를 피하면서 실제 실패·성공 종료 코드, 동일 3개 테스트, 별도 입력 검사는 유지합니다. C08은 동일 측정값을 Node 스트림 대신 stdout 파일 디스크립터로 기록합니다. C15는 샌드박스 receipt의 namespace PID를 같은 작업 디렉터리에 있는 native host의 고유한 자식 host PID와 연결한 뒤 종료를 확인하며, namespace PID 2를 host PID 2로 가정하지 않습니다. 과거 실패 기록은 보존하고 재채점하지 않습니다.
+**오프라인 검사 — 모델 호출 없음:**
+
+```bash
+npm run test:scenarios
+npm run docs:scenarios:check
+npm run test:compatibility -- --plan
+npm run test:compatibility:runtime
+```
+
+기본 동작은 `--plan`입니다. runtime은 실제 Codex와 기계적인 SDK 대역·격리된 인증 환경을 사용하며, C11에서는 실제 실행기도 시작합니다. 실행기 검사이지 실모델 호환성 통과는 아닙니다.
+
+**실모델 실행 — Copilot 인증·사용량 필요:** 실행마다 새 출력 디렉터리를 선택하세요. OpenAI API 키는 필요하지 않습니다. 아래 실행은 한 번만 수행하고, 실패로 종료돼도 보고서를 검증하세요.
+
+```bash
+npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
+```
+
+```bash
+npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
+```
+
+기존 출력 폴더는 덮어쓰지 않습니다. 부분 모델 선택·자동 케이스 재실행·OpenAI 기준선은 없습니다. 모델 사용 불가는 18개 blocked 슬롯으로, 공통 사전 조건 실패도 108개 행렬로 남습니다. 개별 실패 후 다음 케이스를 계속하며, 사용자 중단 시 신규 실행을 멈추고 미완료 증거를 보존합니다.
+
+최대 4개 모델을 병렬 실행하고 케이스마다 정리 예비 8초를 포함합니다. 모든 제한을 소진하면 모델당 2,220초이며 사전 점검을 포함한 배정 추정치는 **75.5분**입니다(OS·I/O 지연 별도). 1시간은 목표이지 전체 강제 종료 제한이 아닙니다.
+
+## 결과 읽기
+
+| 종료 코드 | 의미 |
+| --- | --- |
+| 0 | 유효한 계획, runtime 자체 검사 통과, 또는 실모델 **108/108** 통과 |
+| 1 | 실패·차단·미지원·미완료 실행 |
+| 2 | 인자·증거 오류 |
+
+보고서의 실행 종류를 확인해 오프라인 통과와 실모델 통과를 구분하세요. 소스를 바꾼 뒤 과거 증거를 검증하려면 같은 의존성과 해당 실행의 동결 소스를 사용합니다.
+
+```bash
+node .runtime/compatibility-new-run/source-snapshot/scripts/compatibility.mjs \
+  --verify .runtime/compatibility-new-run/report.json
+```
+
+실행 결과·실패는 [검증 목록](validation/README_KO.md)에 있습니다. 과거 v5/v4 보고서는 원래 실행기로 검증하고 v6로 재채점하지 않습니다.
 
 ## 서로 다른 세 지표
 
@@ -18,19 +58,7 @@ v6는 OS 샌드박스를 완화하지 않고 Linux 검증의 세 가지 가정�
 
 리포트는 기능군별 연결 시나리오의 모델별 증거 상태도 표시합니다. 오프라인 결과는 실모델 기능을 입증하지 못하고, 연결 시나리오가 모두 통과해도 부분 범위가 완전한 지원으로 승격되지는 않습니다.
 
-## 모델 호출 없는 검사
-
-```bash
-npm test
-npm run test:scenarios
-npm run docs:scenarios:check
-npm run test:compatibility -- --plan
-npm run test:compatibility:runtime
-```
-
-단위 테스트는 합성 증거·소유 프로세스·루프백 HTTP를 사용합니다. 런타임 검사는 **실제 Codex 0.154.0 + 기계적인 SDK 대역**을 사용하고 실제 모델을 호출하지 않습니다. C11은 격리된 인증 환경과 명시적인 오프라인 관찰 계층으로 실제 launcher·자식 bridge를 실행합니다. 동작하는 OS 샌드박스가 필요합니다. 런타임 성공은 실행기 검사이지 실모델 호환성 통과가 아닙니다.
-
-## 추가된 실제 네이티브 경로
+## 검사하는 네이티브 경로
 
 - **C11:** 실제 `bin/codex-ghcp`·생산 bridge 수명·기본 도구 카탈로그. `model_catalog_json`·patch 프로파일을 주입하지 않습니다. 대화형 모델 선택이나 모든 reasoning 설정을 인증하지는 않습니다.
 - **C12:** 네이티브 `review/start`와 reviewer 시작·종료 이벤트. 리뷰처럼 보이는 일반 프롬프트로 대체하지 않습니다. bridge가 지원하지 않는 구조화 출력이 필요하면 **unsupported**로 남깁니다.
@@ -48,21 +76,7 @@ C03은 필드 자료형을 명시하고 JSON 의미와 표현 형식(bare JSON/�
 - C12는 완료된 네이티브 리뷰의 렌더링된 finding 또는 JSON을 읽습니다. `review.mjs:3`의 실제 결함 한 건, 실제 diff 읽기, 같은 리뷰 턴의 시작·종료와 파일 보존 조건은 그대로입니다.
 - C13은 부수적인 assistant 메시지가 아니라 완료된 네이티브 `plan` 항목을 판정합니다. 숨은 호스트 응답의 상관관계와 최종 계획 반영이 필요합니다. 읽기 전용 탐색만 허용하며 파일 편집·변경 명령·광범위 승인은 허용하지 않습니다.
 - Git diff 증거는 묶인 셸 명령과 Git 전역 옵션을 인식하지만, 인용된 `git diff` 문자열을 실행으로 간주하지 않습니다. 다른 경로·턴, 추가 finding, 누락된 diff, 연결되지 않거나 안전하지 않은 계획은 음성 테스트에서 거절합니다.
-- C12/C13과 Git 규칙은 v4에서 고정해 v6에도 그대로 적용하며 실행 후 추가한 예외가 아닙니다. C05 명령과 C15 host PID 증거 변경은 위에서 명시적으로 버전을 구분했습니다. 실검증 전에 카탈로그·구현 해시를 고정하고 실패를 보존하며, 점수를 올리기 위한 개별 재실행은 하지 않습니다.
-
-## 실검증: 명시적 실행과 사용량
-
-Copilot 인증이 필요하며 추론 사용량을 소비합니다. OpenAI API 키는 필요하지 않습니다.
-
-```bash
-npm run test:compatibility -- --execute
-npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
-npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
-```
-
-기본 동작은 오프라인 `--plan`입니다. 기존 출력 폴더를 덮어쓰지 않습니다. 모델 사용 불가는 18개 blocked 슬롯으로 남고 공통 사전 조건 실패도 108개 행렬을 유지합니다. 개별 실패 후 다른 케이스를 계속합니다. 사용자 중단 시 신규 실행을 멈추고 미완료 증거를 보존합니다.
-
-최대 4개 모델 lane을 병렬 실행합니다. 케이스 제한에는 준비·추론·도구·정리 예비 8초가 포함됩니다. 모든 제한을 소진하면 모델당 2,220초이며 사전 점검과 두 차례 배정을 합친 추정치는 **75.5분**입니다(I/O·OS 지연 별도). 1시간은 목표일 뿐 전체 강제 종료 조건이 아닙니다. 일반 실행이 모든 제한을 소진한다는 뜻은 아닙니다.
+- C12/C13과 Git 규칙은 v4에서 고정해 v6에도 그대로 적용하며 실행 후 추가한 예외가 아닙니다. C05 명령과 C15 host PID 증거는 [v6 실행기 변경](#v6-실행기-변경)에서 구분합니다. 실검증 전에 카탈로그·구현 해시를 고정하고 실패를 보존하며, 점수를 올리기 위한 개별 재실행은 하지 않습니다.
 
 ## 격리·증거
 
@@ -72,4 +86,6 @@ C11의 실검증 관찰 계층은 실제 SDK·HTTP 경계를 기록할 뿐 생�
 
 native JSONL·HTTP/SSE·SDK·파일 상태·판정·정리·시나리오별 증거를 보존합니다. 검증기는 계약/구현 해시·행렬·파일 소유/해시·재계산한 판정과 효율 지표를 확인합니다. 해시는 제3자 인증이 아닙니다. 공개 전 개인정보를 검토하고 원본은 ignore된 `.runtime`에 둘 수 있습니다.
 
-종료 코드: `0` 유효한 계획 또는 **108/108** 실검증 통과, `1` 실패·차단·미지원·미완료, `2` 인자·증거 오류입니다. 런타임 자체 검사는 실모델 판정과 별도입니다.
+## v6 실행기 변경
+
+v6는 OS 샌드박스를 완화하지 않고 Linux 검증의 세 가지 가정을 바로잡습니다. C05는 `node --test --experimental-test-isolation=none`으로 고정 테스트 3개를 같은 Node 프로세스에서 실행합니다. 고정 버전 샌드박스의 자식 프로세스 캡처 stdout 누락([상위 이슈](https://github.com/openai/codex/issues/18473))을 피하면서 실제 실패·성공 종료 코드, 동일 테스트 3개, 별도 입력 검사는 유지합니다. C08은 동일 측정값을 Node 스트림 대신 stdout 파일 디스크립터에 기록합니다. C15는 receipt의 namespace PID를 같은 작업 디렉터리에 있는 native host의 고유한 자식 host PID와 연결한 뒤 종료를 확인하며, 샌드박스 PID를 전역 PID로 가정하지 않습니다. 과거 실패 기록은 바꾸지 않습니다.
