@@ -6,9 +6,11 @@
 
 아래는 재현 안내이지 5시간 안정성의 증거가 아닙니다. 중단한 실행은 미완료로 유지합니다. Playwright는 실제 Codex PTY 바이트를 xterm.js로 표시하며 데스크톱 터미널 앱 자체를 검증하지는 않습니다.
 
-**목적별 바로가기:** [준비 사항](#준비-사항과-오프라인-검사) · [짧은 터미널 실행](#재현-가능한-터미널-검사) · [smoke·5시간 실행](#통합-soak-실행기) · [결과 읽기](#결과-읽기).
+**목적별 바로가기:** [준비 사항](#준비-사항과-오프라인-검사) · [짧은 터미널 실행](#재현-가능한-터미널-검사) · [smoke](#짧은-실모델-smoke) · [5시간 실행](#5시간-실모델-실행) · [결과 읽기](#결과-읽기).
 
 ## 준비 사항과 오프라인 검사
+
+### 계획
 
 `npm ci` 후 저장소 루트에서 필요한 계획을 확인합니다. 계획은 **모델 호출 없이** 실행하며 Codex·Python·Chromium이나 Copilot 로그인이 필요하지 않습니다.
 
@@ -17,13 +19,15 @@ npm run test:terminal -- --plan --driver playwright
 npm run test:soak -- --plan
 ```
 
-실행·runtime 검사에는 **Node 22.12 이상과 Codex 0.154.0**, 터미널 경로에는 **Python 3**도 필요합니다. [빠른 시작](../README_KO.md#빠른-시작)에 따라 고정 버전 CLI를 설치하되, 오프라인 검사에는 Copilot 로그인·모델 목록 확인을 생략하세요. Chromium은 Playwright 드라이버와 터미널 runtime 검사에만 필요합니다.
+### 오프라인 runtime
+
+실행·runtime 검사에는 **Node 22.12 이상과 Codex 0.154.0**, 터미널 경로에는 **Python 3**도 필요합니다. [CLI 설치 단계](../README_KO.md#2-의존성-설치)를 따르면 되며 오프라인 검사에는 Copilot 로그인이 필요하지 않습니다. Chromium은 Playwright 드라이버와 터미널 runtime 검사에만 필요합니다.
 
 ```sh
 npx --no-install playwright install chromium
 ```
 
-Linux의 라이브러리 오류는 [Chromium 설치 안내](TUI_SCENARIOS_KO.md#준비와-실행)를 참고하세요. 실제 Codex와 SDK 대역으로 두 터미널 드라이버를 **모델 호출·Copilot 로그인 없이** 확인합니다.
+Linux의 라이브러리 오류는 [Chromium 설치 안내](TUI_SCENARIOS_KO.md#오프라인-runtime)를 참고하세요. 실제 Codex와 SDK 대역으로 두 터미널 드라이버를 **모델 호출·Copilot 로그인 없이** 확인합니다.
 
 ```sh
 npm run test:terminal:runtime
@@ -31,7 +35,9 @@ npm run test:terminal:runtime
 
 ## 재현 가능한 터미널 검사
 
-**실모델 옵션:** [Copilot 계정 확인](../README_KO.md#빠른-시작)을 마치세요. 사용량이 발생합니다. 아래 두 예시는 준비 절차가 아니라 **하나를 선택하는 대안**입니다. 출력 디렉터리는 매번 새로 선택하세요.
+**Copilot 사용량이 발생합니다.** [runtime 준비 사항](#오프라인-runtime)과 [Copilot 계정 확인](../README_KO.md#3-설치와-계정-접근-확인)을 마치세요. 아래 두 예시는 준비 절차가 아니라 **하나를 선택하는 대안**입니다. 출력 디렉터리는 매번 새로 선택하세요.
+
+아래는 테스트 실행기의 옵션입니다. `test:terminal`은 launcher의 `--ghcp-model`과 달리 `--model`을 사용합니다.
 
 PTY 드라이버로 실측 대화 120초:
 
@@ -58,7 +64,11 @@ npm run test:terminal -- --execute --driver playwright --model claude-sonnet-5 \
 
 ## 통합 soak 실행기
 
-**smoke는 짧은 실행이지 오프라인 검사가 아닙니다.** 실제 GPT-6 Luna와 Claude Sonnet 5를 호출합니다. 먼저 인증하고 새 출력 폴더를 사용하세요.
+smoke와 내구성 중 목적에 맞게 선택하세요. 5시간 실행 전에 smoke를 반드시 실행할 필요는 없습니다.
+
+### 짧은 실모델 smoke
+
+**Copilot 사용량이 발생하며 오프라인 검사가 아닙니다.** 짧은 실행에서 실제 GPT-6 Luna와 Claude Sonnet 5를 호출합니다. [runtime 준비 사항](#오프라인-runtime)과 [Copilot 계정 확인](../README_KO.md#3-설치와-계정-접근-확인)을 마친 뒤 새 출력 폴더를 사용하세요.
 
 ```sh
 npm run test:soak -- --smoke --duration-seconds 60 --output .runtime/soak-smoke-new
@@ -66,7 +76,9 @@ npm run test:soak -- --smoke --duration-seconds 60 --output .runtime/soak-smoke-
 
 PTY를 추가하려면 `--terminal`, 브라우저 렌더링을 추가하려면 `--terminal --terminal-driver playwright`를 붙입니다. 새 실행의 선택 사항이지 장기 검사 전에 모두 수행해야 하는 단계가 아닙니다. smoke 기간은 1~600초이며 내구성 통과로 계산하지 않습니다.
 
-**5시간 실행 — 별도 선택, 지속적인 모델 사용량 발생:** 준비 완료 후 선언한 모든 lane에서 최소 18,000초를 측정해야 하며 준비·정리 시간은 별도입니다.
+### 5시간 실모델 실행
+
+**Copilot 사용량이 지속적으로 발생합니다.** 준비 완료 후 선언한 모든 lane에서 최소 18,000초를 측정해야 하며 준비·정리 시간은 별도입니다. 시작 전에 [runtime 준비 사항](#오프라인-runtime)과 [Copilot 계정 확인](../README_KO.md#3-설치와-계정-접근-확인)을 마치세요.
 
 ```sh
 npm run test:soak -- --execute --output .runtime/soak-five-hours-new

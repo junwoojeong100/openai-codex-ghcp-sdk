@@ -6,9 +6,11 @@ Use `test:terminal` for a bounded, single-model terminal workload. Use `test:soa
 
 These are reproducibility instructions, not a claim of five-hour reliability. Interrupted runs remain incomplete. The Playwright path renders real Codex PTY bytes in xterm.js; it does not certify a desktop terminal application.
 
-**Choose a path:** [Prerequisites](#prerequisites-and-offline-checks) · [Short terminal run](#reproducible-terminal-checks) · [Smoke or five-hour run](#combined-soak-runner) · [Read the result](#read-the-result).
+**Choose a path:** [Prerequisites](#prerequisites-and-offline-checks) · [Short terminal run](#reproducible-terminal-checks) · [Smoke](#short-live-smoke) · [Five-hour run](#five-hour-live-run) · [Read the result](#read-the-result).
 
 ## Prerequisites and offline checks
+
+### Plan
 
 After `npm ci`, inspect either plan from the repository root. Plans make **no model calls** and need no Codex, Python, Chromium or Copilot login:
 
@@ -17,13 +19,15 @@ npm run test:terminal -- --plan --driver playwright
 npm run test:soak -- --plan
 ```
 
-For execution/runtime checks, use **Node 22.12+ and Codex 0.154.0**; terminal paths also need **Python 3**. Install the pinned CLI as shown in the [quick start](../README.md#quick-start), but skip Copilot login/catalog checks for offline testing. Only the Playwright driver and terminal runtime suite require Chromium:
+### Offline runtime
+
+For execution/runtime checks, use **Node 22.12+ and Codex 0.154.0**; terminal paths also need **Python 3**. Use the [CLI installation step](../README.md#2-install-dependencies); offline testing needs no Copilot login. Only the Playwright driver and terminal runtime suite require Chromium:
 
 ```sh
 npx --no-install playwright install chromium
 ```
 
-For Linux library errors, see the [Chromium setup note](TUI_SCENARIOS.md#prepare-and-run). Check both terminal drivers with real Codex and an SDK double, **without model calls or Copilot login**:
+For Linux library errors, see the [Chromium setup note](TUI_SCENARIOS.md#offline-runtime). Check both terminal drivers with real Codex and an SDK double, **without model calls or Copilot login**:
 
 ```sh
 npm run test:terminal:runtime
@@ -31,7 +35,9 @@ npm run test:terminal:runtime
 
 ## Reproducible terminal checks
 
-**Live opt-in:** complete the [Copilot account check](../README.md#quick-start); these runs consume usage. Choose **one** driver example, not both as setup steps. Each output directory must be new.
+**Consumes Copilot usage.** Use the [runtime prerequisites](#offline-runtime) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access). Choose **one** driver example, not both as setup steps. Each output directory must be new.
+
+These are test-runner options: `test:terminal` uses `--model`, unlike the launcher's `--ghcp-model`.
 
 PTY driver, 120 seconds of measured traffic:
 
@@ -58,7 +64,11 @@ Only generated non-sensitive data is sent. Each run owns its `HOME`, `CODEX_HOME
 
 ## Combined soak runner
 
-**A smoke run is short, not offline.** It calls the real GPT-6 Luna and Claude Sonnet 5 models; authenticate first and use a new output directory.
+Choose smoke or endurance; a smoke run is not required before a five-hour run.
+
+### Short live smoke
+
+**Consumes Copilot usage; it is not offline.** The short run calls the real GPT-6 Luna and Claude Sonnet 5 models. Complete the [runtime prerequisites](#offline-runtime) and [Copilot account check](../README.md#3-check-installation-and-account-access), then use a new output directory.
 
 ```sh
 npm run test:soak -- --smoke --duration-seconds 60 --output .runtime/soak-smoke-new
@@ -66,7 +76,9 @@ npm run test:soak -- --smoke --duration-seconds 60 --output .runtime/soak-smoke-
 
 Add `--terminal` for a PTY lane, or `--terminal --terminal-driver playwright` for a browser-rendered lane. These are alternatives for a new run, not extra commands required before endurance testing. Smoke duration accepts 1–600 seconds and never earns endurance credit.
 
-**Five-hour run — separate opt-in, sustained model usage:** every declared lane must run for at least 18,000 measured seconds after readiness. Preparation and cleanup add time.
+### Five-hour live run
+
+**Sustained Copilot usage.** Every declared lane must run for at least 18,000 measured seconds after readiness. Preparation and cleanup add time. Complete the [runtime prerequisites](#offline-runtime) and [Copilot account check](../README.md#3-check-installation-and-account-access) before starting:
 
 ```sh
 npm run test:soak -- --execute --output .runtime/soak-five-hours-new

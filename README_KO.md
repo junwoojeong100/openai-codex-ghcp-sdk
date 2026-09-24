@@ -70,6 +70,7 @@ Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`
 | 시작 모델 선택 | `./bin/codex-ghcp --ghcp-model claude-sonnet-5` |
 | 현재 디렉터리의 최근 대화 재개 | `./bin/codex-ghcp -- resume --last` |
 | bridge 없이 실행기 도움말 확인 | `./bin/codex-ghcp --help` |
+| bridge 없이 공식 Codex 옵션 확인 | `command codex --help` |
 | bridge 없이 공식 CLI 버전 확인 | `command codex --version` |
 
 비대화형·읽기 전용 요청:
@@ -79,9 +80,9 @@ Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`
   "README_KO.md를 읽고 프로젝트의 목적을 한 문장으로 요약해줘."
 ```
 
-일반 Codex 인자는 `--` 뒤에 전달합니다. 모델 선택은 공식 CLI의 `--model`/`-m` 대신 **`--ghcp-model`**을 사용하세요. 공급자·전송 설정을 덮어쓰는 인자는 거절합니다. Git 저장소 밖에서는 `exec --skip-git-repo-check`로 Git 디렉터리 검사만 생략할 수 있으며, 샌드박스를 끄지는 않습니다.
+**실행기 옵션은 `--` 앞에, Codex 명령·옵션은 뒤에 둡니다.** 예를 들어 `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last`는 Sonnet으로 대화를 재개합니다. 모델 선택에는 공식 CLI의 `--model`/`-m` 대신 `--ghcp-model`을 사용하세요. 공급자·전송 설정 재정의는 거절합니다. Git 저장소 밖에서는 `exec --skip-git-repo-check`로 Git 디렉터리 검사만 생략하며, 샌드박스를 끄지는 않습니다.
 
-다른 프로젝트에서는 실행기의 절대 경로를 사용하면 현재 작업 디렉터리를 유지합니다. 어디서든 `codex`만 입력하려면 **선택 사항인** [zsh 연동·해제 안내](docs/USAGE_KO.md#선택적-zsh-연동)를 따르세요. bridge를 상주시켜 재사용하려면 [실행·상태·종료](docs/USAGE_KO.md#codex-실행)를 참고하세요.
+다른 프로젝트에서는 실행기의 절대 경로를 사용하면 현재 작업 디렉터리를 유지합니다. 어디서든 `codex`만 입력하려면 **선택 사항인** [zsh 연동·해제 안내](docs/USAGE_KO.md#선택적-zsh-연동)를 따르세요. bridge를 상주시켜 재사용하려면 [실행·상태·종료](docs/USAGE_KO.md#선택적-상주-bridge)를 참고하세요.
 
 ## 모델
 
@@ -110,17 +111,24 @@ Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`
 
 ## 개발과 검증
 
-명령이 아니라 **실제로 무엇이 통과했는지** 찾는다면 [기록된 결과와 남은 공백](docs/validation/README_KO.md#기록된-결과)을 읽으세요. 아래 기준은 충족해야 할 조건이지 이미 달성한 결과가 아닙니다.
+검증은 **실행기를 사용하기 위한 필수 절차가 아닙니다.** 명령이 아닌 측정 결과는 [기록된 결과와 남은 공백](docs/validation/README_KO.md#기록된-결과)에서 확인하세요.
 
-검증은 **실행기를 사용하기 위한 필수 절차가 아닙니다.** `npm ci` 후 기본 개발 검사로 단위 검사·소스 커버리지·시나리오 및 문서 정합성을 확인합니다. **모델 호출이나 Copilot 로그인은 필요하지 않습니다.**
+### 로컬 개발 검사
 
-```bash
-npm run test:ci
-```
+`npm ci` 후 변경 내용에 맞는 검사를 선택하세요. 아래 명령은 **모델을 호출하지 않으며 Codex 설치·Copilot 로그인이 필요하지 않습니다.**
 
-단위·실행 제어 검사만 필요하면 `npm test`, 생성 문서 정합성만 확인하려면 `npm run docs:scenarios:check`를 사용하세요. `coverage/lcov.info`는 관측한 소스 커버리지이며 제품 기능 지원율이 아닙니다.
+| 변경 내용 / 목적 | 명령 | 확인 범위 |
+| --- | --- | --- |
+| 문서만 수정 | `npm run test:docs` | 로컬 링크·섹션, npm 예제·한영 일치, Bash/sh 문법, 생성 시나리오 |
+| 코드 수정·PR 전 검사 | `npm run test:ci` | 단위 검사, 소스 커버리지, 시나리오 설계, 문서 |
+| 단위·실행 제어 검사만 | `npm test` | 커버리지 보고서 없이 단위 검사 실행 |
 
-더 넓은 범위의 **오프라인 runtime 검사**에는 Node 22.12 이상, Codex 0.154.0, Python 3를 설치한 뒤 다음을 실행합니다.
+`test:docs`는 예제를 파싱할 뿐 설치·서버·실모델 검사 명령을 실행하거나 외부 URL에 접속하지 않습니다. `coverage/lcov.info`는 관측한 소스 커버리지이며 제품 기능 지원율이 아닙니다.
+
+<details>
+<summary>더 넓은 오프라인 검사: 실제 Codex·PTY·Chromium</summary>
+
+Node 22.12 이상, Codex 0.154.0, Python 3를 설치한 뒤 실행합니다.
 
 ```bash
 npx --no-install playwright install chromium
@@ -129,18 +137,24 @@ env -u GHCP_LIVE_HANDOFF_OUTPUT npm run test:runtime
 
 실제 Codex/PTY/브라우저·워크플로·안정성 경로를 SDK 대역으로 검사하며 Copilot 로그인은 필요하지 않습니다. `env -u`는 이번 호출에서만 실모델 핸드오프 옵션을 제거하므로, 기존 `GHCP_LIVE_HANDOFF_OUTPUT` 설정 때문에 모델을 호출하지 않습니다. CI는 이 오프라인 검사를 Linux/macOS의 단위 커버리지 작업과 분리해 실행합니다.
 
-특정 기능만 검사하려면 아래 안내 중 **하나를 선택**하세요. 모든 행을 순서대로 실행하는 설치 절차가 아닙니다. 계획 명령에는 프로젝트 의존성만 필요하며 Codex·브라우저·Copilot 로그인은 필요하지 않습니다. **실모델 `--execute`와 soak의 `--smoke`는 Copilot 사용량이 발생합니다.** 검사별 실모델 통과 기준은 서로 다릅니다.
+</details>
+
+### 선택적 실모델 검사
+
+아래 안내 중 **하나를 선택**하세요. 모든 행을 순서대로 실행하는 설치 절차가 아닙니다. 계획 명령은 검사를 실행하지 않고 사양만 보여주며 프로젝트 의존성만 필요합니다. **실모델 `--execute`와 soak의 `--smoke`는 Copilot 사용량이 발생합니다.** 아래 통과 기준은 충족해야 할 조건이지 이미 달성한 결과가 아닙니다.
 
 | 목적과 실모델 통과 기준 | 계획 명령 (모델 호출 없음) | 안내 |
 | --- | --- | --- |
 | 개발 워크플로: **108/108** (18개 × 6개 모델) | `npm run test:compatibility -- --plan` | [호환성 실행·해석](docs/COMPATIBILITY_TESTING_KO.md) · [시나리오 사양](docs/NATIVE_SCENARIOS_KO.md) |
 | bridge 장애·복구: **66/66** (11개 × 6개 모델) | `npm run test:stability -- --plan` | [안정성](docs/STABILITY_TESTING_KO.md) |
 | 실제 대화형 TUI: 목표 **69/72**, 전체 통과 **72/72** | `npm run test:tui -- --plan` | [TUI 시나리오](docs/TUI_SCENARIOS_KO.md) |
-| PTY·브라우저: 선언한 작업 완료, 관측한 실패 없음 | `npm run test:terminal -- --plan` | [터미널 검사](docs/SOAK_TESTING_KO.md) |
-| 내구성: 모든 실행 경로 5시간 이상, 관측한 실패 없음 | `npm run test:soak -- --plan` | [내구성](docs/SOAK_TESTING_KO.md#통합-soak-실행기) |
+| PTY·브라우저: 선언한 작업 완료, 관측한 실패 없음 | `npm run test:terminal -- --plan` | [터미널 검사](docs/SOAK_TESTING_KO.md#재현-가능한-터미널-검사) |
+| 내구성: 모든 실행 경로 5시간 이상, 관측한 실패 없음 | `npm run test:soak -- --plan` | [내구성](docs/SOAK_TESTING_KO.md#5시간-실모델-실행) |
 | Opus 필터: 진단 증거 수집이며 호환성 판정 아님 | `npm run diagnose:opus` | [진단](docs/OPUS_DIAGNOSTICS_KO.md) |
 
-저장된 보고서의 [증거 유효성과 검사 통과 여부는 별개](docs/validation/README_KO.md#결과-읽기)입니다. 공개 요약은 `.runtime` 원본 증거 전체가 아닙니다. 생성 시나리오 문서는 `scripts/compatibility/documentation.mjs`와 catalog가 원본이며, 직접 편집하지 말고 `npm run docs:scenarios`로 갱신하세요.
+저장된 보고서의 [증거 유효성과 검사 통과 여부는 별개](docs/validation/README_KO.md#결과-읽기)입니다. 공개 요약은 `.runtime` 원본 증거 전체가 아닙니다.
+
+**시나리오 문서를 수정할 때:** [템플릿](scripts/compatibility/documentation.mjs)이나 [catalog](scripts/compatibility/catalog.mjs)를 수정하고 `npm run docs:scenarios`, `npm run test:docs` 순서로 실행하세요. 생성 파일은 직접 수정하지 않습니다. `npm run docs:scenarios:check`는 생성 내용만 비교하며 나머지 안내 문서는 검사하지 않습니다.
 
 ## 기여자와 참고 자료
 

@@ -22,27 +22,44 @@ const protectedConfig = [
 ];
 const protectedFlags = ["--model", "--profile", "--oss", "--local-provider", "--remote", "--remote-auth-token-env", "--search"];
 
-export const usage = `Usage: codex-ghcp [bridge options] [--] [Codex options and prompt]
+export const usage = `Usage: codex-ghcp [bridge options] [-- Codex options and prompt]
+
+Run ./bin/codex-ghcp with no arguments for an interactive session.
+The default launch starts a private bridge and stops it when Codex exits.
+No .env file or shell setup is needed; .env is not loaded automatically.
 
 Bridge options:
-  --ghcp-model MODEL    GitHub Copilot model ID (default: ${DEFAULT_MODEL})
+  --ghcp-model MODEL    Initial model (overrides GHCP_MODEL; default: ${DEFAULT_MODEL})
   --bridge-port PORT    Fixed loopback port (default: select a free port)
   --bridge-background   Keep this project's bridge running after Codex exits
-  -h, --help            Show this help
+  -h, --help            Show launcher help without starting a bridge
 
-Use --ghcp-model rather than Codex --model/-m. Provider/profile overrides,
+Put bridge options before -- and Codex options after it. Use --ghcp-model
+rather than Codex --model/-m. Provider/profile overrides,
 remote TUI connections, hosted web search and incompatible transport flags
 are rejected. Other Codex options, including sandbox and approvals, pass through.
+Type /model, /compact and /quit inside Codex, not in your shell.
 
 Supported models (subject to Copilot account policy):
 ${SUPPORTED_MODEL_IDS.map((model) => `  ${model}`).join("\n")}
 
-Examples:
+Examples (from this repository's root):
+  ./bin/codex-ghcp
   ./bin/codex-ghcp --ghcp-model gpt-6-sol
-  ./bin/codex-ghcp --ghcp-model gpt-6-astra -- exec --sandbox read-only "Explain this project"
+  ./bin/codex-ghcp -- exec --sandbox read-only "Explain this project"
+  ./bin/codex-ghcp -- resume --last
+
+From another project, use the launcher's absolute path without changing directory.
+For official CLI help/version without a bridge:
+  command codex --help
+  command codex --version
+
+Optional background bridge:
   ./bin/codex-ghcp --bridge-background
   ./bin/codex-ghcp-status
-  ./bin/codex-ghcp-stop
+  ./bin/codex-ghcp-stop   # Only after closing its Codex sessions
+
+Status/stop manage background bridges only. See docs/USAGE.md for details.
 `;
 
 function optionValue(argv, index, flag) {

@@ -2,19 +2,27 @@
 
 [한국어](TUI_SCENARIOS_KO.md) · [Guide map](../README.md#testing) · [Stability contract](STABILITY_TESTING.md) · [Terminal/endurance checks](SOAK_TESTING.md)
 
-`codex-ghcp-tui-12-v3` verifies the **actual Codex TUI → production bridge → Copilot SDK → exact model** connection. It retains **12 scenarios × 6 models = 72 cases** and is never combined with stability, compatibility or earlier TUI results. The target is **at least 95%: 69/72 cases in one complete, unchanged live run**. V3 additionally requires separate first-progress and streaming watchdog settings; older results verify only with their frozen source.
+Test Codex's interactive terminal interface (TUI) through the **actual Codex TUI → production bridge → Copilot SDK → exact model** connection. The `codex-ghcp-tui-12-v3` contract retains **12 scenarios × 6 models = 72 cases** and is never combined with stability, compatibility or earlier TUI results. The target is **at least 95%: 69/72 cases in one complete, unchanged live run**. V3 additionally requires separate first-progress and streaming watchdog settings; older results verify only with their frozen source.
 
 **Jump to:** [Run](#prepare-and-run) · [Scenario list](#scenarios) · [Pass criteria](#acceptance) · [Verification and exit codes](#verify-an-older-run-and-read-exit-codes).
 
 ## Prepare and run
 
-After `npm ci`, inspect the plan from the repository root. This is the default action; it needs no Codex installation, browser or Copilot login and makes no model calls:
+Run from the repository root after `npm ci`. A live matrix is optional, not a setup step.
+
+**Choose a mode:** [Plan](#plan) · [Offline runtime](#offline-runtime) · [Live matrix](#live-matrix) · [Verify saved evidence](#verify-a-saved-report).
+
+### Plan
+
+**No model calls, Codex installation, browser or Copilot login.** The default mode describes the matrix without executing it:
 
 ```sh
 npm run test:tui -- --plan
 ```
 
-Runtime and live checks need **Node 22.12+, Codex 0.154.0, Python 3 and headless Chromium**. Install the pinned Codex CLI as shown in the [quick start](../README.md#quick-start), but skip the Copilot login/catalog check for offline testing. Install the browser once:
+### Offline runtime
+
+Runtime and live checks need **Node 22.12+, Codex 0.154.0, Python 3 and headless Chromium**. Use the [CLI installation step](../README.md#2-install-dependencies); offline testing needs no Copilot login. Install the browser once:
 
 ```sh
 npx --no-install playwright install chromium
@@ -28,13 +36,17 @@ On Linux, if Chromium reports missing system libraries, use `npx --no-install pl
 npm run test:tui:runtime
 ```
 
-**Live — optional, consumes Copilot usage:** complete the [Copilot account check](../README.md#quick-start), then run all 72 cases in a new output directory:
+### Live matrix
+
+**Consumes Copilot usage.** Use the [runtime prerequisites](#offline-runtime) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access), then run all 72 cases in a new output directory:
 
 ```sh
 npm run test:tui -- --execute --output .runtime/tui-new
 ```
 
-Then verify the report **without model calls**, including failed runs. Use the same output directory:
+### Verify a saved report
+
+**No model calls or case reruns.** After execution finishes, verify the saved report even if cases failed. Run this separately, not chained with `&&`, so a nonzero execution exit does not skip verification. Use the same output directory:
 
 ```sh
 npm run test:tui -- --verify .runtime/tui-new/report.json

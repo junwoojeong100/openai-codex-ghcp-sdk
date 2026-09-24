@@ -8,17 +8,21 @@ Test end-to-end development workflows with **18 scenarios × six models = 108 ca
 
 Run from the repository root after `npm ci`. Choose a check below; a live matrix is not part of installation.
 
-**Plan and design checks — no model calls, Codex or Copilot login:**
+**Choose a mode:** [Plan and local checks](#plan-and-local-checks) · [Offline runtime](#offline-runtime) · [Live matrix](#live-matrix) · [Verify saved evidence](#verify-a-saved-report).
+
+### Plan and local checks
+
+**No model calls, Codex installation or Copilot login.** The default mode prints the 108-case contract without executing any cases:
 
 ```bash
-npm run test:scenarios
-npm run docs:scenarios:check
 npm run test:compatibility -- --plan
 ```
 
-The default is `--plan`. A successful plan describes the 108-case contract; it does not execute those cases.
+Use `npm run test:scenarios` to check scenario design. For documentation-only changes, `npm run test:docs` is enough: it checks current guides, command examples and generated scenarios without running the examples.
 
-**Offline runtime — no model calls:** install Node 22.12+, Codex **0.154.0** and a working OS sandbox. No Copilot login or browser is required.
+### Offline runtime
+
+**No model calls.** Use Node 22.12+, Codex **0.154.0** and a working OS sandbox. Follow the [CLI installation step](../README.md#2-install-dependencies); no Copilot login or browser is required.
 
 ```bash
 npm run test:compatibility:runtime
@@ -26,21 +30,27 @@ npm run test:compatibility:runtime
 
 This uses real Codex with mechanical SDK peers and isolated credentials, including the actual launcher in C11. It checks the harness, not live model compatibility. The bridge's application engine requirements are unchanged.
 
-**Live run — optional, consumes Copilot usage:** use the runtime prerequisites above and complete the [Copilot account check](../README.md#quick-start). No OpenAI API key is needed. Choose a new output directory and execute once:
+### Live matrix
+
+**Consumes Copilot usage.** Use the [runtime prerequisites](#offline-runtime) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access). No OpenAI API key is needed.
+
+Before running, retain a separate copy of the exact source and dependency lockfile; this runner does **not** save a source snapshot. Keep the source unchanged until you have verified the report. Choose a new output directory for each run:
 
 ```bash
 npm run test:compatibility -- --execute --output .runtime/compatibility-new-run
 ```
 
-Then verify the saved report **without model calls**, even if execution failed. Keep this separate from the execution command so a nonzero exit does not skip verification:
+Existing output folders are never overwritten. There is no model subset, automatic case rerun or native OpenAI baseline. An unavailable model retains 18 blocked cells; shared prerequisite failure retains all 108 cells. Case failures do not skip later cases. Interruption stops scheduling and preserves incomplete evidence.
+
+Up to four model lanes run concurrently. Each case includes an eight-second cleanup reserve. Exhausting every deadline gives 2,220 seconds/model and a **75.5-minute** scheduling estimate including preflight, excluding OS/I/O overhead. One hour is a target, not a global cutoff.
+
+### Verify a saved report
+
+**No model calls or case reruns.** After execution finishes, verify the saved report even if cases failed. Run this separately, not chained with `&&`, so a nonzero execution exit does not skip verification. Use the same output directory:
 
 ```bash
 npm run test:compatibility -- --verify .runtime/compatibility-new-run/report.json
 ```
-
-Existing output folders are never overwritten. There is no model subset, automatic case rerun or native OpenAI baseline. An unavailable model retains 18 blocked cells; shared prerequisite failure retains all 108 cells. Case failures do not skip later cases. Interruption stops scheduling and preserves incomplete evidence.
-
-Up to four model lanes run concurrently. Each case includes an eight-second cleanup reserve. Exhausting every deadline gives 2,220 seconds/model and a **75.5-minute** scheduling estimate including preflight, excluding OS/I/O overhead. One hour is a target, not a global cutoff.
 
 ## Read the result
 
@@ -54,7 +64,7 @@ Open `.runtime/compatibility-new-run/report.md`: the verdict and per-model count
 | 1 | Failed, blocked, unsupported or incomplete execution |
 | 2 | Invalid arguments or evidence |
 
-Use the report's `executionKind` to distinguish offline from live. **This workflow runner records source fingerprints but does not create a `source-snapshot` directory.** Verify before editing the source. For later verification, retain the complete run directory and a separate copy of the exact source and dependency lockfile used for that run.
+Use the report's `executionKind` to distinguish offline from live. For later verification, retain the complete run directory and the [source and dependency lockfile saved before execution](#live-matrix).
 
 From that preserved source tree, with the matching dependencies installed, replace the example path with the **absolute path to the original report**:
 

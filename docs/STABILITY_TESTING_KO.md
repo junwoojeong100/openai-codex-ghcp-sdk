@@ -10,26 +10,37 @@
 
 `npm ci` 후 저장소 루트에서 실행합니다. 실모델 행렬은 선택 사항이지 설치 절차가 아닙니다.
 
-**계획·stress 검사 — 모델 호출·Codex·Copilot 로그인 불필요:** 기본은 계획 출력이며, stress는 기계적인 SDK 대역을 반복 실행합니다.
+**실행 모드 선택:** [계획·로컬 검사](#계획과-로컬-검사) · [오프라인 runtime](#오프라인-runtime) · [실모델 행렬](#실모델-행렬) · [저장된 증거 검증](#저장된-보고서-검증).
+
+### 계획과 로컬 검사
+
+**모델 호출·Codex 설치·Copilot 로그인이 필요하지 않습니다.** 기본 모드는 행렬 사양만 출력하며 실행하지 않습니다.
 
 ```bash
 npm run test:stability -- --plan
-npm run test:stability:stress
 ```
 
-**오프라인 runtime — 모델 호출 없음:** Node 22.12 이상, Codex **0.154.0**, 동작하는 OS 샌드박스를 준비하세요. 실제 Codex와 SDK 대역을 사용하며 Copilot 로그인이나 브라우저는 필요하지 않습니다.
+로컬 도구 왕복·복구 동작은 `npm run test:stability:stress`로 검사합니다. 기계적인 SDK 대역을 반복 실행하며, 실모델 호출이나 실제 경과 시간 기반의 내구성 검사는 아닙니다.
+
+### 오프라인 runtime
+
+**모델 호출은 없습니다.** Node 22.12 이상, Codex **0.154.0**, 동작하는 OS 샌드박스를 준비하세요. [CLI 설치 단계](../README_KO.md#2-의존성-설치)를 따르면 됩니다. 실제 Codex와 SDK 대역을 사용하며 Copilot 로그인이나 브라우저는 필요하지 않습니다.
 
 ```bash
 npm run test:stability:runtime
 ```
 
-**실모델 — Copilot 사용량 발생:** 위 runtime 준비 사항과 [Copilot 계정 확인](../README_KO.md#빠른-시작)을 마치세요. 새 출력 디렉터리에서 전체 행렬을 한 번 실행합니다.
+### 실모델 행렬
+
+**Copilot 사용량이 발생합니다.** [runtime 준비 사항](#오프라인-runtime)과 [Copilot 계정 확인](../README_KO.md#3-설치와-계정-접근-확인)을 마치세요. 새 출력 디렉터리에서 전체 행렬을 한 번 실행합니다.
 
 ```bash
 npm run test:stability -- --execute --output .runtime/stability-new-run
 ```
 
-실패가 있어도 저장된 보고서를 **모델 호출 없이** 검증하세요. 실행할 때와 같은 출력 디렉터리를 사용합니다.
+### 저장된 보고서 검증
+
+**모델 호출이나 사례 재실행은 없습니다.** 실행이 끝나면 실패가 있어도 저장된 보고서를 검증하세요. 실패 종료 코드 때문에 검증이 생략되지 않도록 실행 명령과 `&&`로 연결하지 말고 별도로 수행합니다. 실행할 때와 같은 출력 디렉터리를 사용하세요.
 
 ```bash
 npm run test:stability -- --verify .runtime/stability-new-run/report.json
@@ -141,7 +152,7 @@ Codex **0.154.0**, Copilot SDK **1.0.14**를 사용합니다. 자동 케이스 �
 
 `pending-result-instruction-handoff-v2` 회귀 검사는 실제 Codex TUI·실행기·fixture MCP 서버·headless Playwright를 사용합니다. 완전한 결과 배치와 함께 최상위 지시문 갱신을 명시적으로 주입합니다. fixture 실행 1회·기존 결과 RPC 제출 0회·원래 샘플을 독립된 한 줄로 출력·`/new` 없는 다음 턴 성공이 통과 조건입니다. 66건 안정성 행렬과 별개이며 [이전 검사 실패](validation/2026-09-23-pending-handoff.json)는 기록에 유지합니다.
 
-두 모드 모두 [TUI 준비 사항](TUI_SCENARIOS_KO.md#준비와-실행)이 필요합니다. **오프라인 — 모델 호출 없음:** 이 호출에서 실모델 환경 변수를 명시적으로 제외합니다.
+두 모드 모두 [TUI 준비 사항](TUI_SCENARIOS_KO.md#오프라인-runtime)이 필요합니다. **오프라인 — 모델 호출 없음:** 이 호출에서 실모델 환경 변수를 명시적으로 제외합니다.
 
 ```sh
 env -u GHCP_LIVE_HANDOFF_OUTPUT node --test test/runtime/pending-handoff.test.mjs

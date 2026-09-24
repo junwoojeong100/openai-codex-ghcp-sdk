@@ -10,26 +10,37 @@ Only looking for normal-launch timeout settings? Go to [operational defaults](#o
 
 Run from the repository root after `npm ci`. A live matrix is optional, not a setup step.
 
-**Plan and stress checks — no model calls, Codex or Copilot login:** plan is the default; stress tests use mechanical SDK cycles.
+**Choose a mode:** [Plan and local checks](#plan-and-local-checks) · [Offline runtime](#offline-runtime) · [Live matrix](#live-matrix) · [Verify saved evidence](#verify-a-saved-report).
+
+### Plan and local checks
+
+**No model calls, Codex installation or Copilot login.** The default mode describes the matrix without executing it:
 
 ```bash
 npm run test:stability -- --plan
-npm run test:stability:stress
 ```
 
-**Offline runtime — no model calls:** use Node 22.12+, Codex **0.154.0** and a working OS sandbox. This drives real Codex with an SDK double; no Copilot login or browser is required.
+For local tool-cycle and recovery checks, use `npm run test:stability:stress`. It uses mechanical SDK cycles, not real models or elapsed-time endurance testing.
+
+### Offline runtime
+
+**No model calls.** Use Node 22.12+, Codex **0.154.0** and a working OS sandbox. Follow the [CLI installation step](../README.md#2-install-dependencies). This drives real Codex with an SDK double; no Copilot login or browser is required.
 
 ```bash
 npm run test:stability:runtime
 ```
 
-**Live — consumes Copilot usage:** use the runtime prerequisites above and complete the [Copilot account check](../README.md#quick-start). Choose a new output directory and execute one full matrix:
+### Live matrix
+
+**Consumes Copilot usage.** Use the [runtime prerequisites](#offline-runtime) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access). Choose a new output directory and execute one full matrix:
 
 ```bash
 npm run test:stability -- --execute --output .runtime/stability-new-run
 ```
 
-Then verify the saved report **without model calls**, even if cases failed. Use the same output directory:
+### Verify a saved report
+
+**No model calls or case reruns.** After execution finishes, verify the saved report even if cases failed. Run this separately, not chained with `&&`, so a nonzero execution exit does not skip verification. Use the same output directory:
 
 ```bash
 npm run test:stability -- --verify .runtime/stability-new-run/report.json
@@ -141,7 +152,7 @@ All are positive integers except `TURN_IDLE_RECOVERY_ATTEMPTS`, which accepts 0�
 
 The `pending-result-instruction-handoff-v2` regression drives the actual Codex TUI, launcher, fixture MCP server and headless Playwright. It injects a labelled top-level instruction update with a complete result batch. A pass requires one fixture execution, zero old result RPCs, the exact sample on a standalone line, and a successful next turn without `/new`. This is separate from the 66-cell stability matrix; [earlier probe failures](validation/2026-09-23-pending-handoff.json) remain recorded.
 
-Both modes require the [TUI prerequisites](TUI_SCENARIOS.md#prepare-and-run). **Offline — no model calls:** explicitly remove the live-mode environment variable for this invocation.
+Both modes require the [TUI prerequisites](TUI_SCENARIOS.md#offline-runtime). **Offline — no model calls:** explicitly remove the live-mode environment variable for this invocation.
 
 ```sh
 env -u GHCP_LIVE_HANDOFF_OUTPUT node --test test/runtime/pending-handoff.test.mjs

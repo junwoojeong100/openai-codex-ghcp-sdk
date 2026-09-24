@@ -17,7 +17,6 @@ import { Backend } from "../scripts/compatibility/backend.mjs";
 import { safeApprovalCommand } from "../scripts/compatibility/fixtures.mjs";
 import { supervise, workerEnvironment } from "../scripts/compatibility/supervisor.mjs";
 import { ROOT, writeJson, sha, safeRead, scrubber, environment, bounded, run } from "../scripts/compatibility/util.mjs";
-import { scenarioDocument, updateDocumentation } from "../scripts/compatibility/documentation.mjs";
 import { CoreScriptedSdk } from "./helpers/core-scripted-sdk.mjs";
 import { syntheticEvidence, writeSyntheticCase } from "./helpers/core-evidence.mjs";
 
@@ -236,34 +235,6 @@ test("user cancellation stops new cases, preserves incomplete cells and cannot c
   assert.equal(cases, 1); assert.equal(report.interrupted, true); assert.equal(report.cases.length, TOTAL_CASES);
   assert.equal(report.summary.fullMatrixPassed, false); assert.ok(report.cases.every(r => r.status === "not-run"));
 });
-test("scenario documentation links every index entry to its detailed contract in both languages", () => {
-  for (const language of ["en", "ko"]) {
-    const document = scenarioDocument(language);
-    const coverageHeading = language === "en" ? "## Separate feature scope from pass rate" : "## 기능 커버리지와 통과율을 분리";
-    assert.ok(document.indexOf("### C18 —") < document.indexOf(coverageHeading), "Detailed contracts precede coverage commentary");
-    for (const { id, name, prompt, assertions } of NATIVE_SCENARIOS) {
-      const anchor = id.toLowerCase();
-      assert.ok(document.includes(`| [${id}](#${anchor}) | ${name[language]} |`));
-      assert.ok(document.includes(`<a id="${anchor}"></a>\n\n### ${id} — ${name[language]}\n`));
-      assert.ok(document.includes(`\`\`\`text\n${prompt}\n\`\`\``), "The exact shared prompt is preserved");
-      for (const assertion of assertions) assert.ok(document.includes(`\`${assertion.id}\`: ${assertion.description[language]} — \`${assertion.evidence}\``));
-    }
-  }
-});
-
-test("scenario documentation is generated from the contract and local links resolve", () => {
-  updateDocumentation({ check: true });
-  const guides = fs.readdirSync(path.join(ROOT, "docs")).filter(file => file.endsWith(".md")).map(file => path.join("docs", file));
-  for (const file of ["README.md", "README_KO.md", ...guides, "docs/validation/README.md", "docs/validation/README_KO.md"]) {
-    const full = path.join(ROOT, file);
-    for (const match of fs.readFileSync(full, "utf8").matchAll(/\]\(([^\s)]+)\)/g)) {
-      const target = match[1].split("#")[0];
-      if (!target || /^[a-z]+:/i.test(target)) continue;
-      assert.ok(fs.existsSync(path.resolve(path.dirname(full), target)), `${file}: ${target}`);
-    }
-  }
-});
-
 test("preflight locates the actual SDK version through its CJS/ESM entry layout", async () => {
   const { installedSdkVersion } = await import("../scripts/compatibility/preflight.mjs");
   assert.equal(installedSdkVersion(), C.versions.copilotSdk);

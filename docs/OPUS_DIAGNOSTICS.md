@@ -8,13 +8,17 @@ This opt-in diagnostic correlates **upstream protocol responses with SDK events*
 
 Run from the repository root after `npm ci`. Live execution requires Copilot SDK 1.0.14 and an authenticated account with access to `claude-opus-5.5`. No Codex TUI or browser is used by this diagnostic.
 
-**Plan only — no model calls:**
+### Plan
+
+**No model calls.** This default mode describes the probes without running them:
 
 ```sh
 npm run diagnose:opus
 ```
 
-**Live diagnostic — consumes Copilot usage:** run `./bin/ghcp-models` first and confirm `claude-opus-5.5` is neither `disabled` nor `not available`. If catalog access fails, use [authentication troubleshooting](USAGE.md#boundaries-and-troubleshooting). Use a new or empty evidence directory; existing reports cannot be overwritten.
+### Live diagnostic
+
+**Consumes Copilot usage.** Run `./bin/ghcp-models` first and confirm `claude-opus-5.5` is neither `disabled` nor `not available`. If catalog access fails, use [authentication troubleshooting](USAGE.md#boundaries-and-troubleshooting). Use a new or empty evidence directory; existing reports cannot be overwritten.
 
 ```sh
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new

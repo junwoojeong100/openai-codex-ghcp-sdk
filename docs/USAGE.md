@@ -23,15 +23,18 @@ Choose the launch that matches your task; these are alternatives, not a sequence
 | Interactive session | `./bin/codex-ghcp` |
 | Resume the latest conversation in this directory | `./bin/codex-ghcp -- resume --last` |
 | Launcher help without a bridge | `./bin/codex-ghcp --help` |
+| Official Codex help without a bridge | `command codex --help` |
 
-For a non-interactive, read-only request:
+To choose a model and make a non-interactive, read-only request:
 
 ```bash
-./bin/codex-ghcp -- exec --sandbox read-only \
+./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- exec --sandbox read-only \
   "Read README.md and summarize its purpose in one sentence."
 ```
 
-Ordinary Codex arguments follow `--`. Outside a Git repository, add `--skip-git-repo-check` after `exec`; it skips only the Git check. The launcher does not add approval or sandbox bypasses and rejects provider/transport overrides.
+**Before `--`: launcher options**, such as `--ghcp-model` and `--bridge-background`. **After `--`: Codex commands and options**, such as `exec`, `resume` and `--sandbox`. Native `--model`/`-m` is rejected; use `--ghcp-model` instead. Enter slash commands such as `/model`, `/compact` and `/quit` **inside the running Codex session**, not in your shell.
+
+Outside a Git repository, add `--skip-git-repo-check` after `exec`; it skips only the Git check. The launcher does not add approval or sandbox bypasses and rejects provider/transport overrides.
 
 To work in another project, open a terminal **in that project** and use the launcher's absolute path. For a clone at `$HOME/GitHub/openai-codex-ghcp-sdk`:
 
@@ -161,6 +164,8 @@ See [Compatibility](COMPATIBILITY.md) before relying on advanced Codex features.
 | Symptom | Action |
 | --- | --- |
 | `./bin/...`: file not found | Run from this repository's root, or use [the absolute launcher path](#run-codex) from your project. |
+| Codex rejects `--ghcp-model` as an unexpected argument | Put launcher options **before** `--`, for example `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last`. |
+| Help/version unexpectedly starts a bridge | Use `./bin/codex-ghcp --help` for launcher help, or `command codex --help` / `command codex --version` for the official CLI. Arguments after `--` take the normal bridge startup path. |
 | Doctor reports `ok: false` or `supportedVersion: false` | Read the failing field. Run `npm ci` for an SDK mismatch; install/fix the named CLI or Node version for a tool failure. Use the [pinned setup](../README.md#quick-start). |
 | Copilot authentication error | Run `copilot login`, then `./bin/ghcp-models`. Do not paste credentials into a prompt or source file. |
 | Model unavailable | Run `./bin/ghcp-models` and choose an ID that is neither `disabled` nor `not available` with `--ghcp-model`. If none qualify, check Copilot entitlement and organization policy. There is no fallback. |
@@ -198,26 +203,31 @@ Configuration changes require every pending result exactly once and unchanged no
 
 ### Load updated code
 
-**Source or environment edits do not update a running bridge.** Finish or cancel the current turn, then exit Codex normally with `/quit`. If you used `--bridge-background`, close all of that bridge's Codex sessions and run `./bin/codex-ghcp-stop` before relaunching. For the default foreground launcher, no separate stop is needed.
+**Source or environment edits take effect only in a new bridge.** Keep the terminal in your **original working project**. The paths below assume a clone at `$HOME/GitHub/openai-codex-ghcp-sdk`; adjust them if needed.
 
-Resume from the same working directory:
+1. **Inside Codex:** finish or cancel the current turn, then type `/quit`. For a background bridge, close every Codex session connected to it.
+2. **In the shell, background mode only:** run `"$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp-stop"`. Skip this step for the default foreground mode; its bridge exits with Codex.
+3. **From the same working project:** resume with the command below. Do not change directories just to reach the launcher.
 
 ```bash
-./bin/codex-ghcp -- resume --last
+"$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp" -- resume --last
 ```
 
-This command starts a fresh foreground bridge. Add `--bridge-background` before `--` if you want to retain it again. Do not kill the bridge beneath an active Codex session: restarting discards in-memory state, including unresolved tool calls. `/health.turnWatchdog` and background status show the running timeout/recovery settings, not the current source defaults.
+If this repository is your working project, `./bin/codex-ghcp -- resume --last` is equivalent. The command starts a fresh foreground bridge; add `--bridge-background` before `--` to retain it again.
+
+Do not kill the bridge beneath an active Codex session: restarting discards in-memory state, including unresolved tool calls. `/health.turnWatchdog` and background status show the running timeout/recovery settings, not the current source defaults.
 
 ### Slow or disconnected upstream
 
 If recovery is exhausted, the replacement session also made no observable progress before its deadline. This does not prove a deadlock: `/health.ready` describes the local SDK connection, not the remote model service. For `ETIMEDOUT` or connection failures, check network, proxy/VPN and service availability before increasing timeouts. Diagnostics distinguish `first_progress` from `streaming`; a replacement session does not get a new absolute turn budget.
 
-For slower workloads, use this **opt-in latency-tolerant launch** after normal exit and stopping any retained background bridge. It allows three minutes both before and after first progress, at most two safe recoveries, a ten-minute absolute turn limit and an eleven-minute total request limit:
+For slower workloads, use this **opt-in latency-tolerant launch** after normal exit and stopping any retained background bridge. Run from the original working project and adjust the clone path as above. It allows three minutes both before and after first progress, at most two safe recoveries, a ten-minute absolute turn limit and an eleven-minute total request limit:
 
 ```bash
 TURN_FIRST_PROGRESS_TIMEOUT_MS=180000 TURN_IDLE_TIMEOUT_MS=180000 TURN_IDLE_RECOVERY_ATTEMPTS=2 \
 TURN_TIMEOUT_MS=600000 REQUEST_TIMEOUT_MS=660000 \
-./bin/codex-ghcp -- -c 'model_reasoning_effort="low"' resume --last
+"$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp" -- \
+  -c 'model_reasoning_effort="low"' resume --last
 ```
 
 This is not the default or a guarantee against disconnection, and it can increase waiting time and inference usage. Raise the turn/request budgets together rather than only the idle timeout. Use `/compact` between completed turns to reduce long-history latency; a larger maximum context does not make a large conversation faster. Never use keepalives as fabricated model progress or blindly rerun completed tools. Long test runners save progress independently under `.runtime`, so a chat failure does not mean the test process stopped; inspect its existing report before starting another run.

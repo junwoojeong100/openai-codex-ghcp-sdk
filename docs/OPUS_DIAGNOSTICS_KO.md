@@ -8,13 +8,17 @@
 
 저장소 루트에서 `npm ci`를 마친 뒤 실행합니다. 실모델 진단에는 Copilot SDK 1.0.14와 `claude-opus-5.5`를 사용할 수 있는 인증된 계정이 필요합니다. 이 진단은 Codex TUI나 브라우저를 사용하지 않습니다.
 
-**계획만 출력 — 모델 호출 없음:**
+### 계획
+
+**모델 호출은 없습니다.** 기본 모드는 진단 내용을 설명할 뿐 실행하지 않습니다.
 
 ```sh
 npm run diagnose:opus
 ```
 
-**실모델 진단 — Copilot 사용량 발생:** 먼저 `./bin/ghcp-models`에서 `claude-opus-5.5`가 `disabled`나 `not available`이 아닌지 확인하세요. 목록 접근이 실패하면 [인증 문제 해결](USAGE_KO.md#제한과-문제-해결)을 참고하세요. 새 디렉터리나 비어 있는 디렉터리만 사용하며 기존 보고서는 덮어쓰지 않습니다.
+### 실모델 진단
+
+**Copilot 사용량이 발생합니다.** 먼저 `./bin/ghcp-models`에서 `claude-opus-5.5`가 `disabled`나 `not available`이 아닌지 확인하세요. 목록 접근이 실패하면 [인증 문제 해결](USAGE_KO.md#제한과-문제-해결)을 참고하세요. 새 디렉터리나 비어 있는 디렉터리만 사용하며 기존 보고서는 덮어쓰지 않습니다.
 
 ```sh
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new

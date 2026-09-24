@@ -70,6 +70,7 @@ The launcher starts a bridge on a free loopback port, waits for readiness, runs 
 | Choose an initial model | `./bin/codex-ghcp --ghcp-model claude-sonnet-5` |
 | Resume the latest conversation in this directory | `./bin/codex-ghcp -- resume --last` |
 | Show launcher help without starting a bridge | `./bin/codex-ghcp --help` |
+| Show official Codex options without a bridge | `command codex --help` |
 | Check the official CLI version without the bridge | `command codex --version` |
 
 For a non-interactive, read-only request:
@@ -79,9 +80,9 @@ For a non-interactive, read-only request:
   "Read README.md and summarize its purpose in one sentence."
 ```
 
-Put ordinary Codex arguments after `--`. Use **`--ghcp-model`**, not native `--model`/`-m`; provider and transport overrides are rejected. Outside a Git repository, `exec --skip-git-repo-check` skips only the Git-directory check, not the sandbox.
+**Launcher options go before `--`; Codex commands and options go after it.** For example, `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last` resumes with Sonnet. Use `--ghcp-model`, not native `--model`/`-m`; provider and transport overrides are rejected. Outside a Git repository, `exec --skip-git-repo-check` skips only the Git-directory check, not the sandbox.
 
-From another project, call this launcher's absolute path; it preserves your working directory. To use just `codex` from any directory, follow the **optional** [zsh setup and undo instructions](docs/USAGE.md#optional-zsh-integration). For a reusable background bridge, see [start/status/stop](docs/USAGE.md#run-codex).
+From another project, call this launcher's absolute path; it preserves your working directory. To use just `codex` from any directory, follow the **optional** [zsh setup and undo instructions](docs/USAGE.md#optional-zsh-integration). For a reusable background bridge, see [start/status/stop](docs/USAGE.md#optional-background-bridge).
 
 ## Models
 
@@ -110,17 +111,24 @@ Read the [full compatibility boundaries](docs/COMPATIBILITY.md) before relying o
 
 ## Testing
 
-Looking for **what has actually passed**, rather than commands? Read the [recorded results and remaining gaps](docs/validation/README.md#recorded-results). The criteria below are requirements, not claims that those results have been achieved.
+Testing is **not required to use the launcher**. For measured results instead of commands, read the [recorded results and remaining gaps](docs/validation/README.md#recorded-results).
 
-Testing is **not required to use the launcher**. After `npm ci`, the default development check covers units, source coverage and scenario/document consistency, with **no model calls or Copilot login**:
+### Local development checks
 
-```bash
-npm run test:ci
-```
+After `npm ci`, choose the check that matches your change. These commands make **no model calls** and need **no Codex installation or Copilot login**.
 
-Use `npm test` for unit/controller checks only, or `npm run docs:scenarios:check` for generated-document consistency. `coverage/lcov.info` measures observed source coverage, not product-feature support.
+| Change / goal | Command | Checks |
+| --- | --- | --- |
+| Documentation only | `npm run test:docs` | Local links and sections, npm examples and EN/KO parity, Bash/sh syntax and generated scenarios |
+| Code or pre-PR check | `npm run test:ci` | Units, source coverage, scenario design and documentation |
+| Unit/controller checks only | `npm test` | Unit suite without the coverage report |
 
-For the larger **offline runtime** check, install Node 22.12+, Codex 0.154.0 and Python 3, then run:
+`test:docs` parses examples; it does not run their install, server or live-test commands, or check external URLs. `coverage/lcov.info` measures observed source coverage, not product-feature support.
+
+<details>
+<summary>Broader offline check: real Codex, PTY and Chromium</summary>
+
+Install Node 22.12+, Codex 0.154.0 and Python 3, then run:
 
 ```bash
 npx --no-install playwright install chromium
@@ -129,18 +137,24 @@ env -u GHCP_LIVE_HANDOFF_OUTPUT npm run test:runtime
 
 These suites drive real Codex/PTY/browser, workflow and stability paths with SDK doubles; no Copilot login is needed. `env -u` removes the live-handoff opt-in for this invocation, so an inherited `GHCP_LIVE_HANDOFF_OUTPUT` cannot enable model calls. CI runs these offline suites separately from unit coverage on Linux/macOS.
 
-For a focused check, choose **one** guide below; the rows are not a setup sequence. The plan commands require only the project dependencies, not Codex, a browser or Copilot login. **Live `--execute` commands and soak `--smoke` runs consume Copilot usage.** Each suite has its own live pass criterion:
+</details>
+
+### Optional live checks
+
+Choose **one** guide below; the rows are not a setup sequence. The plan commands describe the checks without running them and need only project dependencies. **Live `--execute` commands and soak `--smoke` runs consume Copilot usage.** The pass criteria are requirements, not achieved results:
 
 | Goal and live pass criterion | Plan command (no model calls) | Guide |
 | --- | --- | --- |
 | Development workflows: **108/108** (18 × 6 models) | `npm run test:compatibility -- --plan` | [Run and interpret compatibility](docs/COMPATIBILITY_TESTING.md) · [Scenario reference](docs/NATIVE_SCENARIOS.md) |
 | Bridge faults and recovery: **66/66** (11 × 6 models) | `npm run test:stability -- --plan` | [Stability](docs/STABILITY_TESTING.md) |
 | Real interactive TUI: **69/72** target; **72/72** full pass | `npm run test:tui -- --plan` | [TUI scenarios](docs/TUI_SCENARIOS.md) |
-| PTY/browser: declared workload completed without observed failures | `npm run test:terminal -- --plan` | [Terminal checks](docs/SOAK_TESTING.md) |
-| Endurance: every lane ≥5 hours without observed failures | `npm run test:soak -- --plan` | [Endurance](docs/SOAK_TESTING.md#combined-soak-runner) |
+| PTY/browser: declared workload completed without observed failures | `npm run test:terminal -- --plan` | [Terminal checks](docs/SOAK_TESTING.md#reproducible-terminal-checks) |
+| Endurance: every lane ≥5 hours without observed failures | `npm run test:soak -- --plan` | [Endurance](docs/SOAK_TESTING.md#five-hour-live-run) |
 | Opus filtering: diagnostic evidence, not a compatibility verdict | `npm run diagnose:opus` | [Diagnostics](docs/OPUS_DIAGNOSTICS.md) |
 
-For saved reports, [evidence integrity and test success are separate](docs/validation/README.md#read-a-result). Published summaries are not complete `.runtime` evidence bundles. Generated scenario documents come from `scripts/compatibility/documentation.mjs` and the catalog; update them with `npm run docs:scenarios` rather than editing the generated files.
+For saved reports, [evidence integrity and test success are separate](docs/validation/README.md#read-a-result). Published summaries are not complete `.runtime` evidence bundles.
+
+**Editing scenario docs:** change [the template](scripts/compatibility/documentation.mjs) or [catalog](scripts/compatibility/catalog.mjs), run `npm run docs:scenarios`, then `npm run test:docs`. Do not edit generated files directly. `npm run docs:scenarios:check` checks generated content only, not the rest of the guides.
 
 ## Contributors and references
 

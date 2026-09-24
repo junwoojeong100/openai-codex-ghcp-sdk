@@ -1,11 +1,33 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { codexEnvironment, codexProviderArgs, parseLauncherArgs, validateCodexArgs, writeCodexCatalog } from "../src/launcher.mjs";
 import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog } from "../src/model-map.mjs";
+
+test("launcher help explains argument boundaries and needs no working CLI or model", () => {
+  for (const flag of ["--help", "-h"]) {
+    const result = spawnSync(process.execPath, [fileURLToPath(new URL("../src/launcher.mjs", import.meta.url)), flag], {
+      encoding: "utf8", timeout: 10_000,
+      env: { ...process.env, CODEX_BIN: "/missing/codex", GHCP_MODEL: "unavailable-model", GHCP_BRIDGE_PORT: "invalid" },
+    });
+    assert.equal(result.status, 0, result.stderr || result.error?.message);
+    assert.equal(result.stderr, "");
+    assert.match(result.stdout, /Put bridge options before -- and Codex options after it/);
+    assert.match(result.stdout, /\.env is not loaded automatically/);
+    assert.match(result.stdout, /Status\/stop manage background bridges only/);
+    for (const model of SUPPORTED_MODEL_IDS) assert.ok(result.stdout.includes(`  ${model}\n`));
+  }
+  const codexHelp = parseLauncherArgs(["--", "--help"], {});
+  assert.equal(codexHelp.help, false);
+  assert.deepEqual(codexHelp.codexArgs, ["--help"]);
+  const resume = parseLauncherArgs(["--", "resume", "--last"], {});
+  assert.deepEqual(resume.codexArgs, ["resume", "--last"]);
+});
 
 test("launcher defaults and model selection stay within the six allowed models", () => {
   const defaults = parseLauncherArgs([], {});

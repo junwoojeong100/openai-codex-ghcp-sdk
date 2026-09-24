@@ -23,15 +23,18 @@
 | 대화형 세션 | `./bin/codex-ghcp` |
 | 현재 디렉터리의 최근 대화 재개 | `./bin/codex-ghcp -- resume --last` |
 | bridge 없이 실행기 도움말 확인 | `./bin/codex-ghcp --help` |
+| bridge 없이 공식 Codex 도움말 확인 | `command codex --help` |
 
-비대화형·읽기 전용 요청:
+모델을 선택하고 비대화형·읽기 전용 요청을 보내는 예시입니다.
 
 ```bash
-./bin/codex-ghcp -- exec --sandbox read-only \
+./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- exec --sandbox read-only \
   "README_KO.md를 읽고 프로젝트의 목적을 한 문장으로 요약해줘."
 ```
 
-일반 Codex 인자는 `--` 뒤에 전달합니다. Git 저장소 밖에서는 `exec` 뒤에 `--skip-git-repo-check`를 추가해 Git 검사만 생략할 수 있습니다. 실행기는 승인·샌드박스를 우회하지 않으며 공급자·전송 설정 재정의를 거절합니다.
+**`--` 앞은 실행기 옵션**(`--ghcp-model`, `--bridge-background`), **뒤는 Codex 명령·옵션**(`exec`, `resume`, `--sandbox`)입니다. 공식 CLI의 `--model`/`-m`은 거절하므로 `--ghcp-model`을 사용하세요. `/model`, `/compact`, `/quit` 같은 슬래시 명령은 셸이 아니라 **실행 중인 Codex 안에서** 입력합니다.
+
+Git 저장소 밖에서는 `exec` 뒤에 `--skip-git-repo-check`를 추가해 Git 검사만 생략할 수 있습니다. 실행기는 승인·샌드박스를 우회하지 않으며 공급자·전송 설정 재정의를 거절합니다.
 
 다른 프로젝트에서 작업하려면 **해당 프로젝트에서 터미널을 열고** 실행기의 절대 경로를 사용하세요. clone 위치가 `$HOME/GitHub/openai-codex-ghcp-sdk`인 경우:
 
@@ -161,6 +164,8 @@ health 외에는 `Authorization: Bearer <bridge-token>` 또는 `x-api-key`가 �
 | 증상 | 조치 |
 | --- | --- |
 | `./bin/...` 파일을 찾을 수 없음 | 이 저장소 루트에서 실행하거나 작업 프로젝트에서 [실행기의 절대 경로](#codex-실행)를 사용하세요. |
+| Codex가 `--ghcp-model`을 알 수 없는 인자로 거절함 | 실행기 옵션을 **`--` 앞에** 두세요. 예: `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last`. |
+| 도움말·버전 확인인데 bridge가 시작됨 | 실행기 도움말은 `./bin/codex-ghcp --help`, 공식 CLI는 `command codex --help` / `command codex --version`을 사용하세요. `--` 뒤의 인자는 일반 bridge 시작 절차를 거칩니다. |
 | doctor에서 `ok: false` 또는 `supportedVersion: false` | 실패한 필드를 확인하세요. SDK 버전이 다르면 `npm ci`, 도구 오류라면 해당 CLI 또는 Node 버전을 설치·수정합니다. [고정 버전 설치 안내](../README_KO.md#빠른-시작)를 따르세요. |
 | Copilot 인증 오류 | `copilot login` 후 `./bin/ghcp-models`를 실행합니다. 토큰을 프롬프트나 소스에 붙여 넣지 마세요. |
 | 모델 사용 불가 | `./bin/ghcp-models`에서 `disabled`나 `not available`이 아닌 ID를 골라 `--ghcp-model`로 지정하세요. 가능한 모델이 없으면 Copilot 권한·조직 정책을 확인합니다. 자동 대체하지 않습니다. |
@@ -198,26 +203,31 @@ bridge는 응답 스트림을 유지하면서 무응답 SDK 세션을 **요청�
 
 ### 수정 코드 적용
 
-**소스나 환경 변수를 바꿔도 실행 중인 bridge는 갱신되지 않습니다.** 현재 턴을 완료하거나 취소한 뒤 `/quit`으로 Codex를 정상 종료하세요. `--bridge-background`를 사용했다면 연결된 Codex 세션을 모두 닫고 `./bin/codex-ghcp-stop`을 실행합니다. 기본 foreground 방식에는 별도 중지가 필요하지 않습니다.
+**소스·환경 변수 변경은 새 bridge에서만 적용됩니다.** 터미널은 **원래 작업하던 프로젝트 디렉터리**에 유지하세요. 아래 경로는 clone 위치가 `$HOME/GitHub/openai-codex-ghcp-sdk`인 경우이며, 다른 위치라면 바꾸세요.
 
-같은 작업 디렉터리에서 재개합니다.
+1. **Codex 안에서:** 현재 턴을 완료하거나 취소한 뒤 `/quit`을 입력합니다. 상주 bridge라면 연결된 Codex 세션을 모두 닫으세요.
+2. **셸에서, 상주 방식만:** `"$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp-stop"`을 실행합니다. 기본 foreground 방식은 Codex와 함께 bridge가 종료되므로 생략하세요.
+3. **같은 작업 프로젝트에서:** 아래 명령으로 재개합니다. 실행기를 찾으려고 디렉터리를 옮기지 마세요.
 
 ```bash
-./bin/codex-ghcp -- resume --last
+"$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp" -- resume --last
 ```
 
-이 명령은 새 foreground bridge를 시작합니다. 다시 상주시키려면 `--` 앞에 `--bridge-background`를 추가하세요. 활성 Codex 아래의 bridge만 강제 종료하지 마세요. 재시작하면 미해결 도구 호출을 포함한 메모리 상태가 사라집니다. `/health.turnWatchdog`와 background 상태는 현재 소스의 기본값이 아니라 실행 중인 제한 시간·복구 설정을 표시합니다.
+이 저장소에서 작업 중이었다면 `./bin/codex-ghcp -- resume --last`도 같습니다. 새 foreground bridge를 시작하며, 다시 상주시키려면 `--` 앞에 `--bridge-background`를 추가하세요.
+
+활성 Codex 아래의 bridge만 강제 종료하지 마세요. 재시작하면 미해결 도구 호출을 포함한 메모리 상태가 사라집니다. `/health.turnWatchdog`와 background 상태는 현재 소스의 기본값이 아니라 실행 중인 제한 시간·복구 설정을 표시합니다.
 
 ### 느린 응답과 연결 장애
 
 복구 횟수 소진은 새 세션에서도 제한 시간 안에 진행을 관측하지 못했다는 뜻이지 교착의 증거는 아닙니다. `/health.ready`는 로컬 SDK 연결 상태이며 원격 모델 서비스까지 보장하지 않습니다. `ETIMEDOUT`·연결 실패라면 제한을 늘리기 전에 네트워크·프록시/VPN·서비스 상태를 확인하세요. 진단은 `first_progress`와 `streaming` 단계를 구분하며 복구 세션에 새 절대 턴 예산을 주지는 않습니다.
 
-더 느린 작업에는 정상 종료하고 남아 있는 상주 bridge도 중지한 뒤 아래 **선택적 지연 허용 설정**으로 실행하세요. 첫 진행 전후 모두 3분, 안전 조건을 충족한 복구 최대 2회, 절대 턴 10분·전체 요청 11분 제한입니다.
+더 느린 작업에는 정상 종료하고 남아 있는 상주 bridge도 중지한 뒤 아래 **선택적 지연 허용 설정**으로 실행하세요. 위와 같이 원래 프로젝트에서 실행하고 clone 경로를 맞추세요. 첫 진행 전후 모두 3분, 안전 조건을 충족한 복구 최대 2회, 절대 턴 10분·전체 요청 11분 제한입니다.
 
 ```bash
 TURN_FIRST_PROGRESS_TIMEOUT_MS=180000 TURN_IDLE_TIMEOUT_MS=180000 TURN_IDLE_RECOVERY_ATTEMPTS=2 \
 TURN_TIMEOUT_MS=600000 REQUEST_TIMEOUT_MS=660000 \
-./bin/codex-ghcp -- -c 'model_reasoning_effort="low"' resume --last
+"$HOME/GitHub/openai-codex-ghcp-sdk/bin/codex-ghcp" -- \
+  -c 'model_reasoning_effort="low"' resume --last
 ```
 
 기본값을 바꾸거나 끊김 방지를 보장하는 설정은 아니며 대기 시간·추론 사용량이 늘 수 있습니다. 무진행 제한만이 아니라 턴·요청 예산을 함께 조정하세요. 도구 결과까지 완료된 턴 사이에 `/compact`로 긴 이력을 줄이면 지연을 줄이는 데 도움이 됩니다. 최대 컨텍스트가 크다고 긴 대화가 빨라지는 것은 아닙니다. keepalive를 모델 진행으로 위장하거나 완료한 도구를 무조건 재실행하지 않습니다. 장시간 검증은 `.runtime`에 독립적으로 진행 기록을 저장하므로 대화가 끊겨도 검증 프로세스가 멈췄다고 단정하지 말고 기존 보고서를 먼저 확인하세요.

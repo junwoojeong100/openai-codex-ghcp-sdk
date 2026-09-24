@@ -8,7 +8,7 @@
 
 **바로 가기:** [목록](#시나리오-목록) · [상세 계약](#상세-계약) · [기능 범위와 통과율](#기능-커버리지와-통과율을-분리).
 
-`npm run docs:scenarios`로 생성하는 문서입니다. 수정은 `scripts/compatibility/documentation.mjs`와 catalog에 반영하세요.
+생성 문서이므로 직접 수정하지 마세요. [템플릿](../scripts/compatibility/documentation.mjs)이나 [catalog](../scripts/compatibility/catalog.mjs)를 수정하고 `npm run docs:scenarios`, `npm run test:docs` 순서로 실행하세요.
 
 ## 시나리오 목록
 
