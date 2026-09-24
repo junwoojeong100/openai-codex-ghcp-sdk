@@ -35,9 +35,13 @@ npm run test:stability -- --execute --output .runtime/stability-new-run
 npm run test:stability -- --verify .runtime/stability-new-run/report.json
 ```
 
-요약과 보존한 실패는 `.runtime/stability-new-run/report.md`에서 읽고, 증거 검증에는 `report.json`을 사용합니다.
+## 결과 읽기
+
+`.runtime/stability-new-run/report.md`에서 판정·모델별 통과 수·**Cases needing attention**을 읽으세요. 해당 절에 실패 조건·기록된 실패 분류와 오류·증거 링크가 나옵니다. **Complete matrix**에는 모든 사례를 남깁니다. 증거 검증의 입력은 `report.json`입니다.
 
 **전체 통과는 66/66입니다.** 95% 참고 기준(63/66)을 넘겨도 이 판정이나 종료 코드는 바뀌지 않습니다. 기록에는 미해결 상위 필터 실패가 있습니다. 여러 실행의 점수를 합치지 말고 [개별 결과와 보존한 실패](validation/README_KO.md)를 확인하세요.
+
+오프라인 **11/11**은 실행기 통과로 표시하며 실모델 호환성 통과가 아닙니다. 실모델 **65/66**은 `--verify`에서 `evidenceIntegrity: true`여도 미통과입니다. [필드 해석](validation/README_KO.md#결과-읽기)을 참고하세요.
 
 ## 필요한 경우에만 프로필 선택
 
@@ -160,13 +164,17 @@ GHCP_LIVE_HANDOFF_OUTPUT=.runtime/pending-handoff-live-new \
 
 매 실행은 새 폴더를 사용하고 preflight 전에 소스·구현/계약 hash·판정 기준을 동결합니다. 네이티브 이벤트, SDK 메시지·사용량, HTTP/SSE, 표시된 제어 작업, 독립 체크, 케이스별 supervisor 정리 기록과 전체 행렬을 보존합니다. 검증기는 저장된 통과 flag를 믿지 않고 체크·메트릭·artifact 내용을 재계산합니다. 원시 로그는 ignored `.runtime`에 남기고 공유 전에 개인정보를 검토하세요. hash는 제3자 인증이 아닙니다.
 
-소스 변경 후에는 과거 실행의 동결 소스로 검증합니다. 같은 의존성이 필요합니다.
+소스 변경 후에는 원래 실행 디렉터리 전체를 보존하고 같은 의존성과 당시 동결 소스로 검증합니다. `docs/validation`의 공개 요약에는 필수 증거 전체가 없으며 아래 `report.json`을 대신할 수 없습니다.
 
 ```bash
 node .runtime/stability-new-run/source-snapshot/scripts/stability.mjs \
   --verify .runtime/stability-new-run/report.json
 ```
 
-종료 코드 **0**은 정상 plan·오프라인 전체 통과·실모델 66건 전체 통과, **1**은 유효한 증거의 미통과/미완료 실행, **2**는 인자·증거 오류입니다. 오프라인 11/11은 실모델 66/66이 아닙니다.
+| 종료 코드 | 의미 |
+| --- | --- |
+| 0 | 유효한 계획, 오프라인 실행기 통과 또는 실모델 66건·실행 전체 조건 충족 |
+| 1 | 미통과·미완료 실행. 증거가 유효하다고 확인돼도 검증기는 1을 반환할 수 있음 |
+| 2 | 인자 또는 증거 오류 |
 
 [Opus 진단](OPUS_DIAGNOSTICS_KO.md)은 fixture 요청이나 채점 행렬을 바꾸지 않고 상위 refusal 메타데이터를 대조합니다. 별도 대조군과 불완전한 관측은 행렬 결과에 섞지 않습니다.

@@ -22,6 +22,19 @@ export function scenarioDocument(language = "ko") {
     choose("## 시나리오 목록", "## Scenario index"), "",
     choose("| ID | 작업 | 제한 | 턴 | 도구 목표/상한 |", "| ID | Workflow | Deadline | Turns | Tool target/hard cap |"), "|---|---|---:|---:|---:|",
     ...NATIVE_SCENARIOS.map(s => `| [${s.id}](#${s.id.toLowerCase()}) | ${l(s.name)} | ${s.timeoutSeconds}s | ${s.maxUserTurns} | ${s.targetToolCalls}/${s.maxToolCalls} |`), "",
+    choose("**읽는 방법:** C01–C18은 시나리오 ID이며, 각 시나리오를 6개 모델에서 실행한 것이 108건입니다. 아래 작업 프롬프트는 모든 모델에 동일하게 전달하는 원문이므로 번역하지 않습니다. 각 항목의 필수 조건과 [공통 필수 조건](#공통-필수-조건)이 모두 맞아야 통과합니다.",
+      "**How to read a case:** C01–C18 identify scenarios; running each on six models gives 108 cases. Task prompts below are the exact shared model input and are deliberately not translated. A case must satisfy both its required assertions and the [common gates](#mandatory-common-gates)."), "",
+    choose("도구 목표 횟수는 효율 진단이고 상한은 실패를 결정하는 안전 제한입니다. 증거 파일은 조건을 다시 계산하는 입력이지, 파일이 있다는 사실만으로 통과를 인정하는 표식이 아닙니다.",
+      "The tool target is an efficiency diagnostic; the hard cap is a pass/fail limit. Evidence files are inputs to recomputed checks, not proof of success merely because the files exist."), "",
+    choose("## 상세 계약", "## Detailed contracts"), "",
+  ];
+  for (const s of NATIVE_SCENARIOS) lines.push(`<a id="${s.id.toLowerCase()}"></a>`, "", `### ${s.id} — ${l(s.name)}`, "",
+    `**${choose("제한 시간 / 실행 경로", "Deadline / execution path")}:** ${s.timeoutSeconds}s · ${s.surface}`, "",
+    `**${choose("준비 상태", "Test setup")}:** ${l(s.fixture)}`, "", `**${choose("작업", "Task")}:**`, "", "```text", s.prompt, "```", "",
+    `**${choose("절차", "Procedure")}:**`, ...s.steps.map((x, i) => `${i + 1}. ${l(x)}`), "",
+    `**${choose("필수 조건", "Required assertions")}:**`, ...s.assertions.map(a => `- \`${a.id}\`: ${l(a.description)} — \`${a.evidence}\``), "",
+    `**${choose("bridge 실패 위험", "Bridge behavior at risk")}:** ${l(s.bridgeRisk)}`, "");
+  lines.push(
     choose("## 기능 커버리지와 통과율을 분리", "## Separate feature scope from pass rate"), "",
     choose("90%는 여전히 일상 개발 작업의 목표이며 실측 제품 기능 커버리지는 null입니다. 6개 모델을 반복한다고 기능 종류가 6배가 되지 않습니다.",
       "90% remains an everyday-workflow target; measured product-feature coverage is null. Repeating scenarios across six models does not multiply feature breadth."), "",
@@ -49,15 +62,7 @@ export function scenarioDocument(language = "ko") {
       `If every case exhausts its deadline, slots total ${design.perModelSeconds}s/model and the preflight-inclusive scheduling estimate is ${(design.scheduledCeilingEstimateSeconds / 60).toFixed(1)} minutes. Each limit includes ${C.budget.caseCleanupReserveSeconds}s cleanup reserve. This is not a wall-clock guarantee.`), "",
     choose("도구 목표 횟수 초과는 효율 진단입니다. 별도의 높은 안전 상한을 넘은 경우에만 필수 예산 검사가 실패합니다. C03은 bare JSON 또는 단일 JSON fence의 의미를 검사하며 형식은 별도 진단합니다. C05는 파이프 없는 테스트 실행을 요청하여 종료 코드 가림을 방지합니다.",
       "Exceeding the tool target is an efficiency diagnostic. Only the separate hard safety cap fails the budget gate. C03 accepts bare JSON or one JSON fence and records presentation separately. C05 requests standalone test commands to avoid masked pipeline exits."), "",
-    choose("## 공통 필수 조건", "## Mandatory common gates"), "", ...C.commonGates.map(g => `- ${l(g)}`), "",
-    choose("## 상세 계약", "## Detailed contracts"), "",
-  ];
-  for (const s of NATIVE_SCENARIOS) lines.push(`<a id="${s.id.toLowerCase()}"></a>`, "", `### ${s.id} — ${l(s.name)}`, "",
-    `**${choose("제한/표면", "Limit/surface")}:** ${s.timeoutSeconds}s · ${s.surface}`, "",
-    `**${choose("준비", "Fixture")}:** ${l(s.fixture)}`, "", `**${choose("작업", "Task")}:**`, "", "```text", s.prompt, "```", "",
-    `**${choose("절차", "Procedure")}:**`, ...s.steps.map((x, i) => `${i + 1}. ${l(x)}`), "",
-    `**${choose("필수 조건", "Required assertions")}:**`, ...s.assertions.map(a => `- \`${a.id}\`: ${l(a.description)} — \`${a.evidence}\``), "",
-    `**${choose("위험", "Risk")}:** ${l(s.bridgeRisk)}`, "");
+    choose("## 공통 필수 조건", "## Mandatory common gates"), "", ...C.commonGates.map(g => `- ${l(g)}`), "");
   lines.push(choose("## 근거와 사양 원본", "## Sources and source of truth"), "",
     ...Object.entries(C.sources).map(([key, url]) => `- [${key}](${url})`), "",
     "[scripts/compatibility/catalog.mjs](../scripts/compatibility/catalog.mjs)", "",

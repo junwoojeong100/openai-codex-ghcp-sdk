@@ -33,7 +33,14 @@ Open `.runtime/opus-diagnostic-new/report.json` (or the output directory you cho
 - SDK `contentFilterTriggered` / `finishReason`.
 - Bridge lifecycle phase, pending-call count and tool-result submission count.
 
-An actual investigation observed the provider's `reasoning_extraction` category for the owned synthetic fixture request. This is the provider's classification, not proof of the user's intent. Why that benign copy request is classified this way remains a separate question. The diagnostic does not rewrite requests to avoid the category or disable protective instructions.
+Provider categories are **per-run observations, not a confirmed root cause**:
+
+| Record | Observed category |
+| --- | --- |
+| [2026-09-22 investigation](validation/2026-09-22-opus-analysis/README.md) | `reasoning_extraction` |
+| [2026-09-23 diagnostic](validation/2026-09-23-failure-iterations.json) | `other` in all four exact-fixture probes |
+
+Neither category proves user intent or explains why the provider filtered the synthetic copy task. The remaining S11 matrix failure has no recorded native refusal category; do not fill it in from these separate probes. The diagnostic does not rewrite requests to avoid a category or disable protective instructions.
 
 Model discovery can also pass through the SDK request handler. `observedHttpRequests` therefore differs from `observedInferenceRequests`, which requires the exact model in the request. SDK `streaming:false` does not guarantee nonstreaming HTTP on every provider route: inspect the observed `wire[].request.streaming`. An unknown response format has `explicitBlock:null`—missing evidence, not evidence of an unfiltered inference.
 

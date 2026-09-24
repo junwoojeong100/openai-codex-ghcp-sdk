@@ -44,7 +44,9 @@ Up to four model lanes run concurrently. Each case includes an eight-second clea
 
 ## Read the result
 
-Open `.runtime/compatibility-new-run/report.md` for the human-readable summary. `report.json` is the evidence-verification input; use the same output directory in both commands.
+Open `.runtime/compatibility-new-run/report.md`: the verdict and per-model counts come first, followed by **Cases needing attention** with failed checks, recorded errors and links to case artifacts. **Complete matrix** retains all 108 rows; coverage commentary follows the results. `report.json` is the verification input, not the Markdown view.
+
+**`evidenceIntegrity: true` does not mean 108/108 passed.** It means the verifier accepted the saved evidence and recomputed result. Check `fullMatrixPassed` separately; [report fields and examples](validation/README.md#read-a-result).
 
 | Exit code | Meaning |
 | --- | --- |
@@ -52,20 +54,23 @@ Open `.runtime/compatibility-new-run/report.md` for the human-readable summary. 
 | 1 | Failed, blocked, unsupported or incomplete execution |
 | 2 | Invalid arguments or evidence |
 
-Use the report's execution kind to distinguish an offline pass from a live pass. After source changes, verify old evidence with that run's saved source and the same dependencies:
+Use the report's `executionKind` to distinguish offline from live. **This workflow runner records source fingerprints but does not create a `source-snapshot` directory.** Verify before editing the source. For later verification, retain the complete run directory and a separate copy of the exact source and dependency lockfile used for that run.
+
+From that preserved source tree, with the matching dependencies installed, replace the example path with the **absolute path to the original report**:
 
 ```bash
-node .runtime/compatibility-new-run/source-snapshot/scripts/compatibility.mjs \
-  --verify .runtime/compatibility-new-run/report.json
+node scripts/compatibility.mjs --verify /absolute/path/to/compatibility-run/report.json
 ```
 
-Recorded results and failures are in the [verification index](validation/README.md). Older v5/v4 reports require their original runner; do not regrade them as v6.
+Unlike this runner, stability and TUI save a source snapshot automatically. The [verification index](validation/README.md) contains published summaries, not complete `.runtime` bundles; do not pass those summaries to `--verify`. Without the matching source and original artifacts, independent recomputation is unavailable. Older v5/v4 reports require their original runner, not v6.
 
 ## Three separate metrics
 
-1. **Checklist design scope:** 20 reviewer-defined, equal-weight feature groups; direct=1, partial=0.5, uncovered=0. Current score **75%** (12 direct, six partial, two uncovered). “Direct” means a representative implemented probe, not a successful or exhaustive feature.
-2. **Live matrix pass rate:** passed cells divided by **108**, plus model-specific results out of 18. Missing/unsupported/blocked/timed-out cells stay in the denominator. A model needs all 18 workflows to pass for the versioned compatibility verdict.
-3. **Measured product coverage:** **unknown/null**. The checklist is not an OpenAI metric, a usage-frequency survey or a product support percentage. **90% remains a target**, not a result.
+| Metric | Calculation / value | Meaning |
+| --- | --- | --- |
+| Live matrix pass rate | Passed / **108**; per model, passed / **18** | Observed results. Missing, unsupported, blocked and timed-out cases remain in the denominator; each model needs all 18 workflows for compatibility. |
+| Checklist design scope | **75%**: 12 direct + six half-credit + two uncovered groups out of 20 | Reviewer-defined design breadth, not successful tests or exhaustive feature support. |
+| Measured product coverage | **unknown/null**; 90% is a target | Not measured by either number above. The checklist is not an official or usage-weighted support metric. |
 
 Reports also show feature-group evidence per model. Offline runs never establish live feature evidence. Partial scope remains partial even if its linked scenarios pass.
 

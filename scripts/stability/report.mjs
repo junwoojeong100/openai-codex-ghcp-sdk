@@ -5,6 +5,7 @@ import { CATALOG, SCENARIOS } from "./catalog.mjs";
 import { getProfile, profileForRecord, DEFAULT_PROFILE } from "./profiles.mjs";
 import { evaluate, failureCategory, metrics } from "./oracles.mjs";
 import { ROOT, sha, safeRead } from "../compatibility/util.mjs";
+import { reportHeader, caseSections } from "../compatibility/report-format.mjs";
 
 export function sourceManifest(root = ROOT) {
   const files = [];
@@ -135,11 +136,16 @@ export function verifyReport(file) {
 }
 export function markdown(report) {
   const summary = summarize(report);
-  return [`# ${report.catalogId}`, "", `Run: ${report.runId} (${report.executionKind}; profile: ${report.profile ?? DEFAULT_PROFILE})`, "",
-    `Passed: ${summary.passed}/${summary.totalCases}. Full live matrix pass: ${summary.fullMatrixPassed}.`, "",
+  const result = report.executionKind === "offline-self-test"
+    ? summary.offlineHarnessPassed ? "OFFLINE HARNESS PASSED - no live verdict"
+      : !report.finishedAt && !report.interrupted ? "OFFLINE HARNESS IN PROGRESS - no live verdict" : "OFFLINE HARNESS NOT PASSED - no live verdict"
+    : summary.fullMatrixPassed ? "FULL PASS" : !report.finishedAt && !report.interrupted ? "IN PROGRESS" : "NOT PASSED";
+  return [...reportHeader(report, { result, passed: summary.passed, totalCases: summary.totalCases,
+    passRule: `All ${summary.totalCases} cases and run-level checks must pass for this execution kind and profile. The 95% reference does not change the verdict.` }),
     "These are bounded native workflow/fault-injection results, not an hours-long soak or product support rate.", "",
-    "| Model | Passed | Verdict |", "|---|---:|---|",
-    ...summary.perModel.map(m => `| ${m.model} | ${m.passed}/${m.total} | ${m.verdict} |`), "",
-    "| Model | Scenario | Status | Failed checks |", "|---|---|---|---|",
-    ...report.cases.map(c => `| ${c.model} | ${c.scenarioId} | ${c.status} | ${(c.failedChecks ?? []).join(", ")} |`), ""].join("\n");
+    "## Per-model results", "",
+    "| Model | Passed | Live verdict |", "|---|---:|---|",
+    ...summary.perModel.map(m => `| ${m.model} | ${m.passed}/${m.total} | ${report.executionKind !== "live"
+      ? "not assessed (offline)" : m.verdict === `${summary.catalogId}-passed` ? "passed" : "not established"} |`), "",
+    ...caseSections(report.cases)].join("\n");
 }

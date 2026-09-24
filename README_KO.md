@@ -1,6 +1,6 @@
 # OpenAI Codex × GitHub Copilot SDK
 
-[English](README.md) · [사용법·문제 해결](docs/USAGE_KO.md) · [호환성](docs/COMPATIBILITY_KO.md) · [구조](docs/ARCHITECTURE_KO.md)
+[English](README.md) · [사용법·문제 해결](docs/USAGE_KO.md) · [호환성](docs/COMPATIBILITY_KO.md) · [검증 기록](docs/validation/README_KO.md) · [구조](docs/ARCHITECTURE_KO.md)
 
 공식 **Codex CLI**에서 **GitHub Copilot 계정의 모델**을 사용합니다.
 
@@ -110,6 +110,8 @@ Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`
 
 ## 개발과 검증
 
+명령이 아니라 **실제로 무엇이 통과했는지** 찾는다면 [기록된 결과와 남은 공백](docs/validation/README_KO.md#기록된-결과)을 읽으세요. 아래 기준은 충족해야 할 조건이지 이미 달성한 결과가 아닙니다.
+
 검증은 **실행기를 사용하기 위한 필수 절차가 아닙니다.** `npm ci` 후 기본 개발 검사로 단위 검사·소스 커버리지·시나리오 및 문서 정합성을 확인합니다. **모델 호출이나 Copilot 로그인은 필요하지 않습니다.**
 
 ```bash
@@ -138,7 +140,7 @@ env -u GHCP_LIVE_HANDOFF_OUTPUT npm run test:runtime
 | 내구성: 모든 실행 경로 5시간 이상, 관측한 실패 없음 | `npm run test:soak -- --plan` | [내구성](docs/SOAK_TESTING_KO.md#통합-soak-실행기) |
 | Opus 필터: 진단 증거 수집이며 호환성 판정 아님 | `npm run diagnose:opus` | [진단](docs/OPUS_DIAGNOSTICS_KO.md) |
 
-과거 점수·구현 hash·보존한 실패는 설치 절차가 아닌 [검증 목록](docs/validation/README_KO.md)에 정리합니다. 생성 시나리오 문서는 `scripts/compatibility/documentation.mjs`와 catalog가 원본입니다. 생성 파일을 직접 편집하지 말고 `npm run docs:scenarios`로 갱신하세요.
+저장된 보고서의 [증거 유효성과 검사 통과 여부는 별개](docs/validation/README_KO.md#결과-읽기)입니다. 공개 요약은 `.runtime` 원본 증거 전체가 아닙니다. 생성 시나리오 문서는 `scripts/compatibility/documentation.mjs`와 catalog가 원본이며, 직접 편집하지 말고 `npm run docs:scenarios`로 갱신하세요.
 
 ## 기여자와 참고 자료
 

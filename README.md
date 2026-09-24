@@ -1,6 +1,6 @@
 # OpenAI Codex × GitHub Copilot SDK
 
-[한국어](README_KO.md) · [Usage and troubleshooting](docs/USAGE.md) · [Compatibility](docs/COMPATIBILITY.md) · [Architecture](docs/ARCHITECTURE.md)
+[한국어](README_KO.md) · [Usage and troubleshooting](docs/USAGE.md) · [Compatibility](docs/COMPATIBILITY.md) · [Verification records](docs/validation/README.md) · [Architecture](docs/ARCHITECTURE.md)
 
 Run the official **Codex CLI** with models available through your **GitHub Copilot** account.
 
@@ -110,6 +110,8 @@ Read the [full compatibility boundaries](docs/COMPATIBILITY.md) before relying o
 
 ## Testing
 
+Looking for **what has actually passed**, rather than commands? Read the [recorded results and remaining gaps](docs/validation/README.md#recorded-results). The criteria below are requirements, not claims that those results have been achieved.
+
 Testing is **not required to use the launcher**. After `npm ci`, the default development check covers units, source coverage and scenario/document consistency, with **no model calls or Copilot login**:
 
 ```bash
@@ -138,7 +140,7 @@ For a focused check, choose **one** guide below; the rows are not a setup sequen
 | Endurance: every lane ≥5 hours without observed failures | `npm run test:soak -- --plan` | [Endurance](docs/SOAK_TESTING.md#combined-soak-runner) |
 | Opus filtering: diagnostic evidence, not a compatibility verdict | `npm run diagnose:opus` | [Diagnostics](docs/OPUS_DIAGNOSTICS.md) |
 
-Historical scores, implementation hashes and retained failures live in the [verification index](docs/validation/README.md), not in the setup steps. Generated scenario documents come from `scripts/compatibility/documentation.mjs` and the catalog; update them with `npm run docs:scenarios` rather than editing the generated files.
+For saved reports, [evidence integrity and test success are separate](docs/validation/README.md#read-a-result). Published summaries are not complete `.runtime` evidence bundles. Generated scenario documents come from `scripts/compatibility/documentation.mjs` and the catalog; update them with `npm run docs:scenarios` rather than editing the generated files.
 
 ## Contributors and references
 

@@ -239,10 +239,14 @@ test("user cancellation stops new cases, preserves incomplete cells and cannot c
 test("scenario documentation links every index entry to its detailed contract in both languages", () => {
   for (const language of ["en", "ko"]) {
     const document = scenarioDocument(language);
-    for (const { id, name } of NATIVE_SCENARIOS) {
+    const coverageHeading = language === "en" ? "## Separate feature scope from pass rate" : "## 기능 커버리지와 통과율을 분리";
+    assert.ok(document.indexOf("### C18 —") < document.indexOf(coverageHeading), "Detailed contracts precede coverage commentary");
+    for (const { id, name, prompt, assertions } of NATIVE_SCENARIOS) {
       const anchor = id.toLowerCase();
       assert.ok(document.includes(`| [${id}](#${anchor}) | ${name[language]} |`));
       assert.ok(document.includes(`<a id="${anchor}"></a>\n\n### ${id} — ${name[language]}\n`));
+      assert.ok(document.includes(`\`\`\`text\n${prompt}\n\`\`\``), "The exact shared prompt is preserved");
+      for (const assertion of assertions) assert.ok(document.includes(`\`${assertion.id}\`: ${assertion.description[language]} — \`${assertion.evidence}\``));
     }
   }
 });

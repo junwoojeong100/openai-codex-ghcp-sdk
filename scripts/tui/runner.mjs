@@ -9,6 +9,7 @@ import { preflight, verificationEnvironment } from "../compatibility/preflight.m
 import { pool, freshDirectory } from "../compatibility/runner.mjs";
 import { supervise, killOwnedGroup } from "../compatibility/supervisor.mjs";
 import { ROOT, safeRead, scrubber, sha, writeJson } from "../compatibility/util.mjs";
+import { reportHeader, caseSections } from "../compatibility/report-format.mjs";
 import { snapshotSources, verifyFrozenSources } from "../soak/runner.mjs";
 import { implementationHash } from "../stability/report.mjs";
 import { TUI_CATALOG as C, TUI_SCENARIOS, tuiCatalogHash } from "./catalog.mjs";
@@ -44,11 +45,17 @@ export function summarizeTui(report) {
     driver: C.driver, realTuiThroughLauncher: true, hoursLongSoakCertified: false };
 }
 
-function markdown(report) {
-  const rows = report.cases.map(r => `| ${r.model} | ${r.scenarioId} | ${r.status} | ${(r.failedChecks ?? []).join(", ")} |`);
-  return [`# ${C.id}`, "", `Run ${report.runId} (${report.executionKind}); ${report.summary.passed}/${report.summary.totalCases} passed.`, "",
-    `95% target: ${report.summary.thresholdMet ? "met" : "not established"}; full matrix: ${report.summary.fullMatrixPassed ? "passed" : "not passed"}.`, "",
-    "| Model | Scenario | Status | Failed checks |", "|---|---|---|---|", ...rows, ""].join("\n");
+export function markdown(report) {
+  const summary = summarizeTui(report);
+  const result = report.executionKind !== "live" ? "OFFLINE ONLY - no live TUI verdict"
+    : summary.fullMatrixPassed ? "FULL PASS" : summary.thresholdMet ? "TARGET MET - NOT A FULL PASS"
+    : !report.finishedAt && !report.interrupted ? "IN PROGRESS" : "TARGET NOT MET";
+  return [...reportHeader(report, { result, passed: summary.passed, totalCases: summary.totalCases,
+    passRule: `${summary.minimumPassed}/${summary.totalCases} meets the ${summary.thresholdPercent}% target; ${summary.totalCases}/${summary.totalCases} is a full pass. Both require a complete, unchanged live run.` }),
+    "## Per-model results", "", "| Model | Passed | Live verdict |", "|---|---:|---|",
+    ...summary.perModel.map(row => `| ${row.model} | ${row.passed}/${row.total} | ${report.executionKind !== "live"
+      ? "not assessed (offline)" : row.verdict === `${C.id}-passed` ? "passed" : "not established"} |`), "",
+    ...caseSections(report.cases)].join("\n");
 }
 
 export async function runTui({ output, bin = process.env.CODEX_BIN || "codex", env = process.env, signal, onProgress = () => {} } = {}) {

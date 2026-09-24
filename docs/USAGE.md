@@ -71,7 +71,7 @@ Then choose one available model, for example:
 ./bin/codex-ghcp --ghcp-model claude-sonnet-5
 ```
 
-A catalog entry is not a guarantee that every Codex feature works with that model. At launch, the authenticated `/v1/models` catalog is written to a private, temporary `model_catalog_json` file. Codex's `/model` picker uses the account-enabled subset of the six supported models, in the documented order, instead of bundled OpenAI models or an unrelated cached catalog. Relaunch to refresh account availability. The catalog is removed when that Codex process exits, including when using a background bridge.
+The `/model` picker shows the account-enabled subset of the six supported models in the documented order. Relaunch to refresh availability. Being listed does not guarantee every Codex feature works; see [compatibility](COMPATIBILITY.md). The launcher's temporary catalog replaces bundled/cached entries and is removed on Codex exit, even with a background bridge; [implementation details](ARCHITECTURE.md#modules).
 
 Codex 0.154.0 labels the first picker entry `(default)`. When all six models are available, that label appears on `claude-opus-5.5`; it does not change the launcher's default. The active model is marked `(current)`.
 
@@ -79,11 +79,16 @@ Codex 0.154.0 labels the first picker entry `(default)`. When all six models are
 
 ### Context limits
 
-All six models use **their largest SDK-advertised context tier**: `contextTier: "long_context"` when Copilot advertises long-context pricing or explicitly supports that tier, otherwise `"default"`. The same selection governs the Codex catalog, session creation, model/effort changes, history rebuilds and idle recovery. An upstream tier rejection is an error, not a silent fallback. SDK-side automatic compaction remains disabled so Codex owns the conversation history.
+The bridge uses **the largest context tier advertised by the SDK**, consistently across model changes and recovery. Missing context metadata or an upstream tier rejection is an error, not a silent fallback. See [tier selection and budget calculation](ARCHITECTURE.md#context-budgets) for the implementation.
 
-The catalog supplies an **input budget**, not the total input-plus-output window: it takes the smallest applicable model/tier prompt limit and reserves the model's maximum output space within its total window. Codex's local automatic compaction starts at **80%** of that budget. Missing context metadata fails at launch instead of inventing a limit.
+Codex receives an **input budget** that reserves space for output, not the model's total input-plus-output window. Local auto-compaction starts at **80%** of that budget; the SDK's separate automatic compaction stays disabled.
 
-The following is an **example account snapshot from 2026-09-23**, not a promise of current limits. The bridge derives these values from SDK metadata; they are not hard-coded:
+Larger contexts can increase latency, memory and usage charges. Do not raise only Codex's `model_context_window` above the SDK budget. Exit Codex normally and relaunch to refresh the catalog and apply changed settings.
+
+<details>
+<summary>Historical account snapshot: 2026-09-23, not current limits</summary>
+
+These values were derived from SDK metadata, not hard-coded. Check current account metadata before estimating capacity or cost.
 
 | Model | Total context maximum | Codex input budget | Auto-compaction threshold |
 |---|---:|---:|---:|
@@ -94,7 +99,7 @@ The following is an **example account snapshot from 2026-09-23**, not a promise 
 | `gpt-6-sol` | 1,000,000 | 872,000 | 697,600 |
 | `gpt-6-luna` | 1,000,000 | 872,000 | 697,600 |
 
-Larger contexts can increase latency, memory and usage charges; check current account metadata before estimating cost. Do not raise only Codex's `model_context_window` above the SDK budget. Exit Codex normally and relaunch to refresh the catalog and apply changed settings.
+</details>
 
 ## Configuration stays local to the launch
 

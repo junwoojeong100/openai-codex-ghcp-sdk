@@ -40,7 +40,7 @@ npm run test:tui -- --execute --output .runtime/tui-new
 npm run test:tui -- --verify .runtime/tui-new/report.json
 ```
 
-요약과 케이스별 실패는 `.runtime/tui-new/report.md`에서 읽으세요. 95% 목표 달성은 72건 전체 통과와 **다릅니다.** [종료 코드](#과거-실행-검증과-종료-코드)를 참고하세요.
+`.runtime/tui-new/report.md`에서 판정·모델별 통과 수·**Cases needing attention**의 기록된 오류와 증거 링크를 읽으세요. **Complete matrix**를 펼치면 72건 모두 나옵니다. **TARGET MET - NOT A FULL PASS**는 최소 69/72로 목표를 달성했지만 전체 통과는 아니라는 뜻입니다. [종료 코드](#과거-실행-검증과-종료-코드)를 참고하세요.
 
 날짜별 v3 결과와 보존한 v1/v2 실행은 [검증 기록](validation/README_KO.md)에 있습니다. 과거 72/72 결과가 향후 서비스 가용성이나 다른 구현의 동작을 보장하지는 않습니다.
 
@@ -106,7 +106,9 @@ node .runtime/tui-new/source-snapshot/scripts/tui.mjs \
   --verify .runtime/tui-new/report.json
 ```
 
-작업 트리를 바꾼 뒤에는 동결 소스를 사용하며 같은 의존성이 필요합니다. `--verify`는 모델 호출 없이 증거를 확인합니다. 계획·실모델 실행·검증의 종료 코드는 다음과 같습니다.
+`cases/`, `freeze.json`, `source-snapshot/`을 포함한 원래 실행 디렉터리 전체와 같은 의존성이 필요합니다. 공개 요약은 원본 증거를 대신하지 못합니다. `--verify`에는 모델 호출이 없습니다. `evidenceIntegrity`는 증거 유효성, `thresholdMet`는 95% 목표, `fullMatrixPassed`는 72/72 전체 통과를 뜻합니다. [필드 설명](validation/README_KO.md#결과-읽기)을 참고하세요.
+
+계획·실모델 실행·검증의 종료 코드는 다음과 같습니다.
 
 | 코드 | 의미 |
 |---|---|

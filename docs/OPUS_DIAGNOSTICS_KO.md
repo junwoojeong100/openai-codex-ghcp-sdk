@@ -42,7 +42,14 @@ npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
 - **SDK:** `contentFilterTriggered` / `finishReason`.
 - **브릿지:** 요청 단계(`prompt`, `tool_result_continuation`, `tool_handoff`, `completed`), pending 수, 결과 제출 횟수.
 
-실제 조사에서 Anthropic Messages의 `reasoning_extraction` 분류가 관측됐습니다. 이는 상위 서비스가 보고한 분류이지, 사용자가 실제로 추론 추출을 요청했다는 증명이 아닙니다. 왜 소유한 합성 데이터의 복사 요청을 그렇게 분류했는지는 별도 문제입니다. 이 분류를 피하도록 요청을 몰래 고치거나 보호 정책을 해제하지 않습니다.
+공급자 분류는 **각 실행의 관측값이지 확정된 근본 원인이 아닙니다.**
+
+| 기록 | 관측한 분류 |
+| --- | --- |
+| [2026-09-22 조사](validation/2026-09-22-opus-analysis/README_KO.md) | `reasoning_extraction` |
+| [2026-09-23 진단](validation/2026-09-23-failure-iterations.json) | 원문 fixture 검사 4건 모두 `other` |
+
+어느 분류도 사용자 의도나 합성 데이터 복사 요청을 필터링한 이유를 입증하지 않습니다. 남은 S11 행렬 실패에는 네이티브 refusal 분류가 기록되지 않았으므로 별도 진단의 분류로 채우지 마세요. 분류를 피하려고 요청을 몰래 바꾸거나 보호 정책을 해제하지 않습니다.
 
 SDK 모델 목록 조회도 request handler를 지나갈 수 있습니다. `observedHttpRequests`와 모델 ID가 확인된 `observedInferenceRequests`를 별도로 기록합니다. SDK의 `streaming:false`가 모든 공급자 경로에서 비스트리밍 HTTP를 보장하는 것은 아니므로, `wire[].request.streaming`의 실제 값을 확인하세요. 지원하지 않는 응답 형식의 `explicitBlock:null`은 **증거 없음**이지 차단되지 않았다는 뜻이 아닙니다.
 

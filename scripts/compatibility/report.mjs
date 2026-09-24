@@ -5,6 +5,7 @@ import { NATIVE_SCENARIO_CATALOG as C, NATIVE_SCENARIOS, NATIVE_MODELS, TOTAL_CA
 import { evaluate, diagnosticMetrics } from "./oracles.mjs";
 import { artifactContents } from "./artifacts.mjs";
 import { sha, safeRead, implementationHash } from "./util.mjs";
+import { reportHeader, caseSections } from "./report-format.mjs";
 
 import { checklistSummary, featureVerdicts } from "./capabilities.mjs";
 
@@ -97,15 +98,19 @@ export function verifyReport(file) {
 }
 export function markdownReport(report) {
   const summary = summarize(report);
-  return [`# ${C.id} compatibility`, "", `Run: ${report.runId} · ${report.executionKind}`, "",
-    `Passed: ${summary.passed}/${TOTAL_CASES}. Coverage target: 90% of everyday workflows; measured product coverage: **unknown**.`, "",
-    `| Model | Passed / ${NATIVE_SCENARIOS.length} | Result |`, "|---|---:|---|",
-    ...summary.perModel.map(r => `| ${r.model} | ${r.passed}/${NATIVE_SCENARIOS.length} | ${r.outcome} |`), "",
+  const result = report.executionKind !== "live" ? "OFFLINE ONLY - no live compatibility verdict"
+    : summary.fullMatrixPassed ? "FULL PASS" : !report.finishedAt && !report.interrupted ? "IN PROGRESS" : "NOT PASSED";
+  return [...reportHeader(report, { result, passed: summary.passed, totalCases: TOTAL_CASES,
+    passRule: `All ${TOTAL_CASES} live cases and run-level checks must pass.` }),
+    "## Per-model results", "",
+    `| Model | Passed / ${NATIVE_SCENARIOS.length} | Live verdict |`, "|---|---:|---|",
+    ...summary.perModel.map(r => `| ${r.model} | ${r.passed}/${NATIVE_SCENARIOS.length} | ${report.executionKind !== "live"
+      ? "not assessed (offline)" : r.outcome === `${C.id}-compatible` ? "passed" : "not established"} |`), "",
+    ...caseSections(report.cases),
+    "## Feature scope (not a pass rate)", "",
+    "Measured product coverage: **unknown**. The 90% everyday-workflow coverage target has not been measured.", "",
     `Reviewer checklist design score: ${summary.designChecklist.designPercent}%. This is not measured product coverage or a live support rate.`, "",
     "| Capability | Scope | Evidence scenarios | Models with passing linked cases |", "|---|---|---|---:|",
     ...summary.featureVerdicts.map(f => `| ${f.id} | ${f.level} | ${f.scenarios.join(", ") || "none"} | ${f.perModel.filter(m => m.outcome === "scenario-evidence-passed").length}/${NATIVE_MODELS.length} |`), "",
-    "Timeouts, unavailable models, skipped cases and unsupported behavior remain in the denominator.", "",
-    "| Provider/model | Case | Status | Detail |", "|---|---|---|---|",
-    ...report.cases.map(r => `| ${r.provider}/${r.model} | ${r.scenarioId} | ${r.status} | ${(r.error || r.reason || "").replace(/[|\r\n]/g, " ")} |`), "",
   ].join("\n");
 }

@@ -40,7 +40,7 @@ Then verify the report **without model calls**, including failed runs. Use the s
 npm run test:tui -- --verify .runtime/tui-new/report.json
 ```
 
-Open `.runtime/tui-new/report.md` for the summary and per-case failures. Meeting the 95% target does **not** mean all 72 cases passed; see [exit codes](#verify-an-older-run-and-read-exit-codes).
+Open `.runtime/tui-new/report.md` for the verdict, per-model counts and **Cases needing attention**, including recorded errors and case-artifact links. Expand **Complete matrix** for all 72 rows. **TARGET MET - NOT A FULL PASS** means at least 69/72 passed, not that every case passed; see [exit codes](#verify-an-older-run-and-read-exit-codes).
 
 See [verification records](validation/README.md) for dated v3 results and preserved v1/v2 runs. A past 72/72 result is not a guarantee of future service availability or evidence for a different implementation.
 
@@ -106,7 +106,9 @@ node .runtime/tui-new/source-snapshot/scripts/tui.mjs \
   --verify .runtime/tui-new/report.json
 ```
 
-Use the saved source after changing the worktree; the same dependencies are required. `--verify` checks evidence without making model calls. Plan/live/verify exit codes are:
+Keep the complete original run directory, including `cases/`, `freeze.json` and `source-snapshot/`; the same dependencies are required. Published summaries do not replace these artifacts. `--verify` makes no model calls: `evidenceIntegrity` describes validity, `thresholdMet` describes the 95% target, and `fullMatrixPassed` describes 72/72. See [field meanings](validation/README.md#read-a-result).
+
+Plan/live/verify exit codes are:
 
 | Code | Meaning |
 |---|---|

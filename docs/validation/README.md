@@ -2,125 +2,80 @@
 
 [한국어](README_KO.md) · [Guide map](../../README.md#testing) · [Stability contract](../STABILITY_TESTING.md)
 
-This is a dated evidence archive, not a setup guide or a certification of the current worktree. Read each result with its contract, profile and implementation hash. Offline checks, live matrices and different runs cannot be added together. Reproduction commands are in the [guide map](../../README.md#testing); verify an older run with its saved source.
+**The recorded TUI matrix passed; the recorded stability matrices did not fully pass.** This archive describes named, dated runs, not the current worktree or future service availability. For commands instead of results, use the [guide map](../../README.md#testing).
 
-## Latest: published handoff, Linux repairs and failure iterations — 2026-09-23 KST
+**Jump to:** [Recorded results](#recorded-results) · [Read a result](#read-a-result) · [Recheck evidence](#recheck-evidence) · [Earlier runs](#earlier-runs).
 
-[Iteration history, source hashes, CI and remaining failure](2026-09-23-failure-iterations.json)
+## Recorded results
 
-The handoff change was committed/pushed as requested. Further diagnosis found three Linux harness failures: captured Node child-stdio, sandbox measurement output, and namespace-local PID interpretation. The versioned repairs passed all **six Linux/macOS CI jobs** without loosening the OS sandbox. Failures now carry verified categories rather than remaining undetermined.
+The latest retained summaries are dated **2026-09-23 KST**. Each row is a separate run or scope; do not combine its passing cases with another row. The abbreviated source hashes below identify recorded implementations, **not Git commits**.
 
-The preserved `application-data-v3` full run scored **62/66**. An opt-in `application-data-v4` contract explicitly requests complete file lines including labels; its fresh full run scored **65/66 (98.48%)**, with **448/448** local unit/integration checks and **11/11** offline native stability cases. The remaining Opus S11 filter is still a failure (exit code 1), not a 66/66 pass. Default v5 remains unchanged at its recorded 57/66; scores are not combined or regraded.
+| Check / profile | Recorded result | What remains unproved or failed | Record / source hash |
+| --- | --- | --- | --- |
+| Real TUI `v3` | **72/72 (100%), full pass** | Bounded TUI scenarios, not whole-product or multi-hour reliability | [Handoff release](2026-09-23-pending-handoff.json), `320d502c` |
+| Stability, default `v5` | **57/66 (86.36%), not passed** | Nine Opus 5.5 upstream-filter failures; not pending-session 409 failures | [Handoff release](2026-09-23-pending-handoff.json), `320d502c` |
+| Stability, optional `application-data-v3` | **62/66 (93.94%), not passed** | Two Opus filters and two Haiku literal-output failures | [Failure iterations](2026-09-23-failure-iterations.json), `0401d9d1` |
+| Stability, optional `application-data-v4` | **65/66 (98.48%), not passed** | Opus S11 upstream filter remains. Meets the 95% reference, but exits 1 | [Failure iterations](2026-09-23-failure-iterations.json), `1f07ae19` |
+| Focused completed-result handoff `v2` | **6/6**, separate live probe | Does not replace the 66-case stability or 72-case TUI matrix | [Focused probe](2026-09-23-pending-handoff.json) |
+| Workflow compatibility `v6` | **No 108-case live result recorded here** | Offline workflow checks are not live-model compatibility | [Recorded scope](2026-09-23-failure-iterations.json) |
+| Five-hour endurance | **Not established** | The long run was stopped before five hours; later smoke/terminal checks were bounded | [Paused run](2026-09-22-full-pass-investigation/README.md) · [Bounded checks](2026-09-23-six-model-switch/README.md) |
 
-## Earlier: pending-result handoff and release verification — 2026-09-23 KST
+`application-data-v4` is an opt-in wording change, not a fix or regrade of the default v5 result. The provider's internal reason for the remaining filter is **unconfirmed**. The [diagnostic record](2026-09-23-failure-iterations.json) observed category `other`; an [earlier investigation](2026-09-22-opus-analysis/README.md) observed `reasoning_extraction`. Do not assign either diagnostic category to a matrix cell without that cell's evidence.
 
-[Verification summary, failures and release gate](2026-09-23-pending-handoff.json)
+### Offline checks are separate
 
-Implementation `320d502c` passed 424 unit/integration tests, all SDK-double runtime suites, 100 mixed handoffs, the focused 6/6 live handoff probe, and a fresh **72/72 real-TUI matrix**. The separate full **v5 stability matrix remains 57/66 (86.36%)**: all nine failures carry explicit Opus 5.5 upstream content-filter metadata, not the pending-session 409. Both full live reports passed current/frozen-source evidence verification. Failures are preserved and the conditional commit/push was withheld. The active user bridge was not restarted.
+| Recorded check | Result | What it establishes |
+| --- | --- | --- |
+| Local unit/integration checks after the literal-file change | **448/448** | Local behavior; no live-model pass credit |
+| Native stability with an SDK double | **11/11** | Harness behavior without model calls |
+| Linux/macOS CI after the Linux repairs | **6/6 jobs** | Unit/coverage and offline Codex/PTY/browser, workflow and stability suites |
 
-## Earlier: first-progress watchdog and real TUI v3 — 2026-09-23 KST
+These counts come from the [iteration record](2026-09-23-failure-iterations.json), not one combined score. The [recorded successful CI run](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/actions/runs/35872289448) followed a failed run; both are retained. Publication was later explicitly authorized despite the failed stability release gate; [the original gate and override](2026-09-23-pending-handoff.json) remain separate facts.
 
-[Machine-readable verification summary and limits](2026-09-23-first-progress.json)
+## Read a result
 
-The bridge now distinguishes an initial 180-second first-progress allowance from the subsequent 90-second streaming inactivity limit. A fresh v3 live matrix passed **72/72 (100%)** on implementation `793e852c`; current and frozen-source verification passed. A separate SDK-double regression waited 95 measured seconds in the actual TUI without replay. CI and environment reporting were added, but remote CI, full-window inference and multi-hour reliability are not claimed.
+In a newly generated `report.md`, read **Result → Per-model results → Cases needing attention**. Expand **Complete matrix** for every case. Case links lead to recorded artifact directories; a missing link means no case artifact path was recorded. The Markdown view does not verify its own evidence.
 
-## Earlier: TUI → bridge → Copilot SDK connection, v2 — 2026-09-23 KST
+| Field or term | Meaning |
+| --- | --- |
+| `executionKind` | `live` uses real models; `offline-self-test` uses SDK doubles. A plan executes no cases. |
+| `catalogId` / `profile` | The versioned test rules and task wording. Different contracts/profiles are not interchangeable. |
+| `passed` / `totalCases` | Passing cases over the full declared matrix. Failed, blocked, unsupported, timed-out and not-run cases stay in the denominator. |
+| `fullMatrixPassed` | All required live cases and run-level conditions passed. A high percentage alone is insufficient. |
+| `thresholdMet` | TUI's separate 95% target: 69/72 in an eligible complete run. It is not a full pass. |
+| `evidenceIntegrity: true` | The verifier accepted the evidence and recomputed result. It does **not** mean the tested behavior passed. |
+| `implementationHash` / `sourceHash` | A source fingerprint. Use the matching saved source; this is not a commit ID or third-party attestation. |
+| Coverage | Source coverage, the 75% reviewer checklist design score and live pass rate are different metrics. Measured product coverage remains **unknown/null**. |
 
-[Full results, connection failures, improvements and evidence](2026-09-23-tui-connection-v2/README.md)
+For example, stability **65/66**, `evidenceIntegrity: true`, `fullMatrixPassed: false` and exit **1** are consistent: **valid evidence of a non-passing run**. `--verify` checks evidence; it neither reruns failed cases nor turns them into passes. Invalid evidence or arguments produce exit 2 in the matrix runners.
 
-- `codex-ghcp-tui-12-v2`: **72/72 (100%)**, all six models 12/12, implementation `fe500d78`; current and frozen-source verification passed.
-- First independent run **45/72 (62.50%)** is preserved: 26 startup failures and one confirmed Copilot API connection timeout. Runs are not combined.
-- The final run used the default 90-second idle limit and one recovery attempt, not extended deadlines; no failed streams, stalled turns or SDK cleanup errors occurred.
-- Actual SDK model/tier snapshots, Responses SSE, watchdog configuration and graceful cleanup are checked. This bounded result does not guarantee future network availability or multi-hour endurance.
+## Recheck evidence
 
-## Earlier: real Codex TUI scenarios with Playwright headless — 2026-09-23 KST
+| Location | Contents and use |
+| --- | --- |
+| `docs/validation/` | Published summaries, hashes and selected diagnostics. A summary is **not** a complete runner report. |
+| `.runtime/<run>/report.md` | Readable generated view, where the runner supplies one. |
+| `.runtime/<run>/report.json` and `cases/` | Original matrix and case artifacts required for independent recomputation. |
+| `.runtime/<run>/source-snapshot/` | Automatically saved by stability and TUI (also terminal/soak). Workflow compatibility does **not** create this directory; retain its exact source separately. |
 
-[Results, issues found, observations and evidence](2026-09-23-tui-scenarios/README.md)
+Raw `.runtime` directories are ignored by Git and are **not supplied by cloning this repository**. A published JSON summary or file hash alone cannot reproduce a verification. You need the original complete run directory; do not pass a summary to `--verify` or substitute another run's artifacts.
 
-- New contract `codex-ghcp-tui-12-v1`: 12 scenarios × 6 models = 72 cases through the production launcher, the real Codex 0.154.0 TUI and headless Playwright/xterm.js.
-- Final independent run on implementation `54c7eb77`: **70/72 (97.22%)**, verified against current and frozen source. Opus 5.5, Sonnet 5, Haiku 4.5 and Astra scored 12/12.
-- The two failures are Sol and Luna refusing the U03 fixture wording (`token=`), with no tool call and no filter signal. They stay in the denominator; the contract was not changed.
-- The preliminary run found that **the production launcher did not offer Codex's native `apply_patch` tool**. The catalog now declares `apply_patch_tool_type: "freeform"`, and all six models used the native tool in the final run. A harness gap for Haiku's lingering model popup was also fixed.
-- Observations: 0 runtime MCP processes in 1,282 samples; Codex's task-title requests get HTTP 400 because structured output is unsupported; bridge cleanup diagnostics appear only when the harness ends a case with a group SIGINT, never after `/quit`.
-- The preliminary run is preserved separately. [Summary](2026-09-23-tui-scenarios/summary.json) · [Final run](2026-09-23-tui-scenarios/final-tui.json).
+With the original directory and matching source/dependencies available, follow the instructions for [workflow compatibility](../COMPATIBILITY_TESTING.md#read-the-result), [stability](../STABILITY_TESTING.md#evidence-and-exit-codes) or [TUI](../TUI_SCENARIOS.md#verify-an-older-run-and-read-exit-codes). Verification makes no model calls. Without those inputs, independent recomputation is unavailable; a new live run requires a new directory, explicit execution and Copilot usage. Terminal/soak runners and Opus diagnostics do not have a separate `--verify` mode.
 
-## Earlier: six-model switch, bridge MCP isolation and live verification — 2026-09-23 KST
+## Earlier runs
 
-[Changes, run history, MCP isolation evidence, picker checks and retained failures](2026-09-23-six-model-switch/README.md)
+Each link retains its detailed results, failures, changes, source identities and evidence references. Equal totals can describe different cells. Old contracts are not regraded against current rules, and the seven-model 77-case results are not six-model 66-case results.
 
-- Supported models are now `claude-opus-5.5`, `claude-sonnet-5`, `claude-haiku-4.5`, `gpt-6-astra`, `gpt-6-sol` and `gpt-6-luna`, pinned in that picker order.
-- Final independent matrices under the new 66-cell contracts: default **v4 57/66 (86.36%)** and separate **application-data-v2 63/66 (95.45%)**. Neither is 66/66.
-- In v4, every model except Opus 5.5 scored 11/11; all nine Opus 5.5 failures are explicit upstream filters.
-- Bridge SDK sessions now disable the Copilot runtime's unused user/plugin MCP servers. Before the fix, each session started azmcp plus two Playwright processes, about 316 MB. With the fix, 533 samples across the final matrices found **0 MCP processes**, and the SDK `disconnect` median fell from about 0.5 s to about 50 ms.
-- Verification-runner fixes:
-  - a hard-coded seven-model preflight;
-  - a macOS `EPERM` process-group false failure.
-- A real TUI `/model` check listed exactly the six models, and switching models routed prompts to the selected model.
-- Intermediate runs and all failures are preserved separately. [Summary](2026-09-23-six-model-switch/summary.json) · [Additional live checks](2026-09-23-six-model-switch/additional-live.json).
-
-## Earlier: bridge and terminal-runner integration (historical 7-model contract) — 2026-09-23 KST
-
-[Implementation, full matrices, additional live tests and retained failures](2026-09-22-terminal-integration/README.md)
-
-- Final independent matrices: default **v3 66/77 (85.71%)**, separate **application-data-v1 72/77 (93.51%)**. Neither is 77/77 or meets the previously recorded 95% target.
-- PTY and Playwright paths are now repository-owned commands. Extra live testing exposed and fixed ANSI scroll-region handling; the failed run and preliminary matrix remain separate.
-- Remaining outcomes are explicit upstream filtering, literal-label omission and missing repeated tool calls. No oracle weakening, automatic retry, output rewriting or cross-profile score combination.
-- The final matrices were independently verified against current/frozen source. [Full results and source hashes](2026-09-22-terminal-integration/summary.json) · [Additional real-terminal checks](2026-09-22-terminal-integration/additional-live.json).
-
-## Earlier: tool return-type metadata repair meets the ≥95% target — 2026-09-22
-
-[Change scope, fresh full run and original evidence](2026-09-22-runner-repair/README.md)
-
-- A new independent full `application-data-v1` run scored **74/77 (96.10%)**, meeting the target. It is not 77/77; three failures and exit code 1 remain.
-- All four GPT models and Haiku passed **11/11** each; Opus **9/11**, Sonnet **10/11**. Opus S10/S11 filtering and Sonnet S05 label omission remain unresolved.
-- The change is one fixture-tool description plus a regression. It declares the actual full UTF-8 text result; user prompts, fixtures, oracles and the production bridge are unchanged. The changed model-visible metadata is explicit.
-- Seven pre-matrix diagnostic cases and mechanical checks remain separate. Final checks: **267/267**, mechanical compatibility **18/18**, both mechanical stability profiles **11/11** each.
-- Neither earlier 50/77 run nor v3's 66/77 was regraded or combined. [Current/frozen verification](2026-09-22-runner-repair/verification.json) · [Change audit](2026-09-22-runner-repair/change-audit.json).
-
-## Earlier: further live validation and failure-boundary investigation — 2026-09-22
-
-[Fresh full run, separate diagnostics and unresolved findings](2026-09-22-fidelity-followup/README.md)
-
-- Fresh full `application-data-v1`: **50/77 (64.94%), Opus 9/11**. Its total matches the earlier result, but individual cells differ.
-- All 24 literal-output failures, two Opus filters and three cleanup RPC timeouts remain failures (two cases overlap output and cleanup).
-- Four agents worked in parallel, with 21 separate real native diagnostic cases. A Haiku wire sample retained the exact provider-bound tool text despite labels missing from its answer.
-- Three shared-instruction candidates were rolled back. Final production sources/contracts are unchanged and **the ≥95% target is unmet**.
-- Final directly recorded checks: **266/266**, mechanical compatibility **18/18**, mechanical stability **11/11**. [Current/frozen verification](2026-09-22-fidelity-followup/verification.json) · [Final audit](2026-09-22-fidelity-followup/final-audit.json).
-
-## Earlier: optional-profile validation and closeout — 2026-09-22
-
-[Final report, remaining failures and evidence](2026-09-22-opus-closeout/README.md)
-
-- Last full live run, separate `application-data-v1` profile: **50/77 (64.94%)**, **Opus 9/11**.
-- **Unresolved.** Opus S10/S11 retained explicit SDK filtering; 25 other cases failed literal-output checks. No failure was waived or replaced.
-- Final checks: **266/266** unit/regression, **18/18** real Codex + mechanical SDK compatibility, **11/11** optional-profile mechanical stability.
-- Original/default v3 remains **66/77 (85.71%), Opus 0/11**. Prompt profiles and their evidence are separate; the optional profile is not a fix for the original refusal.
-- Further live experiments stopped at the user's request. [Final audit](2026-09-22-opus-closeout/final-audit.json) · [Profile definitions](2026-09-22-opus-closeout/profiles.json).
-
-## Earlier: Opus/Sonnet comparison, source fixes and revalidation — 2026-09-22
-
-[Multidirectional analysis and complete evidence](2026-09-22-opus-analysis/README.md)
-
-- Repeated direct-SDK/production-manager comparisons: **Sonnet 4/4 exact-copy successes, Opus 4/4 refusals**.
-- Native upstream `refusal` / `reasoning_extraction` metadata observed, including an unchanged captured S01 body. The exact classifier trigger remains unconfirmed; model-specific SDK foundation differences are documented.
-- Fixed filtering missed after handoff/idle, response-commit races and first-error overwrite. Six new regressions were first demonstrated failing.
-- Final tests **248/248**; real Codex + mechanical SDK compatibility **18/18**, stability **11/11**.
-- Fresh unchanged full live matrix: **66/77 (85.71%)**. **The ≥95% target is not met.** No successful cells were imported from earlier runs or unscored diagnostics.
-- [Current/frozen verification](2026-09-22-opus-analysis/verification.json) · [Final audit](2026-09-22-opus-analysis/final-audit.json) · [Reusable diagnostic](../OPUS_DIAGNOSTICS.md)
-
-## Earlier: bridge implementation repair — 2026-09-22
-
-[Implementation changes, results and remaining failures](2026-09-22-bridge-repair/README.md)
-
-| Verification | Result | Scope |
-|---|---:|---|
-| Unit/controller regressions | 223/223 | No model calls |
-| Native compatibility runtime | 18/18 | Real Codex + scripted SDK; no model calls |
-| Native stability runtime | 11/11 | Real Codex + scripted SDK; no model calls |
-| Full live stability matrix | **66/77 (85.71%)** | All seven exact models × 11 unchanged v3 scenarios |
-
-**The ≥95% target is not met:** at least 74/77 is required. Six models passed 11/11; `claude-opus-5` failed 11/11 with explicit SDK filter metadata. The failures remain in the denominator. This does not establish the filter's root cause or prove that the bridge has no remaining defects.
-
-The [report](2026-09-22-bridge-repair/README.md) links the complete matrix, current/frozen verification, source hashes and local evidence. It also records the earlier complete 65/77 run, including its unresolved process-exit timeout; that timeout was not regraded. The final run is a separate full matrix, not a combination of selected cells.
-
-Archived verification documents were removed before this repair at the user's request and have not been restored. Git history was not rewritten. These results are not a 126-cell live compatibility certification, a multi-hour soak, or a whole-product support percentage.
+| Date (KST) | Record | Result or finding in that record |
+| --- | --- | --- |
+| 2026-09-23 | [First-progress watchdog / TUI v3](2026-09-23-first-progress.json) | Separate **72/72** run; offline first progress delayed for 95 measured seconds |
+| 2026-09-23 | [TUI connection v2](2026-09-23-tui-connection-v2/README.md) | First **45/72**, then a separate **72/72**; initial failures retained |
+| 2026-09-23 | [TUI v1](2026-09-23-tui-scenarios/README.md) | **70/72**, target met but not a full pass; Sol/Luna U03 refusals retained |
+| 2026-09-23 | [Six-model switch and MCP isolation](2026-09-23-six-model-switch/README.md) | Default v4 **57/66**; optional application-data-v2 **63/66**; neither fully passed |
+| 2026-09-23 | [Terminal integration, seven-model contracts](2026-09-22-terminal-integration/README.md) | Default v3 **66/77**; optional application-data-v1 **72/77** |
+| 2026-09-22 | [Tool-result description repair](2026-09-22-runner-repair/README.md) | Optional application-data-v1 **74/77**; 95% target met, three failures and exit 1 retained |
+| 2026-09-22 | [Further failure-boundary investigation](2026-09-22-fidelity-followup/README.md) | New **50/77** run, not the same cells as the preceding 50/77; output/filter/cleanup failures retained |
+| 2026-09-22 | [Optional-profile closeout](2026-09-22-opus-closeout/README.md) | **50/77**; unresolved; further experiments stopped at the user's request |
+| 2026-09-22 | [Full-pass investigation and paused soak](2026-09-22-full-pass-investigation/README.md) | Five-hour work stopped before completion; not endurance certification |
+| 2026-09-22 | [Opus/Sonnet comparison](2026-09-22-opus-analysis/README.md) | Separate **66/77** matrix; diagnostic Sonnet 4/4 copies versus Opus 4/4 refusals |
+| 2026-09-22 | [Bridge repair](2026-09-22-bridge-repair/README.md) | **66/77**; earlier **65/77** and its process-exit timeout also retained |

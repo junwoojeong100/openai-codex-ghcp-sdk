@@ -35,9 +35,13 @@ Then verify the saved report **without model calls**, even if cases failed. Use 
 npm run test:stability -- --verify .runtime/stability-new-run/report.json
 ```
 
-Read `.runtime/stability-new-run/report.md` for the summary and retained failures; `report.json` is the evidence-verification input.
+## Read the result
+
+Read `.runtime/stability-new-run/report.md` for the verdict, per-model counts and **Cases needing attention**. That section includes failed checks, recorded failure categories/errors and case-artifact links. **Complete matrix** retains every row. `report.json` is the evidence-verification input.
 
 **A full pass requires 66/66.** The 95% reference (63/66) does not change that verdict or exit code. Recorded runs still include upstream-filter failures; see the [results and retained failures](validation/README.md), not a score combined from different runs.
+
+An offline **11/11** is labelled as an offline harness pass, not live compatibility. A live **65/66** remains non-passing even when `--verify` returns `evidenceIntegrity: true`; [how to read those fields](validation/README.md#read-a-result).
 
 ## Choose a profile only if needed
 
@@ -160,13 +164,17 @@ The offline stress run covers 100 tool round trips, 100 exact retries, ten queue
 
 Every run uses a new output directory and freezes source files, implementation/catalog hashes and the scenario contract before preflight. Evidence includes native events, actual SDK messages/usage, HTTP/SSE, labelled controls, independent assertions, per-case supervisor receipts and a complete matrix. The verifier recomputes checks, metrics and artifact projections rather than trusting stored pass flags. Raw logs stay under ignored `.runtime`; review/redact before sharing. Hashes are not third-party attestation.
 
-After source changes, use the saved source to verify an old run (the same dependencies are required):
+After source changes, keep the complete original run directory and use its saved source with the same dependencies. Published `docs/validation` summaries do not contain all required artifacts and cannot replace this `report.json`:
 
 ```bash
 node .runtime/stability-new-run/source-snapshot/scripts/stability.mjs \
   --verify .runtime/stability-new-run/report.json
 ```
 
-Exit codes: **0** = valid plan, passing offline harness, or all 66 live cells passed; **1** = valid evidence but non-passing/incomplete execution; **2** = invalid arguments/evidence. The report distinguishes offline from live and never calls an offline 11/11 a 66/66 live pass.
+| Exit code | Meaning |
+| --- | --- |
+| 0 | Valid plan, passing offline harness, or all 66 live cases and run-level checks passed |
+| 1 | Non-passing/incomplete execution; a verifier can confirm valid evidence and still return 1 |
+| 2 | Invalid arguments or evidence |
 
 [Opus diagnostics](OPUS_DIAGNOSTICS.md) correlate native upstream refusal metadata without changing the fixture prompt or scored matrix. Diagnostic controls and incomplete observations must remain separate from matrix results.
