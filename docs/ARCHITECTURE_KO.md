@@ -17,7 +17,7 @@ Codex CLI — 승인·샌드박스·도구 실행 담당
   → 명시적으로 선택한 Copilot 모델
 ```
 
-이 프로젝트는 프로토콜 변환기입니다. Codex의 도구 실행기를 Copilot 실행기로 교체하거나 OpenAI/Anthropic API를 직접 호출하지 않습니다. 모델 추론은 GitHub Copilot으로 전송됩니다. bridge가 로컬에서 실행된다는 것은 추론도 로컬에서 수행된다는 뜻이 아닙니다.
+이 프로젝트는 프로토콜 변환기입니다. Codex 대신 Copilot이 도구를 실행하게 하거나 OpenAI/Anthropic API를 직접 호출하지 않습니다. 모델 추론은 GitHub Copilot으로 전송됩니다. bridge가 로컬에서 실행된다는 것은 추론도 로컬에서 수행된다는 뜻이 아닙니다.
 
 ## 모듈
 
@@ -37,22 +37,24 @@ Codex CLI — 승인·샌드박스·도구 실행 담당
 
 임시 목록은 피커의 내장·캐시 목록을 대체하며 Codex 종료 시 삭제합니다. 항목에 `apply_patch_tool_type: "freeform"`을 선언하므로 Codex가 기본 `apply_patch` 도구를 제공합니다.
 
-### 검증 실행기
+### 검증 하네스
 
 아래는 테스트 진입점이며 별도로 띄워야 하는 운영 서비스가 아닙니다.
 
-- [터미널 실행기](../scripts/terminal.mjs)·[공유 터미널 경로](../scripts/soak/terminal-lane.mjs): 동결 소스 worker, 격리 환경, SDK 응답 대조를 사용합니다. soak worker도 이 경로를 재사용합니다. [터미널·내구성 검사](SOAK_TESTING_KO.md)를 참고하세요.
-- [TUI 실행기](../scripts/tui.mjs)·[구현](../scripts/tui/): [TUI 케이스](TUI_SCENARIOS_KO.md)마다 전용 PTY와 headless Playwright/xterm.js로 launcher를 구동합니다. 런타임 MCP 프로세스·Codex rollout을 관측하고 저장한 fact에서 검사를 다시 계산합니다.
+- [터미널 러너](../scripts/terminal.mjs)·[공유 터미널 lane](../scripts/soak/terminal-lane.mjs): 동결 소스 worker, 격리 환경, SDK 응답 대조를 사용합니다. soak worker도 이 lane을 재사용합니다. [터미널·내구성 검사](SOAK_TESTING_KO.md)를 참고하세요.
+- [TUI 러너](../scripts/tui.mjs)·[구현](../scripts/tui/): [TUI 케이스](TUI_SCENARIOS_KO.md)마다 전용 PTY와 headless Playwright/xterm.js로 실행기를 구동합니다. 런타임 MCP 프로세스·Codex rollout을 관측하고 저장한 fact에서 검사를 다시 계산합니다.
 - [PTY 수명주기](../scripts/soak/terminal.mjs)·[브라우저 드라이버](../scripts/soak/browser.mjs): 실제 PTY 하나에 독립 파서 또는 Playwright/xterm 표시기를 연결합니다. 취소 시 터미널 그룹과 소유 브라우저를 함께 정리합니다.
 
 ## 도구 호출 왕복
 
 1. Codex가 function 또는 custom/freeform 도구를 선언합니다. `additional_tools` 입력 안의 중첩 선언도 처리합니다.
-2. bridge는 **handler 없는** SDK 도구를 등록하고 `custom:<name>` 항목만 노출합니다. SDK 내장 도구와 tool search는 활성화하지 않습니다. Copilot 런타임 자체의 사용자·plugin MCP 서버는 세션 생성 시 비활성화하므로 하나도 시작되지 않습니다. 이어서 제한 시간이 있는 `session.mcp.list` 점검으로 스캔하지 않은 출처에서 뜬 서버를 중지하고 이후 세션에서 비활성화합니다. Codex 자체 MCP 도구는 Codex가 실행하고 다른 도구처럼 선언하므로 그대로 동작합니다.
+2. bridge는 **실행 처리 함수가 없는** SDK 도구를 등록하고 `custom:<name>` 항목만 노출합니다.
 3. SDK assistant 메시지에서 호출을 받고, `external_tool.requested`에서 해당 호출의 대기 `requestId`를 확보합니다.
 4. HTTP 응답으로 `function_call` 또는 `custom_tool_call`을 Codex에 전달합니다. bridge는 도구를 실행하지 않습니다.
 5. Codex가 자신의 승인·샌드박스 정책에 따라 실행하고, 다음 Responses 요청으로 결과를 보냅니다.
 6. bridge가 `session.rpc.tools.handlePendingToolCall({requestId, result})`로 결과를 제출하고 이어지는 모델 응답을 전달합니다.
+
+**SDK 도구 격리:** SDK 내장 도구와 tool search는 활성화하지 않습니다. Copilot 런타임 자체의 사용자·plugin MCP 서버는 세션 생성 시 비활성화하여 시작을 막습니다. 이어서 제한 시간이 있는 `session.mcp.list` 점검으로 스캔하지 않은 출처에서 뜬 서버를 중지하고 이후 세션에서 비활성화합니다. Codex 자체 MCP 도구는 Codex가 실행하고 다른 도구처럼 선언하므로 그대로 동작합니다.
 
 function 도구는 JSON 인자를 사용합니다. custom 도구는 SDK에 필수 `input` 문자열 하나를 가진 객체로 표현합니다. 이 문자열은 줄바꿈 변경이나 추가 JSON 인코딩 없이 `custom_tool_call.input`으로 돌아갑니다. grammar가 제공되면 모델 설명에 포함하지만, **SDK가 grammar 기반 출력을 강제하지는 않습니다.**
 
@@ -65,11 +67,23 @@ function 도구는 JSON 인자를 사용합니다. custom 도구는 SDK에 필�
 - 전체 이력 요청은 정규화된 prefix를 비교해 처리한 내용을 다시 보내지 않습니다. wire 전용 ID/status는 제외하지만 assistant `phase`와 custom 입력 문자열은 보존·비교합니다. 과거 phase가 생략되면 기존 값을 유지하고, 명시적으로 바뀌면 이력 변경으로 처리합니다.
 - `previous_response_id`는 현재 프로세스 안에서의 후속 연결만 제공합니다. 영구 Responses 저장소가 아니며 최신 대화 버전만 이어갈 수 있습니다.
 - 가장 최근 정규화 요청의 동일한 재시도는 캐시를 반환하므로 프롬프트·도구 결과를 중복 제출하지 않습니다.
-- 대기 중 호출의 결과가 모두 정확히 한 번 포함되고 지시문을 제외한 기존 대화가 그대로일 때만 설정을 바꿔 세션을 교체할 수 있습니다. Codex가 function 도구 설명 뒤에 덧붙이는 플러그인 출처 문장은 이름·스키마·원래 설명이 일치할 때만 메타데이터로 허용합니다. 대기가 없고 전체 이력이 기존 세션과 맞지 않으면 새 세션을 만들 수 있습니다.
+- 대기 호출이 없고 전체 이력이 기존 세션과 맞지 않으면 새 SDK 세션을 만들 수 있습니다. 결과 대기 중의 설정 변경은 아래 핸드오프 절차를 사용합니다.
 
-완료 결과 핸드오프는 전체 이력, `previous_response_id`, 호출 ID로 연결하는 결과 전용 요청을 지원합니다. 모든 결과가 있으면 모델·context tier·도구·최상위 지시문 변경을 함께 반영할 수 있습니다. 기존 사용자·assistant 내용, phase, 호출 ID·인자, 과거 결과는 일치해야 합니다. 이전 세션의 abort·disconnect·delete와 같은 SDK generation의 준비 상태를 확인한 뒤 요청된 설정으로 새 세션을 만들고, 완료된 호출·결과를 직렬화한 이력으로만 제공합니다. 기존 결과 RPC를 다시 제출하지 않으며 최상위 지시문은 지시 채널에 유지합니다. 도구 없는 로컬 압축도 이 경계를 사용합니다.
+### 완료된 도구 결과와 함께 설정 바꾸기
 
-완료 호출 식별자와 응답 버전을 보존하므로 동일 요청 재시도는 새 캐시를 사용하고 이전 응답 참조는 stale 상태로 남습니다. 잘못된 결과 배치는 원래 세션을 제거하기 전에 거절합니다. 정리·준비 상태를 확인하지 못하면 `session_handoff_failed`, 취소·대체 세션 실패 시에는 대화를 유실 상태로 유지하여 후속 요청이 무작정 재전송되지 않게 합니다. `bridge.session_handoff`, `bridge.session_handoff_failed`, `bridge.pending_session_changed`에는 요청 ID와 제한된 변경 field·개수만 남기고 대화 원문은 기록하지 않습니다. 결과 RPC 중복 제출과 완료 ID 재사용을 막는 것이며, 모델이 새 호출 ID로 같은 작업을 다시 제안하는 것까지 보장하지는 않습니다.
+**완료 결과 핸드오프**는 Codex가 모든 대기 결과와 변경된 설정을 함께 보낼 때 SDK 세션을 교체하는 절차입니다. 전체 이력, `previous_response_id`, 호출 ID로 연결하는 결과 전용 요청을 지원합니다. 모델·문맥 등급·도구·신뢰된 최상위 지시문을 함께 바꿀 수 있습니다.
+
+1. 대기 호출마다 정확히 한 번 포함된 일치하는 결과를 확인합니다. 기존 사용자·assistant 내용, phase, 호출 ID·인자, 과거 결과도 일치해야 합니다. 잘못된 결과 배치는 **원래 세션을 제거하기 전에** 거절합니다.
+2. 이전 세션의 abort·disconnect·delete 성공과 같은 SDK 클라이언트 세대의 준비 상태를 확인합니다.
+3. 요청된 설정으로 새 세션을 만듭니다. 완료된 호출·결과는 직렬화한 이력으로만 제공하며 **기존 결과 RPC로 재제출하지 않습니다.** 최상위 지시문은 지시 채널에 유지합니다.
+
+Codex가 function 도구 설명 뒤에 덧붙이는 플러그인 출처 문장은 이름·스키마·원래 설명이 일치할 때만 메타데이터로 허용합니다. 도구 없는 로컬 압축도 같은 핸드오프 경계를 사용합니다.
+
+완료 호출 식별자와 응답 버전을 보존하므로 동일 요청 재시도는 새 캐시를 사용하고 이전 응답 참조는 stale 상태로 남습니다. 결과 RPC 중복 제출과 완료 ID 재사용은 막지만, 모델이 새 호출 ID로 같은 작업을 다시 제안하는 것까지 막지는 못합니다.
+
+정리·준비 상태를 확인하지 못하면 `session_handoff_failed`를 반환합니다. 취소·대체 세션 실패 시에는 대화를 유실 상태로 유지하여 재시도 때 조용히 재전송하지 않습니다. 진단 이벤트 `bridge.session_handoff`, `bridge.session_handoff_failed`, `bridge.pending_session_changed`에는 요청 ID와 제한된 변경 field·개수만 남기며 대화 원문은 기록하지 않습니다.
+
+### 살아 있는 SDK 세션 없이 재개하기
 
 SDK의 send API는 임의의 Responses 이력을 그대로 복원하는 API가 아닙니다. 과거 대화가 포함된 최초 요청은 지시문을 제외한 이력을 assistant phase와 함께 직렬화하여 새 사용자 프롬프트의 문맥으로 제공합니다. JSON 안의 구분자 문자는 이스케이프하지만 디코딩된 원문은 바꾸지 않습니다. 이는 **역할을 그대로 복원하는 네이티브 replay가 아니며**, 동일한 답변을 보장하지 않습니다. 정상적으로 이어지는 live 세션에서는 이 replay 경로를 사용하지 않습니다.
 
@@ -87,15 +101,34 @@ HTTP는 루프백에만 바인딩하고 `/health` 외에는 bridge 전용 인증
 
 ### 모델 진행과 복구
 
-모델 진행 감시는 유휴 세션 만료와 전체 턴 제한과 별개입니다. 각 시도는 갱신되지 않는 첫 진행 제한 `TURN_FIRST_PROGRESS_TIMEOUT_MS`(180초)로 시작합니다. `assistant.turn_start`는 초기화 알림이지 추론 진행이 아닙니다. 실제 루트 텍스트·추론·도구 입력 조각 또는 증가하는 안전 정수 `assistant.streaming_delta.totalResponseSizeBytes`가 도착하면 `TURN_IDLE_TIMEOUT_MS`(90초)로 전환하고 갱신합니다. 바이트 카운터는 서로 다른 루트 턴 ID에서 초기화하며 중복 시작에서는 유지합니다. 루트 대화의 등록된 Fusion 단계에서도 증가하는 비공개 출력 바이트·단계당 한 번의 성공 완료를 반영합니다. 단계 시작만 있는 경우·단계 도구·review/하위 이벤트·중복/잘못된 카운터는 제한을 늘리지 않습니다. 루트 턴당 최대 64개 단계 ID만 추적하고 비공개 내용은 읽거나 전달하지 않습니다. 감시 간격은 `min(SDK_READINESS_INTERVAL_MS, TURN_IDLE_TIMEOUT_MS, TURN_FIRST_PROGRESS_TIMEOUT_MS)`이며 `waitPhase`(`first_progress` 또는 `streaming`)·해당 제한·마지막 진행을 진단합니다. 루트 `model.call_failure`는 제한된 오류 분류·숫자 HTTP 상태만 남기고 진행으로 간주하지 않습니다. 세션 생성·모델 설정은 SDK 시작과 턴 제한 중 짧은 값을 유지하며 복구가 절대 턴 5분·요청 6분 예산을 초기화하지 않습니다.
+모델 진행 감시는 유휴 세션 만료와 별개입니다. 두 무진행 제한은 절대 턴 5분·요청 6분 제한 안에서 적용됩니다.
 
-입력 접수가 확인된 무응답 요청은 이전 세션의 abort·disconnect·delete 성공과 같은 SDK 연결의 준비 상태를 확인한 뒤, 해당 SDK 세션만 재구성하여 기존 응답 스트림에서 복구할 수 있습니다. `TURN_IDLE_RECOVERY_ATTEMPTS`는 기본 1, 0이면 비활성화, 최대 3입니다. 모델·추론 수준·지시문 권한·완료된 전체 이력·완료 호출 식별자·응답 참조 버전·보고된 사용량을 보존합니다. 완료된 도구 결과는 문맥으로만 전달하고 도구 결과 RPC를 재제출하지 않습니다. 부분 출력, 접수 미확인 입력, 대기 호출, 필터, 취소, 정리 실패, 연결 유실은 재전송하지 않습니다. 원래 턴·요청 제한을 모든 복구 시도와 재설정이 공유하며, 취소는 설정 중 MCP 확인도 중단합니다. `bridge.turn_recovering`, `bridge.turn_recovered`, `bridge.turn_recovery_skipped`는 대화 원문 없이 제한된 진단을 남깁니다. 추가 추론 사용량이 발생할 수 있으며, 완전히 조용한 추론과 정지는 구분할 수 없고 이력 재전송은 모델 행동의 정확히 한 번 실행을 보장하지 않습니다.
+| `waitPhase` | 기본 제한 | 제한 시간을 갱신하는 조건 |
+| --- | --- | --- |
+| `first_progress` | `TURN_FIRST_PROGRESS_TIMEOUT_MS`: 180초 | 없음. 시도마다 한 번의 초기 대기 시간을 부여합니다. |
+| `streaming` | `TURN_IDLE_TIMEOUT_MS`: 90초 | 아래에서 정의한 실제 루트 진행. |
+
+**진행으로 인정하는 것:** 루트 텍스트·추론·도구 입력 조각 또는 증가하는 안전 정수 `assistant.streaming_delta.totalResponseSizeBytes`가 도착하면 스트리밍 제한으로 전환하고 갱신합니다. 바이트 카운터는 서로 다른 루트 턴 ID에서 초기화하며 중복 시작에서는 유지합니다. 루트 대화의 등록된 Fusion 단계에서도 증가하는 비공개 출력 바이트와 단계당 한 번의 성공 완료를 반영합니다. 루트 턴당 최대 64개 단계 ID만 추적하며 비공개 내용은 읽거나 전달하지 않습니다.
+
+**진행으로 인정하지 않는 것:** `assistant.turn_start`는 초기화 알림이지 추론 진행이 아닙니다. 단계 시작만 있는 경우·단계 도구·review/하위 이벤트·중복/잘못된 카운터는 제한을 늘리지 않습니다. 루트 `model.call_failure`도 제한된 오류 분류·숫자 HTTP 상태를 남기는 진단일 뿐입니다.
+
+**진단:** `bridge.turn_watchdog`는 `min(SDK_READINESS_INTERVAL_MS, TURN_IDLE_TIMEOUT_MS, TURN_FIRST_PROGRESS_TIMEOUT_MS)` 간격으로 실행하고 `waitPhase`를 기록합니다. `bridge.turn_stalled`는 해당 제한과 마지막 진행을 기록합니다. 세션 생성·모델 설정은 SDK 시작과 턴 제한 중 짧은 값을 사용합니다.
+
+#### 제한된 무응답 복구
+
+입력 접수가 확인된 무응답 요청은 해당 SDK 세션만 재구성하여 기존 응답 스트림에서 복구할 수 있습니다. 이전 세션의 abort·disconnect·delete 성공과 같은 SDK 연결의 준비 상태를 먼저 확인해야 합니다. `TURN_IDLE_RECOVERY_ATTEMPTS`는 기본 1, 0이면 비활성화, 최대 3입니다.
+
+모델·추론 수준·지시문 권한·완료된 전체 이력·완료 호출 식별자·응답 참조 버전·보고된 사용량을 보존합니다. 완료된 도구 결과는 문맥으로만 전달하며 **결과 RPC를 재제출하지 않습니다.**
+
+부분 출력, 접수 미확인 입력, 대기 호출, 필터, 취소, 정리 실패, 연결 유실은 재전송하지 않습니다. 모든 복구 시도와 대체 세션 설정은 원래 턴·요청 제한을 공유하며 이를 초기화하지 않습니다. 취소는 설정 중 MCP 확인도 중단합니다.
+
+`bridge.turn_recovering`, `bridge.turn_recovered`, `bridge.turn_recovery_skipped`는 대화 원문 없이 제한된 진단을 남깁니다. 추가 추론 사용량이 발생할 수 있습니다. 완전히 조용한 추론과 정지는 구분할 수 없으며, 이력 재전송은 모델 행동의 정확히 한 번 실행을 보장하지 않습니다.
 
 ### 데이터 보관
 
 bridge의 상관관계·재시도 상태는 메모리에 있습니다. `store:false`는 여기서 Responses 조회용 저장소를 만들지 않는다는 뜻이지, Copilot·Codex·SDK가 로컬 세션 파일이나 서비스 측 데이터를 전혀 남기지 않는다는 보장은 아닙니다. bridge는 요청 본문과 인증정보를 로그에 기록하지 않습니다. SDK 오류에는 서비스 진단 내용이 포함될 수 있습니다.
 
-이웃 프로젝트의 테스트·검증 실행기·결과는 사용하지 않습니다. 오프라인 테스트는 이 구현에 한정하며 fake SDK와 로컬 HTTP 연결을 사용합니다.
+이웃 프로젝트의 테스트·검증 러너·결과는 사용하지 않습니다. 오프라인 테스트는 이 구현에 한정하며 fake SDK와 로컬 HTTP 연결을 사용합니다.
 
 ## 안정성·복구 경계
 

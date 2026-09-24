@@ -20,7 +20,7 @@ The latest retained summaries are dated **2026-09-23 KST**. Each row is a separa
 | Workflow compatibility `v6` | **No 108-case live result recorded here** | Offline workflow checks are not live-model compatibility | [Recorded scope](2026-09-23-failure-iterations.json) |
 | Five-hour endurance | **Not established** | The long run was stopped before five hours; later smoke/terminal checks were bounded | [Paused run](2026-09-22-full-pass-investigation/README.md) · [Bounded checks](2026-09-23-six-model-switch/README.md) |
 
-`application-data-v4` is an opt-in wording change, not a fix or regrade of the default v5 result. The provider's internal reason for the remaining filter is **unconfirmed**. The [diagnostic record](2026-09-23-failure-iterations.json) observed category `other`; an [earlier investigation](2026-09-22-opus-analysis/README.md) observed `reasoning_extraction`. Do not assign either diagnostic category to a matrix cell without that cell's evidence.
+`application-data-v4` is an opt-in wording change, not a fix or regrade of the default v5 result. The provider's internal reason for the remaining filter is **unconfirmed**. The [diagnostic record](2026-09-23-failure-iterations.json) observed category `other`; an [earlier investigation](2026-09-22-opus-analysis/README.md) observed `reasoning_extraction`. Do not assign either diagnostic category to a matrix case without that case's evidence.
 
 ### Offline checks are separate
 
@@ -64,7 +64,7 @@ With the original directory and matching source/dependencies available, follow t
 
 ## Earlier runs
 
-Each link retains its detailed results, failures, changes, source identities and evidence references. Equal totals can describe different cells. Old contracts are not regraded against current rules, and the seven-model 77-case results are not six-model 66-case results.
+Each link retains its detailed results, failures, changes, source identities and evidence references. Equal totals can describe different cases. Old contracts are not regraded against current rules, and the seven-model 77-case results are not six-model 66-case results.
 
 | Date (KST) | Record | Result or finding in that record |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ Each link retains its detailed results, failures, changes, source identities and
 | 2026-09-23 | [Six-model switch and MCP isolation](2026-09-23-six-model-switch/README.md) | Default v4 **57/66**; optional application-data-v2 **63/66**; neither fully passed |
 | 2026-09-23 | [Terminal integration, seven-model contracts](2026-09-22-terminal-integration/README.md) | Default v3 **66/77**; optional application-data-v1 **72/77** |
 | 2026-09-22 | [Tool-result description repair](2026-09-22-runner-repair/README.md) | Optional application-data-v1 **74/77**; 95% target met, three failures and exit 1 retained |
-| 2026-09-22 | [Further failure-boundary investigation](2026-09-22-fidelity-followup/README.md) | New **50/77** run, not the same cells as the preceding 50/77; output/filter/cleanup failures retained |
+| 2026-09-22 | [Further failure-boundary investigation](2026-09-22-fidelity-followup/README.md) | New **50/77** run, not the same cases as the preceding 50/77; output/filter/cleanup failures retained |
 | 2026-09-22 | [Optional-profile closeout](2026-09-22-opus-closeout/README.md) | **50/77**; unresolved; further experiments stopped at the user's request |
 | 2026-09-22 | [Full-pass investigation and paused soak](2026-09-22-full-pass-investigation/README.md) | Five-hour work stopped before completion; not endurance certification |
 | 2026-09-22 | [Opus/Sonnet comparison](2026-09-22-opus-analysis/README.md) | Separate **66/77** matrix; diagnostic Sonnet 4/4 copies versus Opus 4/4 refusals |

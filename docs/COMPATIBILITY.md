@@ -4,7 +4,7 @@
 
 ## Scope
 
-The target is Codex CLI **0.154.0** with `@github/copilot-sdk` **1.0.14**. This is a text-and-client-tools adapter, not a complete OpenAI Responses implementation. A model being enabled in Copilot does not certify every Codex feature. Offline test results and authenticated model runs are distinct checks.
+The target is Codex CLI **0.154.0** with `@github/copilot-sdk` **1.0.14**. These are the checked versions; newer releases can change the protocol and may need adapter changes. The bridge supports text conversations and tools executed by Codex; it does not implement the whole OpenAI Responses API. A model being enabled in Copilot does not mean every Codex feature works with it. Offline tests check the bridge against simulated SDK responses; only live runs show how real models behave.
 
 Only the [six supported model IDs](../README.md#models) are allowed, in the documented picker order. Account policy still controls availability. Other IDs, including retired models, are rejected. IDs are passed to the SDK without cross-provider renaming or fallback.
 
@@ -41,9 +41,18 @@ The remaining sections describe the protocol details and failure behavior, not a
 
 **Historical replay:** a fresh SDK session cannot import an arbitrary Responses transcript with native roles. Completed historical turns are serialized into prompt context. Live matching conversations preserve the SDK session and submit real pending tool results instead.
 
-**Instruction boundaries:** request instructions and all top-level system/developer messages are preserved verbatim and appended to the SDK-managed system foundation, even when an instruction occurs mid-history. The bridge uses `systemMessage.mode="append"`, never `replace`, so SDK safety instructions remain in place. Both instruction roles share this SDK field; arbitrary historical user/assistant roles still require serialized replay, not a general-purpose role-equivalent transcript import. On unchanged live sessions, new user messages accompanying pending results use separate SDK immediate steering. A trusted instruction update with all pending results instead rebuilds the session after confirmed cleanup, keeping instructions authoritative and tool outputs byte-exact in serialized history. Incomplete or rewritten conversation input still fails before retirement. SDK built-in tools remain unavailable, and only Codex performs client tools under its sandbox and approval policy.
+**Instruction boundaries:** the SDK's system and safety instructions stay in place.
 
-**Assistant phases and completion:** `commentary` and `final_answer` survive canonicalization and replay, following the [Responses phase semantics](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter). Omitted old phases reuse known values; explicit phase changes invalidate the live prefix. Text responses finish at root `session.idle`, allowing intervening corrections, usage and errors to arrive. Tool responses instead require fully correlated pending external calls. Empty, tool-less responses and mismatched pending calls fail before success commitment.
+- Request instructions and all top-level system/developer messages are appended verbatim, including mid-history instructions. The bridge uses `systemMessage.mode="append"`, never `replace`.
+- Both instruction roles share that SDK field. Historical user/assistant messages still require serialized replay, not a general-purpose role-preserving transcript import.
+- On an unchanged live session, new user messages accompanying pending results use separate SDK immediate steering; they are not added to tool output.
+- A trusted instruction update with all pending results rebuilds the session after confirmed cleanup. Instructions remain authoritative and tool outputs stay byte-exact in serialized history. Incomplete or rewritten conversation input fails before retiring the old session.
+
+SDK built-in tools remain unavailable. Only Codex executes client tools, under its own sandbox and approval policy. See the [handoff procedure](ARCHITECTURE.md#changing-configuration-with-completed-tools).
+
+**Assistant phases and completion:** `commentary` and `final_answer` survive canonicalization and replay, following the [Responses phase semantics](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter). Omitted old phases reuse known values; explicit phase changes invalidate the live prefix.
+
+Text responses finish at root `session.idle`, allowing intervening corrections, usage and errors to arrive. Tool responses instead require fully correlated pending external calls. Empty, tool-less responses and mismatched pending calls fail before success commitment.
 
 **Usage:** actual SDK token counts are returned when available. Missing usage is `null`, not estimated. Usage, caching and billing belong to Copilot and need not match OpenAI billing semantics.
 

@@ -1,6 +1,6 @@
 # OpenAI Codex × GitHub Copilot SDK
 
-[English](README.md) · [사용법·문제 해결](docs/USAGE_KO.md) · [호환성](docs/COMPATIBILITY_KO.md) · [검증 기록](docs/validation/README_KO.md) · [구조](docs/ARCHITECTURE_KO.md)
+[English](README.md)
 
 공식 **Codex CLI**에서 **GitHub Copilot 계정의 모델**을 사용합니다.
 
@@ -8,7 +8,18 @@
 Codex → 로컬 HTTP/SSE bridge → GitHub Copilot SDK → 선택한 Copilot 모델
 ```
 
-도구 실행·승인·샌드박스는 계속 Codex가 담당합니다. bridge는 요청과 응답을 변환할 뿐 셸·파일 도구를 실행하지 않습니다. **비공식 연동 프로젝트**이며 Codex와 Copilot의 공식 지원 조합은 아닙니다. 프롬프트·도구 결과는 GitHub Copilot으로 전송되고 계정의 사용 한도·과금 정책이 적용됩니다.
+**bridge**는 Codex와 Copilot 사이의 요청·응답을 변환하는 로컬 서버입니다. 셸·파일 도구 실행과 승인·샌드박스는 계속 Codex가 담당합니다.
+
+**비공식 연동 프로젝트**이며 Codex와 Copilot의 공식 지원 조합은 아닙니다. 프롬프트·도구 결과는 GitHub Copilot으로 전송됩니다. bridge를 로컬에서 실행해도 모델 추론은 로컬에서 이루어지지 않으며, 계정의 사용 한도·과금 정책이 적용됩니다.
+
+| 하려는 작업 | 시작할 곳 |
+| --- | --- |
+| 설치하고 사용해 보기 | [준비 사항](#준비-사항) → [빠른 시작](#빠른-시작) |
+| 내 저장소에서 작업하기 | [다른 프로젝트에서 사용](docs/USAGE_KO.md#다른-프로젝트에서-사용) |
+| 실행·대화 중 오류 해결하기 | [문제 해결](docs/USAGE_KO.md#문제-해결) |
+| 필요한 기능의 지원 여부 확인하기 | [지원 기능과 제한](docs/COMPATIBILITY_KO.md#이-기능을-사용할-수-있나요) |
+| bridge 개발·평가하기 | [검사 명령](#개발과-검증) · [기록된 결과](docs/validation/README_KO.md) |
+| 구현 이해하기 | [구조](docs/ARCHITECTURE_KO.md) |
 
 ## 준비 사항
 
@@ -40,7 +51,7 @@ npm ci
 command codex --version
 ```
 
-버전 출력은 `codex-cli 0.154.0`이어야 합니다. 실행기는 더 새 버전도 허용하지만 이 안내와 검증 기록의 기준은 **0.154.0**입니다. SDK는 **1.0.14**로 고정하며, 업그레이드하면 프로토콜 수정이 필요할 수 있습니다.
+마지막 명령은 `codex-cli 0.154.0`을 출력해야 합니다. 더 새 Codex 버전도 실행되지만 이 안내와 검증 기록은 **0.154.0** 기준입니다.
 
 ### 3. 설치와 계정 접근 확인
 
@@ -49,7 +60,10 @@ command codex --version
 ./bin/ghcp-models
 ```
 
-doctor의 각 도구 `ok`와 Codex의 `supportedVersion`이 모두 `true`여야 합니다. doctor는 **로그인을 검사하지 않습니다.** 모델 명령은 프롬프트를 보내지 않고 Copilot 목록 접근만 확인합니다. `gpt-6-astra`가 `disabled`나 `not available`이 아닌지 확인하세요. 실패했다면 [문제 해결](docs/USAGE_KO.md#제한과-문제-해결)을 먼저 확인합니다.
+- **`ghcp-doctor`**는 설치 상태를 JSON으로 출력합니다. 모든 `ok`와 Codex의 `supportedVersion`이 `true`여야 합니다. 로그인은 검사하지 않습니다.
+- **`ghcp-models`**는 프롬프트를 보내지 않고 Copilot 계정에서 지원 모델별 상태를 보여줍니다. 각 줄은 ID·이름·상태 순서이며, 예를 들면 `gpt-6-astra  GPT-6 Astra  enabled`입니다. 상태가 `disabled`나 `not available`이 아닌 모델을 고르세요. 다른 모델을 지정하지 않으면 4단계는 `gpt-6-astra`를 사용합니다.
+
+둘 중 하나라도 실패하면 [시작 문제 해결](docs/USAGE_KO.md#시작과-설정)을 확인하세요.
 
 ### 4. Codex 시작
 
@@ -57,11 +71,11 @@ doctor의 각 도구 `ok`와 Codex의 `supportedVersion`이 모두 `true`여야 
 ./bin/codex-ghcp
 ```
 
-Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`처럼 계정에서 사용 가능한 모델을 지정하세요.
+다른 모델로 시작하려면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`처럼 `--ghcp-model`을 추가하세요.
 
 **완료 기준:** Codex가 열리고 첫 프롬프트에 답합니다. 예를 들어 `OK라고만 답해줘.`를 입력해 확인하세요. 이 요청은 Copilot 사용량을 소비합니다. 종료하려면 `/quit`을 입력합니다.
 
-실행기는 빈 루프백 포트에 bridge를 시작하고 준비 상태를 확인한 뒤 Codex를 실행합니다. Codex가 종료되면 자신이 시작한 bridge도 정리합니다. **`.env` 파일이나 셸 설정은 필요하지 않습니다.** 다른 저장소에서 작업하려면 [해당 프로젝트에서 실행기를 호출](docs/USAGE_KO.md#codex-실행)하세요.
+실행기는 빈 루프백 포트에 bridge를 시작하고 준비 상태를 확인한 뒤 Codex를 실행합니다. Codex가 종료되면 자신이 시작한 bridge도 정리합니다. **설정은 여기까지입니다. `.env` 파일이나 셸 설정은 필요하지 않습니다.** 다른 저장소에서 작업하려면 [해당 프로젝트에서 실행기를 호출](docs/USAGE_KO.md#다른-프로젝트에서-사용)하세요.
 
 ## 기본 사용법
 
@@ -80,9 +94,9 @@ Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`
   "README_KO.md를 읽고 프로젝트의 목적을 한 문장으로 요약해줘."
 ```
 
-**실행기 옵션은 `--` 앞에, Codex 명령·옵션은 뒤에 둡니다.** 예를 들어 `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last`는 Sonnet으로 대화를 재개합니다. 모델 선택에는 공식 CLI의 `--model`/`-m` 대신 `--ghcp-model`을 사용하세요. 공급자·전송 설정 재정의는 거절합니다. Git 저장소 밖에서는 `exec --skip-git-repo-check`로 Git 디렉터리 검사만 생략하며, 샌드박스를 끄지는 않습니다.
+**실행기 옵션은 `--` 앞에, Codex 명령·옵션은 뒤에 둡니다.** 예를 들어 `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last`는 Sonnet으로 대화를 재개합니다. 모델은 `--ghcp-model`로 선택하며 Codex 자체의 `--model`/`-m`은 거절됩니다. [옵션별 입력 위치](docs/USAGE_KO.md#codex-명령과-옵션-전달)를 참고하세요.
 
-다른 프로젝트에서는 실행기의 절대 경로를 사용하면 현재 작업 디렉터리를 유지합니다. 어디서든 `codex`만 입력하려면 **선택 사항인** [zsh 연동·해제 안내](docs/USAGE_KO.md#선택적-zsh-연동)를 따르세요. bridge를 상주시켜 재사용하려면 [실행·상태·종료](docs/USAGE_KO.md#선택적-상주-bridge)를 참고하세요.
+선택 사항: [어느 디렉터리에서나 `codex`로 이 실행기 사용](docs/USAGE_KO.md#선택적-zsh-연동)(zsh, 해제 방법 포함) 또는 [상주 bridge 사용](docs/USAGE_KO.md#선택적-상주-bridge).
 
 ## 모델
 
@@ -103,15 +117,16 @@ Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`
 
 ## 사용 전 알아둘 제한
 
-- 텍스트와 Codex가 실행하는 function/custom 도구를 지원합니다. 기본 `apply_patch`와 Codex MCP 도구도 포함하지만 custom 도구의 grammar는 생성 강제가 아닌 안내입니다.
-- 이미지·음성·영상·파일을 모델에 직접 첨부하는 입력, 공급자 호스팅 도구, 구조화 JSON 출력, WebSocket, 원격 Responses 압축은 지원하지 않습니다. **Codex 도구를 통한 로컬 파일 읽기·편집은 지원합니다.** Codex의 선택적 제목 생성 요청은 거절하지만 대화는 제목 없이 계속할 수 있습니다.
-- bridge 대화 상태는 메모리에 있습니다. 상주 bridge를 중지하기 전에 Codex 세션을 닫으세요. 재시작하면 대기 중 호출이 사라집니다. 실행기는 승인·샌드박스를 우회하지 않습니다.
+- **지원:** 텍스트 대화와 Codex가 직접 실행하는 도구(셸 명령, 로컬 파일 읽기·편집, 기본 `apply_patch`, Codex MCP 도구). 승인·샌드박스도 Codex가 그대로 적용합니다.
+- **미지원:** 이미지·음성·영상·파일을 모델 입력으로 첨부, 웹 검색 같은 공급자 호스팅 도구, 스키마를 강제하는 JSON 출력, WebSocket, 원격 Responses 압축. Codex의 자동 작업 제목 생성은 구조화 출력이 필요해 거절되며, 대화는 제목 없이 계속됩니다.
+- **근사 지원:** `apply_patch` 같은 custom 도구의 grammar는 모델에 안내로 전달될 뿐 생성 과정에서 강제되지 않습니다.
+- **메모리에만 보관:** bridge는 대화 상태를 메모리에만 둡니다. 중지하거나 재시작하면 대기 중인 도구 호출이 사라지므로 먼저 Codex 세션을 닫으세요.
 
-고급 기능을 사용하기 전에 [전체 호환성 범위](docs/COMPATIBILITY_KO.md)를 확인하세요. 모델 목록이나 TUI 통과 결과가 Codex 전체 기능 지원을 뜻하지는 않습니다. [실모델 기록](docs/validation/README_KO.md)에는 미해결 상위 필터 실패도 있으며, 서로 다른 계약의 점수를 합산하지 않습니다.
+고급 기능에 의존하기 전에 [전체 호환성 범위](docs/COMPATIBILITY_KO.md)를 확인하세요. 지금까지 측정한 결과와 미해결 상위 필터 실패는 [실모델 기록](docs/validation/README_KO.md)에 있습니다.
 
 ## 개발과 검증
 
-검증은 **실행기를 사용하기 위한 필수 절차가 아닙니다.** 명령이 아닌 측정 결과는 [기록된 결과와 남은 공백](docs/validation/README_KO.md#기록된-결과)에서 확인하세요.
+실행기를 사용하는 데 검사 실행은 **필요하지 않습니다.** 이미 측정한 결과는 [기록된 결과와 남은 공백](docs/validation/README_KO.md#기록된-결과)에서 확인하세요.
 
 ### 로컬 개발 검사
 
@@ -123,7 +138,7 @@ Astra를 사용할 수 없다면 `./bin/codex-ghcp --ghcp-model claude-sonnet-5`
 | 코드 수정·PR 전 검사 | `npm run test:ci` | 단위 검사, 소스 커버리지, 시나리오 설계, 문서 |
 | 단위·실행 제어 검사만 | `npm test` | 커버리지 보고서 없이 단위 검사 실행 |
 
-`test:docs`는 예제를 파싱할 뿐 설치·서버·실모델 검사 명령을 실행하거나 외부 URL에 접속하지 않습니다. `coverage/lcov.info`는 관측한 소스 커버리지이며 제품 기능 지원율이 아닙니다.
+`test:docs`는 예제를 실행하지 않고 검사하며 외부 URL에 접속하지 않습니다. `coverage/lcov.info`는 실행된 소스 줄을 보여줄 뿐 제품 기능 지원율이 아닙니다.
 
 <details>
 <summary>더 넓은 오프라인 검사: 실제 Codex·PTY·Chromium</summary>
@@ -135,24 +150,24 @@ npx --no-install playwright install chromium
 env -u GHCP_LIVE_HANDOFF_OUTPUT npm run test:runtime
 ```
 
-실제 Codex/PTY/브라우저·워크플로·안정성 경로를 SDK 대역으로 검사하며 Copilot 로그인은 필요하지 않습니다. `env -u`는 이번 호출에서만 실모델 핸드오프 옵션을 제거하므로, 기존 `GHCP_LIVE_HANDOFF_OUTPUT` 설정 때문에 모델을 호출하지 않습니다. CI는 이 오프라인 검사를 Linux/macOS의 단위 커버리지 작업과 분리해 실행합니다.
+실제 Codex·PTY·브라우저를 **SDK 대역**(모델을 호출하지 않는 Copilot SDK의 로컬 대체 구현)과 연결해 검사하므로 Copilot 로그인은 필요하지 않습니다. `env -u GHCP_LIVE_HANDOFF_OUTPUT`은 내보낸 실모델 모드 변수가 모델 호출을 켜지 못하게 합니다. CI는 이 검사를 Linux·macOS에서 단위 커버리지와 분리해 실행합니다.
 
 </details>
 
 ### 선택적 실모델 검사
 
-아래 안내 중 **하나를 선택**하세요. 모든 행을 순서대로 실행하는 설치 절차가 아닙니다. 계획 명령은 검사를 실행하지 않고 사양만 보여주며 프로젝트 의존성만 필요합니다. **실모델 `--execute`와 soak의 `--smoke`는 Copilot 사용량이 발생합니다.** 아래 통과 기준은 충족해야 할 조건이지 이미 달성한 결과가 아닙니다.
+각 검사는 독립적이며 순서대로 실행할 필요가 없습니다. 계획 명령은 검사할 내용만 출력합니다. **실모델 실행(`--execute`, soak의 `--smoke`)은 실제 모델을 호출하며 Copilot 사용량이 발생합니다.**
 
-| 목적과 실모델 통과 기준 | 계획 명령 (모델 호출 없음) | 안내 |
-| --- | --- | --- |
-| 개발 워크플로: **108/108** (18개 × 6개 모델) | `npm run test:compatibility -- --plan` | [호환성 실행·해석](docs/COMPATIBILITY_TESTING_KO.md) · [시나리오 사양](docs/NATIVE_SCENARIOS_KO.md) |
-| bridge 장애·복구: **66/66** (11개 × 6개 모델) | `npm run test:stability -- --plan` | [안정성](docs/STABILITY_TESTING_KO.md) |
-| 실제 대화형 TUI: 목표 **69/72**, 전체 통과 **72/72** | `npm run test:tui -- --plan` | [TUI 시나리오](docs/TUI_SCENARIOS_KO.md) |
-| PTY·브라우저: 선언한 작업 완료, 관측한 실패 없음 | `npm run test:terminal -- --plan` | [터미널 검사](docs/SOAK_TESTING_KO.md#재현-가능한-터미널-검사) |
-| 내구성: 모든 실행 경로 5시간 이상, 관측한 실패 없음 | `npm run test:soak -- --plan` | [내구성](docs/SOAK_TESTING_KO.md#5시간-실모델-실행) |
-| Opus 필터: 진단 증거 수집이며 호환성 판정 아님 | `npm run diagnose:opus` | [진단](docs/OPUS_DIAGNOSTICS_KO.md) |
+| 검사 | 확인하는 내용 | 계획 명령 (모델 호출 없음) | 실모델 통과 조건 |
+| --- | --- | --- | --- |
+| [워크플로 호환성](docs/COMPATIBILITY_TESTING_KO.md) | 모델 6개 각각에서 개발 워크플로 18개 | `npm run test:compatibility -- --plan` | **108/108**건 통과 |
+| [안정성](docs/STABILITY_TESTING_KO.md) | 모델별 bridge 장애·복구 시나리오 11개 | `npm run test:stability -- --plan` | **66/66**건 통과 |
+| [TUI](docs/TUI_SCENARIOS_KO.md) | 모델별 대화형 터미널 시나리오 12개 | `npm run test:tui -- --plan` | **72/72**건 통과 (**69/72**는 95% 목표 충족일 뿐) |
+| [터미널](docs/SOAK_TESTING_KO.md#재현-가능한-터미널-검사) | 모델 하나로 정해진 시간 동안 PTY 또는 브라우저 작업 | `npm run test:terminal -- --plan` | 관측된 실패 없이 작업 완료 |
+| [내구성](docs/SOAK_TESTING_KO.md#5시간-실모델-실행) | 장시간 이어지는 대화 | `npm run test:soak -- --plan` | 모든 lane(감시하는 대화)이 관측된 실패 없이 5시간 이상 진행 |
+| [Opus 진단](docs/OPUS_DIAGNOSTICS_KO.md) | Opus 상위 필터링에 관한 증거 | `npm run diagnose:opus` | 없음. 증거를 수집할 뿐 호환성 판정이 아님 |
 
-저장된 보고서의 [증거 유효성과 검사 통과 여부는 별개](docs/validation/README_KO.md#결과-읽기)입니다. 공개 요약은 `.runtime` 원본 증거 전체가 아닙니다.
+저장된 보고서를 읽는 방법은 [결과 읽기](docs/validation/README_KO.md#결과-읽기)를 참고하세요. 워크플로 검사의 케이스는 [시나리오 사양](docs/NATIVE_SCENARIOS_KO.md)에 있습니다.
 
 **시나리오 문서를 수정할 때:** [템플릿](scripts/compatibility/documentation.mjs)이나 [catalog](scripts/compatibility/catalog.mjs)를 수정하고 `npm run docs:scenarios`, `npm run test:docs` 순서로 실행하세요. 생성 파일은 직접 수정하지 않습니다. `npm run docs:scenarios:check`는 생성 내용만 비교하며 나머지 안내 문서는 검사하지 않습니다.
 

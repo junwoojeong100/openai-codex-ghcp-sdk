@@ -2,11 +2,19 @@
 
 [한국어](SOAK_TESTING_KO.md) · [Guide map](../README.md#testing) · [TUI scenarios](TUI_SCENARIOS.md) · [Verification records](validation/README.md)
 
-Use `test:terminal` for a bounded, single-model terminal workload. Use `test:soak` for long-lived native conversations, optionally with a terminal lane. Both are separate from the 66-case stability matrix. **Soak `--smoke` also calls real models**; only plans and SDK-double runtime checks avoid inference usage.
+Use `test:terminal` for a bounded, single-model terminal workload. Use `test:soak` for long-lived native conversations, optionally with a terminal lane. Pick one task below; each works on its own.
 
-These are reproducibility instructions, not a claim of five-hour reliability. Interrupted runs remain incomplete. The Playwright path renders real Codex PTY bytes in xterm.js; it does not certify a desktop terminal application.
+| Goal | Start here | Calls real models? |
+| --- | --- | --- |
+| Inspect the workload without running it | [Plan](#plan) | No |
+| Check terminal drivers with simulated SDK responses | [Offline runtime](#offline-runtime) | No |
+| Run one model for a bounded interval | [Terminal checks](#reproducible-terminal-checks) | **Yes** |
+| Try a short multi-model workload | [Live smoke](#short-live-smoke) | **Yes**, even with `--smoke` |
+| Measure at least five hours per lane | [Five-hour live run](#five-hour-live-run) | **Yes**, sustained usage |
 
-**Choose a path:** [Prerequisites](#prerequisites-and-offline-checks) · [Short terminal run](#reproducible-terminal-checks) · [Smoke](#short-live-smoke) · [Five-hour run](#five-hour-live-run) · [Read the result](#read-the-result).
+For execution, install the [runtime prerequisites](#runtime-prerequisites); the offline check itself is optional. After a run, [read its report](#read-the-result).
+
+This guide explains how to run the checks; recorded outcomes are in the [verification records](validation/README.md#recorded-results). Neither suite replaces the 66-case stability matrix. The Playwright driver renders real Codex pseudoterminal (PTY) output in xterm.js; desktop terminal applications are not tested.
 
 ## Prerequisites and offline checks
 
@@ -19,7 +27,7 @@ npm run test:terminal -- --plan --driver playwright
 npm run test:soak -- --plan
 ```
 
-### Offline runtime
+### Runtime prerequisites
 
 For execution/runtime checks, use **Node 22.12+ and Codex 0.154.0**; terminal paths also need **Python 3**. Use the [CLI installation step](../README.md#2-install-dependencies); offline testing needs no Copilot login. Only the Playwright driver and terminal runtime suite require Chromium:
 
@@ -27,7 +35,11 @@ For execution/runtime checks, use **Node 22.12+ and Codex 0.154.0**; terminal pa
 npx --no-install playwright install chromium
 ```
 
-For Linux library errors, see the [Chromium setup note](TUI_SCENARIOS.md#offline-runtime). Check both terminal drivers with real Codex and an SDK double, **without model calls or Copilot login**:
+For Linux library errors, see the [Chromium setup note](TUI_SCENARIOS.md#runtime-prerequisites).
+
+### Offline runtime
+
+**No model calls or Copilot login.** With the [runtime prerequisites](#runtime-prerequisites) installed, check both terminal drivers using real Codex and an SDK double (a local replacement, not a model):
 
 ```sh
 npm run test:terminal:runtime
@@ -35,7 +47,7 @@ npm run test:terminal:runtime
 
 ## Reproducible terminal checks
 
-**Consumes Copilot usage.** Use the [runtime prerequisites](#offline-runtime) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access). Choose **one** driver example, not both as setup steps. Each output directory must be new.
+**Consumes Copilot usage.** Install the [runtime prerequisites](#runtime-prerequisites) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access). Pick **one** driver example below, and use a new output directory for each run.
 
 These are test-runner options: `test:terminal` uses `--model`, unlike the launcher's `--ghcp-model`.
 
@@ -54,31 +66,27 @@ npm run test:terminal -- --execute --driver playwright --model claude-sonnet-5 \
   --output .runtime/terminal-browser-new
 ```
 
-The standalone duration accepts 1–86,400 seconds and is a minimum measured traffic interval, not a five-hour certificate. The final in-flight turn has a bounded completion allowance. `Ctrl+C`/`SIGTERM` cancels work; it cannot turn a partial duration into a pass. Payloads accept 128–65,536 bytes; response requests accept 0–3,000 words (0 requests only the marker). Actual response size is recorded and checked against the declared minimum character workload, not assumed from the prompt. Models must be one of the bridge's six supported IDs; there is no fallback.
-
-Payloads are generated lazily for the next turn, rather than allocating a whole day of large prompts at startup. The terminal parser honors Codex's scrolling regions so long answers do not lose their final marker during composer redraws. Late browser input callbacks are disabled before evidence files close after terminal exit.
-
-Both drivers share the same private PTY lifecycle, workload and success criteria. Playwright submits prompts and Escape through the browser, while xterm.js handles terminal rendering/query responses. Unique completion markers must also appear in observed root SDK responses with the exact model identity; visible terminal text alone is insufficient. Filter signals, SDK errors, failed SSE, short/missing responses, timeouts and cleanup failures remain failures. Reports, heartbeat, SDK/HTTP summaries, terminal receipts and a browser screenshot are saved beneath the new output directory; source snapshots include HTML and Python.
-
-Only generated non-sensitive data is sent. Each run owns its `HOME`, `CODEX_HOME`, working directory and bridge; sandbox remains read-only and tool approval is never bypassed. Live child environments retain only the authentication/proxy settings needed by the SDK. The browser binds no public service and uses an owned empty browser profile. Supervisor cancellation gives terminal workers bounded time to reap the separate PTY and browser before escalation.
+`--duration-seconds 120` means at least 120 seconds of measured traffic **after readiness**, not a 120-second limit on the whole command. Setup, the final in-flight turn and cleanup add time. `Ctrl+C`/`SIGTERM` cancels work and leaves a partial run incomplete. For input/output limits and pass criteria, see [terminal workload and evidence](#terminal-workload-and-evidence).
 
 ## Combined soak runner
 
-Choose smoke or endurance; a smoke run is not required before a five-hour run.
+Pick the short smoke or the five-hour run; the smoke run is not a prerequisite.
+
+Both modes start two **lanes** (independently monitored conversations): GPT-6 Luna and Claude Sonnet 5. Confirm access to `gpt-6-luna` and `claude-sonnet-5` with `./bin/ghcp-models`; access to the launcher's default Astra model is not enough. `--terminal` adds a separate Luna TUI lane.
 
 ### Short live smoke
 
-**Consumes Copilot usage; it is not offline.** The short run calls the real GPT-6 Luna and Claude Sonnet 5 models. Complete the [runtime prerequisites](#offline-runtime) and [Copilot account check](../README.md#3-check-installation-and-account-access), then use a new output directory.
+**Consumes Copilot usage; it is not offline.** The short run calls the real GPT-6 Luna and Claude Sonnet 5 models. Complete the [runtime prerequisites](#runtime-prerequisites) and [Copilot account check](../README.md#3-check-installation-and-account-access), then use a new output directory.
 
 ```sh
 npm run test:soak -- --smoke --duration-seconds 60 --output .runtime/soak-smoke-new
 ```
 
-Add `--terminal` for a PTY lane, or `--terminal --terminal-driver playwright` for a browser-rendered lane. These are alternatives for a new run, not extra commands required before endurance testing. Smoke duration accepts 1–600 seconds and never earns endurance credit.
+To add a terminal lane to a new run, add `--terminal` for a PTY lane or `--terminal --terminal-driver playwright` for a browser-rendered lane. Smoke duration accepts 1–600 seconds and never counts as endurance.
 
 ### Five-hour live run
 
-**Sustained Copilot usage.** Every declared lane must run for at least 18,000 measured seconds after readiness. Preparation and cleanup add time. Complete the [runtime prerequisites](#offline-runtime) and [Copilot account check](../README.md#3-check-installation-and-account-access) before starting:
+**Sustained Copilot usage.** Every declared lane must run for at least 18,000 measured seconds after readiness. Preparation and cleanup add time. Complete the [runtime prerequisites](#runtime-prerequisites) and [Copilot account check](../README.md#3-check-installation-and-account-access) before starting:
 
 ```sh
 npm run test:soak -- --execute --output .runtime/soak-five-hours-new
@@ -88,7 +96,7 @@ Each output directory must be new. The runner freezes source before execution an
 
 ## Read the result
 
-Read `report.json` in the chosen output directory. These two runners do not provide a separate `--verify` command.
+Read `report.json` in the chosen output directory, for example `.runtime/soak-smoke-new/report.json`. These two runners do not provide a separate `--verify` command.
 
 | Run | Fields to check | What a pass establishes |
 | --- | --- | --- |
@@ -97,6 +105,25 @@ Read `report.json` in the chosen output directory. These two runners do not prov
 | `test:soak -- --execute` | The same three fields, plus `durationMet: true` | Every declared lane reached at least five hours without observed failures; not maximum-context certification |
 
 Exit **0** means a valid plan or a passing run of the selected mode, **1** means failed/incomplete execution, and **2** means an argument or runner error. A successful smoke run is still not an endurance pass. Inspect the existing report before starting another run after an interruption.
+
+## Terminal workload and evidence
+
+These details explain the terminal checks above; they are not additional commands to run.
+
+| Option | Accepted range | Meaning |
+| --- | --- | --- |
+| `--duration-seconds` | 1–86,400 seconds | Minimum measured traffic interval for `test:terminal`, not five-hour certification. The final in-flight turn has a bounded completion allowance. |
+| `--payload-bytes` | 128–65,536 bytes | Generated input size. |
+| `--response-words` | 0–3,000 words | Requested output length; 0 requests only the completion marker. Actual output must meet the declared minimum character workload. |
+| `--model` | [Six supported IDs](../README.md#models) | Must be available to the account; no fallback. |
+
+Both drivers share the same private PTY lifecycle, workload and success criteria. Playwright submits prompts and Escape through the browser, while xterm.js handles terminal rendering/query responses. Unique completion markers must also appear in observed root SDK responses with the exact model identity; visible terminal text alone is insufficient.
+
+Filter signals, SDK errors, failed SSE, short/missing responses, timeouts and cleanup failures remain failures. The new output directory retains reports, heartbeats, SDK/HTTP summaries and terminal receipts, plus a screenshot for the browser driver. Source snapshots include HTML and Python.
+
+Only generated non-sensitive data is sent. Each run owns its `HOME`, `CODEX_HOME`, working directory and bridge; sandbox remains read-only and tool approval is never bypassed. Live child environments retain only the authentication/proxy settings needed by the SDK. The browser binds no public service and uses an owned empty browser profile. Supervisor cancellation gives terminal workers bounded time to reap the separate PTY and browser before escalation.
+
+Payloads are generated only for the next turn, rather than allocating a whole day of large prompts at startup. The terminal parser honors Codex's scrolling regions so long answers do not lose their final marker during composer redraws. Late browser input callbacks are disabled before evidence files close after terminal exit.
 
 ## Offline regression scope
 

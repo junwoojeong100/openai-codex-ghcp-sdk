@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { ROOT } from "../scripts/compatibility/util.mjs";
-import { NATIVE_SCENARIOS } from "../scripts/compatibility/catalog.mjs";
+import { NATIVE_SCENARIO_CATALOG, NATIVE_SCENARIOS } from "../scripts/compatibility/catalog.mjs";
 import { scenarioDocument, updateDocumentation } from "../scripts/compatibility/documentation.mjs";
 import { parseArguments as compatibilityArgs } from "../scripts/compatibility.mjs";
 import { parseArguments as stabilityArgs } from "../scripts/stability.mjs";
@@ -125,6 +125,22 @@ test("scenario documentation links every index entry to its detailed contract in
       assert.ok(document.includes(`<a id="${anchor}"></a>\n\n### ${id} — ${name[language]}\n`));
       assert.ok(document.includes(`\`\`\`text\n${prompt}\n\`\`\``), "The exact shared prompt is preserved");
       for (const assertion of assertions) assert.ok(document.includes(`\`${assertion.id}\`: ${assertion.description[language]} — \`${assertion.evidence}\``));
+    }
+  }
+});
+
+test("scenario coverage tables link their cases to the detailed contracts in both languages", () => {
+  for (const language of ["en", "ko"]) {
+    const document = scenarioDocument(language);
+    for (const group of NATIVE_SCENARIO_CATALOG.coverage.checklist) {
+      const links = group.scenarios.map(id => `[${id}](#${id.toLowerCase()})`).join(", ") || "—";
+      assert.ok(document.includes(`| ${group.name[language]} | ${group.level} | ${links} |`),
+        `${language}: missing checklist links for ${group.name[language]}`);
+    }
+    for (const group of NATIVE_SCENARIO_CATALOG.coverage.included) {
+      const links = group.scenarios.map(id => `[${id}](#${id.toLowerCase()})`).join(", ");
+      assert.ok(document.includes(`| ${group.name[language]} | ${links} |`),
+        `${language}: missing capability links for ${group.name[language]}`);
     }
   }
 });

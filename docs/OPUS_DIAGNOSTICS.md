@@ -2,15 +2,15 @@
 
 [한국어](OPUS_DIAGNOSTICS_KO.md) · [Guide map](../README.md#testing) · [Stability contract](STABILITY_TESTING.md)
 
-This opt-in diagnostic correlates **upstream protocol responses with SDK events**, rather than treating a generic `content_filter` event as a root-cause explanation. It neither replaces nor regrades a stability-matrix cell.
+Use this when Opus returns `upstream_content_filter` and you need evidence beyond the error label. This opt-in diagnostic compares **upstream protocol responses with SDK events**; a generic `content_filter` event alone does not explain the root cause. It neither replaces nor regrades a stability-matrix case.
 
 ## Run
 
-Run from the repository root after `npm ci`. Live execution requires Copilot SDK 1.0.14 and an authenticated account with access to `claude-opus-5.5`. No Codex TUI or browser is used by this diagnostic.
+Run from the repository root after `npm ci`. No Codex CLI or browser is required. Choose the plan to inspect the probes, or live execution to collect evidence.
 
 ### Plan
 
-**No model calls.** This default mode describes the probes without running them:
+**No model calls or Copilot login.** This default mode describes the probes without running them:
 
 ```sh
 npm run diagnose:opus
@@ -18,19 +18,47 @@ npm run diagnose:opus
 
 ### Live diagnostic
 
-**Consumes Copilot usage.** Run `./bin/ghcp-models` first and confirm `claude-opus-5.5` is neither `disabled` nor `not available`. If catalog access fails, use [authentication troubleshooting](USAGE.md#boundaries-and-troubleshooting). Use a new or empty evidence directory; existing reports cannot be overwritten.
+**Consumes Copilot usage.** This mode requires Copilot SDK **1.0.14** and an authenticated account with access to `claude-opus-5.5`. Run `./bin/ghcp-models` first and confirm that model is neither `disabled` nor `not available`. If catalog access fails, use [authentication troubleshooting](USAGE.md#startup-and-configuration).
+
+Use a new or empty evidence directory; existing reports cannot be overwritten:
 
 ```sh
 npm run diagnose:opus -- --execute --output .runtime/opus-diagnostic-new
 ```
 
-Seven fresh sessions compare the unchanged v4 fixture prompt through the direct SDK and production manager, SDK streaming/summary options, separate simple-tool controls on both routes, and an arithmetic control. Control wording is diagnostic only and never substitutes for production requests or any of the 66 stability cases. Earlier findings for `claude-opus-5` remain historical.
+Each of the seven probes runs in a fresh session and appears in the report under its `id`:
 
-The model, low reasoning effort, SDK foundation and provider filter policy are retained. Permission requests are rejected; the only tool action is returning an owned synthetic string generated in memory. There are no automatic retries, fallback models or user-setting changes. Filtering, literal-output mismatches, errors or cleanup failures produce exit code 1; even exit code 0 does not establish full-matrix compatibility.
+| Probe `id` | Route | What it sends |
+| --- | --- | --- |
+| `sdk-exact-fixture` | Direct SDK | The unchanged v4 fixture prompt |
+| `bridge-exact-fixture` | Production bridge manager | The same prompt |
+| `sdk-exact-nonstreaming` | Direct SDK | The same prompt with SDK `streaming: false` |
+| `sdk-exact-default-summary` | Direct SDK | The same prompt with the SDK's default reasoning summary; other probes send `reasoningSummary: "none"` |
+| `sdk-simple-tool-control` | Direct SDK | Control: call `read_fixture` once and return its result |
+| `bridge-simple-tool-control` | Production bridge manager | The same simple-tool control |
+| `sdk-arithmetic-control` | Direct SDK | Control: an arithmetic question with no tool |
+
+Control wording is diagnostic only; it never replaces production requests or any of the 66 stability cases. The model, low reasoning effort, SDK protective instructions and provider filter policy stay unchanged. Every permission request is rejected; the only tool action returns a synthetic string generated in memory. There are no automatic retries, fallback models or user-setting changes. Earlier findings for `claude-opus-5` remain historical.
+
+Filtering, literal-output mismatches, errors or cleanup failures give exit code 1. Exit code 0 still does not mean the stability matrix passes.
 
 ## Read the evidence
 
-Open `.runtime/opus-diagnostic-new/report.json` (or the output directory you chose). This diagnostic has no `--verify` mode; inspect its recorded observations, not a matrix pass score. The report distinguishes:
+Open `.runtime/opus-diagnostic-new/report.json` (or the output directory you chose), **including when execution exits with code 1**. This diagnostic has no `--verify` mode; inspect the saved evidence before deciding to run another live diagnostic.
+
+Start with each entry in `cases`:
+
+| `status` | Meaning |
+| --- | --- |
+| `completed` | The probe met its output and tool-submission checks. |
+| `filtered` | The SDK or bridge reported an explicit upstream filter. This does not explain the provider's reason. |
+| `mismatch` | The returned output or tool-submission count did not meet the probe's checks. |
+| `error` | The probe encountered an execution error; inspect `errorCode`. |
+| `not-run` | The probe did not execute; it is not a pass. |
+
+Also check `cases[].cleanup[].passed` and the report's `implementationUnchanged`. A completed response alone is not a successful diagnostic run, and a successful diagnostic is not a matrix pass.
+
+For the provider investigation, the report distinguishes:
 
 - Chat Completions `finish_reason: content_filter`.
 - Anthropic Messages `stop_reason: refusal` and allowlisted `stop_details.category`.

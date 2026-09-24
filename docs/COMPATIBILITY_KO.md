@@ -4,7 +4,7 @@
 
 ## 범위
 
-대상은 Codex CLI **0.154.0**, `@github/copilot-sdk` **1.0.14**입니다. 텍스트와 클라이언트 도구를 연결하며, OpenAI Responses API 전체를 구현하지는 않습니다. Copilot에서 모델이 활성화됐다는 사실만으로 모든 Codex 기능을 지원한다고 판단하지 않습니다. 오프라인 테스트와 인증된 실제 모델 실행은 별도의 확인입니다.
+대상은 Codex CLI **0.154.0**, `@github/copilot-sdk` **1.0.14**입니다. 검증한 버전이며, 새 버전은 프로토콜이 바뀌어 adapter 수정이 필요할 수 있습니다. bridge는 텍스트 대화와 Codex가 실행하는 도구를 지원하며, OpenAI Responses API 전체를 구현하지는 않습니다. Copilot에서 모델이 활성화됐다고 해서 모든 Codex 기능이 그 모델로 동작하는 것은 아닙니다. 오프라인 테스트는 모의 SDK 응답으로 bridge를 검사하며, 실제 모델의 동작은 실모델 실행에서만 확인할 수 있습니다.
 
 [지원 모델 6개](../README_KO.md#모델)만 안내된 피커 순서대로 허용합니다. 실제 사용 가능 여부는 계정 정책에 따릅니다. 지원 종료 모델을 포함한 다른 ID는 거절합니다. 다른 공급자의 이름으로 치환하거나 대체 모델을 선택하지 않고 해당 ID를 SDK에 전달합니다.
 
@@ -41,9 +41,18 @@
 
 **과거 대화 replay:** 새 SDK 세션에 임의의 Responses 이력을 원래 역할 그대로 가져올 수 없습니다. 완료된 과거 턴은 직렬화된 프롬프트 문맥으로 전달합니다. 정상적으로 연결된 live 대화는 기존 SDK 세션과 실제 대기 도구 결과 RPC를 사용합니다.
 
-**지시문 경계:** 요청 지시문과 모든 최상위 system/developer 메시지를 대화 중간에 있더라도 원문 그대로 SDK 기본 시스템 지시에 덧붙입니다. `systemMessage.mode="append"`를 사용하고 `replace`로 SDK 보호 지시를 제거하지 않습니다. 두 지시문 역할은 SDK의 같은 필드를 사용하며, 과거 user/assistant 역할은 여전히 직렬화된 replay를 사용하므로 범용적인 역할 보존 transcript 가져오기는 아닙니다. 설정이 같은 live 세션에서 새 사용자 메시지는 SDK immediate steering으로 별도 전달합니다. 모든 대기 결과와 함께 신뢰된 지시문이 갱신되면 정리 확인 후 세션을 재구성하고, 지시문 권한과 직렬화한 이력 안의 도구 결과 원문을 보존합니다. 결과 누락·기존 대화 변조는 세션 제거 전에 거절합니다. SDK 기본 도구는 계속 비활성화하고, 클라이언트 도구는 Codex가 자신의 샌드박스·승인 정책 아래 실행합니다.
+**지시문 경계:** SDK의 시스템·보호 지시는 그대로 유지합니다.
 
-**Assistant phase와 완료 경계:** [Responses phase 의미](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter)에 따라 `commentary`와 `final_answer`를 정규화·replay에서 보존합니다. 과거 phase가 생략되면 기존 값을 유지하고 명시적으로 바뀌면 live prefix가 달라진 것으로 처리합니다. 텍스트 응답은 루트 `session.idle`까지 기다려 중간 보정·사용량·오류를 수집합니다. 도구 응답은 대신 대응하는 외부 pending 호출의 상관관계를 검증한 뒤 반환합니다. 비어 있고 도구도 없는 응답이나 pending 호출 불일치는 성공 상태를 저장하기 전에 실패합니다.
+- 요청 지시문과 모든 최상위 system/developer 메시지를 원문 그대로 덧붙입니다. 대화 중간의 지시문도 포함하며 `systemMessage.mode="append"`를 사용하고 `replace`는 사용하지 않습니다.
+- 두 지시문 역할은 SDK의 같은 필드를 사용합니다. 과거 user/assistant 메시지는 직렬화된 replay가 필요하며, 역할을 그대로 보존하는 범용 이력 가져오기는 아닙니다.
+- 설정이 같은 live 세션에서 대기 결과와 함께 온 새 사용자 메시지는 SDK immediate steering으로 별도 전달합니다. 도구 출력에 섞지 않습니다.
+- 모든 대기 결과와 함께 신뢰된 지시문이 갱신되면 정리를 확인한 뒤 세션을 재구성합니다. 지시문 권한과 직렬화한 이력 안의 도구 결과 원문을 보존합니다. 결과 누락·기존 대화 변조는 이전 세션을 제거하기 전에 거절합니다.
+
+SDK 기본 도구는 계속 비활성화합니다. 클라이언트 도구는 Codex만 자신의 샌드박스·승인 정책 아래 실행합니다. [핸드오프 절차](ARCHITECTURE_KO.md#완료된-도구-결과와-함께-설정-바꾸기)를 참고하세요.
+
+**Assistant phase와 완료 경계:** [Responses phase 의미](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter)에 따라 `commentary`와 `final_answer`를 정규화·replay에서 보존합니다. 과거 phase가 생략되면 기존 값을 유지하고 명시적으로 바뀌면 live prefix가 달라진 것으로 처리합니다.
+
+텍스트 응답은 루트 `session.idle`까지 기다려 중간 보정·사용량·오류를 수집합니다. 도구 응답은 대신 대응하는 외부 pending 호출의 상관관계를 검증한 뒤 반환합니다. 비어 있고 도구도 없는 응답이나 pending 호출 불일치는 성공 상태를 저장하기 전에 실패합니다.
 
 **사용량:** SDK가 실제 토큰 수를 제공하면 반환하고, 없으면 추정하지 않고 `null`로 표시합니다. 사용량·캐시·과금은 Copilot 기준이며 OpenAI API의 과금 의미와 같다고 보장하지 않습니다.
 
