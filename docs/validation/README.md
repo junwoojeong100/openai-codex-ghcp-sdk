@@ -2,13 +2,13 @@
 
 [한국어](README_KO.md) · [Guide map](../../README.md#testing) · [Stability contract](../STABILITY_TESTING.md)
 
-**The recorded TUI matrix passed; the recorded stability matrices did not fully pass.** This archive describes named, dated runs, not the current worktree or future service availability. For commands instead of results, use the [guide map](../../README.md#testing).
+**In short: the recorded TUI matrix passed in full; the recorded stability matrices did not.** These records describe named, dated runs. They say nothing about the current worktree and do not promise future service availability. To run the checks yourself, use the [guide map](../../README.md#testing).
 
 **Jump to:** [Recorded results](#recorded-results) · [Read a result](#read-a-result) · [Recheck evidence](#recheck-evidence) · [Earlier runs](#earlier-runs).
 
 ## Recorded results
 
-The latest retained summaries are dated **2026-09-23 KST**. Each row is a separate run or scope; do not combine its passing cases with another row. The abbreviated source hashes below identify recorded implementations, **not Git commits**.
+The latest summaries are dated **2026-09-23 KST**. Each row is a separate run or scope; never add one row's passing cases to another's. The short source hashes identify the recorded implementations; they are **not Git commits**.
 
 | Check / profile | Recorded result | What remains unproved or failed | Record / source hash |
 | --- | --- | --- | --- |
@@ -20,7 +20,8 @@ The latest retained summaries are dated **2026-09-23 KST**. Each row is a separa
 | Workflow compatibility `v6` | **No 108-case live result recorded here** | Offline workflow checks are not live-model compatibility | [Recorded scope](2026-09-23-failure-iterations.json) |
 | Five-hour endurance | **Not established** | The long run was stopped before five hours; later smoke/terminal checks were bounded | [Paused run](2026-09-22-full-pass-investigation/README.md) · [Bounded checks](2026-09-23-six-model-switch/README.md) |
 
-`application-data-v4` is an opt-in wording change, not a fix or regrade of the default v5 result. The provider's internal reason for the remaining filter is **unconfirmed**. The [diagnostic record](2026-09-23-failure-iterations.json) observed category `other`; an [earlier investigation](2026-09-22-opus-analysis/README.md) observed `reasoning_extraction`. Do not assign either diagnostic category to a matrix case without that case's evidence.
+- `application-data-v4` is an opt-in wording change, not a fix or regrade of the default v5 result.
+- The provider's internal reason for the remaining filter is **unconfirmed**. The [diagnostic record](2026-09-23-failure-iterations.json) observed category `other`, and an [earlier investigation](2026-09-22-opus-analysis/README.md) observed `reasoning_extraction`. Do not assign either category to a matrix case without that case's own evidence.
 
 ### Offline checks are separate
 
@@ -30,11 +31,11 @@ The latest retained summaries are dated **2026-09-23 KST**. Each row is a separa
 | Native stability with an SDK double | **11/11** | Harness behavior without model calls |
 | Linux/macOS CI after the Linux repairs | **6/6 jobs** | Unit/coverage and offline Codex/PTY/browser, workflow and stability suites |
 
-These counts come from the [iteration record](2026-09-23-failure-iterations.json), not one combined score. The [recorded successful CI run](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/actions/runs/35872289448) followed a failed run; both are retained. Publication was later explicitly authorized despite the failed stability release gate; [the original gate and override](2026-09-23-pending-handoff.json) remain separate facts.
+These counts come from the [iteration record](2026-09-23-failure-iterations.json); they are not one combined score. The [recorded successful CI run](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/actions/runs/35872289448) followed a failed run, and both are kept. Publication was later explicitly authorized even though the stability release gate failed; [the original gate and the override](2026-09-23-pending-handoff.json) are recorded as separate facts.
 
 ## Read a result
 
-In a newly generated `report.md`, read **Result → Per-model results → Cases needing attention**. Expand **Complete matrix** for every case. Case links lead to recorded artifact directories; a missing link means no case artifact path was recorded. The Markdown view does not verify its own evidence.
+In a new `report.md`, read in this order: **Result → Per-model results → Cases needing attention**, then expand **Complete matrix** for every case. Case links open the recorded artifact directories; a missing link means no artifact path was recorded. The Markdown view does not verify its own evidence.
 
 | Field or term | Meaning |
 | --- | --- |
@@ -47,7 +48,7 @@ In a newly generated `report.md`, read **Result → Per-model results → Cases 
 | `implementationHash` / `sourceHash` | A source fingerprint. Use the matching saved source; this is not a commit ID or third-party attestation. |
 | Coverage | Source coverage, the 75% reviewer checklist design score and live pass rate are different metrics. Measured product coverage remains **unknown/null**. |
 
-For example, stability **65/66**, `evidenceIntegrity: true`, `fullMatrixPassed: false` and exit **1** are consistent: **valid evidence of a non-passing run**. `--verify` checks evidence; it neither reruns failed cases nor turns them into passes. Invalid evidence or arguments produce exit 2 in the matrix runners.
+**Example:** stability **65/66** with `evidenceIntegrity: true`, `fullMatrixPassed: false` and exit code **1** is consistent. It is **valid evidence of a run that did not pass**. `--verify` checks evidence; it neither reruns failed cases nor turns them into passes. In the matrix runners, invalid evidence or arguments give exit code 2.
 
 ## Recheck evidence
 
@@ -58,9 +59,9 @@ For example, stability **65/66**, `evidenceIntegrity: true`, `fullMatrixPassed: 
 | `.runtime/<run>/report.json` and `cases/` | Original matrix and case artifacts required for independent recomputation. |
 | `.runtime/<run>/source-snapshot/` | Automatically saved by stability and TUI (also terminal/soak). Workflow compatibility does **not** create this directory; retain its exact source separately. |
 
-Raw `.runtime` directories are ignored by Git and are **not supplied by cloning this repository**. A published JSON summary or file hash alone cannot reproduce a verification. You need the original complete run directory; do not pass a summary to `--verify` or substitute another run's artifacts.
+Raw `.runtime` directories are ignored by Git, so **cloning this repository does not give you them**. A published JSON summary or file hash alone cannot reproduce a verification. You need the original complete run directory; do not pass a summary to `--verify` or substitute another run's artifacts.
 
-With the original directory and matching source/dependencies available, follow the instructions for [workflow compatibility](../COMPATIBILITY_TESTING.md#read-the-result), [stability](../STABILITY_TESTING.md#evidence-and-exit-codes) or [TUI](../TUI_SCENARIOS.md#verify-an-older-run-and-read-exit-codes). Verification makes no model calls. Without those inputs, independent recomputation is unavailable; a new live run requires a new directory, explicit execution and Copilot usage. Terminal/soak runners and Opus diagnostics do not have a separate `--verify` mode.
+With the original directory and matching source and dependencies, follow the verification steps for [workflow compatibility](../COMPATIBILITY_TESTING.md#verify-a-report), [stability](../STABILITY_TESTING.md#verify-a-report) or [TUI](../TUI_SCENARIOS.md#verify-a-report). Verification makes no model calls. Without those inputs, the result cannot be recomputed independently; a new live run needs a new directory, explicit execution and Copilot usage. The terminal and soak runners and the Opus diagnostic have no `--verify` mode.
 
 ## Earlier runs
 

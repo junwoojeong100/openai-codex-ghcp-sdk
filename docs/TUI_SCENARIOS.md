@@ -2,26 +2,26 @@
 
 [한국어](TUI_SCENARIOS_KO.md) · [Guide map](../README.md#testing) · [Stability contract](STABILITY_TESTING.md) · [Terminal/endurance checks](SOAK_TESTING.md)
 
-Test Codex's interactive terminal interface (TUI): model switching, tools, interruption, compaction and resume. Live cases use the **actual Codex TUI → production bridge → Copilot SDK → exact model** connection.
+This suite tests Codex's interactive terminal interface (TUI) through the bridge: model switching, tools, interruption, compaction and resume. Live cases use the **actual Codex TUI → production bridge → Copilot SDK → exact model** path.
 
-The **contract** (versioned scenarios and pass criteria) is `codex-ghcp-tui-12-v3`: **12 scenarios × 6 models = 72 cases**. Each case is one scenario on one model. **69/72** meets the 95% target in one complete, unchanged live run; **72/72** is a full pass. Do not combine these results with stability, compatibility or earlier TUI runs.
+The current contract (the versioned scenarios and pass rules) is `codex-ghcp-tui-12-v3`: **12 scenarios × 6 models = 72 cases**. Each case is one scenario on one model. In one complete, unchanged live run, **72/72** is a full pass and **69/72** meets the 95% target. Do not combine these results with stability, compatibility or earlier TUI runs.
 
-**Jump to:** [Run](#prepare-and-run) · [Read the result](#read-the-result) · [Scenario list](#scenarios) · [Pass criteria](#acceptance) · [Verification and exit codes](#verify-an-older-run-and-read-exit-codes).
+**Jump to:** [Run](#run-the-suite) · [Read the result](#read-the-result) · [Scenarios](#scenarios) · [Pass rules](#pass-rules) · [Execution path](#execution-path) · [Limits](#limits)
 
-## Prepare and run
+## Run the suite
 
-Run from the repository root after `npm ci`. Pick the mode for your goal; each mode works on its own.
+Run every command from the repository root after `npm ci`. Each mode works on its own; pick the one for your goal.
 
-| Goal | Mode | Calls real models? |
+| Goal | Mode | Model calls |
 | --- | --- | --- |
-| Inspect the scenarios | [Plan](#plan) | No |
-| Check the TUI runner with simulated SDK responses | [Offline runtime](#offline-runtime) | No |
-| Measure all 72 cases against Copilot models | [Live matrix](#live-matrix) | **Yes** |
-| Recompute an existing report from its evidence | [Verify a saved report](#verify-a-saved-report) | No |
+| See what the matrix checks | [Plan](#plan) | No |
+| Check the TUI runner with real Codex | [Offline runtime](#offline-runtime) | No |
+| Measure all 72 cases | [Live matrix](#live-matrix) | **Yes** |
+| Recheck a finished run | [Verify a report](#verify-a-report) | No |
 
 ### Plan
 
-**No model calls, Codex installation, browser or Copilot login.** The default mode describes the matrix without executing it:
+Needs no Codex installation, browser or Copilot login:
 
 ```sh
 npm run test:tui -- --plan
@@ -29,17 +29,17 @@ npm run test:tui -- --plan
 
 ### Runtime prerequisites
 
-Offline and live checks need **Node 22.12+, Codex 0.154.0, Python 3 and headless Chromium**. Use the [CLI installation step](../README.md#2-install-dependencies). Only live execution needs a Copilot login. Install the browser once:
+The offline runtime and the live matrix need **Node 22.12+, Codex 0.154.0, Python 3 and headless Chromium**. Install Codex with the [install step](../README.md#2-install-dependencies), then install the browser once:
 
 ```sh
 npx --no-install playwright install chromium
 ```
 
-On Linux, if Chromium reports missing system libraries, use `npx --no-install playwright install --with-deps chromium`; installing OS packages may require administrator privileges.
+On Linux, if Chromium reports missing system libraries, run `npx --no-install playwright install --with-deps chromium` instead; installing OS packages may need administrator rights. Only the live matrix needs a Copilot login.
 
 ### Offline runtime
 
-**No model calls.** With the [runtime prerequisites](#runtime-prerequisites) installed, check U01, U02, U11 and U12 using real Codex and an SDK double (a local replacement, not a model):
+Runs U01, U02, U11 and U12 with real Codex against an SDK double (a local stand-in for the Copilot SDK). No model calls:
 
 ```sh
 npm run test:tui:runtime
@@ -47,60 +47,50 @@ npm run test:tui:runtime
 
 ### Live matrix
 
-**Consumes Copilot usage.** Install the [runtime prerequisites](#runtime-prerequisites) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access). Running all 72 cases needs **all six [supported models](../README.md#models)**; confirm their availability with `./bin/ghcp-models`, not just the default model.
+**Consumes Copilot usage.**
 
-Run all 72 cases in a new output directory:
+1. Install the [runtime prerequisites](#runtime-prerequisites) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access).
+2. Run `./bin/ghcp-models` and confirm that **all six [supported models](../README.md#models)** are available, not only the default model.
+3. Run all 72 cases into a new output directory:
 
 ```sh
 npm run test:tui -- --execute --output .runtime/tui-new
 ```
 
-### Verify a saved report
+Before it starts, the runner saves a copy of its source in the output directory.
 
-**No model calls or case reruns.** Use the same source and dependencies as the run; if the source has changed since, use the run's [saved source snapshot](#verify-an-older-run-and-read-exit-codes) instead.
+### Verify a report
 
-Verify every finished run, including one with failed cases. Run the command on its own: a run that misses the 95% target exits nonzero, so chaining it after `--execute` with `&&` would skip verification. Use the run's output directory:
+Verification recomputes every check from the saved evidence. It makes no model calls and reruns no cases. Verify every finished run, including one with failures:
 
 ```sh
 npm run test:tui -- --verify .runtime/tui-new/report.json
 ```
 
-## Read the result
+Run it as a separate command. A run that misses the 95% target exits with code 1, so chaining `--verify` after `--execute` with `&&` would skip it.
 
-Open `.runtime/tui-new/report.md` for the verdict, per-model counts and **Cases needing attention**, including recorded errors and case-artifact links. Expand **Complete matrix** for all 72 rows. **TARGET MET - NOT A FULL PASS** means at least 69/72 passed, not that every case passed; see [exit codes](#verify-an-older-run-and-read-exit-codes).
-
-See [verification records](validation/README.md) for dated v3 results and preserved v1/v2 runs. A past 72/72 result is not a guarantee of future service availability or evidence for a different implementation.
-
-## Verify an older run and read exit codes
-
-Plan/live/verify exit codes are:
-
-| Code | Meaning |
-|---|---|
-| 0 | Valid plan, or a complete live run met the 95% target |
-| 1 | The run did not establish the 95% target |
-| 2 | Argument or evidence error |
-
-**Exit 0 does not require 72/72.** Check `fullMatrixPassed` for a full pass; `thresholdMet` only establishes the 95% target. `evidenceIntegrity` describes evidence validity, not test success. See [field meanings](validation/README.md#read-a-result).
-
-After source changes, verify with the original run's saved source:
+**If the source has changed since the run,** verify with the source the run saved:
 
 ```sh
 node .runtime/tui-new/source-snapshot/scripts/tui.mjs \
   --verify .runtime/tui-new/report.json
 ```
 
-Keep the complete original run directory, including `cases/`, `freeze.json` and `source-snapshot/`, with the same dependencies. Published summaries do not replace these artifacts. Verification makes no model calls.
+Keep the complete original run directory, including `cases/`, `freeze.json` and `source-snapshot/`, and install the same dependencies. Published summaries cannot replace these artifacts.
 
-## Execution path
+## Read the result
 
-Every case runs through the following path:
-- the repository's real launcher, `bin/codex-ghcp`;
-- the bridge it starts (`src/server.mjs`), the real Copilot SDK and the exact model;
-- the real Codex 0.154.0 TUI in a private PTY, rendered by xterm.js in headless Chromium;
-- input sent as Playwright keyboard events (`/model`, arrows, Enter, Escape) and pastes, with the screen read from the xterm.js buffer.
+Open `report.md` in the output directory, for example `.runtime/tui-new/report.md`. It shows the verdict, per-model counts and **Cases needing attention**, with recorded errors and links to case artifacts. Expand **Complete matrix** for all 72 rows.
 
-Each case uses its own `HOME`, `CODEX_HOME` and workspace; only Copilot authentication is real and shared. The approval policy is `never`, and each scenario pins its sandbox. Markers are random per case. There are no automatic case retries, output rewriting or case substitution. The bridge's production bounded pre-output recovery remains enabled and observable; it is not a harness retry. Existing user bridges and settings are not restarted or changed.
+| Exit code | Meaning |
+|---|---|
+| 0 | Valid plan, or a complete live run met the 95% target |
+| 1 | The run did not reach the 95% target |
+| 2 | Argument or evidence error |
+
+**Exit code 0 does not mean 72/72.** **TARGET MET - NOT A FULL PASS** means at least 69/72 cases passed, but not all of them. Check `fullMatrixPassed` for a full pass. `thresholdMet` shows only the 95% target, and `evidenceIntegrity` says whether the evidence is valid, not whether the tests passed. See [field meanings](validation/README.md#read-a-result).
+
+Dated v3 results and preserved v1/v2 runs are in the [verification records](validation/README.md). A past 72/72 result does not guarantee future service availability and is not evidence for a different implementation.
 
 ## Scenarios
 
@@ -119,40 +109,64 @@ Each case uses its own `HOME`, `CODEX_HOME` and workspace; only Copilot authenti
 | U11 | The reasoning level chosen in `/model` reaches the bridge | Mid-conversation reasoning-effort change, or no popup for models without it |
 | U12 | `/new` isolates the conversation, and `/quit` shuts everything down | Conversation identity, launcher shutdown, child bridge/runtime exit, private catalog removal |
 
-U04 needs Codex's native `apply_patch` tool. The first live run of this contract found that the production launcher did not offer it: models reported having no such tool, and one wrote the file through the shell instead. The production catalog now declares `apply_patch_tool_type: "freeform"`, U04 requires Codex's rollout to show a patch applied after a bridge tool handoff, either through the `apply_patch` tool or through Codex's own interception of an `apply_patch` shell command. A plain shell write does not count. The file must then hold exactly the requested line.
+**U04 needs Codex's native `apply_patch` tool.**
 
-## Acceptance
+- **Why:** the first live run of this contract found that the production launcher did not offer the tool. Models reported it was missing, and one wrote the file through the shell instead. The production catalog now declares `apply_patch_tool_type: "freeform"`.
+- **Pass condition:** Codex's rollout shows a patch applied after a bridge tool handoff, through either the `apply_patch` tool or Codex's own interception of an `apply_patch` shell command. The file must then hold exactly the requested line. A plain shell write does not count.
 
-V3 requires separate first-progress and streaming watchdog settings. Older results verify only with their frozen source.
+## Pass rules
 
-V2 changes U03's credential-like `notes/token.txt` / `token=` fixture to `notes/sample.txt` / `sample_id=`. The random sample value is still absent from the prompt and must be recovered through a real Codex tool. No safety filter or approval is bypassed. V1 refusals remain failures in the historical result.
+Every case must pass these **common checks**:
 
-Every case gets these **common checks**:
 - **routing:** every SDK session, authoritative `session.rpc.model.getCurrent()` snapshot and usage record uses the expected model;
 - **connection:** real SDK input, model output and a completed HTTP 200 Responses SSE stream are recorded; only U08 permits its deliberate in-flight cancellation;
-- **context-tier:** model creation and effort changes retain the maximum advertised tier; the SDK snapshot and published catalog agree with its input budget and compaction threshold;
+- **context-tier:** model creation and effort changes keep the maximum advertised tier, and the SDK snapshot and published catalog agree on its input budget and compaction threshold;
 - **watchdog:** the new bridge's `/health` reports a 180-second first-progress allowance, 90-second streaming inactivity limit, one recovery attempt and 15-second monitoring interval;
 - **upstream:** no filter, SDK error or failed stream;
 - **mcp-isolation:** no MCP process ever appears under the bridge's Copilot runtime while samples are taken;
 - **cleanup:** the PTY group, launcher, bridge, runtime and browser are gone, the private catalog is removed, and there is no harness or SDK-session cleanup error. An idle TUI exits through `/quit` before any bounded fallback termination.
 
 Scenario checks combine this evidence:
+
 - Codex's own rollout: tool calls, file changes, compaction, and per-turn model and effort;
 - bridge SDK observations, HTTP records and the MCP fixture ledger;
 - workspace files and screen snapshots.
 
-Reports record the OS/kernel release, architecture, Node version, available CPUs, memory and whether a proxy/CI environment is configured. Proxy addresses, credentials and host/user identities are not recorded. The metadata describes the measured machine; it does not establish support for unmeasured environments.
+How cases are scored:
 
-Codex's optional automatic title generation still requests unsupported structured JSON output. Its exact title-only schema and explicit HTTP 400 rejection are separately counted as `auxiliaryTitleRejections`, not accepted as a successful model response. Other HTTP 4xx/5xx responses, title-shaped requests with a different error, and all failed streams fail the supported-turn checks. Generated titles remain unsupported; see [compatibility](COMPATIBILITY.md).
+- **Checks are recomputed from saved facts.** Every check is a pure function of the saved `facts.json`. `--verify` checks the actual frozen source, run and case identity, artifact hashes and process supervision, then recomputes every check.
+- **Every case counts.** Failed, blocked, timed-out and unrun cases stay in the 72-case denominator. An interrupted, modified or incomplete run cannot meet the target. `thresholdMet` requires 69/72 and `fullMatrixPassed` requires 72/72. Per-model and per-scenario failures stay visible.
+- **Failures are reported promptly.** A completed unexpected answer or an HTTP or stream failure fails the case at once with its original evidence, instead of waiting for the deadline and being mislabelled as a timeout. Partial observations are kept.
+- **Reruns are complete.** After fixing an issue, rerun all 72 cases into a new output directory. Do not merge passing cases from different implementations or overwrite earlier reports.
+- **Automatic titles are counted separately.** Codex's optional automatic title request still asks for unsupported structured JSON output. Only that exact title-only schema with the explicit HTTP 400 rejection is counted, as `auxiliaryTitleRejections`, and it is not a successful model response. Any other HTTP 4xx/5xx, a title-shaped request with a different error, and any failed stream fail the supported-turn checks. Generated titles remain unsupported; see [compatibility](COMPATIBILITY.md).
 
-Checks are pure functions of the saved `facts.json`. `--verify` checks the actual frozen source, run/case identity, artifact hashes and process supervision, then recomputes every check. Failed, blocked, timed-out and unrun cases stay in the 72-case denominator. An interrupted, modified or incomplete run cannot meet the target. `thresholdMet` requires 69/72; `fullMatrixPassed` still requires 72/72. Per-model and per-scenario failures remain visible.
+Reports also record the OS and kernel release, architecture, Node version, available CPUs, memory, and whether a proxy or CI environment is configured. Proxy addresses, credentials and host or user identities are not recorded. This metadata describes the measured machine; it does not establish support for other environments.
 
-A completed unexpected answer or an HTTP/stream failure fails promptly with its original evidence rather than waiting until a scenario deadline and being mislabelled as a timeout. Partial scenario observations survive failure. After fixing an issue, use a fresh output directory and rerun all 72 cases; do not merge passing cases from different implementations or overwrite earlier reports.
+## Execution path
+
+Every case runs through:
+
+- the repository's real launcher, `bin/codex-ghcp`;
+- the bridge it starts (`src/server.mjs`), the real Copilot SDK and the exact model;
+- the real Codex 0.154.0 TUI in a private PTY, rendered by xterm.js in headless Chromium;
+- input sent as Playwright keyboard events (`/model`, arrows, Enter, Escape) and pastes, with the screen read from the xterm.js buffer.
+
+Isolation:
+
+- Each case uses its own `HOME`, `CODEX_HOME` and workspace; only the Copilot authentication is real and shared.
+- The approval policy is `never`, and each scenario pins its sandbox. Markers are random per case.
+- There are no automatic case retries, output rewriting or case substitution. The bridge's production recovery before output stays enabled and observable; it is not a harness retry.
+- Existing user bridges and settings are not restarted or changed.
+
+## Contract history
+
+- **v3** requires separate first-progress and streaming watchdog settings. Older results verify only with their saved source.
+- **v2** changed U03's credential-like `notes/token.txt` / `token=` fixture to `notes/sample.txt` / `sample_id=`. The random sample value is still absent from the prompt and must be read through a real Codex tool. No safety filter or approval is bypassed. v1 refusals remain failures in that historical result.
 
 ## Limits
 
 - These are bounded runs, not multi-hour endurance certification.
 - Desktop terminal applications themselves are not tested.
 - Recall in U09 and U10 also depends on the model's summary and answer quality.
-- Tier and watchdog configuration checks do not establish full-window inference capacity or fault-injected recovery. `npm run test:context:runtime` separately includes a real 95-second first-progress delay with production deadlines, root-phase private-byte progress, idle/setup/cancellation and repeated-tool regressions using an SDK double; they are not added to the live score.
-- The offline runtime check has no Copilot runtime process, so runtime MCP isolation is established only by live runs.
+- Tier and watchdog configuration checks do not establish full-window inference capacity or fault-injected recovery. `npm run test:context:runtime` separately covers a real 95-second first-progress delay with production deadlines, root-phase private-byte progress, and idle, setup, cancellation and repeated-tool regressions, using an SDK double. Those results are not added to the live score.
+- The offline runtime has no Copilot runtime process, so runtime MCP isolation is established only by live runs.

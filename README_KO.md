@@ -23,7 +23,7 @@ Codex → 로컬 HTTP/SSE bridge → GitHub Copilot SDK → 선택한 Copilot �
 
 ## 준비 사항
 
-- Node.js `^20.19.0` 또는 `>=22.12.0`, npm, Git, Bash. 예시는 Bash/zsh 기준이며 CI는 Linux와 macOS에서 실행합니다.
+- Node.js **22.12 이상**(권장, runtime 검사에는 필수), npm, Git, Bash. 일반 실행은 **20.19 이상의 Node 20.x**에서도 가능합니다. 예시는 Bash/zsh 기준이며 CI는 Linux와 macOS에서 실행합니다.
 - 설치·인증된 [Copilot CLI](https://github.com/github/copilot-cli). `copilot --version`으로 확인하고 필요하면 `copilot login`을 실행합니다.
 - 원하는 모델에 접근할 수 있는 GitHub Copilot 계정.
 - 공식 Codex CLI **0.154.0**. 아래 설치 명령을 사용합니다.
@@ -51,7 +51,7 @@ npm ci
 command codex --version
 ```
 
-마지막 명령은 `codex-cli 0.154.0`을 출력해야 합니다. 더 새 Codex 버전도 실행되지만 이 안내와 검증 기록은 **0.154.0** 기준입니다.
+마지막 명령은 `codex-cli 0.154.0`을 출력해야 합니다. 실행기는 더 새 버전도 허용하지만 **기록된 검증 범위에는 포함되지 않습니다.** 이 안내를 따를 때는 **0.154.0**을 사용하세요.
 
 ### 3. 설치와 계정 접근 확인
 
@@ -60,8 +60,12 @@ command codex --version
 ./bin/ghcp-models
 ```
 
-- **`ghcp-doctor`**는 설치 상태를 JSON으로 출력합니다. 모든 `ok`와 Codex의 `supportedVersion`이 `true`여야 합니다. 로그인은 검사하지 않습니다.
-- **`ghcp-models`**는 프롬프트를 보내지 않고 Copilot 계정에서 지원 모델별 상태를 보여줍니다. 각 줄은 ID·이름·상태 순서이며, 예를 들면 `gpt-6-astra  GPT-6 Astra  enabled`입니다. 상태가 `disabled`나 `not available`이 아닌 모델을 고르세요. 다른 모델을 지정하지 않으면 4단계는 `gpt-6-astra`를 사용합니다.
+| 검사 | 확인할 결과 | 확인하지 않는 것 |
+| --- | --- | --- |
+| `ghcp-doctor` | JSON 출력의 모든 `ok`와 Codex의 `supportedVersion`이 `true` | 로그인·모델 접근. `supportedVersion`은 최소 CLI 버전만 확인하며 전체 호환성을 뜻하지 않습니다. |
+| `ghcp-models` | 선택한 모델의 상태가 `disabled`나 `not available`이 아님 | 모델의 실제 응답. 프롬프트를 보내지 않고 계정의 목록만 조회합니다. |
+
+모델 목록의 각 줄은 ID·이름·상태 순서이며, 예를 들면 `gpt-6-astra  GPT-6 Astra  enabled`입니다. 사용 가능한 다른 모델을 지정하지 않으면 4단계는 `gpt-6-astra`를 사용합니다.
 
 둘 중 하나라도 실패하면 [시작 문제 해결](docs/USAGE_KO.md#시작과-설정)을 확인하세요.
 
@@ -94,7 +98,7 @@ command codex --version
   "README_KO.md를 읽고 프로젝트의 목적을 한 문장으로 요약해줘."
 ```
 
-**실행기 옵션은 `--` 앞에, Codex 명령·옵션은 뒤에 둡니다.** 예를 들어 `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last`는 Sonnet으로 대화를 재개합니다. 모델은 `--ghcp-model`로 선택하며 Codex 자체의 `--model`/`-m`은 거절됩니다. [옵션별 입력 위치](docs/USAGE_KO.md#codex-명령과-옵션-전달)를 참고하세요.
+**실행기 옵션은 `--` 앞에, Codex 명령·옵션은 뒤에 둡니다.** 모델은 Codex의 `--model`/`-m`이 아닌 `--ghcp-model`로 선택하세요. 대화를 재개할 때도 마지막 `/model` 선택이 아니라 실행기의 모델 설정을 사용합니다. [대화 재개](docs/USAGE_KO.md#대화-재개)와 [옵션별 입력 위치](docs/USAGE_KO.md#codex-명령과-옵션-전달)를 참고하세요.
 
 선택 사항: [어느 디렉터리에서나 `codex`로 이 실행기 사용](docs/USAGE_KO.md#선택적-zsh-연동)(zsh, 해제 방법 포함) 또는 [상주 bridge 사용](docs/USAGE_KO.md#선택적-상주-bridge).
 
@@ -120,7 +124,7 @@ command codex --version
 - **지원:** 텍스트 대화와 Codex가 직접 실행하는 도구(셸 명령, 로컬 파일 읽기·편집, 기본 `apply_patch`, Codex MCP 도구). 승인·샌드박스도 Codex가 그대로 적용합니다.
 - **미지원:** 이미지·음성·영상·파일을 모델 입력으로 첨부, 웹 검색 같은 공급자 호스팅 도구, 스키마를 강제하는 JSON 출력, WebSocket, 원격 Responses 압축. Codex의 자동 작업 제목 생성은 구조화 출력이 필요해 거절되며, 대화는 제목 없이 계속됩니다.
 - **근사 지원:** `apply_patch` 같은 custom 도구의 grammar는 모델에 안내로 전달될 뿐 생성 과정에서 강제되지 않습니다.
-- **메모리에만 보관:** bridge는 대화 상태를 메모리에만 둡니다. 중지하거나 재시작하면 대기 중인 도구 호출이 사라지므로 먼저 Codex 세션을 닫으세요.
+- **대기 호출은 메모리에만 보관:** 연결된 Codex 세션을 닫은 뒤 bridge를 중지하세요. Codex에 저장된 이력은 [재개](docs/USAGE_KO.md#대화-재개)할 수 있지만, 재시작한 bridge는 미해결 도구 호출이나 이전 응답 ID를 복원하지 못합니다.
 
 고급 기능에 의존하기 전에 [전체 호환성 범위](docs/COMPATIBILITY_KO.md)를 확인하세요. 지금까지 측정한 결과와 미해결 상위 필터 실패는 [실모델 기록](docs/validation/README_KO.md)에 있습니다.
 

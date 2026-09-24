@@ -38,13 +38,24 @@ Each of the seven probes runs in a fresh session and appears in the report under
 | `bridge-simple-tool-control` | Production bridge manager | The same simple-tool control |
 | `sdk-arithmetic-control` | Direct SDK | Control: an arithmetic question with no tool |
 
-Control wording is diagnostic only; it never replaces production requests or any of the 66 stability cases. The model, low reasoning effort, SDK protective instructions and provider filter policy stay unchanged. Every permission request is rejected; the only tool action returns a synthetic string generated in memory. There are no automatic retries, fallback models or user-setting changes. Earlier findings for `claude-opus-5` remain historical.
+What stays fixed:
 
-Filtering, literal-output mismatches, errors or cleanup failures give exit code 1. Exit code 0 still does not mean the stability matrix passes.
+- The control wording is diagnostic only. It never replaces production requests or any of the 66 stability cases.
+- The model, low reasoning effort, SDK protective instructions and provider filter policy stay unchanged.
+- Every permission request is rejected. The only tool action returns a synthetic string generated in memory.
+- There are no automatic retries, fallback models or user-setting changes. Earlier findings for `claude-opus-5` remain historical.
+
+| Exit code | Meaning |
+| --- | --- |
+| 0 | Valid plan, or all seven probes completed, passed cleanup and ran on unchanged source |
+| 1 | Any filtering, literal-output mismatch, error, cleanup failure or source change |
+| 2 | Argument or runner error |
+
+Exit code 0 does not mean the stability matrix passes.
 
 ## Read the evidence
 
-Open `.runtime/opus-diagnostic-new/report.json` (or the output directory you chose), **including when execution exits with code 1**. This diagnostic has no `--verify` mode; inspect the saved evidence before deciding to run another live diagnostic.
+Open `report.json` in the output directory, for example `.runtime/opus-diagnostic-new/report.json`, **even when the run exits with code 1**. This diagnostic has no `--verify` mode, so read the saved evidence before deciding to run another live diagnostic.
 
 Start with each entry in `cases`:
 
@@ -56,9 +67,9 @@ Start with each entry in `cases`:
 | `error` | The probe encountered an execution error; inspect `errorCode`. |
 | `not-run` | The probe did not execute; it is not a pass. |
 
-Also check `cases[].cleanup[].passed` and the report's `implementationUnchanged`. A completed response alone is not a successful diagnostic run, and a successful diagnostic is not a matrix pass.
+Also check `cases[].cleanup[].passed` and the report's `implementationUnchanged`. A completed response alone is not a successful diagnostic run, and a successful diagnostic run is not a matrix pass.
 
-For the provider investigation, the report distinguishes:
+For the provider investigation, the report keeps these signals apart:
 
 - Chat Completions `finish_reason: content_filter`.
 - Anthropic Messages `stop_reason: refusal` and allowlisted `stop_details.category`.

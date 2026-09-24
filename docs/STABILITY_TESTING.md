@@ -1,114 +1,118 @@
-# Bridge stability and recovery verification
+# Bridge stability and recovery tests
 
 [한국어](STABILITY_TESTING_KO.md) · [Guide map](../README.md#testing) · [Architecture](ARCHITECTURE.md) · [Verification records](validation/README.md)
 
-Test bridge faults, tool-result handoff and recovery through real Codex: **11 scenarios × 6 models = 66 cases**. Each case is one scenario on one model. The default **contract** (versioned test rules) is `codex-ghcp-stability-11-v5`. This suite is separate from workflow compatibility, TUI and endurance checks.
+This suite injects faults into real Codex sessions and checks that the bridge fails safely and recovers: **11 scenarios × 6 models = 66 cases**. A live run passes only at **66/66**. It is separate from the workflow, TUI and endurance suites.
 
-Only looking for normal-launch timeout settings? Go to [operational defaults](#operational-defaults); you do not need to run this matrix.
+You do not need this suite to use the launcher. Production timeout settings and error codes are in the [usage guide](USAGE.md#timeouts-and-recovery). Recorded results, including the remaining upstream-filter failures, are in the [verification records](validation/README.md#recorded-results).
 
-## Prepare and run
+**Jump to:** [Run](#run-the-suite) · [Read the result](#read-the-result) · [Scenarios](#scenarios) · [Pass rules](#pass-rules) · [Wording profiles](#optional-wording-profiles) · [Handoff regression](#focused-handoff-regression) · [Reference](#reference)
 
-Run from the repository root after `npm ci`. Pick the mode for your goal; each mode works on its own.
+## Run the suite
 
-| Goal | Mode | Calls real models? |
+Run every command from the repository root after `npm ci`. Each mode works on its own; pick the one for your goal.
+
+| Goal | Mode | Model calls |
 | --- | --- | --- |
-| Inspect the scenarios or check local recovery logic | [Plan and local checks](#plan-and-local-checks) | No |
-| Check the runner with simulated SDK responses | [Offline runtime](#offline-runtime) | No |
-| Measure all 66 cases against Copilot models | [Live matrix](#live-matrix) | **Yes** |
-| Recompute an existing report from its evidence | [Verify a saved report](#verify-a-saved-report) | No |
+| See what the matrix checks | [Plan](#plan) | No |
+| Stress local state handling | [Stress check](#stress-check) | No |
+| Check the runner with real Codex | [Offline runtime](#offline-runtime) | No |
+| Measure all 66 cases | [Live matrix](#live-matrix) | **Yes** |
+| Recheck a finished run | [Verify a report](#verify-a-report) | No |
 
-### Plan and local checks
+### Plan
 
-**No model calls, Codex installation or Copilot login.** The default mode describes the matrix without executing it:
+Needs no Codex installation or Copilot login:
 
 ```bash
 npm run test:stability -- --plan
 ```
 
-For local tool-cycle and recovery checks, use `npm run test:stability:stress`. An SDK double exercises 100 tool round trips, 100 exact retries, ten queued cancellations, ten SDK recoveries, state capacity and final listener/queue cleanup. This checks repeated state transitions, not real models or elapsed-time endurance.
+### Stress check
+
+Needs no Codex installation or Copilot login:
+
+```bash
+npm run test:stability:stress
+```
+
+An SDK double (a local stand-in for the Copilot SDK) runs 100 tool round trips, 100 exact retries, 10 queued cancellations, 10 SDK recoveries and a state-capacity check, then confirms that listeners and queues were cleaned up. It tests repeated state changes, not real models or long-running endurance.
 
 ### Runtime prerequisites
 
-For offline or live execution, install Node 22.12+, Codex **0.154.0** and use a working OS sandbox. Follow the [CLI installation step](../README.md#2-install-dependencies). No browser is required. Only live execution needs a Copilot login.
+The offline runtime and the live matrix need Node 22.12+, Codex **0.154.0** ([install step](../README.md#2-install-dependencies)) and a working OS sandbox. No browser is needed. Only the live matrix needs a Copilot login.
 
 ### Offline runtime
 
-**No model calls.** With the [runtime prerequisites](#runtime-prerequisites) installed, check real Codex using an SDK double (a local replacement, not a model):
+Runs real Codex against an SDK double, with no model calls:
 
 ```bash
 npm run test:stability:runtime
 ```
 
+A pass is reported as an **offline harness pass (11/11)**. It checks the runner, not live compatibility.
+
 ### Live matrix
 
-**Consumes Copilot usage.** Install the [runtime prerequisites](#runtime-prerequisites) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access). Running all 66 cases needs **all six [supported models](../README.md#models)**; confirm their availability with `./bin/ghcp-models`, not just the default model.
+**Consumes Copilot usage.**
 
-Choose a new output directory and execute one full matrix:
+1. Install the [runtime prerequisites](#runtime-prerequisites) and complete the [Copilot account check](../README.md#3-check-installation-and-account-access).
+2. Run `./bin/ghcp-models` and confirm that **all six [supported models](../README.md#models)** are available, not only the default model.
+3. Run the matrix into a new output directory:
 
 ```bash
 npm run test:stability -- --execute --output .runtime/stability-new-run
 ```
 
-### Verify a saved report
+Before it starts, the runner saves a copy of its source in the output directory. The worst case takes about **50.5 minutes** ([timing](#timing-and-bounds)).
 
-**No model calls or case reruns.** Use the same source and dependencies as the run; if the source has changed since, use the run's [saved source snapshot](#evidence-and-exit-codes) instead.
+### Verify a report
 
-Verify every finished run, including one with failed cases. Run the command on its own: a run with failures exits nonzero, so chaining it after `--execute` with `&&` would skip verification. Use the run's output directory:
+Verification recomputes every check from the saved evidence. It makes no model calls and reruns no cases. Verify every finished run, including one with failures:
 
 ```bash
 npm run test:stability -- --verify .runtime/stability-new-run/report.json
 ```
 
-## Read the result
+Run it as a separate command. A run with failures exits with code 1, so chaining `--verify` after `--execute` with `&&` would skip it.
 
-Read `.runtime/stability-new-run/report.md` for the verdict, per-model counts and **Cases needing attention**. That section includes failed checks, recorded failure categories/errors and case-artifact links. **Complete matrix** retains every row. `report.json` is the evidence-verification input.
-
-**A full pass requires 66/66.** The 95% reference (63/66) does not change that verdict or exit code. Recorded runs still include upstream-filter failures; see the [results and retained failures](validation/README.md), not a score combined from different runs.
-
-An offline **11/11** is labelled as an offline harness pass, not live compatibility. A live **65/66** remains non-passing even when `--verify` returns `evidenceIntegrity: true`; [how to read those fields](validation/README.md#read-a-result).
-
-## Evidence and exit codes
-
-| Exit code | Meaning |
-| --- | --- |
-| 0 | Valid plan, passing offline harness, or all 66 live cases and run-level checks passed |
-| 1 | Non-passing/incomplete execution; a verifier can confirm valid evidence and still return 1 |
-| 2 | Invalid arguments or evidence |
-
-Every run uses a new output directory and freezes source files, implementation/catalog hashes and the scenario contract before preflight. Evidence includes native events, actual SDK messages/usage, HTTP/SSE, labelled controls, independent assertions, per-case supervisor receipts and a complete matrix. The verifier recomputes checks, metrics and artifact projections rather than trusting stored pass flags. Raw logs stay under ignored `.runtime`; review/redact before sharing. Hashes are not third-party attestation.
-
-After source changes, keep the complete original run directory and use its saved source with the same dependencies. Published `docs/validation` summaries do not contain all required artifacts and cannot replace this `report.json`:
+**If the source has changed since the run,** verify with the source the run saved. Keep the complete output directory and install the same dependencies:
 
 ```bash
 node .runtime/stability-new-run/source-snapshot/scripts/stability.mjs \
   --verify .runtime/stability-new-run/report.json
 ```
 
-## Choose a profile only if needed
+The summaries published in `docs/validation` are not complete reports and cannot be verified this way.
 
-| Profile | Selection | Model-visible task |
-| --- | --- | --- |
-| `v5` | Default | Standard synthetic-marker copy task |
-| `application-data-v3` | `--profile application-data-v3` | Application-data read/remember/recall wording on the v5 base |
-| `application-data-v4` | `--profile application-data-v4` | Explicit whole-file wording, including `value:`/`receipt:` labels, colons and whitespace |
+## Read the result
 
-For example, inspect an optional profile without model calls:
+Open `report.md` in the output directory, for example `.runtime/stability-new-run/report.md`. It is ordered for reading:
 
-```sh
-npm run test:stability -- --plan --profile application-data-v4
-```
+1. **Result:** the verdict and pass count.
+2. **Per-model results:** counts for each model.
+3. **Cases needing attention:** failed checks, failure category, recorded error and a link to the case artifacts.
+4. **Complete matrix:** every case.
 
-Add the same `--profile` option to a new `--runtime` or `--execute` run to select it. Each profile has a distinct catalog ID/hash but keeps the six models, 11 scenarios, fixtures, faults, budgets and literal-output/cleanup checks. Production requests and safety policies are not rewritten. A profile's result cannot replace another's; `--verify` uses the recorded profile and rejects a `--profile` override.
+`report.md` is only a view. `--verify` checks `report.json`.
 
-v5 changes S03 to reject a policy-change request with missing tool results while accepting a complete matching result handoff. Older `v4`/`application-data-v2` and 77-case contracts are no longer selectable. Verify those records with their saved source; they are not regraded as v5.
+| Exit code | Meaning |
+| --- | --- |
+| 0 | Valid plan, passing offline harness, or all 66 live cases and run-level checks passed |
+| 1 | The run did not pass or is incomplete. `--verify` also returns 1 for valid evidence of a run that did not pass. |
+| 2 | Invalid arguments or evidence |
 
-## Scope and fixed criteria
+**Only 66/66 is a pass.** The report also shows the 95% reference (63/66), which changes neither the verdict nor the exit code. For example, a live **65/66** run with `evidenceIntegrity: true` is valid evidence of a run that did not pass; see [how to read report fields](validation/README.md#read-a-result).
 
-The matrix uses Codex **0.154.0** and Copilot SDK **1.0.14**. There are no automatic case retries, model substitutions, subsets or native OpenAI baseline.
+Each failed case gets a category: `cleanup` (takes precedence), `upstream-content-filter`, `literal-output` or undetermined. The filter category requires an actual native Responses error code; refusal-like text, a control request or an SDK hint alone is not enough. Categories explain failures; they never change checks, status, the denominator or the exit code. `--verify` recomputes them.
 
-Each passing live case requires native Codex app-server → the production Responses bridge → the real SDK → the exact model, plus native fixture-tool callbacks, independent checks, and owned-resource cleanup. A labelled proxy/instrumentation layer injects the specific faults below. It does not fabricate model output or replace the SDK in live mode. Extra duplicate/rejected/cancelled HTTP control requests are not additional live matrix cases.
+Raw logs stay in the Git-ignored `.runtime` directory. Review and redact them before sharing.
 
-| ID | Scenario | Injected condition | Per-case limit |
+## Scenarios
+
+The default contract (the versioned scenarios and pass rules) is `codex-ghcp-stability-11-v5`. Each case is one scenario on one model, run with Codex **0.154.0** and Copilot SDK **1.0.14**.
+
+| ID | Scenario | Injected fault | Case limit |
 |---|---|---|---:|
 | S01 | Native read, Unicode SSE and readiness | None | 90s |
 | S02 | Tool order changes while returning a pending result | Tool-list permutation only | 90s |
@@ -122,91 +126,99 @@ Each passing live case requires native Codex app-server → the production Respo
 | S10 | Fresh-process native resume without repeated tool work | Planned owned host/bridge restart | 150s |
 | S11 | Six native tool turns, long history and local compaction | ≥12 KiB padding + explicit native compaction | 240s |
 
-Successful read/recall answers must contain both complete literal `value:` and `receipt:` tokens. Added prose or fences are **presentation diagnostics**, not a stability failure. This policy is explicit before execution, differs from the compatibility suite's exact-output checks, and cannot be used to revise compatibility scores. Missing prefixes/values, unwanted tools, uncorrelated evidence and failed recovery still fail. Expected fault turns must actually fail with the specified error; a successful-looking answer alone cannot pass them.
+A labelled test proxy injects each fault. In live mode it never fabricates model output or replaces the SDK. Its control requests (duplicate, rejected or cancelled HTTP requests) are not extra cases.
 
-Every check and artifact is required. Failed, unsupported, blocked, timed-out and unrun cases remain in the **66** denominator. Maximum four model lanes, 30s cleanup reserve per case, and no global cutoff. Worst-case scheduling estimate: 90s preflight + two 1,470s waves (6 models, 4 lanes) = **50.5 minutes**, excluding OS/I/O overhead. A passing matrix is **not a multi-hour soak, a product support percentage, or proof that all historical freezes are resolved**.
+## Pass rules
 
-## Fixture and instruction rules
+- **Every check in all 66 cases must pass.** Failed, unsupported, blocked, timed-out and not-run cases stay in the denominator.
+- **Live cases use the real path:** native Codex app-server → production bridge → real SDK → exact model, with native fixture-tool callbacks, independent checks and cleanup of every test-owned resource.
+- **Answers must keep the literal tokens.** Read and recall answers must contain the complete `value:` and `receipt:` tokens. Extra prose or code fences are recorded as presentation diagnostics, not failures. Missing prefixes or values, unexpected tools, uncorrelated evidence and failed recovery do fail. This rule differs from the workflow suite's exact-output checks and cannot change its scores.
+- **Expected faults must actually fail** with the specified error. A successful-looking answer does not pass a fault turn.
+- **No second chances:** no automatic case retries, model substitutions, subsets or native OpenAI baseline. Failed cases are not rerun or replaced; each score belongs to one complete run of one implementation and contract.
+- **What a pass does not mean:** 66/66 is not a multi-hour soak, a product support percentage or proof that every historical freeze is fixed.
 
-`read_fixture` returns the **entire unchanged UTF-8 file**, including labels and separators, not extracted values. Every model and supported profile uses this same tool description. Tool-description changes are recorded by the implementation hash and frozen source, not just the catalog hash. A matching catalog hash alone therefore does not establish identical model-visible input; see the [historical metadata repair](validation/2026-09-22-runner-repair/README.md).
+## Optional wording profiles
 
-Within each profile, all six models receive the same synthetic-marker tasks. The default profile requests the original two tool-result lines in a text fence. Fences or added prose are allowed; altered literal prefixes or values are not. The production bridge does not rewrite callers' tool descriptions or repair model output.
+The default profile is `v5`. The two opt-in profiles change only the wording that models see:
 
-Client instructions are appended unchanged to the SDK-managed system foundation. SDK built-in tools stay excluded and SDK permission requests are rejected. These rules apply to every model and profile; provider-filtered turns remain failures.
+| Profile | Select with | Model-visible task |
+| --- | --- | --- |
+| `v5` | Default | Standard synthetic-marker copy task |
+| `application-data-v3` | `--profile application-data-v3` | Application-data read/remember/recall wording on the v5 base |
+| `application-data-v4` | `--profile application-data-v4` | Explicit whole-file wording, including the `value:`/`receipt:` labels, colons and whitespace |
 
-## Harness timing and iteration policy
+Inspect a profile without model calls:
 
-The harness uses the following fixed bounds in addition to the per-case limits above:
+```sh
+npm run test:stability -- --plan --profile application-data-v4
+```
 
-- Read, remember and recall prompts all require verbatim two-line output; remember explicitly echoes now and requires a fresh read once **in this turn**. This aligns the instructions with the existing oracle rather than weakening the oracle.
-- Case cleanup uses the production **5,000ms** per-operation default, with a **30s** cleanup reserve. Cleanup errors still fail; diagnostics distinguish abort/disconnect/delete and timeout/RPC failure without logging error text.
-- ACK readiness allows **45s**; SDK client startup/catalog initialization has a **30s** bound. Session creation is additionally governed by the turn/request deadlines; reaching the ACK gate must still be proved, never assumed. S06 uses a **45s** total request deadline and a **60s** bounded ACK gate, keeping the request deadline as the intended fault source. S05/S06 case limits are 120s/180s.
-- The supervisor waits for asynchronous owned-process-group exit only inside the remaining case slot (at most 2s). Groups that remain alive still fail.
+To run a profile, add the same `--profile` option to a new `--runtime` or `--execute` run.
 
-Historical 77-case targets and results remain in the [verification records](validation/README.md). Each score belongs to one complete run of one implementation and contract. Failed cases are not selectively rerun or replaced within a matrix.
-
-## Explicit upstream filtering
-
-Root SDK `assistant.usage` events with `contentFilterTriggered=true` or `finishReason="content_filter"` now fail the request with `upstream_content_filter`. JSON requests return HTTP **422**; an already-started SSE response keeps its HTTP 200 headers but terminates with **`response.failed`**, never `response.completed`. Any text already streamed remains incomplete and cannot be retracted.
-
-The bridge uses structured SDK metadata, not matching refusal-like prose. It does not disable filters, retry inference, resubmit tool results, or cache the blocked turn as success. Failed session state and response handles are invalidated. This corrects error reporting; it does not make an upstream refusal a passing stability case or establish why the provider refused it. All 66 current cases and the acceptance oracle remain unchanged.
-
-## Implemented recovery boundaries
-
-- Tools are compared by identity, not array order. Configuration changes with pending calls require every matching result and unchanged non-instruction history. Confirmed abort/disconnect/delete and same-generation readiness precede replacement; completed results are serialized history, never repeated result RPCs. Incomplete, duplicate, mismatched or rewritten conversation input remains rejected. Completed IDs and response versions survive, but a model may still propose the same operation under a new ID. Conflict diagnostics record request IDs, field names, hashes and counts, not raw content.
-- SDK control-plane `ping` detects loss. A single shared recovery task creates a **new client generation** with bounded startup and backoff; concurrent requests do not each spawn a client. Lost conversations are invalidated. No inference or uncertain tool result is automatically replayed after connection loss.
-- With a healthy connection, the model-progress watchdog can recover a silent turn on its original response stream, once by default. Input must be acknowledged, no output or calls may be pending, and old-session cleanup must be confirmed. Resolved history is context only; completed tool-result RPCs are never repeated. Partial output, filtering, cancellation, uncertain submissions and cleanup failure are excluded. Diagnostics identify recovery attempts, success and specific skip reasons. This is bounded inference replay, not an exactly-once guarantee or an external process-restart watcher.
-- `/health` is public **HTTP-process liveness**, with the last-known `ready`/`upstreamState` fields. Authenticated `/readyz` performs a bounded SDK readiness probe (200/503) and does not reconnect by itself. Authenticated `/v1/models` may recover the SDK before exposing the catalog. Readiness does not guarantee inference service health or quota.
-- Per-conversation FIFO queues are cancellable and bounded. A cancelled waiter is removed immediately and can never run later. Active cancellation settles promptly, but its family lock remains held until bounded cleanup finishes.
-- Responses are structurally reconciled **before** pending calls/history/retry state are committed. Normal identical request retries remain cached; a stream protocol mismatch cannot cache an undelivered tool call as success. Network delivery and model generation are not an exactly-once transaction.
-
-### Operational defaults
-
-| Setting | Default | Meaning |
-|---|---:|---|
-| `TURN_TIMEOUT_MS` | 300000 | Absolute model-turn budget shared across all recovery attempts and replacement setup |
-| `TURN_FIRST_PROGRESS_TIMEOUT_MS` | 180000 | Initial wait per attempt; turn-start metadata, retry notices and keepalives do not restart it |
-| `TURN_IDLE_TIMEOUT_MS` | 90000 | Inactivity after first real progress; root text, reasoning, tool-input and increasing SDK/root-phase bytes refresh it |
-| `TURN_IDLE_RECOVERY_ATTEMPTS` | 1 | Maximum session recoveries per request; integer 0–3, 0 disables |
-| `REQUEST_TIMEOUT_MS` | 360000 | Manager request, including queue wait, SDK work and recovery; not HTTP body reception |
-| `MAX_REQUESTS_PER_SESSION` | 8 | Admitted active + queued requests per family |
-| `MAX_REQUESTS` | 128 | Global admitted active + queued requests |
-| `SDK_READINESS_TIMEOUT_MS` | 2000 | Local SDK ping deadline |
-| `SDK_STARTUP_TIMEOUT_MS` | 30000 | SDK start, ping/catalog initialization, session creation and model-setting RPCs; session setup is also capped by the turn limit |
-| `SDK_READINESS_INTERVAL_MS` | 15000 | Background connection checks and content-free turn watchdog diagnostics; watchdog interval is capped by the idle limit |
-| `SDK_RECOVERY_BACKOFF_MS` | 5000 | Minimum interval between failed recovery attempts |
-
-All are positive integers except `TURN_IDLE_RECOVERY_ATTEMPTS`, which accepts 0–3. Recovery resets neither the absolute turn deadline nor the total request deadline. Existing byte/session/cleanup limits remain.
-
-| Error code | HTTP | Meaning |
-|---|---:|---|
-| `copilot_idle_timeout` | 504 | No model progress before the first-progress or inactivity limit; the message names the `phase` |
-| `copilot_timeout` | 504 | The absolute model-turn limit expired, including any recovery attempts |
-| `request_timeout` | 504 | The total request limit expired, including queue wait |
-| `request_queue_full` | 429 | Too many active and queued requests; nothing was submitted |
-| `upstream_session_lost` | 409 | The Copilot connection was lost; start a new conversation |
-
-Do not blindly replay tool side effects. To apply updated bridge code, first close its Codex sessions, then relaunch the project-owned bridge; the development/test runner never restarts a user's active bridge. `/health.turnWatchdog` reports runtime settings, not the current source file's defaults. Background status also exposes them, but does not discover foreground bridges.
+- Every profile keeps the six models, 11 scenarios, fixtures, faults, budgets, and literal-output and cleanup checks, and has its own catalog ID and hash.
+- Profiles do not rewrite production requests or safety policies.
+- One profile's result cannot stand in for another's. `--verify` uses the recorded profile and rejects a `--profile` override.
 
 ## Focused handoff regression
 
-The `pending-result-instruction-handoff-v2` regression drives the actual Codex TUI, launcher, fixture MCP server and headless Playwright. It injects a labelled top-level instruction update with a complete result batch. A pass requires one fixture execution, zero old result RPCs, the exact sample on a standalone line, and a successful next turn without `/new`. This is separate from the 66-case stability matrix; [earlier probe failures](validation/2026-09-23-pending-handoff.json) remain recorded.
+`pending-result-instruction-handoff-v2` is a separate test, not one of the 66 cases. It drives the actual Codex TUI, launcher, a fixture MCP server and headless Playwright, then sends a labelled instruction update together with a complete tool-result batch.
 
-Both modes require the [TUI prerequisites](TUI_SCENARIOS.md#runtime-prerequisites). **Offline — no model calls:** explicitly remove the live-mode environment variable for this invocation.
+A pass requires one fixture execution, zero old result RPCs, the exact sample on its own line and a successful next turn without `/new`. [Earlier probe failures](validation/2026-09-23-pending-handoff.json) remain recorded. Both modes need the [TUI prerequisites](TUI_SCENARIOS.md#runtime-prerequisites).
+
+**Offline (no model calls):** unset the live-mode variable for this command:
 
 ```sh
 env -u GHCP_LIVE_HANDOFF_OUTPUT node --test test/runtime/pending-handoff.test.mjs
 ```
 
-**Live — consumes Copilot usage across all six models:** use a new output directory. `GHCP_LIVE_HANDOFF_OUTPUT` enables live mode even when this file is run through `npm run test:runtime`; do not export it for routine offline checks.
+**Live (consumes Copilot usage on all six models):** set the variable to a new output directory:
 
 ```sh
 GHCP_LIVE_HANDOFF_OUTPUT=.runtime/pending-handoff-live-new \
   node --test --test-concurrency=1 test/runtime/pending-handoff.test.mjs
 ```
 
-Unconfirmed handoff cleanup/readiness is `session_handoff_failed` (503). Cancellation, connection loss or replacement failure keeps that family unavailable rather than treating a result retry as a fresh conversation. Missing/mismatched pending results remain `tool_result_mismatch` (409); rewritten history remains `pending_session_changed` (409).
+Do not export `GHCP_LIVE_HANDOFF_OUTPUT` in your shell. It switches this test to live mode even when it runs inside `npm run test:runtime`.
 
-Failure reports now distinguish `upstream-content-filter`, `literal-output` and `cleanup` from undetermined failures. Filter classification requires an actual native Responses error code, not refusal-like prose, a control request or an SDK hint alone. Cleanup failures take precedence; category labels never alter failed checks, status, the denominator or exit codes. The verifier recomputes evidence-derived categories. Earlier reports still require their frozen verifier. CI runs the offline suites separately so one failed suite does not hide later results, and retains scrubbed failure diagnostics as artifacts.
+Expected errors: if cleanup or readiness cannot be confirmed during the handoff, the bridge returns `session_handoff_failed` (503). After cancellation, connection loss or a failed replacement, that conversation stays unavailable instead of restarting as a new one. Missing or mismatched results return `tool_result_mismatch` (409), and rewritten history returns `pending_session_changed` (409).
 
-[Opus diagnostics](OPUS_DIAGNOSTICS.md) correlate native upstream refusal metadata without changing the fixture prompt or scored matrix. Diagnostic controls and incomplete observations must remain separate from matrix results.
+## Reference
+
+### Timing and bounds
+
+Up to four model lanes run in parallel; each lane runs one model's cases in sequence. There is no global cutoff. Worst case: 90s preflight + two 1,470s waves = **50.5 minutes**, excluding OS and I/O overhead.
+
+| Bound | Value |
+| --- | --- |
+| Cleanup reserve per case | 30s |
+| Per-operation cleanup | 5,000ms (production default) |
+| Acknowledgement (ACK) readiness | 45s |
+| SDK client startup and catalog load | 30s |
+| S06 fault | 45s total request deadline, 60s ACK gate, so the request deadline expires first |
+| Wait for owned process groups to exit | Up to 2s, within the remaining case time |
+
+Session creation is also bounded by the turn and request deadlines, and each case must prove it reached its ACK gate. Cleanup errors fail the case; diagnostics name the failed step (abort, disconnect or delete) and whether it timed out or the RPC failed, without logging error text. A process group still alive after the wait fails the case.
+
+### Fixture and prompt rules
+
+- `read_fixture` returns the **entire unchanged UTF-8 file**, including labels and separators. Every model and profile gets the same tool description.
+- The implementation hash and saved source record tool-description changes; the catalog hash alone does not prove identical model input ([historical repair](validation/2026-09-22-runner-repair/README.md)).
+- Within a profile, all six models get the same synthetic-marker tasks. Read, remember and recall prompts ask for the two lines verbatim; the remember turn echoes them and must read the file once more in that turn. This wording matches the existing checks; the checks were not relaxed. The default profile asks for the two tool-result lines in a text fence.
+- Client instructions are appended unchanged to the SDK's system instructions. SDK built-in tools stay excluded and SDK permission requests are rejected. The bridge never rewrites tool descriptions or repairs model output, and provider-filtered turns remain failures.
+
+### Behavior under test
+
+The scenarios exercise production behavior documented elsewhere: [timeouts and automatic recovery](USAGE.md#timeouts-and-recovery), [upstream filter errors](COMPATIBILITY.md#upstream-filtered-responses) and the [recovery design](ARCHITECTURE.md#stability-and-recovery-boundaries). The suite never restarts a user's active bridge.
+
+### Saved evidence
+
+Before preflight, every run freezes its source files, implementation and catalog hashes and the scenario contract. Evidence includes native events, SDK messages and usage, HTTP/SSE traffic, labelled control requests, independent checks, per-case supervisor receipts and the complete matrix. The verifier recomputes checks, metrics and artifact projections instead of trusting stored pass flags. Hashes identify files; they are not third-party attestation.
+
+CI runs each offline suite separately, so one failure does not hide later results, and keeps scrubbed failure diagnostics as artifacts.
+
+[Opus diagnostics](OPUS_DIAGNOSTICS.md) collect native refusal metadata without changing the fixture prompt or the scored matrix. Keep their results separate from matrix results.
+
+### Contract history
+
+- `v5` changed S03: a policy-change request with missing tool results is rejected, and the complete matching handoff is accepted.
+- Older `v4`, `application-data-v2` and seven-model 77-case contracts can no longer be selected. Verify their records with the saved source; they are not regraded as v5. Historical results are in the [verification records](validation/README.md).

@@ -20,6 +20,9 @@ test("launcher help explains argument boundaries and needs no working CLI or mod
     assert.match(result.stdout, /Put bridge options before -- and Codex options after it/);
     assert.match(result.stdout, /\.env is not loaded automatically/);
     assert.match(result.stdout, /Status\/stop manage background bridges only/);
+    assert.match(result.stdout, /Use --bridge-background on every launch that should reuse it/);
+    assert.match(result.stdout, /GHCP_DAEMON_DIR consistently for launch\/status\/stop/);
+    assert.match(result.stdout, /does not restore the previous \/model selection/);
     for (const model of SUPPORTED_MODEL_IDS) assert.ok(result.stdout.includes(`  ${model}\n`));
   }
   const codexHelp = parseLauncherArgs(["--", "--help"], {});
@@ -27,6 +30,22 @@ test("launcher help explains argument boundaries and needs no working CLI or mod
   assert.deepEqual(codexHelp.codexArgs, ["--help"]);
   const resume = parseLauncherArgs(["--", "resume", "--last"], {});
   assert.deepEqual(resume.codexArgs, ["resume", "--last"]);
+});
+
+test("documented resume commands use launcher model precedence and explicit background mode", () => {
+  const codexArgs = ["resume", "--last"];
+  for (const { argv, env, model, background } of [
+    { argv: ["--", ...codexArgs], env: {}, model: DEFAULT_MODEL, background: false },
+    { argv: ["--", ...codexArgs], env: { GHCP_MODEL: "gpt-6-sol" }, model: "gpt-6-sol", background: false },
+    { argv: ["--ghcp-model", "claude-sonnet-5", "--", ...codexArgs], env: { GHCP_MODEL: "gpt-6-sol" }, model: "claude-sonnet-5", background: false },
+    { argv: ["--bridge-background", "--", ...codexArgs], env: {}, model: DEFAULT_MODEL, background: true },
+  ]) {
+    const options = parseLauncherArgs(argv, env);
+    assert.equal(options.model, model);
+    assert.equal(options.background, background);
+    assert.deepEqual(options.codexArgs, codexArgs);
+    assert.ok(codexProviderArgs({ model: options.model, port: 4143 }).includes(`model="${model}"`));
+  }
 });
 
 test("launcher defaults and model selection stay within the six allowed models", () => {

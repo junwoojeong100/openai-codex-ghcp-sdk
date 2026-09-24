@@ -23,7 +23,7 @@ This is an **unofficial integration**, not a vendor-supported Codex/Copilot comb
 
 ## Requirements
 
-- Node.js `^20.19.0` or `>=22.12.0`, npm, Git and Bash. The examples use Bash/zsh; CI covers Linux and macOS.
+- Node.js **22.12 or newer** (recommended, and required for the runtime test suites), npm, Git and Bash. Normal launches also work on Node **20.19+ in the 20.x line**. The examples use Bash/zsh; CI covers Linux and macOS.
 - [Copilot CLI](https://github.com/github/copilot-cli) installed and authenticated: check `copilot --version`, then use `copilot login` if needed.
 - A GitHub Copilot account with access to the desired model.
 - Official Codex CLI **0.154.0**; installation is shown below.
@@ -51,7 +51,7 @@ npm ci
 command codex --version
 ```
 
-The last command should print `codex-cli 0.154.0`. Newer Codex releases also start, but this guide and the recorded checks use **0.154.0**.
+The last command should print `codex-cli 0.154.0`. The launcher accepts newer versions, but they are **not covered by the recorded checks**. Use **0.154.0** for the setup described here.
 
 ### 3. Check installation and account access
 
@@ -60,8 +60,12 @@ The last command should print `codex-cli 0.154.0`. Newer Codex releases also sta
 ./bin/ghcp-models
 ```
 
-- **`ghcp-doctor`** prints your installation as JSON. Every `ok` and Codex's `supportedVersion` should be `true`. It does not check login.
-- **`ghcp-models`** shows each supported model's status on your Copilot account without sending a prompt. Each line is the ID, name and status, for example `gpt-6-astra  GPT-6 Astra  enabled`. Pick a model whose status is not `disabled` or `not available`; step 4 uses `gpt-6-astra` unless you choose another.
+| Check | What to look for | What it does not prove |
+| --- | --- | --- |
+| `ghcp-doctor` | In its JSON output, every `ok` and Codex's `supportedVersion` is `true` | Login or model access. `supportedVersion` checks only the minimum CLI version, not full compatibility. |
+| `ghcp-models` | Your chosen model is neither `disabled` nor `not available` | A successful model response. This command lists the account catalog without sending a prompt. |
+
+Model lines contain the ID, name and status, for example `gpt-6-astra  GPT-6 Astra  enabled`. Step 4 uses `gpt-6-astra` unless you select another available model.
 
 If either check fails, see [startup troubleshooting](docs/USAGE.md#startup-and-configuration).
 
@@ -94,7 +98,7 @@ For a non-interactive, read-only request:
   "Read README.md and summarize its purpose in one sentence."
 ```
 
-**Launcher options go before `--`; Codex commands and options go after it.** For example, `./bin/codex-ghcp --ghcp-model claude-sonnet-5 -- resume --last` resumes with Sonnet. To choose a model, use `--ghcp-model`; Codex's own `--model`/`-m` is rejected. See [where each option goes](docs/USAGE.md#pass-codex-commands-and-options).
+**Launcher options go before `--`; Codex commands and options go after it.** Choose a model with `--ghcp-model`, not Codex's `--model`/`-m`. A resumed conversation also uses the launcher's model selection, not the last `/model` choice; see [resume a conversation](docs/USAGE.md#resume-a-conversation) and [command layout](docs/USAGE.md#pass-codex-commands-and-options).
 
 Optional: [make `codex` run this launcher from any directory](docs/USAGE.md#optional-zsh-integration) (zsh, with undo steps), or [keep a background bridge](docs/USAGE.md#optional-background-bridge).
 
@@ -120,7 +124,7 @@ Initial selection is `--ghcp-model`, then `GHCP_MODEL`, otherwise **`gpt-6-astra
 - **Works:** text chat and the tools Codex runs itself: shell commands, reading and editing local files, native `apply_patch` and Codex MCP tools. Codex keeps its approvals and sandbox.
 - **Not supported:** images, audio, video or files attached as model input; provider-hosted tools such as web search; schema-constrained JSON output; WebSockets; remote Responses compaction. Codex's automatic task title needs structured output, so that request is rejected and the conversation continues without a title.
 - **Approximate:** custom-tool grammars, such as `apply_patch`'s, reach the model as guidance; generation does not enforce them.
-- **Memory only:** the bridge keeps conversation state in memory. Stopping or restarting it loses pending tool calls, so close Codex sessions first.
+- **Pending calls are memory-only:** stop the bridge only after closing its Codex sessions. Codex's saved history can be [resumed](docs/USAGE.md#resume-a-conversation), but a restarted bridge cannot restore unresolved tool calls or old response IDs.
 
 Before relying on advanced features, check the [full compatibility boundaries](docs/COMPATIBILITY.md). [Recorded live runs](docs/validation/README.md) show what has been measured, including unresolved upstream-filter failures.
 

@@ -2,89 +2,90 @@
 
 [한국어](COMPATIBILITY_KO.md) · [Quick start](../README.md) · [Usage](USAGE.md) · [Architecture](ARCHITECTURE.md)
 
-## Scope
-
-The target is Codex CLI **0.154.0** with `@github/copilot-sdk` **1.0.14**. These are the checked versions; newer releases can change the protocol and may need adapter changes. The bridge supports text conversations and tools executed by Codex; it does not implement the whole OpenAI Responses API. A model being enabled in Copilot does not mean every Codex feature works with it. Offline tests check the bridge against simulated SDK responses; only live runs show how real models behave.
-
-Only the [six supported model IDs](../README.md#models) are allowed, in the documented picker order. Account policy still controls availability. Other IDs, including retired models, are rejected. IDs are passed to the SDK without cross-provider renaming or fallback.
+**Text chat and the tools Codex runs itself are supported; the full OpenAI Responses API is not.** The table below is the practical boundary for Codex CLI **0.154.0** with Copilot SDK **1.0.14**. A model being available does not mean every feature works with it.
 
 ## Can I use this feature?
 
-| Task | Support and boundary |
-| --- | --- |
-| Chat, read/edit local files and run shell commands | Supported through **Codex's tools**, with Codex's approvals and sandbox. File access is not a direct file attachment to the model. |
-| Use Codex MCP tools | Supported. The Copilot runtime's separate MCP servers stay disabled. |
-| Switch models, compact locally or resume | Supported with [context and state limits](USAGE.md#model-selection-and-context). A bridge restart loses unresolved calls. |
-| Use `apply_patch` or another custom tool | Supported, but grammar is guidance rather than decoder enforcement. |
-| Attach images, audio, video or files directly | Unsupported; model input and tool results must be text. |
-| Require schema-constrained JSON or use provider-hosted web search | Unsupported. A prompt asking for JSON is not a schema guarantee. Native reviewer paths that require structured output can also fail. |
-| Use WebSockets or remote Responses compaction | Unsupported; use the launcher's HTTP/SSE and local-compaction defaults. |
+| Task | Status | Details |
+| --- | --- | --- |
+| Chat, read and edit local files, run shell commands | **Supported** | Through Codex's own tools, with Codex's approvals and sandbox. Tools read the files; files are not attached to the model. |
+| Use Codex MCP tools | **Supported** | The Copilot runtime's separate MCP servers stay disabled. |
+| Switch models or compact locally | **Supported** | Within the [context limits](USAGE.md#model-selection-and-context). |
+| Resume a saved conversation | **Supported** | From Codex's saved history. A restarted bridge cannot restore unresolved tool calls; see [resume behavior and model selection](USAGE.md#resume-a-conversation). |
+| Use `apply_patch` or another custom tool | **Approximate** | Works, but the grammar is guidance for the model, not enforced during generation. |
+| Attach images, audio, video or files directly | **Unsupported** | Model input and tool results must be text. |
+| Require schema-constrained JSON | **Unsupported** | You can ask for JSON in a prompt, but no schema is guaranteed. Automatic titles are unavailable, and native review requests fail when they need this format. |
+| Use provider-hosted web search | **Unsupported** | Separate from client-side Codex MCP tools, which work. |
+| Use WebSockets or remote Responses compaction | **Unsupported** | Keep the launcher's HTTP/SSE and local-compaction defaults. |
 
-The remaining sections describe the protocol details and failure behavior, not additional setup steps.
+For launch errors, see [troubleshooting](USAGE.md#troubleshooting). The rest of this page is protocol reference for developers; it adds no setup steps.
+
+## Scope
+
+- **Versions:** checked with Codex CLI **0.154.0** and `@github/copilot-sdk` **1.0.14**. Newer releases can add fields or tools that need adapter changes; keep the pinned versions until you have checked the new protocol.
+- **Evidence:** offline tests check the bridge against simulated SDK responses. Only [recorded live runs](validation/README.md#recorded-results) show how real models behaved.
+- **Models:** only the [six supported model IDs](../README.md#models) are allowed, in the documented picker order, and account policy still controls availability. Other IDs, including retired models, are rejected. IDs reach the SDK unchanged, with no cross-provider renaming or fallback.
 
 ## Implemented behavior
 
-- `POST /v1/responses`, with either JSON or HTTP/SSE text output; authenticated `GET /v1/models` and `GET /readyz`; public `GET /health`.
-- Text messages, system/developer instructions throughout the supplied transcript, client function tools, and custom/freeform tools.
-- Codex tool namespaces and `additional_tools` declarations. Function arguments retain JSON meaning; custom tool input retains the original string.
-- Multiple pending calls and a following batch containing all corresponding outputs.
-- `parallel_tool_calls=false`: at most one call is forwarded per response. If the SDK emits multiple calls, none are forwarded and the turn fails with `parallel_tool_calls_violation`; this validates the output, not the model's decoding behavior.
-- Live full-history prefix matching, per-conversation serialization, and process-local `previous_response_id` continuation.
-- Exact retries of the latest request without duplicate prompt/result submission.
-- Client cancellation, SDK deadlines, bounded in-memory state and idle/capacity eviction.
-- Reasoning effort only when supported by the selected model's catalog. Haiku 4.5 is not effort-configurable.
-- A launch-owned main-model picker catalog, maximum-advertised-tier input budgets, and native local auto-compaction after complete tool-result handoffs. `npm run test:context:runtime` covers these with the actual Codex CLI and a fake SDK, not maximum-context or endurance inference.
+- **Routes:** `POST /v1/responses` with JSON or HTTP/SSE text output; authenticated `GET /v1/models` and `GET /readyz`; public `GET /health`.
+- **Input:** text messages, system and developer instructions anywhere in the supplied transcript, client function tools and custom (freeform) tools.
+- **Tool declarations:** Codex tool namespaces and `additional_tools`. Function arguments keep their JSON meaning; custom tool input keeps the original string.
+- **Tool results:** several pending calls at once, answered by one following batch that contains every output.
+- **`parallel_tool_calls=false`:** at most one call is forwarded per response. If the SDK emits several calls, none are forwarded and the turn fails with `parallel_tool_calls_violation`. This checks the output; it does not change how the model decodes.
+- **Conversation state:** live full-history prefix matching, one request at a time per conversation, and `previous_response_id` continuation within the running process.
+- **Retries:** an exact retry of the latest request does not resubmit the prompt or tool results.
+- **Limits:** client cancellation, SDK deadlines, bounded in-memory state and eviction of idle or excess conversations.
+- **Reasoning effort:** only when the selected model's catalog supports it. Haiku 4.5 has no configurable effort.
+- **Model catalog and context:** a launch-owned picker catalog, input budgets from the largest advertised tier, and native local auto-compaction after complete tool-result handoffs. `npm run test:context:runtime` covers these with the actual Codex CLI and a fake SDK; it does not test maximum-context or endurance inference.
 
 ## Important approximations
 
-**Custom grammar:** a custom tool becomes an SDK JSON-schema tool with a required `input` string. Grammar is included as model guidance, not enforced by the decoder. Codex remains responsible for parsing and executing the returned raw input.
+Each item below works, but not exactly like the native OpenAI Responses API.
 
-**Historical replay:** a fresh SDK session cannot import an arbitrary Responses transcript with native roles. Completed historical turns are serialized into prompt context. Live matching conversations preserve the SDK session and submit real pending tool results instead.
-
-**Instruction boundaries:** the SDK's system and safety instructions stay in place.
-
-- Request instructions and all top-level system/developer messages are appended verbatim, including mid-history instructions. The bridge uses `systemMessage.mode="append"`, never `replace`.
-- Both instruction roles share that SDK field. Historical user/assistant messages still require serialized replay, not a general-purpose role-preserving transcript import.
-- On an unchanged live session, new user messages accompanying pending results use separate SDK immediate steering; they are not added to tool output.
-- A trusted instruction update with all pending results rebuilds the session after confirmed cleanup. Instructions remain authoritative and tool outputs stay byte-exact in serialized history. Incomplete or rewritten conversation input fails before retiring the old session.
-
-SDK built-in tools remain unavailable. Only Codex executes client tools, under its own sandbox and approval policy. See the [handoff procedure](ARCHITECTURE.md#changing-configuration-with-completed-tools).
-
-**Assistant phases and completion:** `commentary` and `final_answer` survive canonicalization and replay, following the [Responses phase semantics](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter). Omitted old phases reuse known values; explicit phase changes invalidate the live prefix.
-
-Text responses finish at root `session.idle`, allowing intervening corrections, usage and errors to arrive. Tool responses instead require fully correlated pending external calls. Empty, tool-less responses and mismatched pending calls fail before success commitment.
-
-**Usage:** actual SDK token counts are returned when available. Missing usage is `null`, not estimated. Usage, caching and billing belong to Copilot and need not match OpenAI billing semantics.
-
-**Persistence:** response correlation is memory-only. Restart, TTL or capacity eviction invalidates response IDs and unresolved calls. `store:false` does not disable Codex/SDK local files or promise zero retention by Copilot.
-
-**Reasoning summary policy:** SDK session creation and model-setting updates explicitly use `reasoningSummary: "none"`, matching the launcher’s disabled-summary policy. Requested reasoning effort is preserved independently. This is configuration consistency, not an established cause or fix for upstream refusals.
+- **Custom grammar:** a custom tool becomes an SDK JSON-schema tool with one required `input` string. The grammar is sent as guidance for the model; the decoder does not enforce it. Codex still parses and runs the returned raw input.
+- **History replay:** a new SDK session cannot import an arbitrary Responses transcript with native roles, so completed earlier turns are serialized into the prompt context. While a conversation stays live and matching, the bridge keeps its SDK session and submits real pending tool results instead.
+- **Instructions:** the SDK's own system and safety instructions stay in place. Request instructions and every top-level system or developer message, including ones in mid-history, are appended unchanged (`systemMessage.mode="append"`, never `replace`). Both roles share that SDK field. Earlier user and assistant messages still need serialized replay, because there is no general role-preserving transcript import.
+  - On an unchanged live session, new user messages sent with pending results use the SDK's separate immediate steering; they are not added to tool output.
+  - A trusted instruction update sent with all pending results rebuilds the session after cleanup is confirmed. Instructions stay authoritative, and tool outputs stay byte-exact in serialized history. Incomplete or rewritten conversation input fails before the old session is retired.
+  - SDK built-in tools stay unavailable. Only Codex runs client tools, under its own sandbox and approval policy. See the [handoff procedure](ARCHITECTURE.md#changing-configuration-with-completed-tools).
+- **Assistant phases:** `commentary` and `final_answer` survive normalization and replay, following the [Responses phase semantics](https://developers.openai.com/api/docs/guides/reasoning#phase-parameter). An omitted old phase reuses the known value; an explicit phase change invalidates the live prefix.
+- **Completion:** a text response finishes at root `session.idle`, so late corrections, usage and errors can still arrive. A tool response instead finishes when every pending external call is correlated. Empty responses without tool calls, and mismatched pending calls, fail before anything is saved as a success.
+- **Usage:** actual SDK token counts are returned when available; missing usage is `null`, not an estimate. Usage, caching and billing follow Copilot's rules, which need not match OpenAI's.
+- **Persistence:** response tracking lives only in memory. A restart, TTL expiry or capacity eviction invalidates response IDs and unresolved calls. `store:false` does not stop Codex or the SDK from writing local files and does not promise zero retention by Copilot.
+- **Reasoning summaries:** SDK session creation and model-setting updates explicitly set `reasoningSummary: "none"`, matching the launcher, which disables summaries. The requested reasoning effort is kept separately. This keeps the configuration consistent; it is not a known cause of, or fix for, upstream refusals.
 
 ## Rejected or disabled
 
 - WebSocket transport, compressed requests and remote Responses compaction.
 - Images, audio, video, files as model input, and non-text tool outputs.
 - Provider-hosted web search, code interpreter, file search and other server-side built-in tools.
-- Strict tool-schema enforcement, structured JSON output and required/named tool choice.
-- Temperature, top-p, explicit output-token/tool-call limits and automatic request truncation.
-- Reasoning summaries/encrypted reasoning replay, durable response retrieval, stored/background Responses jobs and custom service tiers.
+- Strict tool-schema enforcement, structured JSON output and required or named tool choice.
+- Temperature, top-p, explicit output-token or tool-call limits, and automatic request truncation.
+- Reasoning summaries, encrypted reasoning replay, durable response retrieval, stored or background Responses jobs and custom service tiers.
 
-The launcher disables incompatible transport/search features. Other unsupported semantics fail explicitly instead of being advertised as implemented. Informational Codex hints such as cache keys, metadata, text verbosity or encrypted-reasoning inclusion can be diagnosed as ignored; they do not add the corresponding service capability.
+The launcher turns off the incompatible transport and search features. Other unsupported features fail with an explicit error instead of pretending to work. Informational Codex hints, such as cache keys, metadata, text verbosity or requests to include encrypted reasoning, may be logged as ignored; they do not add the matching capability.
 
 Codex 0.154 sends one extra request after the first prompt of a thread to generate a short task title, and that request uses a JSON schema. The bridge rejects it with HTTP 400 (`Structured output is not supported`). Codex continues normally without a generated title.
 
 ## Upstream-filtered responses
 
-Explicit root SDK content-filter metadata is reported as `upstream_content_filter` (HTTP 422 for JSON, or a terminal `response.failed` event after SSE has begun). No success cache or pending call is committed for that turn, and there is no automatic replay. Already-delivered partial text is marked incomplete. Refusal-like text without structured filter metadata is preserved as ordinary model output; subordinate-agent metadata does not replace the root response.
+When root SDK `assistant.usage` events report `contentFilterTriggered=true` or `finishReason="content_filter"`, the bridge fails the request with `upstream_content_filter`. It relies on this structured metadata, never on matching refusal-like text.
+
+- JSON requests get HTTP 422. An SSE stream that has already started keeps its HTTP 200 headers but ends with `response.failed`, never `response.completed`.
+- Nothing from that turn is saved as a success or a pending call, and the failed session state and response handles are invalidated. The bridge does not disable filters, retry inference or resubmit tool results. Partial text already delivered is marked incomplete; it cannot be retracted.
+- Refusal-like text without structured filter metadata stays ordinary model output. Metadata from subordinate agents does not replace the root response.
+- Filter monitoring continues after tool handoff and while idle. A late root signal invalidates the next cached retry or pending-result continuation, but output already delivered cannot be taken back. If SDK shutdown errors follow, the first observed fault is kept.
+
+This makes the error explicit; it does not explain why the provider refused, and a filtered turn still counts as a failure, for example in the stability matrix. For opt-in, privacy-bounded evidence about native refusals, see [Opus upstream diagnostics](OPUS_DIAGNOSTICS.md).
 
 ## Operational notes
 
-- Choose the initial model with `--ghcp-model`; `/model` uses the launch's account-enabled subset of the six allowed models in pinned order. The temporary catalog does not edit Codex configuration, but Codex's `/model` selection can be saved to `~/.codex/config.toml`. See [selection and persistence](USAGE.md#model-selection-and-context).
-- A result batch must include every outstanding call exactly once. Configuration changes, including tool-less compaction, require a complete-result handoff with unchanged non-instruction history and confirmed cleanup/readiness. Completed IDs and stale response versions survive; old result RPCs are never resubmitted. Serialized history cannot guarantee that a model will not request the same operation under a new ID.
-- SDK sessions select the maximum advertised context tier (`long_context` where available, otherwise `default`); Codex compacts at 80% of the catalog's effective input budget. Context overflow keeps the `context_length_exceeded` error code, and the launcher disables automatic HTTP/stream inference retries. First progress has a separate 180-second allowance, followed by the 90-second streaming inactivity limit; both remain capped by the absolute turn/request deadlines.
-- The most recent result is retryable, but arbitrary historical response branches are not. Start a new full-history conversation to branch.
-- Codex retains its normal sandbox and approval behavior. The bridge never substitutes an approval-bypass option.
-- Background-daemon state is specific to this project. Status/stop must verify the owned instance before reuse or termination.
-- Newer CLI releases may add fields or tools that require changes to this adapter. Pin versions until you have checked the new protocol.
-
-Filter monitoring remains active after tool handoff and idle. A late root signal invalidates the next cached retry or pending-result continuation; already-delivered output cannot be retracted. The first observed fault is retained if later SDK shutdown errors occur. See [Opus upstream diagnostics](OPUS_DIAGNOSTICS.md) for opt-in, privacy-bounded native refusal evidence.
+- **Models:** choose the starting model with `--ghcp-model`. `/model` offers the account-enabled subset of the six allowed models, in pinned order. The temporary catalog does not edit Codex's configuration, but Codex can save a `/model` selection to `~/.codex/config.toml`; see [selection and persistence](USAGE.md#model-selection-and-context).
+- **Tool results:** a result batch must include every outstanding call exactly once. Completed call IDs and stale response versions are remembered, and old result RPCs are never resubmitted. Serialized history cannot stop a model from requesting the same operation again under a new ID.
+- **Configuration changes:** a change while calls are pending, including tool-less compaction, needs a complete-result handoff with unchanged non-instruction history and confirmed cleanup and readiness.
+- **Context:** SDK sessions use the largest advertised context tier (`long_context` where available, otherwise `default`), and Codex compacts at 80% of the catalog's input budget. Context overflow keeps the `context_length_exceeded` error code.
+- **Timeouts and retries:** the first progress gets its own 180-second allowance, and then the 90-second streaming inactivity limit applies; both stay within the whole-turn and whole-request deadlines. The launcher turns off automatic HTTP and stream retries.
+- **Branching:** the latest result can be retried, but arbitrary earlier response branches cannot. To branch, start a new full-history conversation.
+- **Approvals:** Codex keeps its normal sandbox and approval behavior; the bridge never substitutes an approval-bypass option.
+- **Background bridge:** the default registry is shared across working projects and tied to the checkout that started it. Status and stop verify the bridge instance they own; see [reuse and isolation](USAGE.md#optional-background-bridge).

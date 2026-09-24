@@ -25,17 +25,17 @@ const protectedFlags = ["--model", "--profile", "--oss", "--local-provider", "--
 export const usage = `Usage: codex-ghcp [bridge options] [-- Codex options and prompt]
 
 Run ./bin/codex-ghcp with no arguments for an interactive session.
-The default launch starts a private bridge and stops it when Codex exits.
+The default launch starts a new private bridge and stops it when Codex exits.
 No .env file or shell setup is needed; .env is not loaded automatically.
 
 Bridge options:
   --ghcp-model MODEL    Initial model (overrides GHCP_MODEL; default: ${DEFAULT_MODEL})
   --bridge-port PORT    Fixed loopback port (default: select a free port)
-  --bridge-background   Keep this project's bridge running after Codex exits
+  --bridge-background   Keep the bridge running for reuse after Codex exits
   -h, --help            Show launcher help without starting a bridge
 
-Put bridge options before -- and Codex options after it. Use --ghcp-model
-rather than Codex --model/-m. Provider/profile overrides,
+Put bridge options before -- and Codex options after it.
+Use --ghcp-model rather than Codex --model/-m. Provider and profile overrides,
 remote TUI connections, hosted web search and incompatible transport flags
 are rejected. Other Codex options, including sandbox and approvals, pass through.
 Type /model, /compact and /quit inside Codex, not in your shell.
@@ -49,6 +49,9 @@ Examples (from this repository's root):
   ./bin/codex-ghcp -- exec --sandbox read-only "Explain this project"
   ./bin/codex-ghcp -- resume --last
 
+Resume uses --ghcp-model, then GHCP_MODEL, then ${DEFAULT_MODEL};
+it does not restore the previous /model selection.
+
 From another project, use the launcher's absolute path without changing directory.
 For official CLI help/version without a bridge:
   command codex --help
@@ -57,8 +60,12 @@ For official CLI help/version without a bridge:
 Optional background bridge:
   ./bin/codex-ghcp --bridge-background
   ./bin/codex-ghcp-status
-  ./bin/codex-ghcp-stop   # Only after closing its Codex sessions
+  ./bin/codex-ghcp-stop   # Only after closing all sessions using this bridge
 
+Use --bridge-background on every launch that should reuse it.
+Without the flag, a new foreground bridge starts; the background bridge stays up.
+The default registry is shared across working projects and tied to one checkout.
+For another checkout, set GHCP_DAEMON_DIR consistently for launch/status/stop.
 Status/stop manage background bridges only. See docs/USAGE.md for details.
 `;
 
