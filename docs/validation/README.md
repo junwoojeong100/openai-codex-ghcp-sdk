@@ -42,7 +42,9 @@ This run needed **zero bridge catalog recoveries and zero model-transport recove
 
 This run saved **42 full TUI recordings, 150 checkpoint screenshots and 42 closing screenshots** locally. All eight published screenshots and the edited summary come from this run.
 
-**[Watch the edited summary](media/verification-summary.mp4)** · [Media provenance, clip offsets and hashes](media/manifest.json)
+**[Play the edited summary](https://cdn.jsdelivr.net/gh/junwoojeong100/openai-codex-ghcp-sdk@4c7fea28077fa23742d59685b65e2ab7936be68a/docs/validation/media/verification-summary.mp4)** · [Repository MP4](media/verification-summary.mp4) · [Media provenance, clip offsets and hashes](media/manifest.json)
+
+The playback link opens the browser's video player via jsDelivr and is pinned to the existing MP4's repository commit.
 
 Each real-speed excerpt is followed by a clearly labeled two-second still of its actual checkpoint. Title bars sit outside the complete source frame; audio is absent. The overall label is **36/36 — PASS**, with each case's own status. These are representative scenes, not all 36 case recordings. Sonnet's baseline test failure is required evidence, not a failed case.
 

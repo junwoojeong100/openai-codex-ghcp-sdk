@@ -42,7 +42,9 @@
 
 이번 실행에서는 **전체 TUI 녹화 42개, 단계별 스크린샷 150장, 종료 스크린샷 42장**을 로컬에 저장했습니다. 공개 스크린샷 8장과 편집 영상은 모두 이번 실행에서 가져왔습니다.
 
-**[편집 요약 영상 보기](media/verification-summary.mp4)** · [미디어 출처·구간 시각·해시](media/manifest.json)
+**[편집 요약 영상 바로 재생](https://cdn.jsdelivr.net/gh/junwoojeong100/openai-codex-ghcp-sdk@4c7fea28077fa23742d59685b65e2ab7936be68a/docs/validation/media/verification-summary.mp4)** · [저장소 원본 MP4](media/verification-summary.mp4) · [미디어 출처·구간 시각·해시](media/manifest.json)
+
+재생 링크는 기존 MP4의 저장소 커밋에 고정된 jsDelivr 주소이며, 브라우저 기본 동영상 플레이어에서 열립니다.
 
 실제 속도의 각 영상 구간 뒤에 해당 체크포인트를 2초간 붙이고 정지 화면임을 명시했습니다. 제목 막대는 전체 원본 화면 밖에 있으며 음성은 없습니다. 전체 판정은 **36/36 — PASS**이고 각 케이스 상태도 표시합니다. 대표 장면이며 36건 전체 녹화는 아닙니다. Sonnet의 진단 테스트 실패는 필수 근거이지 케이스 실패가 아닙니다.
 
