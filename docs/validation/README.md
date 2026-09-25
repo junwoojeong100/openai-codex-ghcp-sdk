@@ -4,7 +4,7 @@
 
 ## Recorded results
 
-**codex-ghcp-essential-v1 · 36/36 · PASS** — **2026-09-25, 08:19–08:25 KST**.
+**codex-ghcp-essential-v1 · 36/36 · PASS** — **2026-09-25, 10:08–10:15 KST**.
 
 All 36 cases passed using actual Codex CLI/TUI → production bridge → real Copilot SDK → exact Copilot model. The six scenario IDs, exact models, deadlines and 36/36 rule were retained, without automatic case retries, fallback models or pooled scores. V02 uses the explicit, evidence-gated two-turn procedure below.
 
@@ -31,15 +31,23 @@ All nine common checks also passed **36/36**, including routing, HTTP/SSE, conte
 
 The two turns apply equally to all six models within the existing case deadline and `workspace-write` sandbox. The first turn's read-only instruction is checked at the checkpoint, not enforced by switching the sandbox. Production bridge commands and results are not rewritten. **This verifies a staged coding workflow, not guaranteed adherence to a compound single-turn request.** The JSON includes each model's baseline and final native exits; full checkpoints are in `.runtime/verification-final/v02-workflow.json` and per-case facts.
 
-The live run recorded zero transport/session errors and zero transport/catalog recoveries. Recovery safety is covered by deterministic regressions; live fault recovery was not exercised, and provider/network failure elimination is not claimed.
+The live run recorded zero model transport/session errors and zero transport-error recoveries. Startup `listModels` timed out once in each Claude model's V05 launch; all three recovered with a fresh client within the original 30-second startup budget and the cases passed. These are bridge catalog recoveries, not case reruns. Transport-recovery safety remains covered by deterministic regressions, not a live transport fault in this run.
+
+## Final driver corrections
+
+- Pinned verification passes `check_for_update_on_startup=false`. A real cached-update popup was reproduced and shown to match the old composer detector; numbered menu choices now fail readiness, and an unexpected update popup receives no input. This changes only the verification environment, not normal launcher settings or global installations.
+- An answer and `response.completed` are not enough to continue. The driver also requires fresh matching native `task_started`/`task_complete` receipts and a ready composer, so it does not request `/compact` while Codex still considers the task active. A rejected compact command fails immediately without retrying it.
+- The duration regression now measures elapsed coverage and completed responses rather than assuming two turns fit in 450 ms. A controlled slow-response test confirms that reaching the duration alone cannot finish an unanswered turn.
+
+After these corrections, the full local suites and a fresh 36-case live matrix ran sequentially. Production bridge code, scenario IDs, model IDs, case deadlines and required outcomes were not changed.
 
 ## Recording and screenshots
 
 This run saved **42 full TUI recordings, 150 checkpoint screenshots and 42 closing screenshots** locally. All published media below comes from this run.
 
-**[Watch the approximately 102-second summary](media/verification-summary.mp4)** · [Media provenance and hashes](media/manifest.json)
+**[Watch the approximately 103-second summary](media/verification-summary.mp4)** · [Media provenance and hashes](media/manifest.json)
 
-The 101.76-second summary contains eight real-speed excerpts of up to 11 seconds, each followed by a labeled two-second still of its actual checkpoint. Title bars sit outside the original frame; audio is absent. It displays the recorded overall result, **36/36 — PASS**. These are representative scenes, not recordings of all 36 cases; full evidence remains authoritative. The failing tests in the first V02 scene are the required baseline, not a failed verification case.
+The 103.08-second summary contains eight real-speed excerpts of up to 11 seconds, each followed by a labeled two-second still of its actual checkpoint. Title bars sit outside the original frame; audio is absent. It displays the recorded overall result, **36/36 — PASS**. These are representative scenes, not recordings of all 36 cases; full evidence remains authoritative. The failing tests in the first V02 scene are the required baseline, not a failed verification case.
 
 | Summary start | Screenshot | Recorded outcome |
 | --- | --- | --- |
@@ -56,13 +64,13 @@ Media checks include full video decoding, file hashes and OCR of selected frames
 
 ## Local regressions and evidence
 
-Unit/integration/documentation **376/376**; real-Codex runtime with SDK doubles **21/21**. They ran sequentially before the live matrix on the same source fingerprint, without relaxing timing assertions. Offline results are not added to the live score.
+Unit/integration/documentation **386/386**; real-Codex runtime with SDK doubles **22/22**. They ran sequentially before the live matrix on the same source fingerprint. The native suite includes startup and cold resume with a cached synthetic newer version, without selecting or installing an update. Offline results are not added to the live score.
 
 Codex 0.154.0 · Copilot SDK 1.0.14 · darwin/arm64 · Node v22.16.0
 
-The recorded live result is local to this environment. Linux/macOS CI jobs are configured, but no remote CI execution is claimed here.
+Evidence was automatically recomputed: `evidenceIntegrity=true`. Raw facts and frozen source: `.runtime/verification-final/`. Implementation fingerprint: `d604fdeda3c6643ab2264aa14231de44a059385c70cfb12e5d8386b1ac6105d9`, not a Git commit ID. Source and user settings were unchanged during execution; all 36 owned worker groups were cleaned up. Public JSON is not a replacement for raw evidence.
 
-Evidence was automatically recomputed: `evidenceIntegrity=true`. Raw facts and frozen source: `.runtime/verification-final/`. Implementation fingerprint: `177abfa900a8a4e7de4868096ba459d9d9308f563b54ee44e40eda287e9a50dd`, not a Git commit ID. Source and user settings were unchanged during execution; all 36 owned worker groups were cleaned up. Public JSON is not a replacement for raw evidence.
+This record retains only the latest local verification. A specific commit's remote CI status is available in [GitHub Actions](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/actions), separately from this live score.
 
 ## Recheck evidence
 
@@ -72,8 +80,8 @@ This command needs the original local `.runtime/verification-final/` directory; 
 npm run verify -- --verify .runtime/verification-final/report.json
 ```
 
-The final documentation audit preserved the runtime/verifier/test source fingerprint and the raw 36/36 verdict. Guide wording, public-result metadata and the local publication audit were updated; no live matrix or media recording was rerun. The public media remains byte-identical to this execution's published captures.
+The retained raw run and public media both come from the corrected driver and the execution time above. Rechecking them makes no model calls and does not alter the recorded outcome.
 
 ## Cleanup and limits
 
-Only the current suite, latest evidence and matching media remain. This is one successful essential-integration run, not a guarantee of future model behavior, summary accuracy, five-hour endurance or whole-product completeness. The recorded verification did not include a remote CI run or restart existing user bridges.
+Only the current suite, latest live evidence and matching media remain. Earlier CI snapshots and preparation diagnostics have been removed from this repository's records. This is one successful essential-integration run, not a guarantee of future model behavior, summary accuracy, five-hour endurance or whole-product completeness. Existing user bridges were not restarted.

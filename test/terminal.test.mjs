@@ -14,6 +14,8 @@ let count = 0, input = '', trusting = mode === 'trust';
 const ready = () => process.stdout.write('\\x1b[2J\\x1b[HOpenAI Codex (offline mechanical peer)\\r\\n\\x1b[?2004h\\u203a \\r\\n? for shortcuts');
 if (mode === 'permission') {
   process.stdout.write('OpenAI Codex\\r\\nWould you like to run the following command?\\r\\n1. Yes, proceed');
+} else if (mode === 'update') {
+  process.stdout.write('OpenAI Codex\\r\\nUpdate available! 0.154.0 -> 999.0.0\\r\\n\\r\\n\\u203a 1. Update now (runs npm install)\\r\\n  2. Skip\\r\\n  3. Skip until next version\\r\\n\\r\\nPress enter to continue');
 } else if (trusting) {
   process.stdout.write('Do you trust the contents of this directory?\\r\\n' + process.cwd() + '\\r\\n\\u203a 1. Yes, continue\\r\\n2. No, quit');
 } else if (mode !== 'silent') ready();
@@ -44,7 +46,7 @@ process.stdin.on('data', data => {
   setTimeout(() => {
     process.stdout.write('\\x1b[2J\\x1b[HOpenAI Codex\\r\\n\\u203a ' + prompt +
       '\\r\\n\\r\\n\\u2022 PTY_OK_' + count + '\\r\\n\\r\\n\\u203a \\r\\n? for shortcuts');
-  }, 80);
+  }, mode === 'slow-duration' ? 600 : 80);
 });
 `;
 
@@ -146,6 +148,30 @@ test("a private PTY sends two turns in one TUI and requires fresh distinct marke
   assert.equal(events.filter(event => event.action === "submit-visible-probe-prompt").length, 2);
 });
 
+test("numbered menus and update choices are not a ready Codex composer", () => {
+  const menu = "\n  \u2728 \u200aUpdate available! 0.154.0 -> 999.0.0\n\n  Release notes: https://github.com/openai/codex/releases/latest\n\n"
+    + "\u203a 1. Update now (runs `npm install -g @openai/codex`)\n  2. Skip\n  3. Skip until next version\n\n  Press enter to continue\n";
+  for (const text of [menu, menu.replace("\u203a 1.", "  1.").replace("  2. Skip", "\u276f 2. Skip")]) {
+    const state = inspectTerminalScreen(text, { knownCodex: true });
+    assert.equal(state.update, true);
+    assert.equal(state.ready, false);
+  }
+  assert.equal(inspectTerminalScreen("\u203a 1. Update now\n  2. Skip\nPress enter to continue", { knownCodex: true }).ready, false);
+  const conversation = "OpenAI Codex\n\u203a Explain the Update available! notice.\n\u2022 It offers a newer release.\n\u203a \n? for shortcuts";
+  assert.equal(inspectTerminalScreen(conversation).ready, true);
+  assert.equal(inspectTerminalScreen(conversation).update, false);
+});
+
+test("an unexpected updater exits the PTY probe without selecting an option or sending a prompt", async t => {
+  const result = await runTerminalProbe(options(t, "update"));
+  assert.equal(result.status, "failed");
+  assert.equal(result.reason, "unexpected-update-prompt");
+  assert.deepEqual(result.turns, []);
+  const events = fs.readFileSync(result.artifacts.events, "utf8").trim().split("\n").map(JSON.parse);
+  assert.ok(!events.some(event => event.type === "input"));
+  assertReaped(result);
+});
+
 test("duration checks finish only after covered time and completed responses", async t => {
   const result = await runTerminalProbe({ ...options(t), durationMs: 450, turns: [
     { prompt: "First.", expectedMarker: "PTY_OK_1" },
@@ -155,7 +181,18 @@ test("duration checks finish only after covered time and completed responses", a
   assert.equal(result.status, "passed", JSON.stringify(result));
   assert.equal(result.reason, "duration-covered");
   assert.ok(result.coveredMs >= 450);
-  assert.ok(result.turns.length >= 2 && result.turns.every(turn => turn.completedAt));
+  assert.ok(result.turns.length >= 1 && result.turns.every(turn => turn.completedAt && turn.markerObserved));
+  assertReaped(result);
+});
+
+test("duration coverage waits for a slow first answer instead of imposing a turn-rate target", async t => {
+  const result = await runTerminalProbe({ ...options(t, "slow-duration"), durationMs: 450 });
+  assert.equal(result.status, "passed", JSON.stringify(result));
+  assert.equal(result.reason, "duration-covered");
+  assert.equal(result.turns.length, 1);
+  assert.ok(result.coveredMs >= 600);
+  assert.ok(result.turns[0].durationMs >= 600);
+  assert.ok(result.turns[0].completedAt && result.turns[0].markerObserved);
   assertReaped(result);
 });
 

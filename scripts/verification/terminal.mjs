@@ -143,7 +143,11 @@ export function inspectTerminalScreen(text, { knownCodex = false, prompt = "", e
   const loading = /^\s*[\u2502|]\s*(?:model|directory):\s+loading\b/im.test(text);
   const busy = /esc to (?:interrupt|cancel)|\b(?:working|thinking|reconnecting)\s*(?:\.{3}|\(|\u2026)/i.test(text);
   const lines = text.split("\n"), last = lines.findLastIndex(line => line.trim());
-  const composer = lines.slice(Math.max(0, last - 7)).some(line => /^\s*[\u203a\u276f]\s*/.test(line));
+  const bottom = lines.slice(Math.max(0, last - 7));
+  const numberedOption = /^\s*[\u203a\u276f]\s*\d+\.\s/;
+  const update = bottom.some(line => numberedOption.test(line)) && /\bUpdate available!/i.test(text)
+    && /^\s*(?:[\u203a\u276f>]\s*)?\d+\.\s+Update now\b/im.test(text);
+  const composer = bottom.some(line => /^\s*[\u203a\u276f]\s*/.test(line) && !numberedOption.test(line));
   const codex = knownCodex || /OpenAI Codex|Codex CLI/i.test(text);
   const marker = expectedMarker && lines.some(line => {
     const clean = line.trim();
@@ -152,8 +156,8 @@ export function inspectTerminalScreen(text, { knownCodex = false, prompt = "", e
   });
   const error = expectedError && !prompt.includes(expectedError) && lines.some(line =>
     /^\s*(?:\u25a0|error[:\s])/i.test(line) && line.includes(expectedError));
-  return { ready: Boolean(codex && composer && !loading && !busy && !trust && !theme && !permission && !login),
-    markerObserved: Boolean(marker), errorObserved: Boolean(error), trust, theme, permission, login, loading, busy };
+  return { ready: Boolean(codex && composer && !loading && !busy && !trust && !theme && !permission && !login && !update),
+    markerObserved: Boolean(marker), errorObserved: Boolean(error), trust, theme, permission, login, loading, busy, update };
 }
 
 function integer(value, name, maximum = 2_147_483_647) {
@@ -320,6 +324,7 @@ export async function runTerminalProbe({
     if (!readySeen && now - started >= readyTimeoutMs) { stop("readiness-deadline", "timed-out"); return; }
     if (state.permission) { stop("unexpected-tool-permission"); return; }
     if (state.login) { stop("unexpected-authentication-prompt"); return; }
+    if (state.update) { stop("unexpected-update-prompt"); return; }
     if (state.trust) {
       const ownedPathVisible = text.replace(/\n\s*/g, "").includes(actualCwd);
       const selectedYes = /^\s*[\u203a\u276f>]\s*1\.\s*Yes,?\s*(?:continue|I trust)/im.test(text);

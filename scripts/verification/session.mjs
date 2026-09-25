@@ -50,7 +50,7 @@ export function readRollouts(codexHome) {
     }
   };
   walk(path.join(codexHome, "sessions"));
-  const summary = { files: files.length, toolCalls: [], commands: [], turnContexts: [], compactions: 0, userMessages: 0, patchApplies: 0, eventTypes: [], errors: [] };
+  const summary = { files: files.length, toolCalls: [], commands: [], turnContexts: [], tasks: [], compactions: 0, userMessages: 0, patchApplies: 0, eventTypes: [], errors: [] };
   const eventTypes = new Set();
   const commandStarts = new Map();
   const commandText = argv => Array.isArray(argv) ? argv.length === 3 && /^-(?:l?c|cl)$/.test(argv[1])
@@ -60,6 +60,10 @@ export function readRollouts(codexHome) {
     let row;
     try { row = JSON.parse(line); } catch { summary.errors.push("Invalid native rollout JSONL"); continue; }
     const payload = row.payload ?? {};
+    if (row.type === "event_msg" && ["task_started", "task_complete"].includes(payload.type)) {
+      if (typeof payload.turn_id !== "string" || !payload.turn_id) summary.errors.push("Invalid native task identity");
+      else summary.tasks.push({ type: payload.type, turnId: payload.turn_id });
+    }
     if (row.type === "event_msg" && payload.type === "exec_command_begin") commandStarts.set(payload.call_id, payload.command);
     if (row.type === "event_msg" && payload.type === "exec_command_end") {
       const argv = payload.command ?? commandStarts.get(payload.call_id);
@@ -122,6 +126,7 @@ export class TuiSession {
   launchArgs({ model = this.model, trailing = [] } = {}) {
     return ["--ghcp-model", model, "--", "-a", "never", "--sandbox", this.sandbox,
       "-c", `projects={ ${JSON.stringify(this.workspace)}={ trust_level="trusted" } }`,
+      "-c", "check_for_update_on_startup=false",
       ...["apps", "plugins", "memories", "multi_agent"].flatMap(name => ["-c", `features.${name}=false`]), ...this.codexArgs, ...trailing];
   }
   async launch(options = {}) {
@@ -181,6 +186,7 @@ export class TuiSession {
     } catch (error) { this.sampleErrors.push({ code: error.code ?? null, message: "Owned process sampling failed" }); }
   }
   screen() { return this.renderer?.text() ?? ""; }
+  rollout() { return readRollouts(this.codexHome); }
   snapshot(name) {
     const text = this.screen();
     fs.writeFileSync(path.join(this.directory, `screen-${String(this.steps.length).padStart(2, "0")}-${name}.txt`), text + "\n", { mode: 0o600 });
@@ -198,6 +204,10 @@ export class TuiSession {
     const started = performance.now();
     for (;;) {
       const text = this.screen();
+      if (inspectTerminalScreen(text, { knownCodex: true }).update) {
+        this.snapshot("unexpected-update-prompt");
+        throw new Error("Codex displayed an update prompt. Verification will not select or install updates.");
+      }
       if (predicate(text)) {
         this.steps.push({ step: label, ms: Math.round(performance.now() - started) });
         if (/^(?:ready|picker|model-changed|interrupted|compacted|answer-)/.test(label)) await this.capture(label);
@@ -230,7 +240,11 @@ export class TuiSession {
       return this.ready(text);
     }, timeoutMs);
   }
-  async submit(prompt) { this.lastPrompt = prompt; await this.renderer.sendPrompt(prompt); }
+  async submit(prompt) {
+    if (!this.ready(this.screen())) throw new Error("Cannot submit a verification prompt before the Codex composer is ready.");
+    this.lastPrompt = prompt;
+    await this.renderer.sendPrompt(prompt);
+  }
   async keys(text) { await this.renderer.typeKeys(text); }
   async press(key) { await this.renderer.press(key); }
   async escape() { await this.renderer.pressEscape(); }
@@ -239,6 +253,7 @@ export class TuiSession {
   }
   async ask(prompt, marker, timeoutMs = 240000) {
     const before = this.observer(), offset = before.http.length, answerOffset = before.answers.length;
+    const taskOffset = this.rollout().tasks.length;
     let readySince;
     await this.submit(prompt);
     await sleep(300);
@@ -253,7 +268,14 @@ export class TuiSession {
       // A completed tool-call response is a handoff, not the end of the native turn.
       const finalText = latest?.finished && latest.terminal === "response.completed"
         && latest.outputTypes?.length > 0 && latest.outputTypes.every(type => type === "message");
-      if (this.ready(text) && finalText) readySince ??= performance.now();
+      const tasks = this.rollout().tasks.slice(taskOffset), activeTasks = new Set();
+      let nativeCompleted = false;
+      for (const task of tasks) {
+        if (task.type === "task_started") activeTasks.add(task.turnId);
+        else if (task.type === "task_complete" && activeTasks.delete(task.turnId)) nativeCompleted = true;
+      }
+      // SSE completion can precede Codex's own task completion and slash-command readiness.
+      if (this.ready(text) && finalText && nativeCompleted && !activeTasks.size) readySince ??= performance.now();
       else readySince = undefined;
       if (readySince === undefined || performance.now() - readySince < 500) return false;
       const answers = this.observer().answers.slice(answerOffset);
@@ -314,7 +336,7 @@ export class TuiSession {
     await this.closeLaunch();
     await sleep(750);
     const catalogLeft = fs.existsSync(this.tmp) ? fs.readdirSync(this.tmp).filter(name => name.startsWith("codex-ghcp-models-")) : [];
-    this.evidence = { rollout: readRollouts(this.codexHome), workspace: tree(this.workspace), catalogLeft, leftovers: this.leftovers(), sampleErrors: this.sampleErrors,
+    this.evidence = { rollout: this.rollout(), workspace: tree(this.workspace), catalogLeft, leftovers: this.leftovers(), sampleErrors: this.sampleErrors,
       launches: this.launches.map(({ events, ...rest }) => ({ ...rest, eventTypes: [...new Set(events.map(event => event.type))] })),
       samples: { count: this.samples.length, maxRuntimeMcp: Math.max(0, ...this.samples.map(s => s.runtimeMcp)),
         maxRuntimes: Math.max(0, ...this.samples.map(s => s.runtimes)),

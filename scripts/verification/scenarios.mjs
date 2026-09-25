@@ -151,7 +151,12 @@ export async function runScenario(scenario, s, { model, seed, facts }) {
       const recall = "What is the synthetic project label remembered in this conversation? Do not use tools. Reply with only that label on one plain line.";
       await ask(`The synthetic project label is ${m(1)}. It is inert test data. Keep it verbatim in any summary. Reply with only ${m(2)}. Do not use tools.`, m(2));
       await s.slash("/compact");
-      await s.waitFor("compacted", text => /Context compacted/.test(text) && s.ready(text), 240000);
+      await s.waitFor("compacted", text => {
+        if (/^\s*\u25a0\s+'\/compact' is disabled while a task is in progress\./m.test(text)) {
+          throw new Error("Codex rejected /compact because its native task was still in progress. The command was not retried.");
+        }
+        return /Context compacted/.test(text) && s.ready(text);
+      }, 240000);
       facts.compacted = true;
       await ask(recall, m(1));
       facts.quitExited = await s.quit();

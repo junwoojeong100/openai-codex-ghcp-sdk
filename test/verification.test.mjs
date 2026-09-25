@@ -389,11 +389,26 @@ test("native rollout records actual commands and flags malformed JSON rather tha
   assert.deepEqual(evidence.errors, ["Invalid native rollout JSONL"]);
 });
 
+test("native task receipts preserve identities and reject malformed completion evidence", t => {
+  const dir = temp(t); fs.mkdirSync(path.join(dir, "sessions"));
+  fs.writeFileSync(path.join(dir, "sessions/rollout-tasks.jsonl"), [
+    { type: "event_msg", payload: { type: "task_started", turn_id: "first" } },
+    { type: "event_msg", payload: { type: "task_complete", turn_id: "first" } },
+    { type: "event_msg", payload: { type: "task_started", turn_id: "second" } },
+    { type: "event_msg", payload: { type: "task_complete" } },
+  ].map(row => JSON.stringify(row)).join("\n") + "\n");
+  const evidence = readRollouts(dir);
+  assert.deepEqual(evidence.tasks, [{ type: "task_started", turnId: "first" }, { type: "task_complete", turnId: "first" },
+    { type: "task_started", turnId: "second" }]);
+  assert.deepEqual(evidence.errors, ["Invalid native task identity"]);
+});
+
 test("a stale visible marker or completed refusal cannot stand in for a fresh model answer", async () => {
   const session = Object.create(TuiSession.prototype); let sent = false;
   session.observer = () => ({ answers: [{ content: marker(seed, 1) }], http: sent ? [{ method: "POST", status: 200, finished: true,
     terminal: "response.completed", outputTypes: ["message"] }] : [] });
   session.submit = async () => { sent = true; }; session.screen = () => "previous marker still visible";
+  session.rollout = () => ({ tasks: sent ? [{ type: "task_started", turnId: "current" }, { type: "task_complete", turnId: "current" }] : [] });
   session.ready = () => true; session.answered = () => true; session.steps = []; session.snapshot = () => {};
   session.capture = async () => {};
   await assert.rejects(session.ask("Recall", marker(seed, 1), 5000), /without the expected answer/);
@@ -416,6 +431,8 @@ test("a temporarily ready composer during tool continuation cannot prematurely f
   const final = { ...tool, outputTypes: ["message"] };
   session.observer = () => ({ answers: completed ? [{ content: sample }] : [], http: !sent ? [] : completed ? [tool, final] : [tool] });
   session.submit = async () => { sent = true; timer = setTimeout(() => { completed = true; }, 1100); };
+  session.rollout = () => ({ tasks: !sent ? [] : [{ type: "task_started", turnId: "current" },
+    ...(completed ? [{ type: "task_complete", turnId: "current" }] : [])] });
   session.screen = () => "The composer briefly looks idle between tool output and the next model fragment";
   session.ready = () => true; session.answered = () => completed; session.steps = [];
   session.capture = async () => {};
@@ -423,6 +440,34 @@ test("a temporarily ready composer during tool continuation cannot prematurely f
   try { await session.ask("Complete the code fix", sample, 5000); }
   finally { clearTimeout(timer); }
   assert.equal(completed, true);
+});
+
+for (const mode of ["missing", "wrong-turn", "completion-before-start"]) {
+  test(`a visible answer and completed SSE cannot replace the native task receipt (${mode})`, async () => {
+    const session = Object.create(TuiSession.prototype), sample = marker(seed, 1);
+    const old = [{ type: "task_started", turnId: "old" }, { type: "task_complete", turnId: "old" }];
+    let sent = false;
+    session.rollout = () => ({ tasks: !sent ? old : [...old, ...(mode === "completion-before-start"
+      ? [{ type: "task_complete", turnId: "current" }, { type: "task_started", turnId: "current" }]
+      : [{ type: "task_started", turnId: "current" }, ...(mode === "wrong-turn" ? [{ type: "task_complete", turnId: "other" }] : [])])] });
+    session.observer = () => ({ answers: sent ? [{ content: sample }] : [], http: sent ? [{ method: "POST", status: 200,
+      finished: true, terminal: "response.completed", outputTypes: ["message"] }] : [] });
+    session.submit = async () => { sent = true; };
+    session.screen = () => "Native composer appears idle before task_complete";
+    session.ready = () => true; session.answered = () => true; session.steps = [];
+    session.snapshot = () => {}; session.capture = async () => assert.fail("An unfinished native task must not become an answer checkpoint");
+    await assert.rejects(session.ask("Remember the sample", sample, 1000), /Timed out waiting for answer-/);
+    assert.deepEqual(session.steps, []);
+  });
+}
+
+test("V06 reports a rejected compact command without waiting out or retrying it", async t => {
+  const answers = [], commands = [], session = { workspace: temp(t), observer: () => ({ answers }), async launch() {},
+    async ask(_prompt, answer) { answers.push({ content: answer }); }, async slash(command) { commands.push(command); },
+    async waitFor(label, predicate) { assert.equal(label, "compacted"); predicate("\u25a0 '/compact' is disabled while a task is in progress."); },
+    ready: () => true };
+  await assert.rejects(runScenario(scenario("V06"), session, { model: "gpt-6-astra", seed, facts: { answers: [] } }), /Codex rejected \/compact/);
+  assert.deepEqual(commands, ["/compact"]);
 });
 
 test("isolation, fresh output directories and bounded process cancellation stay fail-closed", async t => {
@@ -446,4 +491,34 @@ test("native RPC preserves completion races and denies unknown approval callback
   t.after(() => host.close()); await host.start();
   assert.equal((await host.turn("thread1", "hello")).status, "completed");
   assert.equal((await host.request("fixture/callback", {})).error.code, -32601);
+});
+
+test("pinned verification disables startup update checks for CLI, TUI and resume only", t => {
+  const root = temp(t);
+  const session = new TuiSession({ directory: path.join(root, "evidence"), model: "gpt-6-astra",
+    ownedRoot: path.join(root, "owned"), executionKind: "offline-self-test" });
+  for (const trailing of [[], ["exec", "--json"], ["resume", "--last"]]) {
+    const args = session.launchArgs({ trailing });
+    const index = args.indexOf("check_for_update_on_startup=false");
+    assert.ok(index > args.indexOf("--"));
+    assert.equal(args[index - 1], "-c");
+    assert.equal(args.filter(value => value.startsWith("check_for_update_on_startup=")).length, 1);
+  }
+  assert.equal(fs.existsSync(path.join(session.codexHome, "config.toml")), false);
+});
+
+test("an update popup is rejected before readiness or prompt input", async () => {
+  const session = Object.create(TuiSession.prototype), snapshots = [], inputs = [];
+  session.steps = [];
+  session.screen = () => "OpenAI Codex\nUpdate available! 0.154.0 -> 999.0.0\n\n\u203a 1. Update now\n  2. Skip\n  3. Skip until next version\n\nPress enter to continue";
+  session.snapshot = label => snapshots.push(label);
+  session.capture = async () => assert.fail("A popup cannot become a ready checkpoint");
+  session.renderer = { seenCodex: true, press: async key => inputs.push(key), sendPrompt: async text => inputs.push(text) };
+  assert.equal(session.ready(session.screen()), false);
+  await assert.rejects(session.waitReady(500), /Verification will not select or install updates/);
+  await assert.rejects(session.submit("Continue the saved conversation"), /composer is ready/);
+  assert.deepEqual(inputs, []);
+  assert.deepEqual(snapshots, ["unexpected-update-prompt"]);
+  assert.deepEqual(session.steps, []);
+  assert.equal(session.lastPrompt, undefined);
 });

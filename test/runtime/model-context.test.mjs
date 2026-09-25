@@ -19,8 +19,8 @@ const root = fileURLToPath(new URL("../..", import.meta.url));
 const bin = process.env.CODEX_BIN || "codex";
 const model = DEFAULT_MODEL;
 const token = "owned-context-runtime-fixture";
-const isolatedCodexArgs = ["apps", "plugins", "memories", "multi_agent"]
-  .flatMap(feature => ["-c", `features.${feature}=false`]);
+const isolatedCodexArgs = ["-c", "check_for_update_on_startup=false",
+  ...["apps", "plugins", "memories", "multi_agent"].flatMap(feature => ["-c", `features.${feature}=false`])];
 const limits = { max_context_window_tokens: 65_536, max_prompt_tokens: 49_152, max_output_tokens: 16_384 };
 const models = [{ id: model, supportedReasoningEfforts: ["low"], capabilities: {
   supports: { reasoningEffort: true }, limits,
