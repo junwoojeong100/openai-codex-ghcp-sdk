@@ -375,6 +375,16 @@ test("Markdown has one verdict, keeps every failure, and does not confuse percen
   assert.match(error, /The SDK request failed/); assert.ok(!error.includes("[object Object]"));
 });
 
+test("Markdown exposes fixture cleanup failures even when case checks passed", () => {
+  const report = finished();
+  Object.assign(report.cases[0], { status: "failed", observedStatus: "passed", failedChecks: [],
+    cleanupError: "EACCES: cannot remove <fixture> | permission denied" });
+  const text = markdown(report);
+  assert.match(text, /NOT PASSED\.\*\* 35\/36/);
+  assert.match(text, /Fixture cleanup: EACCES: cannot remove &lt;fixture&gt; &#124; permission denied/);
+  assert.doesNotMatch(text, /No detail recorded/);
+});
+
 test("native rollout records actual commands and flags malformed JSON rather than silently skipping it", t => {
   const dir = temp(t); fs.mkdirSync(path.join(dir, "sessions"));
   fs.writeFileSync(path.join(dir, "sessions/rollout-test.jsonl"), [

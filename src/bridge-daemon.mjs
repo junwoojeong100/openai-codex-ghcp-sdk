@@ -124,6 +124,22 @@ export async function bridgeModels(bridge) {
   return (await bridgeModelCatalog(bridge)).data;
 }
 
+async function bridgeReadiness(bridge) {
+  // A valid 503 readiness reply still authenticates the daemon without reconnecting its SDK.
+  const response = await fetch(`http://127.0.0.1:${bridge.port}/readyz`, {
+    headers: { authorization: `Bearer ${bridge.token}` },
+    signal: AbortSignal.timeout(50_000),
+    redirect: "error",
+  });
+  if (![200, 503].includes(response.status)) throw new Error(`Bridge readiness check failed (HTTP ${response.status}).`);
+  const body = await response.json();
+  if (typeof body?.ready !== "boolean" || !["ready", "starting", "recovering", "unavailable", "stopped"].includes(body.state)
+      || body.ready !== (body.state === "ready") || response.status !== (body.ready ? 200 : 503)) {
+    throw new Error("Invalid bridge readiness response; refusing to confirm authentication.");
+  }
+  return body;
+}
+
 async function requireModel(bridge, model) {
   if (!(await bridgeHealth(bridge))) throw new Error("Could not verify the bridge instance.");
   if (!(await bridgeModels(bridge)).some((entry) => entry.id === model)) {
@@ -276,15 +292,16 @@ export async function daemonStatus(env = process.env) {
   if (!registry) return { running: false, state: "stopped" };
   requireCheckout(registry);
   const health = pidAlive(registry.pid) ? await bridgeHealth(registry) : null;
-  let authenticated = false;
+  let readiness;
   if (health) {
-    try { await bridgeModels(registry); authenticated = true; } catch { /* Report unverified state without exposing credentials. */ }
+    try { readiness = await bridgeReadiness(registry); } catch { /* Report unverified state without exposing credentials. */ }
   }
   return {
-    running: authenticated,
-    state: authenticated ? "running" : pidAlive(registry.pid) ? "unverified" : "stale",
+    running: Boolean(readiness),
+    state: readiness ? "running" : pidAlive(registry.pid) ? "unverified" : "stale",
     pid: registry.pid,
     port: registry.port,
+    ...(readiness ? { ready: readiness.ready, upstreamState: readiness.state } : {}),
     ...(health ? { preferredModel: health.preferredModel, modelCount: health.modelCount,
       turnWatchdog: health.turnWatchdog ?? null } : {}),
     log: paths.log,
@@ -302,7 +319,7 @@ export async function stopDaemon(env = process.env) {
       if (!(await bridgeHealth(registry))) {
         throw new Error("Cannot verify the bridge instance; refusing to signal its PID.");
       }
-      await bridgeModels(registry);
+      await bridgeReadiness(registry);
       try { process.kill(registry.pid, "SIGTERM"); } catch (error) { if (error.code !== "ESRCH") throw error; }
       const deadline = Date.now() + shutdownTimeoutMs;
       while (pidAlive(registry.pid) && Date.now() < deadline) await delay(100);

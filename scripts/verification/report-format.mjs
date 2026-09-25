@@ -29,6 +29,7 @@ function caseRow(row) {
   if (row.category) detail.push(`category: ${row.category}`);
   if (row.error) detail.push(typeof row.error === "string" ? row.error : row.error.message ?? JSON.stringify(row.error));
   if (row.reason) detail.push(row.reason);
+  if (row.cleanupError) detail.push(`Fixture cleanup: ${row.cleanupError}`);
   if (row.supervisor?.error?.message) detail.push(row.supervisor.error.message);
   if (row.supervisor?.code !== undefined && row.supervisor.code !== 0) detail.push(`worker exit: ${row.supervisor.code}`);
   if (row.supervisor?.killed) detail.push("worker terminated by supervisor");

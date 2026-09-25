@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "runId": "48b00a9e-e7b2-4673-9d42-26f47d341c59",
+  "runId": "9c85cf9b-4e03-4224-8386-da6b64337df6",
   "contractId": "codex-ghcp-essential-v1",
-  "implementationHash": "d604fdeda3c6643ab2264aa14231de44a059385c70cfb12e5d8386b1ac6105d9",
+  "implementationHash": "b4e39c1ca3cd6cedfd18e2d03871a7a14c19733f52b56db6a6209da9f542fa88",
   "catalogHash": "ba633bc057a3ad468021625911a21a7db4013e203f96692203af38b976d8506a",
   "result": {
     "totalCases": 36,
-    "passed": 36,
-    "fullMatrixPassed": true,
+    "passed": 34,
+    "fullMatrixPassed": false,
     "counts": {
-      "passed": 36,
-      "failed": 0,
+      "passed": 34,
+      "failed": 2,
       "blocked": 0,
       "timed-out": 0,
       "not-run": 0
@@ -18,7 +18,7 @@
     "perModel": [
       {
         "model": "claude-opus-5.5",
-        "passed": 6,
+        "passed": 5,
         "total": 6
       },
       {
@@ -43,18 +43,18 @@
       },
       {
         "model": "gpt-6-luna",
-        "passed": 6,
+        "passed": 5,
         "total": 6
       }
     ],
-    "auxiliaryTitleRejections": 66,
+    "auxiliaryTitleRejections": 64,
     "recoveredTransportErrors": 0,
-    "catalogRecoveries": 3,
+    "catalogRecoveries": 2,
     "hoursLongSoakCertified": false
   },
-  "startedAt": "2026-09-25T01:08:36.611Z",
-  "finishedAt": "2026-09-25T01:15:19.881Z",
-  "editing": "Each genuine 1x video excerpt is followed by a clearly labeled two-second still of its captured checkpoint. Title/status bars are outside the original frame. No audio, substituted answers or hidden failures. Representative scenes, not all 36 cases.",
+  "startedAt": "2026-09-25T01:58:11.813Z",
+  "finishedAt": "2026-09-25T02:06:15.339Z",
+  "editing": "Genuine 1x video excerpts, each followed by a clearly labeled two-second still of its actual checkpoint or failure screen. Every non-passing case is represented. Titles are outside the full source frame. No audio, rewritten model output, simulated results or case-score pooling. Representative scenes, not all 36 cases.",
   "screenshots": [
     {
       "model": "claude-opus-5.5",
@@ -62,12 +62,12 @@
       "description": "Unicode reply",
       "status": "passed",
       "file": "01-v01-claude-opus-5.5.png",
-      "sha256": "52dd300ae259d205220e98f7bcf2ccd95473d624ec5b7dfc883a6d416351e0d4",
+      "sha256": "6eb37912506b582feed3c293a1e59a034368128fab68db5f5fcd6f958193e352",
       "source": "cases/claude-opus-5.5/V01/launch-1/checkpoint-04.png",
-      "checkpoint": "answer-TUI_28e4dc6d_000001 안녕 café",
+      "checkpoint": "answer-TUI_98e53b64_000001 안녕 café",
       "requestedCheckpointPresent": true,
-      "at": 1790298538635,
-      "approximateVideoOffsetMs": 11252
+      "at": 1790301512533,
+      "approximateVideoOffsetMs": 10121
     },
     {
       "model": "claude-sonnet-5",
@@ -75,12 +75,12 @@
       "description": "Read-only failing baseline",
       "status": "passed",
       "file": "02-v02-baseline-claude-sonnet-5.png",
-      "sha256": "0bcff5b05d5955dee25e3cca7d08f4629dbe06d5443627c8afcc18666396839f",
+      "sha256": "a11ce85ebd5cf2234f9af76ac444be0e8a75251fa8e1778d865027cf4e7059ad",
       "source": "cases/claude-sonnet-5/V02/launch-1/checkpoint-02.png",
-      "checkpoint": "answer-TUI_a3d1e601_000002",
+      "checkpoint": "answer-TUI_d9c2593d_000002",
       "requestedCheckpointPresent": true,
-      "at": 1790298565104,
-      "approximateVideoOffsetMs": 18603
+      "at": 1790301533427,
+      "approximateVideoOffsetMs": 13807
     },
     {
       "model": "claude-sonnet-5",
@@ -88,12 +88,12 @@
       "description": "Repair and passing tests",
       "status": "passed",
       "file": "03-v02-repair-claude-sonnet-5.png",
-      "sha256": "afc9ff108ba76232239a6095c2f8e95505a9b060b112207cd2c1db5c37ddec73",
+      "sha256": "42379aa2e3cf98608e54cbfc253dde9599b20a94c84b0b40018af05ab5a6dcd3",
       "source": "cases/claude-sonnet-5/V02/launch-1/checkpoint-03.png",
-      "checkpoint": "answer-TUI_a3d1e601_000001",
+      "checkpoint": "answer-TUI_d9c2593d_000001",
       "requestedCheckpointPresent": true,
-      "at": 1790298577963,
-      "approximateVideoOffsetMs": 31447
+      "at": 1790301553769,
+      "approximateVideoOffsetMs": 34130
     },
     {
       "model": "claude-haiku-4.5",
@@ -101,12 +101,12 @@
       "description": "MCP error and continuation",
       "status": "passed",
       "file": "04-v03-claude-haiku-4.5.png",
-      "sha256": "283edea6c8286c76d7e18cf96d4504b9f9b347d11b2d96b85d76301894654006",
-      "source": "cases/claude-haiku-4.5/V03/launch-1/checkpoint-02.png",
-      "checkpoint": "answer-TUI_21707595_000001",
+      "sha256": "21ea65f7e50cfae16b9627e7d87201ec8403967913e7de9e7c1c157f960809c7",
+      "source": "cases/claude-haiku-4.5/V03/launch-1/checkpoint-03.png",
+      "checkpoint": "answer-TUI_9c587430_000001",
       "requestedCheckpointPresent": true,
-      "at": 1790298602792,
-      "approximateVideoOffsetMs": 17485
+      "at": 1790301591619,
+      "approximateVideoOffsetMs": 33110
     },
     {
       "model": "gpt-6-astra",
@@ -114,12 +114,12 @@
       "description": "Model and reasoning switch",
       "status": "passed",
       "file": "05-v04-gpt-6-astra.png",
-      "sha256": "f7e0eadcd031d44e80197c65fe2ca26a8293e40da6bb3e8775f962bab3ab1c62",
+      "sha256": "9233752158958bc7c40fbff59a25a4c5b61c6e1ca9cc60c171ee24af5b271352",
       "source": "cases/gpt-6-astra/V04/launch-1/checkpoint-05.png",
-      "checkpoint": "answer-TUI_8ed44dff_000002",
+      "checkpoint": "answer-TUI_a9cef10e_000002",
       "requestedCheckpointPresent": true,
-      "at": 1790298833667,
-      "approximateVideoOffsetMs": 22592
+      "at": 1790301902542,
+      "approximateVideoOffsetMs": 35364
     },
     {
       "model": "gpt-6-sol",
@@ -127,12 +127,12 @@
       "description": "Interrupt and continue",
       "status": "passed",
       "file": "06-v05-gpt-6-sol.png",
-      "sha256": "16cb2802b31692b0b2ad9957853d7838757f0fa9cdca32c1f22f74e462bdb8f5",
+      "sha256": "c77d975c10db61f8caa29db19e63c436549985b2174a05a492f4be10bcec8b71",
       "source": "cases/gpt-6-sol/V05/launch-1/checkpoint-03.png",
-      "checkpoint": "answer-TUI_1d63838e_000001",
+      "checkpoint": "answer-TUI_d2cf39f4_000001",
       "requestedCheckpointPresent": true,
-      "at": 1790298881501,
-      "approximateVideoOffsetMs": 13024
+      "at": 1790301930258,
+      "approximateVideoOffsetMs": 14522
     },
     {
       "model": "gpt-6-sol",
@@ -140,12 +140,12 @@
       "description": "Compaction and recall",
       "status": "passed",
       "file": "07-v06-compact-gpt-6-sol.png",
-      "sha256": "0280734c80d0fb1515663ee1459dd9091c39fd7eb44bdd7653ef152731091758",
+      "sha256": "bc9a190cc1b0d9cc05086107bd65098dc665ce49703dffe8d7eb48e3f22e91e5",
       "source": "cases/gpt-6-sol/V06/launch-1/checkpoint-04.png",
-      "checkpoint": "answer-TUI_a10b4e67_000001",
+      "checkpoint": "answer-TUI_2c0617de_000001",
       "requestedCheckpointPresent": true,
-      "at": 1790298907971,
-      "approximateVideoOffsetMs": 23083
+      "at": 1790301959778,
+      "approximateVideoOffsetMs": 25759
     },
     {
       "model": "gpt-6-luna",
@@ -153,39 +153,65 @@
       "description": "Cold resume and recall",
       "status": "passed",
       "file": "08-v06-resume-gpt-6-luna.png",
-      "sha256": "16adf89f939f6e020ae986561527c8ee7f40ec763c18613292a8fa1d35f8d3f6",
+      "sha256": "ad5f4870bb60a396af55de7c825e29bd315274537cd884b95863173245cd7b3d",
       "source": "cases/gpt-6-luna/V06/launch-2/checkpoint-02.png",
-      "checkpoint": "answer-TUI_c8ed2b0c_000001",
+      "checkpoint": "answer-TUI_e0589c61_000001",
       "requestedCheckpointPresent": true,
-      "at": 1790298910187,
-      "approximateVideoOffsetMs": 9344
+      "at": 1790301968572,
+      "approximateVideoOffsetMs": 9888
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V04",
+      "description": "SDK catalog failure before inference",
+      "status": "failed",
+      "file": "09-v04-failure-claude-opus-5.5.png",
+      "sha256": "171e13716da36dfcd4bba65e49ddfdf3166d3daa7fc933d3770f59c84d8641fd",
+      "source": "cases/claude-opus-5.5/V04/launch-1/terminal-browser.png",
+      "checkpoint": "final-screen",
+      "requestedCheckpointPresent": false,
+      "at": 1790301613206,
+      "approximateVideoOffsetMs": 11674
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V02",
+      "description": "Final answer mismatch",
+      "status": "failed",
+      "file": "10-v02-failure-gpt-6-luna.png",
+      "sha256": "f931526c7d11a9c37587fb0741b60a42a343346cd9e91eeca1e8d831b32ce253",
+      "source": "cases/gpt-6-luna/V02/launch-1/terminal-browser.png",
+      "checkpoint": "final-screen",
+      "requestedCheckpointPresent": false,
+      "at": 1790301845661,
+      "approximateVideoOffsetMs": 43431
     }
   ],
   "clips": [
     {
       "model": "claude-opus-5.5",
       "scenarioId": "V01",
-      "status": "passed",
       "description": "Unicode reply",
+      "status": "passed",
       "source": "cases/claude-opus-5.5/V01/launch-1/terminal-browser.webm",
-      "sourceSha256": "215109b5986c6b9743b3d53b50fc4a4429ff2617e4c9e5ee66bc507b6f779979",
-      "sourceStartSeconds": 0.952,
-      "sourceEndSeconds": 11.952,
+      "sourceSha256": "cb7c668e4dd901ca29273ac512c90997d551a00f1c2582b10935186a3e147a82",
+      "sourceStartSeconds": 0,
+      "sourceEndSeconds": 10.821,
       "summaryStartSeconds": 0,
-      "videoExcerptSeconds": 11,
+      "videoExcerptSeconds": 10.84,
       "checkpointHoldSeconds": 2,
-      "durationSeconds": 13
+      "durationSeconds": 12.84
     },
     {
       "model": "claude-sonnet-5",
       "scenarioId": "V02",
-      "status": "passed",
       "description": "Read-only failing baseline",
+      "status": "passed",
       "source": "cases/claude-sonnet-5/V02/launch-1/terminal-browser.webm",
-      "sourceSha256": "85fb753e9ba4edbfa7f222b5906307bf4b89a65c9b11fd3b1ea2e29e9b5fb477",
-      "sourceStartSeconds": 8.303,
-      "sourceEndSeconds": 19.303,
-      "summaryStartSeconds": 13,
+      "sourceSha256": "25554cab1a68ccbb11bb30aa080ce716e69e022fd6f8ed95a1edf3b61ea5364b",
+      "sourceStartSeconds": 3.5069999999999997,
+      "sourceEndSeconds": 14.507,
+      "summaryStartSeconds": 12.84,
       "videoExcerptSeconds": 11,
       "checkpointHoldSeconds": 2,
       "durationSeconds": 13
@@ -193,13 +219,13 @@
     {
       "model": "claude-sonnet-5",
       "scenarioId": "V02",
-      "status": "passed",
       "description": "Repair and passing tests",
+      "status": "passed",
       "source": "cases/claude-sonnet-5/V02/launch-1/terminal-browser.webm",
-      "sourceSha256": "85fb753e9ba4edbfa7f222b5906307bf4b89a65c9b11fd3b1ea2e29e9b5fb477",
-      "sourceStartSeconds": 21.147,
-      "sourceEndSeconds": 32.147,
-      "summaryStartSeconds": 26,
+      "sourceSha256": "25554cab1a68ccbb11bb30aa080ce716e69e022fd6f8ed95a1edf3b61ea5364b",
+      "sourceStartSeconds": 23.830000000000005,
+      "sourceEndSeconds": 34.830000000000005,
+      "summaryStartSeconds": 25.84,
       "videoExcerptSeconds": 11,
       "checkpointHoldSeconds": 2,
       "durationSeconds": 13
@@ -207,13 +233,13 @@
     {
       "model": "claude-haiku-4.5",
       "scenarioId": "V03",
-      "status": "passed",
       "description": "MCP error and continuation",
+      "status": "passed",
       "source": "cases/claude-haiku-4.5/V03/launch-1/terminal-browser.webm",
-      "sourceSha256": "de4a8bd8b8ed5c928310ee9857551c434093b252b5b05117e0960eae859b8cdd",
-      "sourceStartSeconds": 7.184999999999999,
-      "sourceEndSeconds": 18.185,
-      "summaryStartSeconds": 39,
+      "sourceSha256": "b1ebf2b6bdbff08ded4f3472e9101a2271b8e39b96840042648f182ab3383918",
+      "sourceStartSeconds": 22.810000000000002,
+      "sourceEndSeconds": 33.81,
+      "summaryStartSeconds": 38.84,
       "videoExcerptSeconds": 11,
       "checkpointHoldSeconds": 2,
       "durationSeconds": 13
@@ -221,13 +247,13 @@
     {
       "model": "gpt-6-astra",
       "scenarioId": "V04",
-      "status": "passed",
       "description": "Model and reasoning switch",
+      "status": "passed",
       "source": "cases/gpt-6-astra/V04/launch-1/terminal-browser.webm",
-      "sourceSha256": "4e38f75c84ee94958b7050d8966e7f8bd704157cb99e6059b47ab81430a066d3",
-      "sourceStartSeconds": 12.291999999999998,
-      "sourceEndSeconds": 23.291999999999998,
-      "summaryStartSeconds": 52,
+      "sourceSha256": "17d79ea52349cf2d98c2948120d7df103904eb367521855ac882c0a5134da6a1",
+      "sourceStartSeconds": 25.064,
+      "sourceEndSeconds": 36.064,
+      "summaryStartSeconds": 51.84,
       "videoExcerptSeconds": 11,
       "checkpointHoldSeconds": 2,
       "durationSeconds": 13
@@ -235,13 +261,13 @@
     {
       "model": "gpt-6-sol",
       "scenarioId": "V05",
-      "status": "passed",
       "description": "Interrupt and continue",
+      "status": "passed",
       "source": "cases/gpt-6-sol/V05/launch-1/terminal-browser.webm",
-      "sourceSha256": "c664bbb9f52ea6cdbb178d6855ff291d2954e3f12dede5f4b11d863b2c29ec4a",
-      "sourceStartSeconds": 2.7239999999999984,
-      "sourceEndSeconds": 13.723999999999998,
-      "summaryStartSeconds": 65,
+      "sourceSha256": "10f24fbe82e6ccc6a9127847ba8cdcdf1e0837cfc0ef4821cd8f822f420d7898",
+      "sourceStartSeconds": 4.2219999999999995,
+      "sourceEndSeconds": 15.222,
+      "summaryStartSeconds": 64.84,
       "videoExcerptSeconds": 11,
       "checkpointHoldSeconds": 2,
       "durationSeconds": 13
@@ -249,13 +275,13 @@
     {
       "model": "gpt-6-sol",
       "scenarioId": "V06",
-      "status": "passed",
       "description": "Compaction and recall",
+      "status": "passed",
       "source": "cases/gpt-6-sol/V06/launch-1/terminal-browser.webm",
-      "sourceSha256": "1920ea7c4bd52cac51d195b775033b099e69b723a298ef0655e467c83e790b26",
-      "sourceStartSeconds": 12.782999999999998,
-      "sourceEndSeconds": 23.782999999999998,
-      "summaryStartSeconds": 78,
+      "sourceSha256": "54e8d63c89a26d7963ba76f5b12c5b7432df40fe20044c70b88b29769a14ccb8",
+      "sourceStartSeconds": 15.459,
+      "sourceEndSeconds": 26.459,
+      "summaryStartSeconds": 77.84,
       "videoExcerptSeconds": 11,
       "checkpointHoldSeconds": 2,
       "durationSeconds": 13
@@ -263,23 +289,50 @@
     {
       "model": "gpt-6-luna",
       "scenarioId": "V06",
-      "status": "passed",
       "description": "Cold resume and recall",
+      "status": "passed",
       "source": "cases/gpt-6-luna/V06/launch-2/terminal-browser.webm",
-      "sourceSha256": "e331fdd02cb4f2bb37ae3aa91d0d7357fa37a6c59b38261d4a0666cd49cb1294",
+      "sourceSha256": "02daa95d09cf13f9e14129a80baa6343f31a330c05dbfb789ae587d555a678b5",
       "sourceStartSeconds": 0,
-      "sourceEndSeconds": 10.043999999999999,
-      "summaryStartSeconds": 91,
-      "videoExcerptSeconds": 10.08,
+      "sourceEndSeconds": 10.588,
+      "summaryStartSeconds": 90.84,
+      "videoExcerptSeconds": 10.6,
       "checkpointHoldSeconds": 2,
-      "durationSeconds": 12.08
+      "durationSeconds": 12.6
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V04",
+      "description": "SDK catalog failure before inference",
+      "status": "failed",
+      "source": "cases/claude-opus-5.5/V04/launch-1/terminal-browser.webm",
+      "sourceSha256": "3190f453e2b0d85d2c603ceb8c153c2d30543f0ecad24ad58aa7b7daede0c772",
+      "sourceStartSeconds": 1.3739999999999988,
+      "sourceEndSeconds": 12.373999999999999,
+      "summaryStartSeconds": 103.44,
+      "videoExcerptSeconds": 11,
+      "checkpointHoldSeconds": 2,
+      "durationSeconds": 13
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V02",
+      "description": "Final answer mismatch",
+      "status": "failed",
+      "source": "cases/gpt-6-luna/V02/launch-1/terminal-browser.webm",
+      "sourceSha256": "7a192a0a641185dcb821e5a75183c9f006f577eafff3945514ba329f54ba256d",
+      "sourceStartSeconds": 33.131,
+      "sourceEndSeconds": 44.131,
+      "summaryStartSeconds": 116.44,
+      "videoExcerptSeconds": 11,
+      "checkpointHoldSeconds": 2,
+      "durationSeconds": 13
     }
   ],
-  "cards": [],
   "summary": {
     "file": "verification-summary.mp4",
-    "sha256": "abef83f2acceefc4ad36e6f897971107a7e15e75a153e5cad892c4c110e75b31",
-    "bytes": 3185766,
+    "sha256": "e1775c2f46689e3b11f864599b52553e5fb645ca0403cc62c7a634c1c67c5940",
+    "bytes": 3215744,
     "programs": [],
     "stream_groups": [],
     "streams": [
@@ -289,11 +342,11 @@
         "width": 1280,
         "height": 1120,
         "r_frame_rate": "25/1",
-        "nb_frames": "2577"
+        "nb_frames": "3236"
       }
     ],
     "format": {
-      "duration": "103.080000"
+      "duration": "129.440000"
     }
   }
 }

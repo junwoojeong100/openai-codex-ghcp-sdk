@@ -4,71 +4,68 @@
 
 ## Recorded results
 
-**codex-ghcp-essential-v1 · 36/36 · PASS** — **2026-09-25, 10:08–10:15 KST**.
+**codex-ghcp-essential-v1 · 34/36 · NOT PASSED** — **2026-09-25, 10:58–11:06 KST**.
 
-All 36 cases passed using actual Codex CLI/TUI → production bridge → real Copilot SDK → exact Copilot model. The six scenario IDs, exact models, deadlines and 36/36 rule were retained, without automatic case retries, fallback models or pooled scores. V02 uses the explicit, evidence-gated two-turn procedure below.
+All 36 cases were executed once using actual Codex CLI/TUI → production bridge → real Copilot SDK, with exact model selection. The updated source was tested without changing the six scenarios, deadlines or 36/36 pass rule. There were no automatic case retries, fallback models, corrective prompts or pooled scores. Both failures remain in the final result.
 
-**`fullMatrixPassed=true` · `evidenceIntegrity=true` · failed/blocked/timed-out/not-run: 0.**
+**`fullMatrixPassed=false` · `evidenceIntegrity=true` · failed: 2 · blocked/timed-out/not-run: 0.**
 
 | Model | Passed | Failed cases |
 | --- | --- | --- |
-| claude-opus-5.5 | 6/6 | — |
+| claude-opus-5.5 | 5/6 | V04 |
 | claude-sonnet-5 | 6/6 | — |
 | claude-haiku-4.5 | 6/6 | — |
 | gpt-6-astra | 6/6 | — |
 | gpt-6-sol | 6/6 | — |
-| gpt-6-luna | 6/6 | — |
+| gpt-6-luna | 5/6 | V02 |
 
-**Every model completed V02 with real failure-before/repair/pass-after evidence.** Each read-only baseline ran all three tests, recorded two failures with native exit 1 and had an unchanged workspace snapshot. Only then did the runner request a repair. Native `apply_patch` changed `discount.mjs`, the final snapshot showed no other file changes, and the exact same test command passed all three tests with native exit 0 in the same process. Sonnet's baseline and repair are both shown in the media below.
+## Failures
 
-All nine common checks also passed **36/36**, including routing, HTTP/SSE, context/watchdog settings, upstream outcome, MCP isolation, workspace protection, cleanup and execution. The 66 exact unsupported automatic-title requests were counted separately, not credited as successful supported requests.
+| Case | Recorded outcome and boundary |
+| --- | --- |
+| Opus V04 | Initial SDK `listModels` failed with `rpc_error` after 10,570 ms. The launcher exited before the composer, any model call or the picker. V04 starts with Astra before switching to Opus, so the Opus switch was not exercised. The diagnostic does not establish a more specific network or authentication cause. |
+| Luna V02 | The baseline failed as required, native `apply_patch` fixed the code, and all three tests then passed. The model nevertheless returned the original `discount.mjs` source instead of the requested `sample.txt` value, despite that value appearing in the native read result. `execution` and `V02.edit` failed; the runner did not correct or retry the answer. |
 
-## V02 procedure and evidence
+The JSON retains failed-check IDs, startup diagnostics and Luna's expected/observed answer. The failure screenshots and video excerpts below come from this same run, not a reconstruction.
 
-- **Read-only diagnosis:** request file reads and the exact failing test command, explicitly without edits. Retain the native transcript and workspace snapshot.
-- **Evidence gate:** require an unmasked nonzero exit, the three-test failure summary, unchanged files and no patch attempts. Missing evidence fails the case; the runner does not send a corrective prompt, synthesize a baseline or retry the case.
-- **Repair:** only after the gate, request native `apply_patch` and the identical test command. Recompute the result from the unchanged baseline prefix and the final transcript, including all three passing tests, immutable tests/user files and the hidden sample answer.
+## Verified outcomes and limits
 
-The two turns apply equally to all six models within the existing case deadline and `workspace-write` sandbox. The first turn's read-only instruction is checked at the checkpoint, not enforced by switching the sandbox. Production bridge commands and results are not rewritten. **This verifies a staged coding workflow, not guaranteed adherence to a compound single-turn request.** The JSON includes each model's baseline and final native exits; full checkpoints are in `.runtime/verification-final/v02-workflow.json` and per-case facts.
+Every model's V02 recorded an unchanged read-only baseline, three tests with two failures and native exit 1, then a native patch and the same three passing tests with exit 0. Only `discount.mjs` changed; tests and user files were preserved. **The full V02 workflow passed 5/6**, because the required final answer also matters. Full checkpoints are in `.runtime/verification-final/v02-workflow.json` and per-case facts. The two-turn procedure verifies a staged workflow, not general instruction-following reliability.
 
-The live run recorded zero model transport/session errors and zero transport-error recoveries. Startup `listModels` timed out once in each Claude model's V05 launch; all three recovered with a fresh client within the original 30-second startup budget and the cases passed. These are bridge catalog recoveries, not case reruns. Transport-recovery safety remains covered by deterministic regressions, not a live transport fault in this run.
+V01, V03, V05 and V06 passed on all six models. Routing, HTTP/SSE, context-tier and watchdog checks passed 35/36; execution passed 34/36. Workspace protection, MCP isolation and cleanup passed 36/36. A successful cleanup or narrower check does not override a failed case.
 
-## Final driver corrections
-
-- Pinned verification passes `check_for_update_on_startup=false`. A real cached-update popup was reproduced and shown to match the old composer detector; numbered menu choices now fail readiness, and an unexpected update popup receives no input. This changes only the verification environment, not normal launcher settings or global installations.
-- An answer and `response.completed` are not enough to continue. The driver also requires fresh matching native `task_started`/`task_complete` receipts and a ready composer, so it does not request `/compact` while Codex still considers the task active. A rejected compact command fails immediately without retrying it.
-- The duration regression now measures elapsed coverage and completed responses rather than assuming two turns fit in 450 ms. A controlled slow-response test confirms that reaching the duration alone cannot finish an unanswered turn.
-
-After these corrections, the full local suites and a fresh 36-case live matrix ran sequentially. Production bridge code, scenario IDs, model IDs, case deadlines and required outcomes were not changed.
+Two startup-catalog timeouts, in Sonnet V04 and Haiku V04, recovered within the original 30-second budget. The separate Opus V04 RPC error was not eligible for timeout-only recovery. No model transport/session error or model-transport recovery occurred; the catalog startup failure is still a failure. The 64 exact unsupported automatic-title requests were counted separately, not credited as supported responses.
 
 ## Recording and screenshots
 
-This run saved **42 full TUI recordings, 150 checkpoint screenshots and 42 closing screenshots** locally. All published media below comes from this run.
+This run saved **42 full TUI recordings, 144 checkpoint screenshots and 42 closing screenshots** locally. All ten published screenshots and the edited summary come from this run, including both failed cases.
 
-**[Watch the approximately 103-second summary](media/verification-summary.mp4)** · [Media provenance and hashes](media/manifest.json)
+**[Watch the edited summary](media/verification-summary.mp4)** · [Media provenance, clip offsets and hashes](media/manifest.json)
 
-The 103.08-second summary contains eight real-speed excerpts of up to 11 seconds, each followed by a labeled two-second still of its actual checkpoint. Title bars sit outside the original frame; audio is absent. It displays the recorded overall result, **36/36 — PASS**. These are representative scenes, not recordings of all 36 cases; full evidence remains authoritative. The failing tests in the first V02 scene are the required baseline, not a failed verification case.
+Each real-speed excerpt is followed by a clearly labeled two-second still of its actual checkpoint or failure screen. Title bars sit outside the complete source frame; audio is absent. The overall label is **34/36 — NOT PASSED**, with each case's own status. These are representative scenes, not all 36 case recordings. Sonnet's baseline test failure is required evidence; the final two scenes are actual case failures.
 
-| Summary start | Screenshot | Recorded outcome |
+| Scene | Screenshot | Recorded outcome |
 | --- | --- | --- |
-| 00:00 | [V01 · Opus Unicode reply](media/01-v01-claude-opus-5.5.png) | Passed |
-| 00:13 | [V02 · Sonnet read-only baseline](media/02-v02-baseline-claude-sonnet-5.png) | Required test failures, native exit 1 |
-| 00:26 | [V02 · Sonnet repair and tests](media/03-v02-repair-claude-sonnet-5.png) | Three passing tests, native exit 0; case passed |
-| 00:39 | [V03 · Haiku MCP](media/04-v03-claude-haiku-4.5.png) | Passed |
-| 00:52 | [V04 · Astra model/effort switch](media/05-v04-gpt-6-astra.png) | Passed |
-| 01:05 | [V05 · Sol interruption/continuation](media/06-v05-gpt-6-sol.png) | Passed |
-| 01:18 | [V06 · Sol compaction/recall](media/07-v06-compact-gpt-6-sol.png) | Passed |
-| 01:31 | [V06 · Luna cold-resume recall](media/08-v06-resume-gpt-6-luna.png) | Passed |
+| 1 | [V01 · Opus Unicode reply](media/01-v01-claude-opus-5.5.png) | Passed |
+| 2 | [V02 · Sonnet read-only baseline](media/02-v02-baseline-claude-sonnet-5.png) | Required test failures, native exit 1 |
+| 3 | [V02 · Sonnet repair and tests](media/03-v02-repair-claude-sonnet-5.png) | Three passing tests, native exit 0; case passed |
+| 4 | [V03 · Haiku MCP](media/04-v03-claude-haiku-4.5.png) | Passed |
+| 5 | [V04 · Astra model/effort switch](media/05-v04-gpt-6-astra.png) | Passed |
+| 6 | [V05 · Sol interruption/continuation](media/06-v05-gpt-6-sol.png) | Passed |
+| 7 | [V06 · Sol compaction/recall](media/07-v06-compact-gpt-6-sol.png) | Passed |
+| 8 | [V06 · Luna cold-resume recall](media/08-v06-resume-gpt-6-luna.png) | Passed |
+| 9 | [V04 · Opus startup failure](media/09-v04-failure-claude-opus-5.5.png) | Failed before inference: SDK catalog RPC |
+| 10 | [V02 · Luna final-answer mismatch](media/10-v02-failure-gpt-6-luna.png) | Tests passed; required answer failed |
 
-Media checks include full video decoding, file hashes and OCR of selected frames and screenshots; no manual visual review was performed. Captures contain isolated synthetic workspaces; raw recordings can still show local temporary paths. The media manifest links each published asset to its original run and checkpoint.
+Media checks include full decoding of all raw recordings and the summary, source-file hashes, and OCR of the ten screenshots and twenty representative summary frames. Direct image inspection was unavailable, so no manual visual review is claimed. Captures contain isolated synthetic workspaces; local temporary paths remain visible. The manifest links each published asset to its original run and checkpoint or closing failure screen.
 
 ## Local regressions and evidence
 
-Unit/integration/documentation **386/386**; real-Codex runtime with SDK doubles **22/22**. They ran sequentially before the live matrix on the same source fingerprint. The native suite includes startup and cold resume with a cached synthetic newer version, without selecting or installing an update. Offline results are not added to the live score.
+Unit/integration/documentation **392/392**; real-Codex runtime with SDK doubles **22/22**. They ran sequentially before the live matrix on the same source fingerprint, including the daemon-control and cleanup-reporting changes. Offline successes are not added to the live score or used to erase either failure.
 
 Codex 0.154.0 · Copilot SDK 1.0.14 · darwin/arm64 · Node v22.16.0
 
-Evidence was automatically recomputed: `evidenceIntegrity=true`. Raw facts and frozen source: `.runtime/verification-final/`. Implementation fingerprint: `d604fdeda3c6643ab2264aa14231de44a059385c70cfb12e5d8386b1ac6105d9`, not a Git commit ID. Source and user settings were unchanged during execution; all 36 owned worker groups were cleaned up. Public JSON is not a replacement for raw evidence.
+Evidence was automatically recomputed: `evidenceIntegrity=true`, `fullMatrixPassed=false`. Raw facts and frozen source: `.runtime/verification-final/`. Implementation fingerprint: `b4e39c1ca3cd6cedfd18e2d03871a7a14c19733f52b56db6a6209da9f542fa88`, not a Git commit ID. Source and user settings were unchanged during execution; all 36 owned worker groups were cleaned up. Public JSON is not a replacement for raw evidence.
 
 This record retains only the latest local verification. A specific commit's remote CI status is available in [GitHub Actions](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/actions), separately from this live score.
 
@@ -80,8 +77,8 @@ This command needs the original local `.runtime/verification-final/` directory; 
 npm run verify -- --verify .runtime/verification-final/report.json
 ```
 
-The retained raw run and public media both come from the corrected driver and the execution time above. Rechecking them makes no model calls and does not alter the recorded outcome.
+Current and frozen-source verifiers reproduce the same result. This command returns **exit 1** for this run: the evidence is intact, but 34/36 is not a pass. Rechecking makes no model calls and does not alter either failure.
 
 ## Cleanup and limits
 
-Only the current suite, latest live evidence and matching media remain. Earlier CI snapshots and preparation diagnostics have been removed from this repository's records. This is one successful essential-integration run, not a guarantee of future model behavior, summary accuracy, five-hour endurance or whole-product completeness. Existing user bridges were not restarted.
+Only the current suite, this final live run and its matching media remain. Earlier raw results, outdated public media and temporary publication files were removed without rewriting Git history. Existing user bridges were not restarted. This is a failed essential-integration assessment, not whole-product or endurance certification; unsupported capabilities remain unchanged.

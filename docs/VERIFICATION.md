@@ -22,7 +22,7 @@ npm run verify -- --execute --output .runtime/verification-new
 
 Use a new output directory; existing results are never overwritten. Omitting `--output` chooses a fresh directory automatically. `npm run verify` only shows the plan, without model calls.
 
-The command runs the cases, saves the evidence, **automatically recomputes the result**, and prints the `report.md` path. Read its verdict and failed-case rows. Exit **0** means all 36 cases passed; **1** means a failed, blocked or incomplete run; **2** means an argument or evidence error. Failures remain failures even if all processes were cleaned up.
+The command runs the cases, saves the evidence, **automatically recomputes the result**, and prints the `report.md` path. Read its verdict and failed-case rows, including fixture cleanup errors even when the case checks passed. Exit **0** means all 36 cases passed; **1** means a failed, blocked or incomplete run; **2** means an argument or evidence error. Failures remain failures even if all processes were cleaned up.
 
 ## What is necessary
 

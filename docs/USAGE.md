@@ -104,10 +104,12 @@ A launch without the flag starts a separate foreground bridge and leaves the bac
 
 | `state` | Meaning and action |
 | --- | --- |
-| `running` | The registered bridge responded and authenticated catalog access succeeded. This does not test a model response. |
+| `running` | The registered bridge responded and its local credential was verified. `ready` and `upstreamState` separately report SDK readiness, not a model-response guarantee. |
 | `stopped` | No background bridge is registered. A foreground bridge may still be running. |
 | `stale` | The registered process has exited. The next background launch replaces the registry entry. |
-| `unverified` | A process exists, but its identity or catalog access could not be confirmed. Read the reported `log` file; do not kill a PID based only on the registry. |
+| `unverified` | A process exists, but its identity or local credential could not be confirmed. Read the reported `log` file; do not kill a PID based only on the registry. |
+
+Status and stop use the authenticated `/readyz` probe, not a model catalog request: they do not trigger SDK reconnection. A verified bridge can report `running` with `ready=false` and can still be stopped during an upstream outage.
 
 **Stop it** only after closing **every** Codex session that uses it, including sessions in other projects:
 
