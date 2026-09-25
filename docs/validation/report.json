@@ -1,0 +1,854 @@
+{
+  "schemaVersion": 1,
+  "recordKind": "final-verification-summary",
+  "assessmentDate": "2026-09-25",
+  "timezone": "Asia/Seoul",
+  "contractId": "codex-ghcp-essential-v1",
+  "executionKind": "live",
+  "runId": "ba901d61-785f-4762-b45c-e0f2480e4cac",
+  "startedAt": "2026-09-24T23:19:41.837Z",
+  "finishedAt": "2026-09-24T23:25:06.196Z",
+  "durationMs": 324383,
+  "versions": {
+    "codex": "0.154.0",
+    "copilotSdk": "1.0.14",
+    "playwright": "1.63.0",
+    "xterm": "6.0.0"
+  },
+  "environment": {
+    "platform": "darwin",
+    "release": "25.6.0",
+    "architecture": "arm64",
+    "node": "v22.16.0",
+    "cpuCount": 10,
+    "totalMemoryBytes": 17179869184,
+    "proxyConfigured": false,
+    "ci": false
+  },
+  "implementationHash": "177abfa900a8a4e7de4868096ba459d9d9308f563b54ee44e40eda287e9a50dd",
+  "catalogHash": "ba633bc057a3ad468021625911a21a7db4013e203f96692203af38b976d8506a",
+  "scenarioIdsModelsAndPassRuleUnchanged": true,
+  "implementationUnchangedDuringRun": true,
+  "frozenSourceUnchanged": true,
+  "userSettingsUnchanged": true,
+  "result": {
+    "evidenceIntegrity": true,
+    "catalogId": "codex-ghcp-essential-v1",
+    "totalCases": 36,
+    "passed": 36,
+    "fullMatrixPassed": true,
+    "counts": {
+      "passed": 36,
+      "failed": 0,
+      "blocked": 0,
+      "timed-out": 0,
+      "not-run": 0
+    },
+    "perModel": [
+      {
+        "model": "claude-opus-5.5",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "model": "claude-sonnet-5",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "model": "gpt-6-astra",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "model": "gpt-6-sol",
+        "passed": 6,
+        "total": 6
+      },
+      {
+        "model": "gpt-6-luna",
+        "passed": 6,
+        "total": 6
+      }
+    ],
+    "auxiliaryTitleRejections": 66,
+    "recoveredTransportErrors": 0,
+    "catalogRecoveries": 0,
+    "hoursLongSoakCertified": false
+  },
+  "checks": {
+    "routing": {
+      "passed": 36,
+      "total": 36
+    },
+    "connection": {
+      "passed": 36,
+      "total": 36
+    },
+    "context-tier": {
+      "passed": 36,
+      "total": 36
+    },
+    "watchdog": {
+      "passed": 36,
+      "total": 36
+    },
+    "upstream": {
+      "passed": 36,
+      "total": 36
+    },
+    "mcp-isolation": {
+      "passed": 36,
+      "total": 36
+    },
+    "workspace": {
+      "passed": 36,
+      "total": 36
+    },
+    "cleanup": {
+      "passed": 36,
+      "total": 36
+    },
+    "execution": {
+      "passed": 36,
+      "total": 36
+    },
+    "V01.cli": {
+      "passed": 6,
+      "total": 6
+    },
+    "V01.launch": {
+      "passed": 6,
+      "total": 6
+    },
+    "V01.isolation": {
+      "passed": 6,
+      "total": 6
+    },
+    "V02.tests": {
+      "passed": 6,
+      "total": 6
+    },
+    "V02.edit": {
+      "passed": 6,
+      "total": 6
+    },
+    "V03.mcp": {
+      "passed": 6,
+      "total": 6
+    },
+    "V03.continuation": {
+      "passed": 6,
+      "total": 6
+    },
+    "V04.switch": {
+      "passed": 6,
+      "total": 6
+    },
+    "V04.effort": {
+      "passed": 6,
+      "total": 6
+    },
+    "V05.interrupt": {
+      "passed": 6,
+      "total": 6
+    },
+    "V05.recovery": {
+      "passed": 6,
+      "total": 6
+    },
+    "V06.compact": {
+      "passed": 6,
+      "total": 6
+    },
+    "V06.resume": {
+      "passed": 6,
+      "total": 6
+    }
+  },
+  "cases": [
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V01",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 27178,
+      "resultHash": "bdeed7b6a9645e2c9a9288ea73f1f23b53251663aae02e3f8b6b58319303a8e4",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V02",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 30635,
+      "resultHash": "b02015fc2c10c01efefa667a63a9630645c2aa4165adaa5ea99db3f81283fdb0",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V03",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 26439,
+      "resultHash": "4aa1b65a2386b8ed39e3508d0214f6e172191d035f131e7751d2078521f9c11c",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V04",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 25208,
+      "resultHash": "2471f3e3e2148a79f8b8ac9a6088708cec45ddda5ecd500f900a44f43f140a9f",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V05",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 16953,
+      "resultHash": "83977986afc8cb609c4de754fff334a9f8b11f280515d19d212ce6152146d00c",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-opus-5.5",
+      "scenarioId": "V06",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 38636,
+      "resultHash": "f4f841343bef96dc5387c27fb93d97312823d23896370d3280816a2d95a7a831",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "V01",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 25726,
+      "resultHash": "2646637e145ea8046d63e88faa30d9e702649b73ac88d91089e97b6196fb87cd",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "V02",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 30170,
+      "resultHash": "8eb59688073ef70386c3b42f491c621ed7664b607804eb584acd28cb49e191d8",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "V03",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 24698,
+      "resultHash": "9f3158b0c6d200583b0644d404aedfecfc135f57fc4c187743b8840dcb753d17",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "V04",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 22816,
+      "resultHash": "4f4a20f813c4786d753308c379e7cd7b384eaaad86a792d5778e71c412350dd7",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "V05",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 15609,
+      "resultHash": "d57a2acd16be3f8a134432da7ff97ea46d230276b6edca49fe383baae83fde2d",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-sonnet-5",
+      "scenarioId": "V06",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 35493,
+      "resultHash": "ce2eeddd9c54b214ac516b38cf6759366d7a2d30e101e949a667759aa0bbfdf0",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "V01",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 27835,
+      "resultHash": "4bce59088837b34dd8c8d14fc9541567c6d386030eccb21f2572bc6b4327542b",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "V02",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 50378,
+      "resultHash": "501fec2b3b011940468661c3bc508ec2bfd798c447f0a310074c71e83b1b8cab",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "V03",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 21385,
+      "resultHash": "42b2c6641bcf51516c601197b3d76905a2ec217a88684a1de7dea14598a6dcc0",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "V04",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 20437,
+      "resultHash": "7ccf2c957a0ea4b5485565d6b133f10c5c74654a58fafbc3688bd2eb555e4336",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "V05",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 16881,
+      "resultHash": "598090e032983e68c36f96b156add203220bf3cecdfcf9d27c3619b95bbbae8c",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "claude-haiku-4.5",
+      "scenarioId": "V06",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 41148,
+      "resultHash": "7a9d6eccfc37436042b97e4e3365693498c05ee83704211f10109c8d479f2b6c",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "V01",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 29693,
+      "resultHash": "7863e85ceb8f398220022e312f23ebc08043530e3929a0336cb8f660c63668fa",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "V02",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 34367,
+      "resultHash": "c8d5775a439c101132666fb43e4be0d0392ac13b771fca30a942b78d66c6b48b",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "V03",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 27034,
+      "resultHash": "942519d107f58a16b5d1a83783a96fadedb8415782df5b0be9f43992d66c8c57",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "V04",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 21798,
+      "resultHash": "accd8c2dcf634701862f80b241b8135efaa2a0eec082b6de5cf098d13b78bc05",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "V05",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 14498,
+      "resultHash": "11ed5a6fac7d15408f84302ac278c5c25eb87a2482bdc2718976d742fb8be153",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-astra",
+      "scenarioId": "V06",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 38276,
+      "resultHash": "71bb7b0dd04b5b989f93463f551025576d9481ee242735ecc4f887f7b413ee1d",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "V01",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 30275,
+      "resultHash": "217c148398ad9901edcd3addf913014bf9608ed8ae554e68132c3e5607a665b5",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "V02",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 26610,
+      "resultHash": "ed46911ef81505c727813e6339429c3eaac5b26b243f1655019441dd09a718cf",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "V03",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 19620,
+      "resultHash": "e87f8a1d1f45455d7c100c7e396c14bfe17a8f274a123a41471bdef2d138dca3",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "V04",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 20580,
+      "resultHash": "e03149bd08ba20500a2a432db0211ee6e5332864318bd6d6f2fa35e950af5ea3",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "V05",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 13505,
+      "resultHash": "b466bf368b9d80daa0a46625aadb2d5f630795f96b44b20ce1144a85f346c955",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-sol",
+      "scenarioId": "V06",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 32859,
+      "resultHash": "d1e26eed86277712e9880d3c184936f96d96c1e0a0ef7ee68206e1579232ce19",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V01",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 34055,
+      "resultHash": "d317d46e8c6783d672c451bb26ec6c781ee25c626339fe96639d74cd642d114a",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V02",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 23580,
+      "resultHash": "25b6d50293dbd9d6f771c90c78f307fb0400854a3eabd69df6785dddbba836e0",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V03",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 16600,
+      "resultHash": "d83d9c508b0ae74791d2b94f5a2257f22c2c25c0435faf4e8c8760e6c2dd2e9c",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V04",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 22584,
+      "resultHash": "c9b03960694642505e7934422b70836f3e2f2ba20626549c73c0053062a7dae7",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V05",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 13703,
+      "resultHash": "31c2b86377373f26133ae24b08eff1a826bd4a9f6aa700c3d48e15b656ef835b",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    },
+    {
+      "model": "gpt-6-luna",
+      "scenarioId": "V06",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 32181,
+      "resultHash": "ad351269458281d13aa3977b5cf9b633d2eb35400137016605e3811a51d640da",
+      "recoveredTransportErrors": 0,
+      "catalogRecoveries": 0
+    }
+  ],
+  "failures": [],
+  "v02Procedure": {
+    "appliesToAllSixModels": true,
+    "turns": [
+      "Read-only baseline",
+      "Repair after evidence gate"
+    ],
+    "gate": "The native transcript must contain an unmasked nonzero test exit with three tests and actual failures, no recorded patch attempt, and a workspace snapshot equal to the original. Otherwise the case fails without a repair request or retry.",
+    "completion": "The exact baseline remains a prefix of the final native transcript; native apply_patch changes discount.mjs, the final workspace snapshot contains no other file changes, and the same three tests pass with exit zero in the same process.",
+    "sandbox": "Both turns use the same isolated workspace-write sandbox; read-only diagnosis is a prompt instruction, not a sandbox transition.",
+    "filePreservationEvidence": "Native tool records plus initial, baseline and final workspace snapshots; not continuous filesystem monitoring or a write-prevention mechanism.",
+    "unchanged": [
+      "36-case rule",
+      "six exact models",
+      "case deadlines",
+      "production defaults",
+      "test command",
+      "test assertions",
+      "tool/result fidelity",
+      "no automatic case retries"
+    ],
+    "limitation": "A staged coding workflow is verified; single-turn instruction adherence and universal model-task success are not guaranteed.",
+    "evidence": ".runtime/verification-final/v02-workflow.json",
+    "evidenceSha256": "f0042b50d3b650f9e266bb02f4d3bdffc8cec606ff28d0f66566d1da4b51bdfc",
+    "modelsPassed": 6,
+    "cases": [
+      {
+        "model": "claude-opus-5.5",
+        "status": "passed",
+        "twoTurnAnswersRecorded": true,
+        "baselineWorkspaceUnchanged": true,
+        "baselinePatchApplies": 0,
+        "baseline": [
+          {
+            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+            "exitCode": 1,
+            "tests": 3,
+            "failed": 2
+          }
+        ],
+        "final": {
+          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+          "exitCode": 0,
+          "tests": 3,
+          "passed": 3
+        },
+        "baselineIsExactNativePrefix": true,
+        "testsUnchanged": true,
+        "onlySourceModified": [
+          "discount.mjs"
+        ],
+        "sameNativeProcess": true
+      },
+      {
+        "model": "claude-sonnet-5",
+        "status": "passed",
+        "twoTurnAnswersRecorded": true,
+        "baselineWorkspaceUnchanged": true,
+        "baselinePatchApplies": 0,
+        "baseline": [
+          {
+            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+            "exitCode": 1,
+            "tests": 3,
+            "failed": 2
+          }
+        ],
+        "final": {
+          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+          "exitCode": 0,
+          "tests": 3,
+          "passed": 3
+        },
+        "baselineIsExactNativePrefix": true,
+        "testsUnchanged": true,
+        "onlySourceModified": [
+          "discount.mjs"
+        ],
+        "sameNativeProcess": true
+      },
+      {
+        "model": "claude-haiku-4.5",
+        "status": "passed",
+        "twoTurnAnswersRecorded": true,
+        "baselineWorkspaceUnchanged": true,
+        "baselinePatchApplies": 0,
+        "baseline": [
+          {
+            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+            "exitCode": 1,
+            "tests": 3,
+            "failed": 2
+          }
+        ],
+        "final": {
+          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+          "exitCode": 0,
+          "tests": 3,
+          "passed": 3
+        },
+        "baselineIsExactNativePrefix": true,
+        "testsUnchanged": true,
+        "onlySourceModified": [
+          "discount.mjs"
+        ],
+        "sameNativeProcess": true
+      },
+      {
+        "model": "gpt-6-astra",
+        "status": "passed",
+        "twoTurnAnswersRecorded": true,
+        "baselineWorkspaceUnchanged": true,
+        "baselinePatchApplies": 0,
+        "baseline": [
+          {
+            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+            "exitCode": 1,
+            "tests": 3,
+            "failed": 2
+          }
+        ],
+        "final": {
+          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+          "exitCode": 0,
+          "tests": 3,
+          "passed": 3
+        },
+        "baselineIsExactNativePrefix": true,
+        "testsUnchanged": true,
+        "onlySourceModified": [
+          "discount.mjs"
+        ],
+        "sameNativeProcess": true
+      },
+      {
+        "model": "gpt-6-sol",
+        "status": "passed",
+        "twoTurnAnswersRecorded": true,
+        "baselineWorkspaceUnchanged": true,
+        "baselinePatchApplies": 0,
+        "baseline": [
+          {
+            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+            "exitCode": 1,
+            "tests": 3,
+            "failed": 2
+          }
+        ],
+        "final": {
+          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+          "exitCode": 0,
+          "tests": 3,
+          "passed": 3
+        },
+        "baselineIsExactNativePrefix": true,
+        "testsUnchanged": true,
+        "onlySourceModified": [
+          "discount.mjs"
+        ],
+        "sameNativeProcess": true
+      },
+      {
+        "model": "gpt-6-luna",
+        "status": "passed",
+        "twoTurnAnswersRecorded": true,
+        "baselineWorkspaceUnchanged": true,
+        "baselinePatchApplies": 0,
+        "baseline": [
+          {
+            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+            "exitCode": 1,
+            "tests": 3,
+            "failed": 2
+          }
+        ],
+        "final": {
+          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
+          "exitCode": 0,
+          "tests": 3,
+          "passed": 3
+        },
+        "baselineIsExactNativePrefix": true,
+        "testsUnchanged": true,
+        "onlySourceModified": [
+          "discount.mjs"
+        ],
+        "sameNativeProcess": true
+      }
+    ]
+  },
+  "observedRecovery": {
+    "transportFailures": 0,
+    "sessionErrors": 0,
+    "recoveredTransportErrors": 0,
+    "catalogRecoveries": 0
+  },
+  "localRegressions": {
+    "local-tests": {
+      "total": 376,
+      "passed": 376,
+      "failed": 0,
+      "cancelled": 0,
+      "log": ".runtime/verification-final/local-tests.log",
+      "sha256": "a48cd4a3bd69d5d7ebeb1d1aa2650fcc6e8cbb40bdcc71a7cd2dac512fe97a04"
+    },
+    "runtime-tests": {
+      "total": 21,
+      "passed": 21,
+      "failed": 0,
+      "cancelled": 0,
+      "log": ".runtime/verification-final/runtime-tests.log",
+      "sha256": "c25077f4ea161e152e2a5d8b092675f057fc733e300626ee404bc5b886552b98"
+    }
+  },
+  "localExecutionNote": "Local coverage, offline real-Codex runtime and the live matrix ran sequentially on the same source fingerprint. Offline results are not added to the live score.",
+  "evidence": {
+    "rawReport": ".runtime/verification-final/report.json",
+    "rawReportSha256": "a7cee3187de8217012c30f22720f5937b07336dd205f445af8bbc0a9731a5e68",
+    "automaticallyRecomputed": true,
+    "verificationSha256": "473149a9a9df88d4062f446d0eba178eaad8bb819708db08647eb25c14ec5082",
+    "postCleanupVerificationSha256": "473149a9a9df88d4062f446d0eba178eaad8bb819708db08647eb25c14ec5082",
+    "requiresOriginalArtifacts": true,
+    "recheckedAfterCleanup": true,
+    "frozenSourceVerified": true,
+    "frozenVerificationSha256": "473149a9a9df88d4062f446d0eba178eaad8bb819708db08647eb25c14ec5082"
+  },
+  "media": {
+    "recordedTuiLaunches": 42,
+    "rawVideoFiles": 42,
+    "checkpointScreenshots": 150,
+    "closingScreenshots": 42,
+    "summary": {
+      "file": "docs/validation/media/verification-summary.mp4",
+      "durationSeconds": 101.76,
+      "sha256": "c0fa939abd5715295e5188df36cce005eba4bb4fe43692ede68f7c951c084b43",
+      "bytes": 3215084
+    },
+    "publishedScreenshots": 8,
+    "manifest": "docs/validation/media/manifest.json",
+    "manifestSha256": "b538ea4f6d3a900a3f13c135d3302d4da41ccce9a05ac5f4cba8a6c20e6912b2",
+    "editing": "Each genuine 1x video excerpt is followed by a clearly labeled two-second still of its captured checkpoint. Title/status bars are outside the original frame. No audio, substituted answers or hidden failures. Representative scenes, not all 36 cases.",
+    "v02BaselineAndRepairShown": true,
+    "all36CasesShownInSummary": false,
+    "validation": {
+      "decodedVideos": 43,
+      "screenshotOcrSamples": 8,
+      "finalVideoFrameOcrSamples": 16,
+      "manualVisualReviewPerformed": false,
+      "audit": ".runtime/verification-final/media-review.json",
+      "auditSha256": "7aa12ed1594dc0036561ed553dba5db587e068f3faadc3d4492f0069d5da7c7d"
+    }
+  },
+  "cleanup": {
+    "previousRawRunsRetained": false,
+    "priorVerificationArtifactsRemoved": true,
+    "currentVerificationSuiteRetained": true,
+    "retainedRawRun": ".runtime/verification-final",
+    "allFinalWorkerGroupsGone": true,
+    "gitHistoryRewritten": false,
+    "existingUserBridgesRestarted": false,
+    "priorArtifactAbsenceVerified": true,
+    "onlyFinalArtifactsRemain": true,
+    "previousHistorySummariesRemoved": true,
+    "preparationLogsRetained": false
+  },
+  "documentation": {
+    "total": 6,
+    "passed": 6,
+    "log": ".runtime/verification-final/documentation.log",
+    "sha256": "b481932124de9f165d4a2d9551f9d0852f0ff1cf07a14ce5fa97510e92ce53aa"
+  },
+  "limits": [
+    "Only the six essential scenarios on six exact models are scored, not whole-product completeness or a percentage target.",
+    "V02 is a two-turn, evidence-gated workflow, not a guarantee that a model follows every step in a compound one-turn instruction.",
+    "Model instruction following and summary accuracy are not guaranteed; no endurance certification.",
+    "Multimodal input, schema-enforced JSON, hosted tools, WebSockets and remote Responses compaction remain unsupported.",
+    "The recorded verification is local and does not include remote CI results. Existing user bridges were not restarted."
+  ],
+  "closeout": {
+    "reviewedAt": "2026-09-25T00:13:21.697Z",
+    "scope": "Documentation accuracy, bilingual consistency, implementation/default alignment and saved-evidence/media integrity.",
+    "liveRunId": "ba901d61-785f-4762-b45c-e0f2480e4cac",
+    "newLiveExecution": false,
+    "modelCallsMade": 0,
+    "runtimeCodeChanged": false,
+    "verifierOrTestsChanged": false,
+    "mediaRegenerated": false,
+    "changes": [
+      "Clarified timeout units, per-request budgets and separate cleanup/retry layers.",
+      "Limited cache reuse claims to successful requests with live valid state.",
+      "Distinguished tool-result RPC no-resubmission from serialized history reuse.",
+      "Distinguished V02 prompt instructions and snapshot evidence from write prevention.",
+      "Separated configured CI targets and accepted versions from recorded local coverage.",
+      "Clarified local raw-evidence requirements and manual publication/retention responsibilities."
+    ],
+    "checks": {
+      "documentationTests": {
+        "passed": 6,
+        "total": 6
+      },
+      "bilingualGuidePairs": 7,
+      "shellBlocksParsed": 52,
+      "shellTokensMatchExceptLocalizedReadmePrompt": true,
+      "environmentNamesMatch": true,
+      "defaultsMatchedPerLanguage": 14,
+      "launcherHelpAndVerificationPlan": "offline",
+      "runtimeVerifierTestFingerprintUnchanged": true,
+      "frozenAndCurrentVerdictsMatch": true,
+      "publishedResultMatchesRaw": true,
+      "publishedMediaHashesUnchanged": true,
+      "latestRunOnly": true,
+      "documentDelimitersAndCurrentReferencesVerified": true,
+      "mediaDurationAndTimelineMatch": true,
+      "originalMediaFilesHashVerified": 42,
+      "v02BaselineAndRepairEvidenceRechecked": 6,
+      "finalAuditRecord": ".runtime/verification-final/publication-audit.json"
+    }
+  }
+}

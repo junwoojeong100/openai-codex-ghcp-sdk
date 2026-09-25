@@ -5,18 +5,12 @@ import path from "node:path";
 import { randomBytes } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { after, test } from "node:test";
-import { TuiSession, isExpectedTitleRejection } from "../../scripts/tui/session.mjs";
-import { SUPPORTED_MODEL_IDS } from "../../src/model-map.mjs";
-import { implementationHash } from "../../scripts/stability/report.mjs";
-import { snapshotSources, verifyFrozenSources } from "../../scripts/soak/runner.mjs";
-import { scrubber } from "../../scripts/compatibility/util.mjs";
-import { verificationEnvironment } from "../../scripts/compatibility/preflight.mjs";
+import { TuiSession, isExpectedTitleRejection } from "../../scripts/verification/session.mjs";
+import { scrubber } from "../../scripts/verification/util.mjs";
+import { verificationEnvironment } from "../../scripts/verification/preflight.mjs";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
-const live = Boolean(process.env.GHCP_LIVE_HANDOFF_OUTPUT);
-const directory = live ? path.resolve(process.env.GHCP_LIVE_HANDOFF_OUTPUT)
-  : fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "pending-handoff-tui-")));
-if (live) fs.mkdirSync(directory, { mode: 0o700 });
+const directory = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "pending-handoff-tui-")));
 const clean = scrubber();
 const write = (file, value) => fs.writeFileSync(file, JSON.stringify(clean(value), null, 2) + "\n", { mode: 0o600 });
 const read = file => fs.existsSync(file) ? fs.readFileSync(file, "utf8").trim().split("\n").filter(Boolean).map(line => JSON.parse(line)) : [];
@@ -24,24 +18,17 @@ const prompts = [
   'Call the fixture MCP lookup tool exactly once with key "selected". Reply with only the returned application sample on a line by itself, without a label or other text. Do not use shell tools.',
   "Without using tools, repeat only the exact application sample returned by the earlier lookup on a line by itself, without a label or other text.",
 ];
-const report = { contractId: "pending-result-instruction-handoff-v2", prompts,
-  executionKind: live ? "live" : "offline-self-test", sourceHash: implementationHash(),
+const report = { prompts, executionKind: "offline-self-test",
   environment: verificationEnvironment(), startedAt: new Date().toISOString(),
   scope: "Actual Codex TUI and headless Playwright; labelled trusted-instruction update with complete tool results. No /new or user bridge restart.",
-  cases: (live ? SUPPORTED_MODEL_IDS : ["gpt-6-astra"]).map(model => ({ model, status: "not-run" })) };
-const sources = live ? snapshotSources(directory) : null;
-if (sources) write(path.join(directory, "freeze.json"), { frozenAt: new Date().toISOString(), contractId: report.contractId,
-  prompts, sourceHash: report.sourceHash, sources });
+  cases: [{ model: "gpt-6-astra", status: "not-run" }] };
 const save = () => write(path.join(directory, "report.json"), report);
 save();
 after(() => {
-  Object.assign(report, { finishedAt: new Date().toISOString(), sourceUnchanged: implementationHash() === report.sourceHash,
+  Object.assign(report, { finishedAt: new Date().toISOString(),
     passed: report.cases.filter(row => row.status === "passed").length, total: report.cases.length });
-  if (sources) report.frozenSourceUnchanged = verifyFrozenSources(directory, sources);
   save();
-  if (!live) fs.rmSync(directory, { recursive: true, force: true });
-  assert.equal(report.sourceUnchanged, true);
-  if (sources) assert.equal(report.frozenSourceUnchanged, true);
+  fs.rmSync(directory, { recursive: true, force: true });
 });
 
 for (const row of report.cases) test(`${row.model}: complete tool results survive an instruction update in the same actual TUI (${report.executionKind})`, { timeout: 300_000 }, async t => {
@@ -53,7 +40,7 @@ for (const row of report.cases) test(`${row.model}: complete tool results surviv
   const session = new TuiSession({ directory: out, model: row.model, ownedRoot: path.join(out, "owned"),
     sandbox: "read-only", executionKind: report.executionKind,
     preload: fileURLToPath(new URL("../fixtures/pending-handoff.mjs", import.meta.url)),
-    codexArgs: ["-c", `mcp_servers.fixture={ command=${JSON.stringify(process.execPath)}, args=[${JSON.stringify(path.join(root, "scripts/compatibility/mcp-fixture.mjs"))}, ${JSON.stringify(fixture)}], startup_timeout_sec=15, tool_timeout_sec=15, default_tools_approval_mode="approve" }`] });
+    codexArgs: ["-c", `mcp_servers.fixture={ command=${JSON.stringify(process.execPath)}, args=[${JSON.stringify(path.join(root, "scripts/verification/mcp-fixture.mjs"))}, ${JSON.stringify(fixture)}], startup_timeout_sec=15, tool_timeout_sec=15, default_tools_approval_mode="approve" }`] });
   write(session.observerFile, { ...JSON.parse(fs.readFileSync(session.observerFile, "utf8")), pendingHandoffProbe: true });
   const cancel = () => { void session.closeLaunch(); };
   t.signal.addEventListener("abort", cancel, { once: true });
@@ -106,7 +93,7 @@ for (const row of report.cases) test(`${row.model}: complete tool results surviv
     assert.equal(evidence.rollout.files, 1);
     assert.equal(session.observer().metrics.modelMismatches, 0);
     assert.ok(evidence.launches.every(launch => launch.cleanup?.childReaped && launch.cleanup?.processGroupGone && !launch.browserError && !launch.rendererCloseError));
-    if (live) { assert.ok(evidence.samples.maxRuntimes > 0); assert.equal(evidence.samples.maxRuntimeMcp, 0); }
+    assert.equal(evidence.samples.maxRuntimes, 0);
     row.cleanupPassed = true;
   } catch (error) { failure ??= error; row.cleanupError = clean(error.message); }
   t.signal.removeEventListener("abort", cancel);

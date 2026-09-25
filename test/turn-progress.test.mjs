@@ -153,7 +153,7 @@ test("duplicate turn-start events cannot reset cumulative root byte counts", asy
 });
 
 test("upstream failure diagnostics are root-only, content-free and do not fabricate progress", async t => {
-  const { manager, diagnostics } = await setup(t, { turnFirstProgressTimeoutMs: 80, turnIdleRecoveryAttempts: 0 }, { onSend: session => {
+  const { manager, client, diagnostics } = await setup(t, { turnFirstProgressTimeoutMs: 80, turnIdleRecoveryAttempts: 0 }, { onSend: session => {
     session.emit("assistant.turn_start", {});
     session.emit("model.call_failure", { source: "top_level", failureKind: "api", statusCode: 429,
       errorMessage: "private-provider-details", providerCallId: "private-correlation", model: "private-model" });
@@ -165,7 +165,8 @@ test("upstream failure diagnostics are root-only, content-free and do not fabric
   } });
   await assert.rejects(manager.execute(body("input")), /Last upstream failure: api \(HTTP 429\)/);
   const failures = diagnostics.filter(event => event.event === "bridge.model_call_failed");
-  assert.deepEqual(failures, [{ event: "bridge.model_call_failed", model, phase: "prompt", kind: "api", statusCode: 429 }]);
+  assert.deepEqual(failures, [{ event: "bridge.model_call_failed", model, phase: "prompt",
+    sessionId: client.sessions[0].sessionId, kind: "api", statusCode: 429 }]);
   assert.doesNotMatch(JSON.stringify(diagnostics), /private-/);
 });
 

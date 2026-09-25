@@ -7,10 +7,10 @@ import { normalizeRequest } from "../../src/request-policy.mjs";
 const root = fileURLToPath(new URL("../..", import.meta.url));
 if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === path.join(root, "src/server.mjs")) {
   const config = JSON.parse(fs.readFileSync(process.env.GHCP_SOAK_OBSERVER, "utf8"));
-  if (config.pendingHandoffProbe !== true || !["live", "offline-self-test"].includes(config.executionKind)) {
-    throw new Error("An explicitly labelled, owned pending-handoff probe is required.");
+  if (config.pendingHandoffProbe !== true || config.executionKind !== "offline-self-test") {
+    throw new Error("An explicitly labelled, offline pending-handoff fixture is required.");
   }
-  if (config.executionKind === "offline-self-test") await import("./tui-sdk.mjs");
+  await import("./tui-sdk.mjs");
   const file = path.join(config.output, "pending-handoff.jsonl");
   const record = value => fs.appendFileSync(file, JSON.stringify({ at: Date.now(), ...value }) + "\n", { mode: 0o600 });
   const isResult = item => ["function_call_output", "custom_tool_call_output"].includes(item.type);

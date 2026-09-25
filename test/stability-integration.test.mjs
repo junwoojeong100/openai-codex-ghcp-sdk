@@ -78,6 +78,28 @@ test("slow first progress keeps one response stream open without replaying the p
   assert.ok(!diagnostics.some(event => event.event === "bridge.turn_recovering"));
 });
 
+test("safe transport recovery completes the same SSE response without an intermediate failure", async t => {
+  let sends = 0;
+  const client = new FakeClient({ onSend: session => {
+    if (++sends === 1) setImmediate(() => {
+      session.emit("model.call_failure", { source: "top_level", failureKind: "transport", model });
+      session.emit("session.error", { errorType: "query", message: "synthetic transport failure" });
+    });
+    else session.reply("TRANSPORT_RECOVERED");
+  } });
+  const { post, diagnostics } = await setup(t, { client });
+  const response = await post({ model, input: "synthetic recall", stream: true });
+  const events = parseEvents(await response.text());
+  assert.equal(response.status, 200);
+  assert.equal(events.filter(event => event.type === "response.created").length, 1);
+  assert.equal(events.filter(event => event.type === "response.completed").length, 1);
+  assert.ok(!events.some(event => event.type === "response.failed"));
+  assert.equal(events.at(-1).response.id, events[0].response.id);
+  assert.equal(events.at(-1).response.output[0].content[0].text, "TRANSPORT_RECOVERED");
+  assert.equal(diagnostics.find(row => row.event === "bridge.turn_recovered").requestId, events[0].response.id);
+  assert.equal(sends, 2);
+});
+
 test("idle recovery exhaustion emits one failure and the next prompt works on the same bridge", async t => {
   const client = new FakeClient({ onSend: () => {} });
   const { post, manager } = await setup(t, { client, managerOptions: { turnIdleTimeoutMs: 40 } });

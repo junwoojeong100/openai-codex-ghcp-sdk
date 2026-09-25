@@ -57,24 +57,15 @@ jobs:
       - run: npm ci
       - run: npm install --global @openai/codex@0.154.0
       - run: npx --no-install playwright install --with-deps chromium
-      - name: Actual Codex, private PTY and browser with SDK doubles only
-        run: node --test --test-concurrency=1 test/runtime/*.test.mjs
-      - name: Native compatibility with SDK doubles
-        if: ${{ !cancelled() }}
+      - name: Essential workflows and safety regressions with SDK doubles only
         shell: bash
-        env:
-          COMPATIBILITY_DEBUG: "1"
-        run: npm run test:compatibility:runtime 2>&1 | tee "$RUNNER_TEMP/ghcp-compatibility.log"
-      - name: Native stability with SDK doubles
-        if: ${{ !cancelled() }}
-        run: npm run test:stability:runtime -- --output .runtime/ci-stability
+        run: npm run test:runtime 2>&1 | tee "$RUNNER_TEMP/ghcp-runtime.log"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: offline-runtime-evidence-${{ matrix.os }}
           path: |
-            ${{ runner.temp }}/ghcp-compatibility.log
-            .runtime/ci-stability/
+            ${{ runner.temp }}/ghcp-runtime.log
           if-no-files-found: warn
           include-hidden-files: true
           retention-days: 14

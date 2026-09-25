@@ -12,18 +12,20 @@ Codex → 로컬 HTTP/SSE bridge → GitHub Copilot SDK → 선택한 Copilot �
 
 **비공식 연동 프로젝트**이며 Codex와 Copilot의 공식 지원 조합은 아닙니다. 프롬프트·도구 결과는 GitHub Copilot으로 전송됩니다. bridge를 로컬에서 실행해도 모델 추론은 로컬에서 이루어지지 않으며, 계정의 사용 한도·과금 정책이 적용됩니다.
 
+**현재 평가:** [구현 상태와 최신 검증](docs/STATUS_KO.md). 핵심 연동 결과와 미지원·미검증 기능을 구분합니다.
+
 | 하려는 작업 | 시작할 곳 |
 | --- | --- |
 | 설치하고 사용해 보기 | [준비 사항](#준비-사항) → [빠른 시작](#빠른-시작) |
 | 내 저장소에서 작업하기 | [다른 프로젝트에서 사용](docs/USAGE_KO.md#다른-프로젝트에서-사용) |
 | 실행·대화 중 오류 해결하기 | [문제 해결](docs/USAGE_KO.md#문제-해결) |
 | 필요한 기능의 지원 여부 확인하기 | [지원 기능과 제한](docs/COMPATIBILITY_KO.md#이-기능을-사용할-수-있나요) |
-| bridge 개발·평가하기 | [검사 명령](#개발과-검증) · [기록된 결과](docs/validation/README_KO.md) |
+| bridge 개발·평가하기 | [구현 완성도](docs/STATUS_KO.md) · [검사 명령](#개발과-검증) · [기록된 결과](docs/validation/README_KO.md) |
 | 구현 이해하기 | [구조](docs/ARCHITECTURE_KO.md) |
 
 ## 준비 사항
 
-- Node.js **22.12 이상**(권장, runtime 검사에는 필수), npm, Git, Bash. 일반 실행은 **20.19 이상의 Node 20.x**에서도 가능합니다. 예시는 Bash/zsh 기준이며 CI는 Linux와 macOS에서 실행합니다.
+- Node.js **22.12 이상**(권장, runtime 검사에는 필수), npm, Git, Bash. 실행기는 **20.19 이상의 Node 20.x**도 허용합니다. 예시는 Bash/zsh 기준이며 CI 워크플로는 Linux와 macOS 대상으로 설정돼 있습니다. [기록된 실모델 실행](docs/validation/README_KO.md)은 macOS/arm64와 Node 22.16.0에서 수행했습니다.
 - 설치·인증된 [Copilot CLI](https://github.com/github/copilot-cli). `copilot --version`으로 확인하고 필요하면 `copilot login`을 실행합니다.
 - 원하는 모델에 접근할 수 있는 GitHub Copilot 계정.
 - 공식 Codex CLI **0.154.0**. 아래 설치 명령을 사용합니다.
@@ -126,54 +128,21 @@ command codex --version
 - **근사 지원:** `apply_patch` 같은 custom 도구의 grammar는 모델에 안내로 전달될 뿐 생성 과정에서 강제되지 않습니다.
 - **대기 호출은 메모리에만 보관:** 연결된 Codex 세션을 닫은 뒤 bridge를 중지하세요. Codex에 저장된 이력은 [재개](docs/USAGE_KO.md#대화-재개)할 수 있지만, 재시작한 bridge는 미해결 도구 호출이나 이전 응답 ID를 복원하지 못합니다.
 
-고급 기능에 의존하기 전에 [전체 호환성 범위](docs/COMPATIBILITY_KO.md)를 확인하세요. 지금까지 측정한 결과와 미해결 상위 필터 실패는 [실모델 기록](docs/validation/README_KO.md)에 있습니다.
+고급 기능에 의존하기 전에 [전체 호환성 범위](docs/COMPATIBILITY_KO.md)를 확인하세요. [현재 실모델 결과와 녹화](docs/validation/README_KO.md)는 검증된 동작과 미지원·미검증 기능을 구분합니다.
 
 ## 개발과 검증
 
-실행기를 사용하는 데 검사 실행은 **필요하지 않습니다.** 이미 측정한 결과는 [기록된 결과와 남은 공백](docs/validation/README_KO.md#기록된-결과)에서 확인하세요.
-
-### 로컬 개발 검사
-
-`npm ci` 후 변경 내용에 맞는 검사를 선택하세요. 아래 명령은 **모델을 호출하지 않으며 Codex 설치·Copilot 로그인이 필요하지 않습니다.**
-
-| 변경 내용 / 목적 | 명령 | 확인 범위 |
-| --- | --- | --- |
-| 문서만 수정 | `npm run test:docs` | 로컬 링크·섹션, npm 예제·한영 일치, Bash/sh 문법, 생성 시나리오 |
-| 코드 수정·PR 전 검사 | `npm run test:ci` | 단위 검사, 소스 커버리지, 시나리오 설계, 문서 |
-| 단위·실행 제어 검사만 | `npm test` | 커버리지 보고서 없이 단위 검사 실행 |
-
-`test:docs`는 예제를 실행하지 않고 검사하며 외부 URL에 접속하지 않습니다. `coverage/lcov.info`는 실행된 소스 줄을 보여줄 뿐 제품 기능 지원율이 아닙니다.
-
-<details>
-<summary>더 넓은 오프라인 검사: 실제 Codex·PTY·Chromium</summary>
-
-Node 22.12 이상, Codex 0.154.0, Python 3를 설치한 뒤 실행합니다.
+실행기를 사용하는 데 검사는 **필요하지 않습니다.** 실모델 검증은 **하나뿐**입니다. 핵심 시나리오 6개를 모델 6개에서 실행하며 **36/36**일 때만 통과합니다.
 
 ```bash
-npx --no-install playwright install chromium
-env -u GHCP_LIVE_HANDOFF_OUTPUT npm run test:runtime
+npm run verify -- --execute
 ```
 
-실제 Codex·PTY·브라우저를 **SDK 대역**(모델을 호출하지 않는 Copilot SDK의 로컬 대체 구현)과 연결해 검사하므로 Copilot 로그인은 필요하지 않습니다. `env -u GHCP_LIVE_HANDOFF_OUTPUT`은 내보낸 실모델 모드 변수가 모델 호출을 켜지 못하게 합니다. CI는 이 검사를 Linux·macOS에서 단위 커버리지와 분리해 실행합니다.
+Copilot 사용량이 발생하며 결과 저장과 증거 재계산까지 자동으로 수행합니다. 출력된 `report.md` 경로를 읽으면 됩니다. 프로필 선택·별도 행렬·수동 재검증 단계는 필요하지 않습니다. 준비 사항과 시나리오는 [검증 안내](docs/VERIFICATION_KO.md), 실측 결과는 [현재 결과](docs/validation/README_KO.md)에 있습니다.
 
-</details>
+개발 시 `npm test`는 모델 호출 없이 단위·안전성·문서 회귀 검사를 실행합니다. `npm run test:runtime`은 실제 Codex/PTY/Chromium에 SDK 대역을 연결하며 역시 모델을 호출하지 않습니다. CI 워크플로에는 두 검사를 별도 작업으로 설정했으며 실모델 행렬은 실행하지 않습니다. 문서만 검사하려면 `npm run test:docs`, 소스 커버리지까지 확인하려면 `npm run test:ci`를 사용합니다.
 
-### 선택적 실모델 검사
-
-각 검사는 독립적이며 순서대로 실행할 필요가 없습니다. 계획 명령은 검사할 내용만 출력합니다. **실모델 실행(`--execute`, soak의 `--smoke`)은 실제 모델을 호출하며 Copilot 사용량이 발생합니다.**
-
-| 검사 | 확인하는 내용 | 계획 명령 (모델 호출 없음) | 실모델 통과 조건 |
-| --- | --- | --- | --- |
-| [워크플로 호환성](docs/COMPATIBILITY_TESTING_KO.md) | 모델 6개 각각에서 개발 워크플로 18개 | `npm run test:compatibility -- --plan` | **108/108**건 통과 |
-| [안정성](docs/STABILITY_TESTING_KO.md) | 모델별 bridge 장애·복구 시나리오 11개 | `npm run test:stability -- --plan` | **66/66**건 통과 |
-| [TUI](docs/TUI_SCENARIOS_KO.md) | 모델별 대화형 터미널 시나리오 12개 | `npm run test:tui -- --plan` | **72/72**건 통과 (**69/72**는 95% 목표 충족일 뿐) |
-| [터미널](docs/SOAK_TESTING_KO.md#재현-가능한-터미널-검사) | 모델 하나로 정해진 시간 동안 PTY 또는 브라우저 작업 | `npm run test:terminal -- --plan` | 관측된 실패 없이 작업 완료 |
-| [내구성](docs/SOAK_TESTING_KO.md#5시간-실모델-실행) | 장시간 이어지는 대화 | `npm run test:soak -- --plan` | 모든 lane(감시하는 대화)이 관측된 실패 없이 5시간 이상 진행 |
-| [Opus 진단](docs/OPUS_DIAGNOSTICS_KO.md) | Opus 상위 필터링에 관한 증거 | `npm run diagnose:opus` | 없음. 증거를 수집할 뿐 호환성 판정이 아님 |
-
-저장된 보고서를 읽는 방법은 [결과 읽기](docs/validation/README_KO.md#결과-읽기)를 참고하세요. 워크플로 검사의 케이스는 [시나리오 사양](docs/NATIVE_SCENARIOS_KO.md)에 있습니다.
-
-**시나리오 문서를 수정할 때:** [템플릿](scripts/compatibility/documentation.mjs)이나 [catalog](scripts/compatibility/catalog.mjs)를 수정하고 `npm run docs:scenarios`, `npm run test:docs` 순서로 실행하세요. 생성 파일은 직접 수정하지 않습니다. `npm run docs:scenarios:check`는 생성 내용만 비교하며 나머지 안내 문서는 검사하지 않습니다.
+핵심 v1 검증과 최신 결과·미디어만 보존합니다. 전체 원본 근거는 로컬에 있으며 Git에서 제외합니다. 새 clone에는 공개 요약과 미디어만 있고 전체 실행 근거는 없습니다.
 
 ## 기여자와 참고 자료
 

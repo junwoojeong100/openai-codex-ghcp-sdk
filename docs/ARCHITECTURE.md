@@ -40,7 +40,7 @@ The bridge adapts protocols. It does not replace Codex's tool executor with Copi
 | [responses.mjs](../src/responses.mjs) | Response items/events; preserve `call_id`, namespace and custom input bytes. |
 | [session-manager.mjs](../src/session-manager.mjs) | Conversation identity, history, retries, pending results, deadlines and cleanup. |
 | [request-queue.mjs](../src/request-queue.mjs) | Bounded, cancellable per-conversation FIFO queues and total request deadlines. |
-| [sdk-lifecycle.mjs](../src/sdk-lifecycle.mjs) | SDK readiness and connection recovery, distinct from silent-turn recovery. |
+| [sdk-lifecycle.mjs](../src/sdk-lifecycle.mjs) | SDK readiness and connection/catalog recovery, separate from idle/transport turn recovery. |
 | [copilot-session-rpc.mjs](../src/copilot-session-rpc.mjs) | Bounded abort/disconnect/delete and pending-tool-result RPCs. |
 | [mcp-isolation.mjs](../src/mcp-isolation.mjs) | Read Copilot user/plugin MCP names and pass `disabledMcpServers` on every bridge session. |
 | [model-map.mjs](../src/model-map.mjs) | Allowed IDs, default model, Codex catalog and SDK-derived context/effort limits; no fallback model. |
@@ -51,11 +51,7 @@ The temporary catalog replaces bundled/cached picker entries and is removed on C
 
 ### Verification harnesses
 
-These are test entry points, not extra production services:
-
-- [Terminal runner](../scripts/terminal.mjs) and [shared terminal lane](../scripts/soak/terminal-lane.mjs): frozen-source workers, isolated environments and SDK-correlated outcomes. The soak worker reuses this lane; see [terminal/endurance checks](SOAK_TESTING.md).
-- [TUI runner](../scripts/tui.mjs) and [implementation](../scripts/tui/): each [TUI case](TUI_SCENARIOS.md) runs the launcher in a private PTY with headless Playwright/xterm.js, samples runtime MCP processes, reads Codex's rollout and recomputes checks from saved facts.
-- [PTY lifecycle](../scripts/soak/terminal.mjs) and [browser driver](../scripts/soak/browser.mjs): one real PTY with an independent parser or Playwright/xterm renderer. Cancellation reaps both the terminal group and owned browser.
+There is one [verification entry point](../scripts/verify.mjs) and one [essential contract](VERIFICATION.md): actual Codex → production bridge → real Copilot SDK → exact model. The [implementation](../scripts/verification/) runs six essential scenarios on all six models, automatically freezes source and recomputes saved facts. The shared PTY/browser code also supports offline safety regressions; these helpers are not separate live suites.
 
 ## Tool handoff
 
@@ -77,7 +73,7 @@ These are test entry points, not extra production services:
 - Requests within a conversation are serialized. Independent conversations use independent SDK sessions.
 - For full-history requests, a canonical prefix comparison removes already-processed items. Wire-only IDs/status are ignored; assistant `phase` and custom input bytes remain significant. An omitted old phase reuses the known value, while an explicitly changed phase is a history change.
 - `previous_response_id` supports process-local continuation, not a durable Responses store. Only the current conversation version can be continued.
-- An exact retry of the most recent normalized request returns its cached result without resending the prompt or tool results.
+- An exact retry of the most recent successful normalized request returns its cached result without resubmission while the session state remains live and valid. Failed requests and evicted sessions have no success cache.
 - Once there are no pending calls, an incompatible full history can start a new SDK session. Changes while results are pending use the handoff below.
 
 ### Changing configuration with completed tools
@@ -97,7 +93,7 @@ A **completed-result handoff** replaces an SDK session when Codex returns all pe
 
 When a conversation has no live SDK session, for example after a bridge restart, the bridge rebuilds one from the history Codex sends:
 
-- The SDK's send interface is not a general Responses transcript-import API, so a cold start serializes the non-instruction history into context for a new user prompt, keeping assistant phases.
+- The SDK's send interface is not a general Responses transcript-import API, so a cold start serializes the non-instruction history into context, keeping assistant phases. If the final item is a user message, its exact text is sent once after that history as the **current request**, rather than hidden inside the historical JSON. This also applies to compaction, model changes and safe turn recovery.
 - Delimiter characters inside the JSON are escaped without changing the decoded text.
 - This is an approximation: it is not native role-preserving replay and does not guarantee identical answers.
 - Ordinary live turns that match the known history do not use this replay path.
@@ -105,8 +101,8 @@ When a conversation has no live SDK session, for example after a bridge restart,
 ### Context budgets
 
 - **Tier choice:** `model-map.mjs` selects the largest advertised context tier for each model: `long_context` when `billing.tokenPrices.longContext` or `supportedContextTiers` advertises support, otherwise `default`.
-- **One selector for everything:** the same selector drives the catalog budgets and the SDK session configuration. The tier is part of the session signature, so it survives effort changes, history rebuilds and idle recovery. Changing the tier while calls are pending needs the complete-result handoff above, and an upstream rejection never silently falls back.
-- **Budget:** catalog input budgets respect the selected tier's prompt limits and reserve the maximum output space within the model's total context window. Codex starts local automatic compaction at 80% of that budget; the SDK's own compaction stays disabled.
+- **One selector for everything:** the same selector drives the catalog budgets and the SDK session configuration. The tier is part of the session signature, so it survives effort changes, history rebuilds and turn recovery. Changing the tier while calls are pending needs the complete-result handoff above, and an upstream rejection never silently falls back.
+- **Budget:** catalog input budgets take the minimum valid advertised prompt/context limit and reserve maximum output space when valid context/output sizes are supplied. The launcher rejects an absent or invalid budget. Codex starts local automatic compaction at 80% of that budget; the SDK's own compaction stays disabled.
 - **Overflow errors:** structured SDK context-limit failures keep the Responses `context_length_exceeded` code, so Codex can tell overflow apart from a retryable transport failure. The launcher disables automatic HTTP and stream retries; an exact client retry can still use the bridge's success cache.
 
 ## Lifetime and security boundaries
@@ -130,15 +126,15 @@ The model-progress watchdog is separate from idle-session expiry. Its two inacti
 - **What does not count:** `assistant.turn_start` is initialization, not inference progress. Phase starts alone, phase tools, review or subordinate events, and duplicate or invalid counters cannot extend the deadline. Root `model.call_failure` metadata is diagnostic only, limited to a bounded failure category and a numeric HTTP status.
 - **Diagnostics:** `bridge.turn_watchdog` runs every `min(SDK_READINESS_INTERVAL_MS, TURN_IDLE_TIMEOUT_MS, TURN_FIRST_PROGRESS_TIMEOUT_MS)` and records `waitPhase`. `bridge.turn_stalled` records the limit that applied and the last real progress. Session creation and model-setting use the smaller of the SDK startup and turn deadlines.
 
-#### Bounded silent-turn recovery
+#### Bounded turn recovery
 
-A silent request whose input was acknowledged can recover on its original response stream by rebuilding only its SDK session.
+A silent request whose input was acknowledged can recover on its original response stream by rebuilding only its SDK session. The same shared attempt budget also covers a terminal root `session.error` of type `query` preceded by structured, root-only `model.call_failure` transport metadata, with no API error codes/status or model progress. A query message or a connection-error string alone never authorizes a retry. Individual model-call failures remain diagnostic while the SDK performs its own recovery.
 
-- **Preconditions:** the bridge first confirms abort, disconnect and delete of the old session and a healthy readiness check on the same client generation. `TURN_IDLE_RECOVERY_ATTEMPTS` defaults to 1 (0 disables it; the maximum is 3).
+- **Preconditions:** the bridge first confirms abort, disconnect and delete of the old session and a healthy readiness check on the same client generation. `TURN_IDLE_RECOVERY_ATTEMPTS` defaults to 1 and is shared by idle and transport recovery (0 disables these turn retries; the maximum is 3). It does not control connection/catalog recovery or the SDK/provider's internal retries.
 - **What is kept:** model, effort, instruction authority, the complete resolved history, completed-call identities, response-handle versions and reported usage. Completed tool results become context, **never another tool-result RPC**.
-- **What forbids it:** partial output, unacknowledged input, pending calls, filtering, cancellation, failed cleanup and connection loss.
+- **What forbids it:** partial output, unacknowledged input, pending calls, filtering, cancellation, failed cleanup and connection loss. Transport recovery additionally rejects any observed root reasoning/tool-input/stream bytes, usage or Fusion output, API failures, authentication/rate-limit/quota errors and uncertain delivery.
 - **Deadlines:** all attempts and the replacement setup share the original turn and request deadlines; recovery does not reset them. Cancellation also interrupts the setup's MCP checks.
-- **Diagnostics:** `bridge.turn_recovering`, `bridge.turn_recovered` and `bridge.turn_recovery_skipped` report bounded details without conversation text.
+- **Diagnostics:** `bridge.turn_transport_failed`, `bridge.turn_recovering`, `bridge.turn_recovered` and `bridge.turn_recovery_skipped` report bounded details without conversation text. Recovery receipts identify the retired bridge-owned session, cause and original response ID.
 - **Limits:** recovery may use extra inference. Completely silent reasoning cannot be told apart from a stall, and history replay is not exactly-once model execution.
 
 ### Data retention
@@ -149,13 +145,15 @@ No sibling project's tests, validation runner or validation results are used. Of
 
 ## Stability and recovery boundaries
 
+- **Startup catalog recovery:** the first `listModels` call receives at most half of `SDK_STARTUP_TIMEOUT_MS` (15 seconds by default), capped by the remaining time. Only its timeout, after confirmed `forceStop`, permits one fresh client; start, ping, catalog calls and that retry share the original startup budget (30 seconds by default). Cleanup retains its separate bound. RPC/authentication errors, cancellation, failed cleanup and reused clients do not qualify. Late completion can clean only its retired client; no model prompt is submitted by this recovery.
+
 - **Queues:** `request-queue.mjs` owns cancellable per-family FIFO admission, total request deadlines and bounds. A cancelled waiter is removed at once and can never run later. Cancellation settles before cleanup, but the family lock is held until cleanup completes.
-- **Connection recovery:** `sdk-lifecycle.mjs` owns bounded ping checks, single-flight connection recovery and fresh client generations. One shared recovery task, with bounded startup and backoff, serves concurrent requests instead of each starting a client. Connection loss invalidates and explicitly fails the affected conversations without replaying inference or uncertain tool results. This is separate from the bounded idle recovery on a healthy connection above.
+- **Connection recovery:** `sdk-lifecycle.mjs` owns bounded ping checks, single-flight connection recovery and fresh client generations. One shared recovery task, with bounded startup and backoff, serves concurrent requests instead of each starting a client. Connection loss invalidates and explicitly fails the affected conversations without replaying inference or uncertain tool results. This is separate from bounded turn recovery on a healthy SDK connection above.
 - **Tool lists:** tools are compared by identity, so their order is metadata. Real policy changes while calls are pending require the complete-result handoff above. Conflict (409) diagnostics contain request IDs, field names, hashes and counts rather than raw text.
-- **Commit order:** delta/final stream reconciliation happens before the success cache or pending-tool state is committed. Identical retries stay cached, but a stream protocol mismatch can never cache an undelivered tool call as success. Network delivery and model generation are not one exactly-once transaction.
+- **Commit order:** delta/final stream reconciliation happens before the success cache or pending-tool state is committed. A successful result can then serve an identical retry while the state remains valid; a stream protocol mismatch cannot cache an undelivered tool call as success. Network delivery and model generation are not one exactly-once transaction.
 - **Health routes:** public `/health` reports HTTP-process liveness, the last-known `ready` and `upstreamState` fields and the running `turnWatchdog` settings; an older process without that field has not loaded this implementation. Authenticated `/readyz` runs a bounded SDK readiness probe (200 or 503) and does not reconnect by itself. Authenticated `/v1/models` may recover the SDK connection before answering. Readiness does not guarantee inference service health or quota.
 
-Timeout defaults and error codes are in the [usage guide](USAGE.md#timeouts-and-recovery); the separate 66-case stability contract is in the [stability guide](STABILITY_TESTING.md). Historical v3 stability and v4 compatibility evidence is verified with frozen source, never regraded.
+Timeout defaults and error codes are in the [usage guide](USAGE.md#timeouts-and-recovery); current integration checks are in the [single verification guide](VERIFICATION.md). The retained final run includes its matching source snapshot.
 
 ### Instruction and response boundaries
 

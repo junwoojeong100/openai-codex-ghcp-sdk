@@ -3,22 +3,15 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
-import { ROOT } from "../scripts/compatibility/util.mjs";
-import { NATIVE_SCENARIO_CATALOG, NATIVE_SCENARIOS } from "../scripts/compatibility/catalog.mjs";
-import { scenarioDocument, updateDocumentation } from "../scripts/compatibility/documentation.mjs";
-import { parseArguments as compatibilityArgs } from "../scripts/compatibility.mjs";
-import { parseArguments as stabilityArgs } from "../scripts/stability.mjs";
-import { parseArguments as tuiArgs } from "../scripts/tui.mjs";
-import { parseArguments as terminalArgs } from "../scripts/terminal.mjs";
-import { parseArguments as soakArgs } from "../scripts/soak.mjs";
-import { parseArguments as diagnosticArgs } from "../scripts/diagnose-opus.mjs";
+import { ROOT } from "../scripts/verification/util.mjs";
+import { CATALOG, SCENARIOS } from "../scripts/verification/catalog.mjs";
+import { parseArguments } from "../scripts/verify.mjs";
 
 const guides = ["README.md", "README_KO.md",
   ...fs.readdirSync(path.join(ROOT, "docs")).filter(file => file.endsWith(".md")).map(file => `docs/${file}`),
   "docs/validation/README.md", "docs/validation/README_KO.md"];
 const documents = new Map(guides.map(file => [file, fs.readFileSync(path.join(ROOT, file), "utf8")]));
-const parsers = { "test:compatibility": compatibilityArgs, "test:stability": stabilityArgs,
-  "test:tui": tuiArgs, "test:terminal": terminalArgs, "test:soak": soakArgs, "diagnose:opus": diagnosticArgs };
+const parsers = { verify: parseArguments };
 
 function markdownParts(text) {
   const blocks = [];
@@ -110,37 +103,17 @@ test("Bash and sh examples parse without executing setup, servers or live checks
   }
 });
 
-test("scenario documentation is generated from the current contract", () => {
-  updateDocumentation({ check: true });
-});
-
-test("scenario documentation links every index entry to its detailed contract in both languages", () => {
-  for (const language of ["en", "ko"]) {
-    const document = scenarioDocument(language);
-    const coverageHeading = language === "en" ? "## Separate feature scope from pass rate" : "## 기능 커버리지와 통과율을 분리";
-    assert.ok(document.indexOf("### C18 —") < document.indexOf(coverageHeading), "Detailed contracts precede coverage commentary");
-    for (const { id, name, prompt, assertions } of NATIVE_SCENARIOS) {
-      const anchor = id.toLowerCase();
-      assert.ok(document.includes(`| [${id}](#${anchor}) | ${name[language]} |`));
-      assert.ok(document.includes(`<a id="${anchor}"></a>\n\n### ${id} — ${name[language]}\n`));
-      assert.ok(document.includes(`\`\`\`text\n${prompt}\n\`\`\``), "The exact shared prompt is preserved");
-      for (const assertion of assertions) assert.ok(document.includes(`\`${assertion.id}\`: ${assertion.description[language]} — \`${assertion.evidence}\``));
-    }
+test("one bilingual guide describes every essential scenario and one full-pass rule", () => {
+  for (const language of ["", "_KO"]) {
+    const document = documents.get(`docs/VERIFICATION${language}.md`);
+    assert.ok(document.includes(CATALOG.id));
+    assert.ok(document.includes(`${CATALOG.totalCases}/${CATALOG.totalCases}`));
+    for (const scenario of SCENARIOS) assert.ok(document.includes(`| ${scenario.id} |`));
+    assert.ok(document.includes("verification.json"));
   }
-});
-
-test("scenario coverage tables link their cases to the detailed contracts in both languages", () => {
-  for (const language of ["en", "ko"]) {
-    const document = scenarioDocument(language);
-    for (const group of NATIVE_SCENARIO_CATALOG.coverage.checklist) {
-      const links = group.scenarios.map(id => `[${id}](#${id.toLowerCase()})`).join(", ") || "—";
-      assert.ok(document.includes(`| ${group.name[language]} | ${group.level} | ${links} |`),
-        `${language}: missing checklist links for ${group.name[language]}`);
-    }
-    for (const group of NATIVE_SCENARIO_CATALOG.coverage.included) {
-      const links = group.scenarios.map(id => `[${id}](#${id.toLowerCase()})`).join(", ");
-      assert.ok(document.includes(`| ${group.name[language]} | ${links} |`),
-        `${language}: missing capability links for ${group.name[language]}`);
-    }
+  const { scripts } = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+  assert.equal(scripts.verify, "node scripts/verify.mjs");
+  for (const retired of ["test:compatibility", "test:stability", "test:soak", "test:terminal", "test:tui", "diagnose:opus", "docs:scenarios"]) {
+    assert.ok(!Object.hasOwn(scripts, retired), retired);
   }
 });

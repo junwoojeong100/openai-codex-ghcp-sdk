@@ -3,20 +3,29 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
 import { SessionManager } from "../../src/session-manager.mjs";
-import { FakeClient } from "../helpers/stability-sdk.mjs";
+import { FakeClient, replayInput } from "../helpers/stability-sdk.mjs";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
 if (process.env.GHCP_TERMINAL_FIXTURE && path.resolve(process.argv[1] || "") === path.join(root, "src/server.mjs")) {
   const config = JSON.parse(fs.readFileSync(process.env.GHCP_TERMINAL_FIXTURE, "utf8"));
   const record = { executionKind: "offline-terminal-fixture", sends: 0, sessions: 0, aborts: 0,
-    byteDeltas: 0, fusionDeltas: 0, firstProgressDelays: [], diagnostics: [] };
+    byteDeltas: 0, fusionDeltas: 0, firstProgressDelays: [], setupFailures: [], diagnostics: [] };
   const timers = new Set();
-  let recoveryStalled = false;
+  let recoveryStalled = false, setupStartedAt;
   const start = SessionManager.prototype.start;
+  const execute = SessionManager.prototype.execute;
+  SessionManager.prototype.execute = async function (...args) {
+    try { return await execute.apply(this, args); }
+    catch (error) {
+      if (error.code === "copilot_setup_timeout" && setupStartedAt !== undefined) {
+        record.setupFailures.push({ code: error.code, timeoutMs: this.startupTimeoutMs,
+          elapsedMs: performance.now() - setupStartedAt });
+      }
+      throw error;
+    }
+  };
   const latestPrompt = prompt => {
-    const match = /<conversation_history>\n([\s\S]*)\n<\/conversation_history>/.exec(prompt);
-    if (!match) return prompt;
-    return JSON.parse(match[1]).findLast(item => item.type === "message" && item.role === "user")?.content;
+    return replayInput(prompt).findLast(item => item.type === "message" && item.role === "user")?.content;
   };
   SessionManager.prototype.start = async function () {
     record.watchdog = { firstProgressTimeoutMs: this.turnFirstProgressTimeoutMs, idleTimeoutMs: this.turnIdleTimeoutMs,
@@ -34,7 +43,10 @@ if (process.env.GHCP_TERMINAL_FIXTURE && path.resolve(process.argv[1] || "") ===
           timers.delete(session.fixtureTimer);
           await abort();
         };
-        if (config.hangFirstSetup && record.sessions === 1) await new Promise(() => {});
+        if (config.hangFirstSetup && record.sessions === 1) {
+          setupStartedAt = performance.now();
+          await new Promise(() => {});
+        }
       },
       onSend(session, { prompt }) {
         record.sends++;

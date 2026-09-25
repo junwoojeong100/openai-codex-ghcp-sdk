@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { descendants, sandboxTaskPid } from "../scripts/compatibility/processes.mjs";
+import { descendants, sandboxTaskPid } from "../scripts/verification/processes.mjs";
 
 function fixture(t) {
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "owned-processes-")));

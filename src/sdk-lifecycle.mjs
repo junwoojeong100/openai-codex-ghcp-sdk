@@ -35,7 +35,42 @@ export class SdkLifecycle {
 
   start() {
     if (this.stopped) return Promise.reject(unavailable());
-    return this.starting ??= this.#connect(this.client);
+    return this.starting ??= this.#connectWithCatalogRecovery();
+  }
+
+  #replaceClient() {
+    let replacement;
+    try { replacement = this.clientFactory(); }
+    catch {
+      this.#diagnostic({ event: "bridge.upstream_client_creation_failed", generation: this.generation });
+      throw unavailable("SDK client replacement failed");
+    }
+    if (!replacement || this.usedClients.has(replacement)) throw unavailable("Recovery requires a fresh SDK client");
+    this.usedClients.add(replacement);
+    this.client = replacement;
+    return replacement;
+  }
+
+  async #connectWithCatalogRecovery() {
+    const deadline = performance.now() + this.startupTimeoutMs;
+    try {
+      await this.#connect(this.client, { deadline,
+        catalogTimeoutMs: this.clientFactory ? Math.max(1, Math.floor(this.startupTimeoutMs / 2)) : null });
+    } catch (error) {
+      if (this.stopped || !this.clientFactory || error.operation !== "listModels" || error.failureType !== "timeout"
+          || !error.cleanupConfirmed || performance.now() >= deadline) throw error;
+      this.state = "recovering";
+      this.#diagnostic({ event: "bridge.upstream_catalog_recovering", generation: this.generation,
+        remainingMs: Math.max(0, Math.floor(deadline - performance.now())) });
+      try {
+        await this.#connect(this.#replaceClient(), { deadline });
+      } catch (retryError) {
+        this.state = this.stopped ? "stopped" : "unavailable";
+        retryError.message += " SDK catalog recovery was exhausted after one fresh-client attempt.";
+        throw retryError;
+      }
+      this.#diagnostic({ event: "bridge.upstream_catalog_recovered", generation: this.generation });
+    }
   }
 
   #diagnostic(event) {
@@ -54,10 +89,12 @@ export class SdkLifecycle {
     return task;
   }
 
-  async #connect(client) {
+  async #connect(client, { deadline, catalogTimeoutMs = null }) {
     const generation = ++this.generation;
     const startedAt = performance.now();
+    const timeoutMs = Math.max(1, Math.floor(deadline - startedAt));
     let operationName = "start";
+    let catalogTimer;
     const controller = new AbortController();
     this.connectController = controller;
     const operation = (async () => {
@@ -69,32 +106,45 @@ export class SdkLifecycle {
       await client.ping("codex-ghcp-readiness");
       controller.signal.throwIfAborted();
       operationName = "listModels";
+      if (catalogTimeoutMs !== null) catalogTimer = setTimeout(() => controller.abort(Object.assign(
+        new Error("SDK catalog deadline exceeded."), { code: "sdk_operation_timeout" },
+      )), catalogTimeoutMs);
       const models = supportedModels(await client.listModels());
       controller.signal.throwIfAborted();
       return models;
     })();
     try {
-      const models = await withinDeadline(() => operation, this.startupTimeoutMs, controller.signal);
+      const models = await withinDeadline(() => operation, timeoutMs, controller.signal);
       if (this.stopped || generation !== this.generation) throw unavailable();
       this.client = client;
       this.onReady({ client, models, generation });
       this.state = "ready";
     } catch (error) {
-      const failureType = this.stopped || controller.signal.aborted ? "cancelled"
-        : error?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error";
+      const failureType = this.stopped ? "cancelled" : error?.code === "sdk_operation_timeout" ? "timeout"
+        : controller.signal.aborted ? "cancelled" : "rpc_error";
       this.#diagnostic({ event: "bridge.upstream_connect_failed", generation, operation: operationName,
-        failureType, timeoutMs: this.startupTimeoutMs, elapsedMs: Math.floor(performance.now() - startedAt) });
+        failureType, timeoutMs: this.startupTimeoutMs, elapsedMs: Math.floor(performance.now() - startedAt),
+        ...(this.clientFactory ? { attemptBudgetMs: timeoutMs, catalogTimeoutMs } : {}) });
       controller.abort(error);
       this.state = this.stopped ? "stopped" : "unavailable";
       this.retired.add(client);
       this.retiredClients.add(client);
       // A timed-out start can still finish. Clean the retired object once more
       // then; never publish it or touch the replacement client.
-      const lateCleanup = () => this.#forceStop(client).catch(() => {});
+      const lateCleanup = () => this.#forceStop(client).catch(() => {
+        this.#diagnostic({ event: "bridge.upstream_cleanup_failed", generation, operation: "lateForceStop" });
+      });
       void operation.then(lateCleanup, lateCleanup);
-      await this.#forceStop(client).catch(() => {});
-      throw unavailable(`SDK ${operationName} ${failureType === "timeout" ? "timed out" : failureType === "cancelled" ? "cancelled" : "failed"}`);
+      let cleanupConfirmed = false;
+      try { await this.#forceStop(client); cleanupConfirmed = true; }
+      catch (cleanupError) {
+        this.#diagnostic({ event: "bridge.upstream_cleanup_failed", generation, operation: "forceStop",
+          failureType: cleanupError?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error" });
+      }
+      throw Object.assign(unavailable(`SDK ${operationName} ${failureType === "timeout" ? "timed out" : failureType === "cancelled" ? "cancelled" : "failed"}`),
+        { operation: operationName, failureType, cleanupConfirmed });
     } finally {
+      clearTimeout(catalogTimer);
       if (this.connectController === controller) this.connectController = null;
     }
   }
@@ -139,11 +189,8 @@ export class SdkLifecycle {
         this.retired.delete(old);
       }
       if (this.stopped) throw unavailable();
-      const replacement = this.clientFactory();
-      if (!replacement || this.usedClients.has(replacement)) throw new Error("Recovery requires a fresh SDK client.");
-      this.usedClients.add(replacement);
-      this.client = replacement; // ownership for shutdown, not readiness
-      await this.#connect(replacement);
+      this.#replaceClient();
+      await this.#connectWithCatalogRecovery();
       this.#diagnostic({ event: "bridge.upstream_recovered", generation: this.generation });
     }).catch(() => {
       this.state = this.stopped ? "stopped" : "unavailable";

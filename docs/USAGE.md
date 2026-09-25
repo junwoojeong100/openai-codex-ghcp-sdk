@@ -84,7 +84,7 @@ For example, to choose a model and make a non-interactive, read-only request:
 - `--profile`/`-p`, `--oss`, `--local-provider`, `--remote`, `--remote-auth-token-env` and `--search`.
 - `-c` or `--enable` settings for the model, provider, model catalog, profiles, web search or the features the launcher turns off.
 
-Every other Codex option, including approvals and sandboxing, works as usual.
+Other options are passed through for Codex to validate. Approval and sandbox options keep their normal meaning; accepting an option does not establish support for every requested feature. In particular, `exec --json` emits Codex's event log, not [schema-constrained model output](COMPATIBILITY.md#can-i-use-this-feature).
 
 Outside a Git repository, add `--skip-git-repo-check` after `exec`; it skips only the Git check.
 
@@ -153,29 +153,13 @@ The launcher's temporary model list is deleted when Codex exits, even in backgro
 
 ### Context limits
 
-- The bridge always uses **the largest context tier the SDK advertises** for the model, including after model changes and recovery. Missing context metadata or a rejected tier is an error, not a silent fallback.
-- Codex receives an **input budget** that leaves room for the model's output, so it is smaller than the model's total context window.
+- The bridge selects **`long_context` when the SDK advertises it, otherwise `default`**, including after model changes and recovery. The launcher rejects missing or invalid context budgets instead of using Codex fallback limits; an upstream tier rejection is not silently retried at another tier.
+- Codex receives an **input budget** based on the advertised prompt/context limits, with output space reserved when a valid maximum output size is supplied. This budget is not necessarily the provider's total context window.
 - Codex compacts the conversation automatically at **80%** of that budget. The SDK's own automatic compaction stays off. You can also run `/compact` between turns.
 - Larger contexts can add latency, memory use and usage charges. Do not raise only Codex's `model_context_window` above the SDK budget.
 - To pick up new catalog limits or changed settings, exit Codex normally and relaunch.
 
 Implementation details: [tier selection and budget calculation](ARCHITECTURE.md#context-budgets).
-
-<details>
-<summary>Historical account snapshot: 2026-09-23, not current limits</summary>
-
-These values were derived from SDK metadata, not hard-coded. Check current account metadata before estimating capacity or cost.
-
-| Model | Total context maximum | Codex input budget | Auto-compaction threshold |
-|---|---:|---:|---:|
-| `claude-opus-5.5` | 1,000,000 | 872,000 | 697,600 |
-| `claude-sonnet-5` | 1,000,000 | 936,000 | 748,800 |
-| `claude-haiku-4.5` | 200,000 | 136,000 | 108,800 |
-| `gpt-6-astra` | 1,050,000 | 922,000 | 737,600 |
-| `gpt-6-sol` | 1,000,000 | 872,000 | 697,600 |
-| `gpt-6-luna` | 1,000,000 | 872,000 | 697,600 |
-
-</details>
 
 ## Settings
 
@@ -187,7 +171,7 @@ On each launch, the launcher:
 - turns off Codex features the bridge does not support: WebSockets, request compression, hosted web search, remote compaction and reasoning summaries;
 - starts Copilot sessions with the Copilot runtime's own MCP servers disabled, including user and plugin servers. Codex's MCP servers still work because Codex runs them itself; see [tool handoff](ARCHITECTURE.md#tool-handoff).
 
-The launcher does **not** edit `~/.codex/config.toml`, `auth.json`, shell startup files or another project's server, and it does not copy your Copilot or GitHub login into Codex. Your other Codex settings still apply; this is not a fresh Codex profile. Only two actions of your own change files: `/model` can save a selection to `~/.codex/config.toml`, and the optional [zsh integration](#optional-zsh-integration) edits `~/.zshrc`.
+The launcher does **not** edit `~/.codex/config.toml`, `auth.json`, shell startup files or another project's server, and it does not copy your Copilot or GitHub login into Codex. Your other Codex settings still apply; this is not a fresh Codex profile. Codex and the SDK can still write session data, and Codex tools can change project files with your configured permissions. `/model` can save a selection to Codex's configuration, and the optional [zsh integration](#optional-zsh-integration) edits `~/.zshrc`; these are separate from the launcher's temporary routing settings.
 
 ### Launcher settings
 
@@ -206,7 +190,7 @@ All settings are optional. Set environment variables in your shell or put them b
 
 ### Timeouts and recovery
 
-Values are in **milliseconds**. The limits run at the same time; they do not add up. A new value takes effect only after you [restart the bridge](#restart-the-bridge-safely).
+Settings ending in `_MS` use **milliseconds**, `_BYTES` use **bytes**, and attempt/request limits are **counts**. Turn and request deadlines are not reset by recovery; cleanup has separate per-operation limits. A new value takes effect only after you [restart the bridge](#restart-the-bridge-safely).
 
 | Setting | Default | What it limits |
 | --- | --- | --- |
@@ -215,34 +199,40 @@ Values are in **milliseconds**. The limits run at the same time; they do not add
 | `TURN_IDLE_TIMEOUT_MS` | 90000 (90 seconds) | Silence after progress begins. Text, reasoning, tool input and growing SDK or phase byte counts reset it. |
 | `TURN_TIMEOUT_MS` | 300000 (5 minutes) | The whole model turn, including recovery attempts. |
 | `REQUEST_TIMEOUT_MS` | 360000 (6 minutes) | The whole request, including queue wait, SDK work and recovery, but not receiving the HTTP body. |
-| `TURN_IDLE_RECOVERY_ATTEMPTS` | 1 | Automatic session recoveries per request: an integer from 0 to 3; 0 turns recovery off. |
+| `TURN_IDLE_RECOVERY_ATTEMPTS` | 1 | Shared idle/transport session-recovery budget per request: 0–3; 0 disables these retries, not SDK connection/catalog recovery. |
 | `MAX_REQUESTS_PER_SESSION` | 8 | Running plus queued requests per conversation. |
 | `MAX_REQUESTS` | 128 | Running plus queued requests in total. |
 | `SDK_READINESS_TIMEOUT_MS` | 2000 | Local SDK ping deadline. |
-| `SDK_READINESS_INTERVAL_MS` | 15000 | Background connection checks and turn-watchdog diagnostics. The watchdog interval is also capped by the idle limit. |
+| `SDK_READINESS_INTERVAL_MS` | 15000 | Background connection-check interval. Turn-watchdog diagnostics use the minimum of this, the first-progress limit and the idle limit. |
 | `SDK_RECOVERY_BACKOFF_MS` | 5000 | Minimum gap between failed connection-recovery attempts. |
+| `CLEANUP_TIMEOUT_MS` | 5000 | Each owned SDK cleanup operation, such as abort, disconnect, delete or force-stop. |
 | `MAX_REPLAY_BYTES`, `MAX_BODY_BYTES` | 33554432 (32 MiB) | Serialized history and HTTP request body size. These are memory safeguards, not model token limits. |
 
-Every value except `TURN_IDLE_RECOVERY_ATTEMPTS` must be a positive integer. [`.env.example`](../.env.example) lists the remaining limits with their defaults.
+In this table, every value except `TURN_IDLE_RECOVERY_ATTEMPTS` must be a positive integer. The turn/request limits apply to one bridge Responses request, not an entire multi-tool Codex task. The request deadline includes queue wait and setup; the turn deadline starts after initial session setup. [`.env.example`](../.env.example) lists the remaining limits with their defaults.
 
-**Automatic recovery.** If a model turn goes silent past its limit, the bridge can replace the Copilot session and retry the turn on the same response stream, **once per request** by default.
+**Automatic recovery.** If a model turn goes silent past its limit or ends with a confirmed pre-output transport failure, the bridge can replace the Copilot session and retry the turn on the same response stream. Both causes share **one attempt per request** by default; query errors without matching structured transport evidence are not retried.
 
-- **When:** only if nothing can be lost or repeated. The SDK connection is healthy, the input was acknowledged, the model has produced no output or tool calls, and the old session was cleaned up.
-- **What stays the same:** the original turn and request deadlines. Completed tool results are never resent.
+- **When:** input was acknowledged, the current attempt has produced no assistant text/message, no tool calls are pending, and cleanup and readiness on the same client generation are confirmed. Transport-error recovery additionally requires no observed model progress in that attempt, including reasoning, tool-input or stream bytes.
+- **What stays the same:** the original turn and request deadlines. Completed tool-result RPCs are never resubmitted; their contents may be included as history when rebuilding a session. This is not an exactly-once inference guarantee.
 - **Cost:** a retry can use extra Copilot usage.
-- **To turn it off:** set `TURN_IDLE_RECOVERY_ATTEMPTS=0`. Codex's own automatic HTTP and stream retries are always off.
+- **To disable session-recovery retries:** set `TURN_IDLE_RECOVERY_ATTEMPTS=0`. The launcher disables Codex's automatic HTTP and stream retries. Read-only SDK connection/catalog recovery and retries internal to the SDK/provider are separate.
 
 See [recovery details](ARCHITECTURE.md#model-progress-and-recovery).
 
 | Error code | HTTP | Meaning |
 | --- | --- | --- |
 | `copilot_idle_timeout` | 504 | No model progress within the first-progress or idle limit. The message names the `phase`. |
+| `copilot_transport_error` | 502 | Structured model-transport failure; safe recovery was unavailable, blocked or exhausted. |
+| `copilot_setup_timeout` | 504 | An SDK session-setup or model-setting operation exceeded its deadline. |
 | `copilot_timeout` | 504 | The whole-turn limit expired, including any recovery. |
 | `request_timeout` | 504 | The whole-request limit expired, including queue wait. |
 | `request_queue_full` | 429 | Too many running and queued requests. Nothing was submitted. |
+| `upstream_unavailable` | 503 | The SDK connection could not become ready; this connection-recovery path does not retry inference. |
 | `upstream_session_lost` | 409 | The Copilot connection was lost. Start a new conversation. |
 
-For what to do about timeouts, see [slow or disconnected upstream](#slow-or-disconnected-upstream).
+These HTTP statuses apply before streaming starts. An already-started SSE response keeps HTTP 200 and reports the error in `response.failed`. For timeout handling, see [slow or disconnected upstream](#slow-or-disconnected-upstream).
+
+A startup `listModels` timeout can replace the SDK client once after confirmed cleanup, within the same `SDK_STARTUP_TIMEOUT_MS` budget (30 seconds by default). The first catalog attempt gets at most half that budget (15 seconds by default), also capped by the remaining startup time. Cleanup retains its separate bound. This read-only recovery makes no inference calls and does not retry authentication or arbitrary RPC errors.
 
 ### Restart the bridge safely
 
@@ -287,7 +277,7 @@ Find your symptom below. For what the bridge supports at all, see [compatibility
 | Symptom or code | What to do |
 | --- | --- |
 | HTTP 404 or 409, for example `unknown_tool_call` or `tool_result_mismatch` | The bridge lost or cannot continue this conversation's state. Start a new conversation with `/new`; see [what each code means](#conversation-state-errors-404-409). |
-| `copilot_idle_timeout`, `copilot_timeout`, `request_timeout` or `ETIMEDOUT` | Check network, proxy and service availability first, then see [slow or disconnected upstream](#slow-or-disconnected-upstream) and the [limits](#timeouts-and-recovery). A healthy local bridge does not prove the model service is available. |
+| `copilot_idle_timeout`, `copilot_timeout`, `copilot_transport_error`, `copilot_setup_timeout`, `upstream_unavailable`, `request_timeout` or `ETIMEDOUT` | Check network, proxy and service availability first, then see [slow or disconnected upstream](#slow-or-disconnected-upstream) and the [limits](#timeouts-and-recovery). A healthy local bridge does not prove the model service is available. |
 | `request_queue_full` (429) | Too many requests are running or queued. Wait for running turns to finish, then send the prompt again. |
 | `context_length_exceeded` | Codex compacts automatically, including in tool-heavy turns. If the error persists, run `/compact` between turns or start a shorter conversation. Raising a byte limit does not add model context. |
 | `history_too_large` or `body_too_large` (413) | Start a shorter conversation, or raise `MAX_REPLAY_BYTES` or `MAX_BODY_BYTES` if you have memory to spare and [restart the bridge](#restart-the-bridge-safely). These limits do not add model context. |
@@ -332,7 +322,7 @@ These values allow three minutes both before and after first progress, up to two
 - Never treat keepalives as model progress or blindly rerun completed tools.
 - **If a long test was running,** read its existing `.runtime` report before starting another run. Test runners save progress on their own; a chat failure does not mean the test stopped.
 
-For test commands and recorded results, see the [testing guide map](../README.md#testing) and [verification records](validation/README.md). The records keep failures and separate offline checks, live matrices and older implementations.
+For test commands and the final recorded result, see the [testing guide map](../README.md#testing) and [verification result](validation/README.md). Failed cases and offline regressions stay separate from the live verdict.
 
 ## Direct server (advanced)
 

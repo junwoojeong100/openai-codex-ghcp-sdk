@@ -135,3 +135,68 @@ test("SDK startup diagnostics omit upstream messages, credentials and arbitrary 
   assert.equal(diagnostics[0].failureType, "rpc_error");
   assert.doesNotMatch(JSON.stringify(diagnostics), /private-/);
 });
+
+test("a stalled startup catalog gets one fresh client within the original deadline", async t => {
+  const gate = deferred(), ready = [], diagnostics = [];
+  const old = peer({ listModels: () => gate.promise }), replacement = peer();
+  let factories = 0;
+  const lifecycle = setup(t, { client: old, startupTimeoutMs: 120,
+    clientFactory: () => { factories++; return replacement; }, onReady: e => ready.push(e.client),
+    onDiagnostic: event => diagnostics.push(event) });
+  await Promise.all(Array.from({ length: 12 }, () => lifecycle.start()));
+  assert.equal(factories, 1);
+  assert.equal(old.forced, 1);
+  assert.deepEqual(ready, [replacement]);
+  assert.equal(replacement.starts, 1);
+  assert.equal(lifecycle.snapshot().ready, true);
+  const recovering = diagnostics.find(row => row.event === "bridge.upstream_catalog_recovering");
+  assert.ok(recovering.remainingMs > 0 && recovering.remainingMs <= 60);
+  assert.equal(diagnostics.filter(row => row.event === "bridge.upstream_catalog_recovered").length, 1);
+  gate.resolve([{ id: "gpt-6-sol" }]);
+  await delay(10);
+  assert.deepEqual(ready, [replacement]);
+  assert.ok(old.forced >= 2);
+  assert.equal(replacement.forced, 0);
+});
+
+test("catalog recovery exhausts two clients without resetting the startup budget", async t => {
+  const old = peer({ listModels: () => new Promise(() => {}) });
+  const replacement = peer({ listModels: () => new Promise(() => {}) });
+  let factories = 0;
+  const lifecycle = setup(t, { client: old, startupTimeoutMs: 120,
+    clientFactory: () => { factories++; return replacement; } });
+  const started = Date.now();
+  await assert.rejects(lifecycle.start(), error => error.code === "upstream_unavailable" && /exhausted/.test(error.message));
+  assert.ok(Date.now() - started < 200, "the second client must not receive another 120 ms budget");
+  assert.equal(factories, 1);
+  assert.equal(lifecycle.state, "unavailable");
+  assert.equal(old.forced, 1);
+  assert.equal(replacement.forced, 1);
+});
+
+for (const mode of ["rpc-error", "cleanup-error", "cleanup-deadline", "cancelled", "reused-client", "factory-error"]) {
+  test(`catalog recovery is fail-closed (${mode})`, async t => {
+    let factories = 0;
+    const old = peer({ listModels: () => mode === "rpc-error" ? Promise.reject(new Error("private-auth-error")) : new Promise(() => {}) });
+    const lifecycle = setup(t, { client: old, startupTimeoutMs: 80, cleanupTimeoutMs: 100,
+      clientFactory: () => {
+        factories++;
+        if (mode === "factory-error") throw new Error("private-factory-error");
+        return mode === "reused-client" ? old : peer();
+      } });
+    old.forceStop = async () => {
+      old.forced++;
+      if (mode === "cleanup-error") throw new Error("private-cleanup-error");
+      if (mode === "cleanup-deadline") await delay(60);
+      if (mode === "cancelled") lifecycle.beginStop();
+    };
+    await assert.rejects(lifecycle.start(), error => {
+      assert.equal(error.code, "upstream_unavailable");
+      assert.doesNotMatch(error.message, /private-/);
+      return true;
+    });
+    assert.equal(factories, ["reused-client", "factory-error"].includes(mode) ? 1 : 0);
+    assert.equal(lifecycle.snapshot().ready, false);
+    assert.equal(old.starts, 1);
+  });
+}

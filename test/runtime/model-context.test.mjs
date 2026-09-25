@@ -6,18 +6,21 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { codexEnvironment, codexProviderArgs, writeCodexCatalog } from "../../src/launcher.mjs";
+import { codexProviderArgs, writeCodexCatalog } from "../../src/launcher.mjs";
 import { DEFAULT_MODEL, SUPPORTED_MODEL_IDS, modelCatalog } from "../../src/model-map.mjs";
 import { createBridgeServer } from "../../src/server.mjs";
 import { SessionManager } from "../../src/session-manager.mjs";
-import { NativeHost } from "../../scripts/compatibility/rpc.mjs";
-import { runTerminalProbe } from "../../scripts/soak/terminal.mjs";
-import { FakeClient } from "../helpers/stability-sdk.mjs";
+import { NativeHost } from "../../scripts/verification/rpc.mjs";
+import { environment } from "../../scripts/verification/util.mjs";
+import { runTerminalProbe } from "../../scripts/verification/terminal.mjs";
+import { FakeClient, replayInput } from "../helpers/stability-sdk.mjs";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
 const bin = process.env.CODEX_BIN || "codex";
 const model = DEFAULT_MODEL;
 const token = "owned-context-runtime-fixture";
+const isolatedCodexArgs = ["apps", "plugins", "memories", "multi_agent"]
+  .flatMap(feature => ["-c", `features.${feature}=false`]);
 const limits = { max_context_window_tokens: 65_536, max_prompt_tokens: 49_152, max_output_tokens: 16_384 };
 const models = [{ id: model, supportedReasoningEfforts: ["low"], capabilities: {
   supports: { reasoningEffort: true }, limits,
@@ -27,7 +30,7 @@ function fixture(t) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "ghcp-context-runtime-"));
   const codexHome = path.join(directory, ".codex");
   fs.mkdirSync(codexHome, { mode: 0o700 });
-  const env = { ...codexEnvironment(process.env, token), HOME: directory, CODEX_HOME: codexHome };
+  const env = environment(process.env, { home: directory, codexHome, tmp: directory, token });
   const hosts = [];
   let manager, server;
   t.after(async () => {
@@ -45,7 +48,8 @@ function fixture(t) {
     directory, env,
     async host(args, options = {}) {
       const host = new NativeHost({
-        bin, args, cwd: directory, env, signal: AbortSignal.timeout(20_000), ...options,
+        bin, cwd: directory, env, signal: AbortSignal.timeout(20_000), ...options,
+        args: [...args, ...isolatedCodexArgs],
       });
       hosts.push(host);
       await host.start();
@@ -79,19 +83,18 @@ async function startThread(host, directory, extra = {}) {
 
 test("the actual launcher replaces bundled picker entries and removes its private catalog on exit", { timeout: 25_000 }, async t => {
   const f = fixture(t);
-  const output = path.join(f.directory, "observer");
-  fs.mkdirSync(output, { mode: 0o700 });
-  const observer = path.join(f.directory, "observer.json");
-  fs.writeFileSync(observer, JSON.stringify({ output, executionKind: "offline-self-test" }), { mode: 0o600 });
   const host = await f.host(["--ghcp-model", model, "--"], {
     bin: path.join(root, "bin/codex-ghcp"),
-    env: { ...f.env, CODEX_BIN: bin, GHCP_COMPAT_OBSERVER: observer,
+    env: { ...f.env, CODEX_BIN: bin,
       COPILOT_HOME: path.join(f.directory, "copilot"), GHCP_DAEMON_DIR: path.join(f.directory, "daemon"),
-      NODE_OPTIONS: `--import=${JSON.stringify(path.join(root, "scripts/compatibility/launcher-observer.mjs"))}` },
+      NODE_OPTIONS: `--import=${JSON.stringify(path.join(root, "test/fixtures/catalog-sdk.mjs"))}` },
   });
   const picker = await host.request("model/list", { includeHidden: true });
   assert.deepEqual(picker.data.map(entry => entry.model), [model]);
   const config = await host.request("config/read", { includeLayers: false });
+  for (const feature of ["apps", "plugins", "memories", "multi_agent"]) {
+    assert.equal(config.config.features[feature], false, `Offline context fixtures must disable ${feature}`);
+  }
   const filename = config.config.model_catalog_json;
   assert.equal(typeof filename, "string");
   assert.equal(fs.statSync(filename).mode & 0o777, 0o600);
@@ -219,6 +222,43 @@ test("native automatic compaction at a resolved tool handoff completes and conti
   assert.equal(answer?.message.params.item.text, marker);
 });
 
+test("native manual compaction and recall keep the current instruction separate from the original reply request", { timeout: 25_000 }, async t => {
+  const f = fixture(t), label = `PROJECT_${randomUUID()}`, ack = `ACK_${randomUUID()}`;
+  const remember = `The synthetic project label is ${label}. Keep it in summaries. Reply only ${ack}.`;
+  const recall = "Return the remembered project label, not its earlier acknowledgment. Do not use tools.";
+  let compactions = 0, recalls = 0;
+  const client = new FakeClient({ models, onSend(session, { prompt }) {
+    const items = replayInput(prompt), current = items.at(-1).content;
+    const envelope = JSON.parse(prompt.split("<conversation_history>\n")[1].split("\n</conversation_history>")[0]);
+    assert.ok(prompt.endsWith(`\n\nCurrent user request:\n${current}`));
+    assert.ok(!envelope.some(item => item.content === current));
+    if (!session.config.tools.length) {
+      compactions++;
+      assert.match(current, /CONTEXT CHECKPOINT COMPACTION/);
+      assert.ok(envelope.some(item => item.content === remember));
+      assert.ok(envelope.some(item => item.role === "assistant" && item.content === ack));
+      session.reply(`The project label is ${label}; ${ack} was only an acknowledgment. Preserve the label.`);
+    } else if (current === remember) session.reply(ack);
+    else {
+      assert.equal(current, recall);
+      assert.ok(envelope.some(item => item.content.includes(label)));
+      recalls++;
+      session.reply(label);
+    }
+  } });
+  const bridge = await f.bridge(client), host = await f.host(bridge.args);
+  const thread = await startThread(host, f.directory);
+  assert.equal((await host.turn(thread, remember)).status, "completed");
+  const offset = host.records.length;
+  await host.request("thread/compact/start", { threadId: thread });
+  await host.wait(row => row.message.method === "turn/completed" && row.message.params.threadId === thread, offset);
+  assert.equal((await host.turn(thread, recall)).status, "completed");
+  assert.equal(compactions, 1);
+  assert.equal(recalls, 1);
+  assert.equal(client.sessions.length, 3);
+  assert.ok(client.sessions.every(session => session.sent.length === 1 && session.submitted.length === 0));
+});
+
 test("native context overflow fails once with the recognized code and allows a shorter follow-up", { timeout: 25_000 }, async t => {
   const f = fixture(t);
   let sends = 0;
@@ -320,7 +360,7 @@ async function terminalFixture(t, { turns, hangFirstSetup = false, turnIdleRecov
     bin: path.join(root, "bin/codex-ghcp"),
     args: ["--", "-a", "never", "--sandbox", "read-only",
       "-c", `projects={ ${JSON.stringify(fs.realpathSync(f.directory))}={ trust_level="trusted" } }`,
-      "-c", "features.apps=false", "-c", "features.plugins=false", "-c", "features.memories=false", "-c", "features.multi_agent=false"],
+      ...isolatedCodexArgs],
     cwd: f.directory, ownedRoot: f.directory, directory: path.join(f.directory, "terminal"),
     env: { ...f.env, TMPDIR: tmp, CODEX_BIN: bin, COPILOT_HOME: path.join(f.directory, "copilot"),
       GHCP_DAEMON_DIR: path.join(f.directory, "daemon"), GHCP_TERMINAL_FIXTURE: configuration,
@@ -412,10 +452,14 @@ test("the real TUI surfaces a stalled session setup and accepts the next prompt"
     { prompt: "Reply with AFTER_SETUP_OK.", expectedMarker: "AFTER_SETUP_OK" },
   ] });
   assert.equal(result.turns[0].errorObserved, true);
-  assert.ok(result.turns[0].durationMs < 2500, JSON.stringify({
-    turn: result.turns[0], diagnostics: sdk.diagnostics,
-  }));
+  // PTY timing also includes native preparation and rendering, not just SDK setup.
+  assert.equal(sdk.setupFailures.length, 1);
+  const [failure] = sdk.setupFailures;
+  assert.equal(failure.code, "copilot_setup_timeout");
+  assert.equal(failure.timeoutMs, 500);
+  assert.ok(failure.elapsedMs >= 400 && failure.elapsedMs < 2500, JSON.stringify(failure));
   assert.equal(result.turns[1].markerObserved, true);
   assert.equal(sdk.sends, 1);
   assert.equal(sdk.sessions, 2);
+  t.diagnostic(JSON.stringify({ setupFailureMs: failure.elapsedMs, visibleErrorMs: result.turns[0].durationMs }));
 });

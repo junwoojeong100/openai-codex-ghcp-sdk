@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { groupExists, killOwnedGroup, supervise, waitForOwnedGroupExit } from "../scripts/compatibility/supervisor.mjs";
+import { groupExists, killOwnedGroup, supervise, waitForOwnedGroupExit } from "../scripts/verification/supervisor.mjs";
 
 const failWith = code => () => { throw Object.assign(new Error(`kill ${code}`), { code }); };
 

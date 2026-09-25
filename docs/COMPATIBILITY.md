@@ -9,6 +9,7 @@
 | Task | Status | Details |
 | --- | --- | --- |
 | Chat, read and edit local files, run shell commands | **Supported** | Through Codex's own tools, with Codex's approvals and sandbox. Tools read the files; files are not attached to the model. |
+| Receive `codex exec --json` events | **Supported** | Codex emits JSONL events. This does not constrain the model's answer to a JSON schema. |
 | Use Codex MCP tools | **Supported** | The Copilot runtime's separate MCP servers stay disabled. |
 | Switch models or compact locally | **Supported** | Within the [context limits](USAGE.md#model-selection-and-context). |
 | Resume a saved conversation | **Supported** | From Codex's saved history. A restarted bridge cannot restore unresolved tool calls; see [resume behavior and model selection](USAGE.md#resume-a-conversation). |
@@ -17,6 +18,8 @@
 | Require schema-constrained JSON | **Unsupported** | You can ask for JSON in a prompt, but no schema is guaranteed. Automatic titles are unavailable, and native review requests fail when they need this format. |
 | Use provider-hosted web search | **Unsupported** | Separate from client-side Codex MCP tools, which work. |
 | Use WebSockets or remote Responses compaction | **Unsupported** | Keep the launcher's HTTP/SSE and local-compaction defaults. |
+
+**Supported is a protocol boundary, not an all-model success guarantee.** AGENTS/skill instructions, exact answers, native Plan questions and MCP call order also depend on the model. A successful HTTP/SSE exchange can still produce an incorrect task result. Check the [dated results](validation/README.md#recorded-results), not just catalog availability.
 
 For launch errors, see [troubleshooting](USAGE.md#troubleshooting). The rest of this page is protocol reference for developers; it adds no setup steps.
 
@@ -34,10 +37,10 @@ For launch errors, see [troubleshooting](USAGE.md#troubleshooting). The rest of 
 - **Tool results:** several pending calls at once, answered by one following batch that contains every output.
 - **`parallel_tool_calls=false`:** at most one call is forwarded per response. If the SDK emits several calls, none are forwarded and the turn fails with `parallel_tool_calls_violation`. This checks the output; it does not change how the model decodes.
 - **Conversation state:** live full-history prefix matching, one request at a time per conversation, and `previous_response_id` continuation within the running process.
-- **Retries:** an exact retry of the latest request does not resubmit the prompt or tool results.
+- **Cached retries:** an exact retry of the latest successful normalized request returns its cached result only while that conversation state remains live and valid. Failed requests, evicted state and bridge restarts have no such cache; this is not a general exactly-once guarantee.
 - **Limits:** client cancellation, SDK deadlines, bounded in-memory state and eviction of idle or excess conversations.
 - **Reasoning effort:** only when the selected model's catalog supports it. Haiku 4.5 has no configurable effort.
-- **Model catalog and context:** a launch-owned picker catalog, input budgets from the largest advertised tier, and native local auto-compaction after complete tool-result handoffs. `npm run test:context:runtime` covers these with the actual Codex CLI and a fake SDK; it does not test maximum-context or endurance inference.
+- **Model catalog and context:** a launch-owned picker catalog, input budgets from the largest advertised tier, and native local auto-compaction after complete tool-result handoffs. `npm run test:runtime` covers these with the actual Codex CLI and a fake SDK; it does not test maximum-context or endurance inference.
 
 ## Important approximations
 
@@ -77,7 +80,7 @@ When root SDK `assistant.usage` events report `contentFilterTriggered=true` or `
 - Refusal-like text without structured filter metadata stays ordinary model output. Metadata from subordinate agents does not replace the root response.
 - Filter monitoring continues after tool handoff and while idle. A late root signal invalidates the next cached retry or pending-result continuation, but output already delivered cannot be taken back. If SDK shutdown errors follow, the first observed fault is kept.
 
-This makes the error explicit; it does not explain why the provider refused, and a filtered turn still counts as a failure, for example in the stability matrix. For opt-in, privacy-bounded evidence about native refusals, see [Opus upstream diagnostics](OPUS_DIAGNOSTICS.md).
+This makes the error explicit; it does not explain why the provider refused. A filtered supported turn still fails the [essential integration check](VERIFICATION.md). Do not infer a provider's internal reason from refusal text alone.
 
 ## Operational notes
 
@@ -86,6 +89,6 @@ This makes the error explicit; it does not explain why the provider refused, and
 - **Configuration changes:** a change while calls are pending, including tool-less compaction, needs a complete-result handoff with unchanged non-instruction history and confirmed cleanup and readiness.
 - **Context:** SDK sessions use the largest advertised context tier (`long_context` where available, otherwise `default`), and Codex compacts at 80% of the catalog's input budget. Context overflow keeps the `context_length_exceeded` error code.
 - **Timeouts and retries:** the first progress gets its own 180-second allowance, and then the 90-second streaming inactivity limit applies; both stay within the whole-turn and whole-request deadlines. The launcher turns off automatic HTTP and stream retries.
-- **Branching:** the latest result can be retried, but arbitrary earlier response branches cannot. To branch, start a new full-history conversation.
+- **Branching:** the latest successful result can be retried while its state remains valid, but arbitrary earlier response branches cannot. To branch, start a new full-history conversation.
 - **Approvals:** Codex keeps its normal sandbox and approval behavior; the bridge never substitutes an approval-bypass option.
 - **Background bridge:** the default registry is shared across working projects and tied to the checkout that started it. Status and stop verify the bridge instance they own; see [reuse and isolation](USAGE.md#optional-background-bridge).

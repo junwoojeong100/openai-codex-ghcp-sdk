@@ -98,3 +98,18 @@ export class FakeClient {
 
 export function deferred() { let resolve, reject; const promise = new Promise((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; }
 export const headers = id => ({ "session-id": id, "thread-id": id });
+
+export function replayInput(prompt) {
+  const opening = "<conversation_history>\n", closing = "\n</conversation_history>";
+  const start = prompt.indexOf(opening);
+  if (start < 0) return [{ type: "message", role: "user", content: prompt }];
+  const end = prompt.indexOf(closing, start + opening.length);
+  if (end < 0) throw new Error("Incomplete replay envelope");
+  const items = JSON.parse(prompt.slice(start + opening.length, end));
+  const tail = prompt.slice(end + closing.length), prefix = "\n\nCurrent user request:\n";
+  if (tail) {
+    if (!tail.startsWith(prefix)) throw new Error("Unexpected replay request boundary");
+    items.push({ type: "message", role: "user", content: tail.slice(prefix.length) });
+  }
+  return items;
+}
