@@ -114,7 +114,8 @@ for (const operation of ["start", "ping", "listModels"]) {
     assert.equal(diagnostics.length, 1);
     const [{ elapsedMs, ...diagnostic }] = diagnostics;
     assert.deepEqual(diagnostic, { event: "bridge.upstream_connect_failed", generation: 1,
-      operation, failureType: "timeout", timeoutMs: 20 });
+      operation, failureType: "timeout", timeoutMs: 20,
+      ...(operation === "listModels" ? { catalogFailure: { kind: "deadline", rpcCode: null, statusCode: null, transportCode: null, retryable: true } } : {}) });
     assert.ok(elapsedMs >= 0);
     assert.equal(lifecycle.snapshot().ready, false);
     assert.ok(client.forced >= 1);
@@ -158,6 +159,75 @@ test("a stalled startup catalog gets one fresh client within the original deadli
   assert.ok(old.forced >= 2);
   assert.equal(replacement.forced, 0);
 });
+
+for (const [label, fields, kind] of [
+  ["internal JSON-RPC", { code: -32603 }, "internal_rpc"],
+  ["closed JSON-RPC", { code: -32097 }, "transport"],
+  ["socket reset", { code: "ECONNRESET" }, "transport"],
+  ["nested connection timeout", { cause: { code: "UND_ERR_CONNECT_TIMEOUT" } }, "transport"],
+  ["unavailable server", { data: { statusCode: 503 } }, "server"],
+]) {
+  test(`read-only catalog recovery handles ${label} once without inference`, async t => {
+    const error = Object.assign(new Error("private diagnostics"), fields), diagnostics = [];
+    const old = peer({ listModels: async () => { throw error; } }), replacement = peer();
+    let factories = 0;
+    const lifecycle = setup(t, { client: old, clientFactory: () => { factories++; return replacement; }, onDiagnostic: row => diagnostics.push(row) });
+    await lifecycle.start();
+    assert.equal(factories, 1); assert.equal(old.forced, 1); assert.equal(replacement.starts, 1);
+    assert.equal(lifecycle.snapshot().ready, true);
+    const failed = diagnostics.find(row => row.event === "bridge.upstream_connect_failed");
+    assert.equal(failed.catalogFailure.kind, kind); assert.equal(failed.catalogFailure.retryable, true);
+    assert.ok(diagnostics.some(row => row.event === "bridge.upstream_catalog_recovered"));
+    assert.doesNotMatch(JSON.stringify(diagnostics), /private diagnostics/);
+  });
+}
+
+for (const [label, error] of [
+  ["authentication", Object.assign(new Error("Authentication failed: private-value"), { code: -32603 })],
+  ["authorization", Object.assign(new Error("private-value"), { code: -32603, data: { statusCode: 403 } })],
+  ["nested rejection over generic server failure", Object.assign(new Error("private-value"), { code: -32603, status: 503, data: { statusCode: 401 } })],
+  ["structured authentication", Object.assign(new Error("private-value"), { code: -32603, data: { code: "authentication_error" } })],
+  ["rate limit", Object.assign(new Error("private-value"), { code: -32603, cause: { status: 429 } })],
+  ["invalid parameters", Object.assign(new Error("private-value"), { code: -32602 })],
+  ["invalid parameters despite a transport cause", Object.assign(new Error("private-value"), { code: -32602, cause: { code: "ECONNRESET" } })],
+  ["cancellation", Object.assign(new Error("private-value"), { code: -32800 })],
+  ["SDK abort", Object.assign(new Error("private-value"), { name: "AbortError", code: -32603 })],
+  ["unsupported server", Object.assign(new Error("private-value"), { code: -32603, statusCode: 501 })],
+  ["untyped failure", Object.assign(new Error("private-value"), { code: "private-code" })],
+  ["malformed error code", Object.assign(new Error("private-value"), { code: { toLowerCase: 42 } })],
+]) {
+  test(`catalog recovery does not retry ${label}`, async t => {
+    let factories = 0;
+    const diagnostics = [], client = peer({ listModels: async () => { throw error; } });
+    const lifecycle = setup(t, { client, clientFactory: () => { factories++; return peer(); }, onDiagnostic: row => diagnostics.push(row) });
+    await assert.rejects(lifecycle.start(), caught => caught.code === "upstream_unavailable" && !caught.catalogFailure.retryable);
+    assert.equal(factories, 0);
+    assert.doesNotMatch(JSON.stringify(diagnostics), /private-/);
+  });
+}
+
+test("catalog RPC recovery remains single-attempt and requires confirmed cleanup", async t => {
+  for (const cleanupFails of [false, true]) {
+    let factories = 0;
+    const failure = () => Promise.reject(Object.assign(new Error("private diagnostics"), { code: -32603 }));
+    const old = peer({ listModels: failure, ...(cleanupFails ? { forceStop: async () => { throw new Error("cleanup failed"); } } : {}) });
+    const replacement = peer({ listModels: failure });
+    const lifecycle = setup(t, { client: old, clientFactory: () => { factories++; return replacement; } });
+    await assert.rejects(lifecycle.start(), { code: "upstream_unavailable" });
+    assert.equal(factories, cleanupFails ? 0 : 1);
+    assert.equal(lifecycle.snapshot().ready, false);
+  }
+});
+
+for (const operation of ["start", "ping"]) {
+  test(`catalog recovery never retries ${operation} failures`, async t => {
+    let factories = 0;
+    const client = peer({ [operation]: async () => { throw Object.assign(new Error("private diagnostics"), { code: -32603 }); } });
+    const lifecycle = setup(t, { client, clientFactory: () => { factories++; return peer(); } });
+    await assert.rejects(lifecycle.start(), { code: "upstream_unavailable" });
+    assert.equal(factories, 0);
+  });
+}
 
 test("catalog recovery exhausts two clients without resetting the startup budget", async t => {
   const old = peer({ listModels: () => new Promise(() => {}) });

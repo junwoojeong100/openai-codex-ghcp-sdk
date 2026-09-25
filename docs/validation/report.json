@@ -5,10 +5,10 @@
   "timezone": "Asia/Seoul",
   "contractId": "codex-ghcp-essential-v1",
   "executionKind": "live",
-  "runId": "9c85cf9b-4e03-4224-8386-da6b64337df6",
-  "startedAt": "2026-09-25T01:58:11.813Z",
-  "finishedAt": "2026-09-25T02:06:15.339Z",
-  "durationMs": 483541,
+  "runId": "96a2b4e8-d38e-4bd4-a42d-56c54ac304d6",
+  "startedAt": "2026-09-25T03:30:24.106Z",
+  "finishedAt": "2026-09-25T03:40:27.667Z",
+  "durationMs": 603618,
   "versions": {
     "codex": "0.154.0",
     "copilotSdk": "1.0.14",
@@ -25,9 +25,11 @@
     "proxyConfigured": false,
     "ci": false
   },
-  "implementationHash": "b4e39c1ca3cd6cedfd18e2d03871a7a14c19733f52b56db6a6209da9f542fa88",
+  "implementationHash": "8911f4768cae37f7184a9099b994d3deeca1ce15bde70c048106aa1d506397f7",
   "catalogHash": "ba633bc057a3ad468021625911a21a7db4013e203f96692203af38b976d8506a",
-  "scenarioIdsModelsAndPassRuleUnchanged": true,
+  "scenarioIdsModelsAndDeadlinesUnchanged": true,
+  "answerAcceptanceTightened": true,
+  "v02PromptClarified": true,
   "implementationUnchangedDuringRun": true,
   "frozenSourceUnchanged": true,
   "userSettingsUnchanged": true,
@@ -35,11 +37,11 @@
     "evidenceIntegrity": true,
     "catalogId": "codex-ghcp-essential-v1",
     "totalCases": 36,
-    "passed": 34,
-    "fullMatrixPassed": false,
+    "passed": 36,
+    "fullMatrixPassed": true,
     "counts": {
-      "passed": 34,
-      "failed": 2,
+      "passed": 36,
+      "failed": 0,
       "blocked": 0,
       "timed-out": 0,
       "not-run": 0
@@ -47,7 +49,7 @@
     "perModel": [
       {
         "model": "claude-opus-5.5",
-        "passed": 5,
+        "passed": 6,
         "total": 6
       },
       {
@@ -72,30 +74,30 @@
       },
       {
         "model": "gpt-6-luna",
-        "passed": 5,
+        "passed": 6,
         "total": 6
       }
     ],
-    "auxiliaryTitleRejections": 64,
+    "auxiliaryTitleRejections": 66,
     "recoveredTransportErrors": 0,
-    "catalogRecoveries": 2,
+    "catalogRecoveries": 0,
     "hoursLongSoakCertified": false
   },
   "checks": {
     "routing": {
-      "passed": 35,
+      "passed": 36,
       "total": 36
     },
     "connection": {
-      "passed": 35,
+      "passed": 36,
       "total": 36
     },
     "context-tier": {
-      "passed": 35,
+      "passed": 36,
       "total": 36
     },
     "watchdog": {
-      "passed": 35,
+      "passed": 36,
       "total": 36
     },
     "upstream": {
@@ -115,7 +117,7 @@
       "total": 36
     },
     "execution": {
-      "passed": 34,
+      "passed": 36,
       "total": 36
     },
     "V01.cli": {
@@ -135,7 +137,11 @@
       "total": 6
     },
     "V02.edit": {
-      "passed": 5,
+      "passed": 6,
+      "total": 6
+    },
+    "V02.answer": {
+      "passed": 6,
       "total": 6
     },
     "V03.mcp": {
@@ -147,11 +153,11 @@
       "total": 6
     },
     "V04.switch": {
-      "passed": 5,
+      "passed": 6,
       "total": 6
     },
     "V04.effort": {
-      "passed": 5,
+      "passed": 6,
       "total": 6
     },
     "V05.interrupt": {
@@ -177,8 +183,8 @@
       "scenarioId": "V01",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 26969,
-      "resultHash": "751bead9da23cdf49e7a47a7a98891da4bf350474c77f5d0f59e0d20dfae6726",
+      "durationMs": 46411,
+      "resultHash": "2a21f7143c672e7226d33e0dc86b2eabc594cf339cb638c72f45989917850f33",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -187,8 +193,8 @@
       "scenarioId": "V02",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 40927,
-      "resultHash": "46e1ab4e73b403018603b4f5dbe8ed60a6389bd4d32553a9ccc6b04c5c271875",
+      "durationMs": 60239,
+      "resultHash": "9b4c8ca3fa2f52bb9ca03742ad9f6134e60b921fc1deb6065e358340ef27bde3",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -197,26 +203,18 @@
       "scenarioId": "V03",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 38288,
-      "resultHash": "4ef7f043b2040a842c361aa4f65f3adf2067bfa3c56ee81e7b4f710299fd315f",
+      "durationMs": 41097,
+      "resultHash": "e16d626fd80c2e77b1d054d9f5252acd7ef2ba2e9dde3f2fbddbeeefd7948464",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
     {
       "model": "claude-opus-5.5",
       "scenarioId": "V04",
-      "status": "failed",
-      "failedChecks": [
-        "routing",
-        "connection",
-        "context-tier",
-        "watchdog",
-        "execution",
-        "V04.switch",
-        "V04.effort"
-      ],
-      "durationMs": 15655,
-      "resultHash": "b2dde686b2b70e474eb8402cf0cb7d0284a8876ee8c6a424a2d41b426ec3da3e",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 72233,
+      "resultHash": "805eb1bc0e3110d2fba037767951fadf4c79a1bafe9a19e67c96318028fe8c24",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -225,8 +223,8 @@
       "scenarioId": "V05",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 45426,
-      "resultHash": "04caf2dcfe740e2836f6a65506dada2a3218e8e0b228ef3efe38bc5602722bfb",
+      "durationMs": 31318,
+      "resultHash": "d51d401f66fde26cea615b027395733f3af13fb6141a8bbf41975bb17042c17e",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -235,8 +233,8 @@
       "scenarioId": "V06",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 95567,
-      "resultHash": "71d6eae23d1a277e6ae4c2a751b0c54039509c07c15a9ec5616c9ce7627e6e08",
+      "durationMs": 77427,
+      "resultHash": "a90397fd274196adf89bb180b874416e41702213b6e7c47c46e1d9900ff00daa",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -245,8 +243,8 @@
       "scenarioId": "V01",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 24978,
-      "resultHash": "8d0edb458dc01a8748effcea4bf9d762b9f265cf6988e463787602092309c2ed",
+      "durationMs": 43682,
+      "resultHash": "e908cfb280503e3669816fa2ce60ff67fff0a9ffbf1550e98572e1814c5fa664",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -255,8 +253,8 @@
       "scenarioId": "V02",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 37583,
-      "resultHash": "773e252f57224093b1ecc6fc6c6d46d7bc5ea8d4444492454ed69393bc01ae5b",
+      "durationMs": 65754,
+      "resultHash": "15c4cc249d3206fb7f7392b80ba4314876d7171f6ab28f2b5d6cb3f47126cd8e",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -265,8 +263,8 @@
       "scenarioId": "V03",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 37155,
-      "resultHash": "eef5746a08a8996595a0f0debd6876151d0e01d2980f526ad7d60b5302175403",
+      "durationMs": 42228,
+      "resultHash": "6d8177a4499c118f9b816134ab8ea26c726e01cb7326dac737ba28e8128e3a63",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -275,18 +273,18 @@
       "scenarioId": "V04",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 64511,
-      "resultHash": "7afda6fd07b1451f53afdcba9f4b0a23685569b93ddf2d0a02c02c267edb2006",
+      "durationMs": 65445,
+      "resultHash": "434c759afbb1319ff45e40b624bdd00a67f7520af700a668c25299ead697c2dc",
       "recoveredTransportErrors": 0,
-      "catalogRecoveries": 1
+      "catalogRecoveries": 0
     },
     {
       "model": "claude-sonnet-5",
       "scenarioId": "V05",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 24794,
-      "resultHash": "0dd4b79efafacc649db028b2b2f1ee32635d2d8670476107851a968fa2b328e6",
+      "durationMs": 32071,
+      "resultHash": "b966f4dd7a2fe80d5d58cccaad5244554c2bf1d7f07c0acdf49d5f694c72fcf7",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -295,8 +293,8 @@
       "scenarioId": "V06",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 89034,
-      "resultHash": "805c0745662e4a1fcfaf1aa325ed72169579f733ff956d6c2b0c3199f5ab1ce8",
+      "durationMs": 66526,
+      "resultHash": "ccd365f0b984d12a5056e5c45d53992877b51f1319d659d0f17c15b539054d20",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -305,8 +303,8 @@
       "scenarioId": "V01",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 24721,
-      "resultHash": "fbaf8c99020af8dcf255e3d429f3601d47793eedab5dabec7395b8e4d211855a",
+      "durationMs": 46400,
+      "resultHash": "e3dff5b413d37efee0defa1134212b5bc6b67900b0b048c16e2565a57490acca",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -315,8 +313,8 @@
       "scenarioId": "V02",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 38307,
-      "resultHash": "38c46535dbd5903a66cf3118ad4926a34ab7ca78c42446a0db24927a0b9f5002",
+      "durationMs": 65409,
+      "resultHash": "fd4644bd27f0f31a53255dab7e1967b80399a4e6908a853090717cfb773d5f09",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -325,8 +323,8 @@
       "scenarioId": "V03",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 37935,
-      "resultHash": "db7ad9aebb589a07b96a1161f082abff455366edf87ddc50da9228892de0df0d",
+      "durationMs": 53316,
+      "resultHash": "457f5d45d561cd13de9808a90c058d75c69847b64f920faecce6f4a4ec355e5e",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -335,18 +333,18 @@
       "scenarioId": "V04",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 63032,
-      "resultHash": "a4c03574d7abcbd9848e55f173487ecabc9cc3e9e9c7aa63b1798c7108b28a08",
+      "durationMs": 64459,
+      "resultHash": "45cb2a58b24d4c3d66150c9d63617d3f7e7a995ad3cddde811a3c85bb37036aa",
       "recoveredTransportErrors": 0,
-      "catalogRecoveries": 1
+      "catalogRecoveries": 0
     },
     {
       "model": "claude-haiku-4.5",
       "scenarioId": "V05",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 24907,
-      "resultHash": "aa16ba225b22ae297ac403f8665ae3406db1452810680b3c055f7862e35f1193",
+      "durationMs": 40465,
+      "resultHash": "e365ead76a0e7a9baddd4962cf506c17a2fc031cbad24ecb14ef37596a3a143c",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -355,8 +353,8 @@
       "scenarioId": "V06",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 89799,
-      "resultHash": "21dcde25b307edbdd514dbd54202c1fd00ae84dbc830ea69a5941b6696369cbf",
+      "durationMs": 67571,
+      "resultHash": "17e4cf56ed9d16bfd7b9a1c0d4322cf31a45668bd75f4d8101ab739cdc08e350",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -365,8 +363,8 @@
       "scenarioId": "V01",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 33561,
-      "resultHash": "0b027074d1aa78ffbc9e0c52bdba3b1a5715184921293f51fe8ef030e81e2948",
+      "durationMs": 54924,
+      "resultHash": "aac9310d0591dfc0580b160b4f40759f874a10d5458105f476bdfd8ab696de7f",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -375,8 +373,8 @@
       "scenarioId": "V02",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 50320,
-      "resultHash": "429cff4b2a52f8d21a9ef17c3d7bb253f1b3ae0ea7d509feab0772d3ab70c24e",
+      "durationMs": 65331,
+      "resultHash": "c049a1399f4052b47480963dba2178e7dca424d6ead7c3c15cb9864b1daa31f9",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -385,8 +383,8 @@
       "scenarioId": "V03",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 23356,
-      "resultHash": "f268b8d78dbb6b30e1830cf861d1b9ec8749307e2454a327b9ca227a3ee2dabc",
+      "durationMs": 36010,
+      "resultHash": "3a3443122cc2dff18e02670875f334cf1109b461bc885555bb2ca1628cee7908",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -395,8 +393,8 @@
       "scenarioId": "V04",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 40441,
-      "resultHash": "3c2a5590c1d10d48d8acf502fe86b41df37bb939b295916fd0af9c5be366ce56",
+      "durationMs": 35138,
+      "resultHash": "5225604c45087360be90edeb36ad147d45d5ce9391ee7914549a9d22ee6a125b",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -405,8 +403,8 @@
       "scenarioId": "V05",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 16822,
-      "resultHash": "049f3350a8d209d21b3b00d3317d20c390e880a505a29544ef0f7bcf20ff07d5",
+      "durationMs": 21868,
+      "resultHash": "a29d18031479b7974daae31929ce633e1486d22747831c6470cf2a38584bd2c8",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -415,8 +413,8 @@
       "scenarioId": "V06",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 45745,
-      "resultHash": "880a602bea5cef487bea91218cde1226f4c760ee8f5fad93d5063c9f06686d38",
+      "durationMs": 59477,
+      "resultHash": "ad6b4f8fc967063dd32d28ae3b0cd9322ff1884768eb3d5c82a8ea080495ee69",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -425,8 +423,8 @@
       "scenarioId": "V01",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 30882,
-      "resultHash": "29ba8b660732f221fa57e18c14190b896f67d2b85c446568413ed082e0baf10c",
+      "durationMs": 50946,
+      "resultHash": "cfc7d7a94aaf2090800433bec544d08e8b913d2dbc28b6164069aff2c3242243",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -435,8 +433,8 @@
       "scenarioId": "V02",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 44780,
-      "resultHash": "50115817e837f7591f53f65107dca1be88ff079ea53c2dc5acc164588b36fc5e",
+      "durationMs": 61083,
+      "resultHash": "6d5568541d571e17d4afe33a38aa5705d461550a849a522f9adfe26fb6b7a7a2",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -445,8 +443,8 @@
       "scenarioId": "V03",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 24375,
-      "resultHash": "4338ea9f532230bdd6809496eed68a9d0c3242cc9ab6e86d1d854e218650ca11",
+      "durationMs": 35356,
+      "resultHash": "2a6b97c435eea8ffdf08fcade1977d6bfdd49a06c3cd06ec64058f1e7e555ff4",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -455,8 +453,8 @@
       "scenarioId": "V04",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 41546,
-      "resultHash": "455e03ded6c1431bc32a3dd4aebb02f4f59e9b626451c24a572f8f170fab3df3",
+      "durationMs": 36177,
+      "resultHash": "d9389e91a003cabe08283e2a9ff8b5cbb3e666bf8d9ea1f7b35bd29826ba43b1",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -465,8 +463,8 @@
       "scenarioId": "V05",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 18022,
-      "resultHash": "c8a106b9159d764d35a5ac043beec588dc799b48d1ef27de2edcb2e4975e6d5f",
+      "durationMs": 23512,
+      "resultHash": "24169c92db65d2fd842df3bee0e774d7bbbedde9d51089f1a5d312a59e94410f",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -475,8 +473,8 @@
       "scenarioId": "V06",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 42336,
-      "resultHash": "1dbfb067802f00684ee8dbf4e406e7dbf0a7581b39dabb38243a7fbceb1a9260",
+      "durationMs": 59291,
+      "resultHash": "cde07b334173f6e2d493b076f8f2bace71802e166e9b23e1f2825f8a5c573419",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -485,21 +483,18 @@
       "scenarioId": "V01",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 27745,
-      "resultHash": "902c4498849965af963255b792ce1722bcd088abb4c4e1e436e2b7b7dfcfd952",
+      "durationMs": 49120,
+      "resultHash": "53655bdb1980e94258edf0626bc68f0a777ce3de86d0e443e1591a5b7964c71e",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
     {
       "model": "gpt-6-luna",
       "scenarioId": "V02",
-      "status": "failed",
-      "failedChecks": [
-        "execution",
-        "V02.edit"
-      ],
-      "durationMs": 45588,
-      "resultHash": "580066e0bc35108d0782649dee763f38526a2847761d064dc5af2e72ae389c03",
+      "status": "passed",
+      "failedChecks": [],
+      "durationMs": 57342,
+      "resultHash": "1b4065b26ecfb152a7cc042e1e8db88d2b4594031747f34e9fa89423556c4b3c",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -508,8 +503,8 @@
       "scenarioId": "V03",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 20504,
-      "resultHash": "eef020620ccc503aa776cc1a4656f7519a3dc2b7fdadd0198c4d8f062885c87c",
+      "durationMs": 35167,
+      "resultHash": "b1ce20a10fc81db7b9ad72a6d5b5bdcd52b6750aa2c6685fc136eae8f052e8a3",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -518,8 +513,8 @@
       "scenarioId": "V04",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 43892,
-      "resultHash": "a6ccfffb6be5b2dab8ae0a62b32bcc903caab3b3ebf233e899cf37fe0b11bee1",
+      "durationMs": 36367,
+      "resultHash": "1afdc3d3621fdf9969cbd0e420c95c50753e0d8e238488fb92c4aa21e703a812",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -528,8 +523,8 @@
       "scenarioId": "V05",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 18344,
-      "resultHash": "0af6fdb2a828b9ae50b9233ab02e5c54d50386a09e7e98112b0912cc6686fb13",
+      "durationMs": 24634,
+      "resultHash": "617daa1b9222c504963244b5018d43d98b6646061e58ed2e86123a8547572999",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     },
@@ -538,320 +533,325 @@
       "scenarioId": "V06",
       "status": "passed",
       "failedChecks": [],
-      "durationMs": 40835,
-      "resultHash": "414bf0b0edce7c0c1ad906e0ecc9212793ad0a7021e118dcd4cfde725309c836",
+      "durationMs": 58483,
+      "resultHash": "1900f824987f0ed3c18005b56e0c4b451aee6f1a3859a7e5f2ca59eabfe05ad6",
       "recoveredTransportErrors": 0,
       "catalogRecoveries": 0
     }
   ],
-  "failures": [
-    {
-      "model": "claude-opus-5.5",
-      "scenarioId": "V04",
-      "status": "failed",
-      "failedChecks": [
-        "routing",
-        "connection",
-        "context-tier",
-        "watchdog",
-        "execution",
-        "V04.switch",
-        "V04.effort"
-      ],
-      "error": {
-        "name": "Error",
-        "message": "Codex exited while waiting for ready"
+  "failures": [],
+  "failureReview": {
+    "previousRunId": "9c85cf9b-4e03-4224-8386-da6b64337df6",
+    "previousFailures": [
+      {
+        "model": "claude-opus-5.5",
+        "scenarioId": "V04",
+        "status": "failed",
+        "failedChecks": [
+          "routing",
+          "connection",
+          "context-tier",
+          "watchdog",
+          "execution",
+          "V04.switch",
+          "V04.effort"
+        ],
+        "error": {
+          "name": "Error",
+          "message": "Codex exited while waiting for ready"
+        },
+        "artifactPath": "cases/claude-opus-5.5/V04",
+        "launchModel": "gpt-6-astra",
+        "modelCalls": 0,
+        "startupDiagnostics": [
+          {
+            "event": "bridge.upstream_connect_failed",
+            "generation": 1,
+            "operation": "listModels",
+            "failureType": "rpc_error",
+            "timeoutMs": 30000,
+            "elapsedMs": 10570,
+            "attemptBudgetMs": 29999,
+            "catalogTimeoutMs": 15000,
+            "at": 1790301613085
+          }
+        ],
+        "cleanupConfirmed": true
       },
-      "artifactPath": "cases/claude-opus-5.5/V04",
-      "launchModel": "gpt-6-astra",
+      {
+        "model": "gpt-6-luna",
+        "scenarioId": "V02",
+        "status": "failed",
+        "failedChecks": [
+          "execution",
+          "V02.edit"
+        ],
+        "error": {
+          "name": "Error",
+          "message": "The model completed its turn without the expected answer; this is not a stream timeout."
+        },
+        "artifactPath": "cases/gpt-6-luna/V02",
+        "launchModel": "gpt-6-luna",
+        "modelCalls": 6,
+        "startupDiagnostics": [],
+        "expectedAnswer": "TUI_3b56cc28_000001",
+        "observedAnswer": "export function discount(price, percent) { return price * (100 - percent); }",
+        "cleanupConfirmed": true
+      }
+    ],
+    "catalogProbe": {
+      "attempts": 6,
+      "ready": 6,
       "modelCalls": 0,
-      "startupDiagnostics": [
-        {
-          "event": "bridge.upstream_connect_failed",
-          "generation": 1,
-          "operation": "listModels",
-          "failureType": "rpc_error",
-          "timeoutMs": 30000,
-          "elapsedMs": 10570,
-          "attemptBudgetMs": 29999,
-          "catalogTimeoutMs": 15000,
-          "at": 1790301613085
-        }
-      ],
-      "cleanupConfirmed": true
+      "underlyingPriorCause": "The prior trace discarded the upstream code. Six bounded concurrent read-only probes did not reproduce it; no network/authentication root cause is inferred."
     },
-    {
-      "model": "gpt-6-luna",
-      "scenarioId": "V02",
-      "status": "failed",
-      "failedChecks": [
-        "execution",
-        "V02.edit"
-      ],
-      "error": {
-        "name": "Error",
-        "message": "The model completed its turn without the expected answer; this is not a stream timeout."
+    "scenarioReview": {
+      "priorFailuresWereGenuine": true,
+      "freshFileReadRequested": true,
+      "sampleIndependentOfAcknowledgment": true,
+      "exactFinalAnswerRequired": true
+    },
+    "runnerRegressionsReproduced": [
+      "An earlier matching SDK line could hide a wrong final answer",
+      "An expected line plus extra prose could pass",
+      "Failed answers were omitted from scenario facts",
+      "Unrecovered catalog failures could pass the upstream check",
+      "Catalog recovery receipts must belong to the same bridge process; a cold-resume generation cannot stand in for another process",
+      "Native command completion can omit already-streamed prefix bytes while the actual call output is complete; file-read validation must use the native call result, not the command summary."
+    ],
+    "inferenceRetryPolicyChanged": false,
+    "scenarioIdsAndDeadlinesUnchanged": true,
+    "automaticCaseRetries": 0,
+    "runtimeHarnessObservation": {
+      "initialRun": {
+        "passed": 21,
+        "total": 22,
+        "error": "Unqualified timeout during the cached-update offline runtime check"
       },
-      "artifactPath": "cases/gpt-6-luna/V02",
-      "launchModel": "gpt-6-luna",
-      "modelCalls": 6,
-      "startupDiagnostics": [],
-      "expectedAnswer": "TUI_3b56cc28_000001",
-      "observedAnswer": "export function discount(price, percent) { return price * (100 - percent); }",
-      "cleanupConfirmed": true
+      "targetedRecheck": {
+        "passed": 1,
+        "total": 1
+      },
+      "originalTimeoutSource": "Not recoverable from the original generic timeout; not claimed as an SDK or model failure.",
+      "improvement": "Renderer failures stop immediately; capture errors identify the launch and checkpoint. No timing budget was increased.",
+      "finalSourceFocusedChecks": {
+        "passed": 2,
+        "total": 2
+      }
+    },
+    "nativeOutputReproduction": {
+      "offline": true,
+      "actualPinnedCodex": true,
+      "command": "cat sample.txt && node --test --experimental-test-isolation=none discount.test.mjs",
+      "commandSummaryOmittedPrefix": true,
+      "nativeToolResultPreservedPrefix": true,
+      "correctedFocusedRuntime": {
+        "passed": 2,
+        "total": 2
+      },
+      "modelCalls": 0
     }
-  ],
+  },
   "v02Procedure": {
-    "appliesToAllSixModels": true,
     "turns": [
       "Read-only baseline",
-      "Repair after evidence gate"
+      "Repair, re-read sample, run the same tests, return exact value"
     ],
-    "sandbox": "Both turns use the same isolated workspace-write sandbox. The baseline is checked from native records and file snapshots, not continuous write prevention.",
-    "limitation": "A staged coding workflow is verified, not guaranteed adherence to a compound one-turn request.",
+    "scope": "The same two turns and workspace-write sandbox apply to every model. A fresh read reduces an unintended memory task; wrong final answers still fail.",
+    "independentSampleValue": true,
+    "separateEditAndAnswerChecks": true,
+    "modelsPassed": 6,
     "evidence": ".runtime/verification-final/v02-workflow.json",
-    "evidenceSha256": "70abd0a3ba3a47e4838792355657a7b622cea84c5f359c5d87c16e976f0218ba",
-    "modelsPassed": 5,
+    "evidenceSha256": "905034db7a91f3e3bd1a546b4f721a41aba70f7b7a4e3cec348e13ecc05d9471",
     "cases": [
       {
         "model": "claude-opus-5.5",
         "status": "passed",
         "baselineWorkspaceUnchanged": true,
-        "baselinePatchApplies": 0,
         "baseline": [
           {
-            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
             "exitCode": 1,
             "tests": 3,
             "failed": 2
           }
         ],
         "final": {
-          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
           "exitCode": 0,
           "tests": 3,
           "passed": 3
         },
         "baselineIsExactNativePrefix": true,
-        "testsUnchanged": true,
         "onlySourceModified": [
           "discount.mjs"
         ],
-        "sameNativeProcess": true,
-        "twoTurnAnswersRecorded": true,
-        "expectedRepairAnswer": "TUI_806e3c58_000001",
-        "observedRepairAnswer": "TUI_806e3c58_000001",
-        "requiredRepairAnswerMatched": true
+        "expectedAnswer": "TUI_56d34598_000001",
+        "observedAnswer": "TUI_56d34598_000001",
+        "exactAnswerPassed": true,
+        "freshSampleRead": true,
+        "matchingToolSubmissions": 5,
+        "totalToolSubmissions": 5
       },
       {
         "model": "claude-sonnet-5",
         "status": "passed",
         "baselineWorkspaceUnchanged": true,
-        "baselinePatchApplies": 0,
         "baseline": [
           {
-            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
             "exitCode": 1,
             "tests": 3,
             "failed": 2
           }
         ],
         "final": {
-          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
           "exitCode": 0,
           "tests": 3,
           "passed": 3
         },
         "baselineIsExactNativePrefix": true,
-        "testsUnchanged": true,
         "onlySourceModified": [
           "discount.mjs"
         ],
-        "sameNativeProcess": true,
-        "twoTurnAnswersRecorded": true,
-        "expectedRepairAnswer": "TUI_d9c2593d_000001",
-        "observedRepairAnswer": "TUI_d9c2593d_000001",
-        "requiredRepairAnswerMatched": true
+        "expectedAnswer": "TUI_15715c43_000001",
+        "observedAnswer": "TUI_15715c43_000001",
+        "exactAnswerPassed": true,
+        "freshSampleRead": true,
+        "matchingToolSubmissions": 6,
+        "totalToolSubmissions": 6
       },
       {
         "model": "claude-haiku-4.5",
         "status": "passed",
         "baselineWorkspaceUnchanged": true,
-        "baselinePatchApplies": 0,
         "baseline": [
           {
-            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
             "exitCode": 1,
             "tests": 3,
             "failed": 2
           }
         ],
         "final": {
-          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
           "exitCode": 0,
           "tests": 3,
           "passed": 3
         },
         "baselineIsExactNativePrefix": true,
-        "testsUnchanged": true,
         "onlySourceModified": [
           "discount.mjs"
         ],
-        "sameNativeProcess": true,
-        "twoTurnAnswersRecorded": true,
-        "expectedRepairAnswer": "TUI_a3e1f9cd_000001",
-        "observedRepairAnswer": "TUI_a3e1f9cd_000001",
-        "requiredRepairAnswerMatched": true
+        "expectedAnswer": "TUI_788115d9_000001",
+        "observedAnswer": "TUI_788115d9_000001",
+        "exactAnswerPassed": true,
+        "freshSampleRead": true,
+        "matchingToolSubmissions": 6,
+        "totalToolSubmissions": 6
       },
       {
         "model": "gpt-6-astra",
         "status": "passed",
         "baselineWorkspaceUnchanged": true,
-        "baselinePatchApplies": 0,
         "baseline": [
           {
-            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
             "exitCode": 1,
             "tests": 3,
             "failed": 2
           }
         ],
         "final": {
-          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
           "exitCode": 0,
           "tests": 3,
           "passed": 3
         },
         "baselineIsExactNativePrefix": true,
-        "testsUnchanged": true,
         "onlySourceModified": [
           "discount.mjs"
         ],
-        "sameNativeProcess": true,
-        "twoTurnAnswersRecorded": true,
-        "expectedRepairAnswer": "TUI_6abc9178_000001",
-        "observedRepairAnswer": "TUI_6abc9178_000001",
-        "requiredRepairAnswerMatched": true
+        "expectedAnswer": "TUI_e6af276b_000001",
+        "observedAnswer": "TUI_e6af276b_000001",
+        "exactAnswerPassed": true,
+        "freshSampleRead": true,
+        "matchingToolSubmissions": 5,
+        "totalToolSubmissions": 5
       },
       {
         "model": "gpt-6-sol",
         "status": "passed",
         "baselineWorkspaceUnchanged": true,
-        "baselinePatchApplies": 0,
         "baseline": [
           {
-            "command": "/bin/zsh -lc \"cat sample.txt discount.mjs && node --test --experimental-test-isolation=none discount.test.mjs\"",
             "exitCode": 1,
             "tests": 3,
             "failed": 2
           }
         ],
         "final": {
-          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
           "exitCode": 0,
           "tests": 3,
           "passed": 3
         },
         "baselineIsExactNativePrefix": true,
-        "testsUnchanged": true,
         "onlySourceModified": [
           "discount.mjs"
         ],
-        "sameNativeProcess": true,
-        "twoTurnAnswersRecorded": true,
-        "expectedRepairAnswer": "TUI_97c5bf50_000001",
-        "observedRepairAnswer": "TUI_97c5bf50_000001",
-        "requiredRepairAnswerMatched": true
+        "expectedAnswer": "TUI_76803ea7_000001",
+        "observedAnswer": "TUI_76803ea7_000001",
+        "exactAnswerPassed": true,
+        "freshSampleRead": true,
+        "matchingToolSubmissions": 5,
+        "totalToolSubmissions": 5
       },
       {
         "model": "gpt-6-luna",
-        "status": "failed",
+        "status": "passed",
         "baselineWorkspaceUnchanged": true,
-        "baselinePatchApplies": 0,
         "baseline": [
           {
-            "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
             "exitCode": 1,
             "tests": 3,
             "failed": 2
           }
         ],
         "final": {
-          "command": "/bin/zsh -lc \"node --test --experimental-test-isolation=none discount.test.mjs\"",
           "exitCode": 0,
           "tests": 3,
           "passed": 3
         },
         "baselineIsExactNativePrefix": true,
-        "testsUnchanged": true,
         "onlySourceModified": [
           "discount.mjs"
         ],
-        "sameNativeProcess": true,
-        "twoTurnAnswersRecorded": false,
-        "expectedRepairAnswer": "TUI_3b56cc28_000001",
-        "observedRepairAnswer": "export function discount(price, percent) { return price * (100 - percent); }",
-        "requiredRepairAnswerMatched": false
+        "expectedAnswer": "TUI_ca402205_000001",
+        "observedAnswer": "TUI_ca402205_000001",
+        "exactAnswerPassed": true,
+        "freshSampleRead": true,
+        "matchingToolSubmissions": 6,
+        "totalToolSubmissions": 6
       }
     ]
   },
+  "toolDelivery": {
+    "totalSubmissions": 45,
+    "matchedSubmissions": 45,
+    "matchingNativeResults": 45,
+    "evidence": ".runtime/verification-final/tool-delivery.json",
+    "evidenceSha256": "9b469e4320f7504319b643415c8c65ac7ec088954f54af50fb3259e495ff3a17",
+    "limitation": "Proves bytes presented to the SDK submission RPC, not model comprehension."
+  },
   "observedRecovery": {
-    "transportFailures": 0,
-    "sessionErrors": 0,
+    "startupConnectionFailures": [],
     "recoveredTransportErrors": 0,
-    "catalogRecoveries": 2,
-    "startupConnectionFailures": [
-      {
-        "model": "claude-opus-5.5",
-        "scenarioId": "V04",
-        "caseStatus": "failed",
-        "operation": "listModels",
-        "failureType": "rpc_error",
-        "elapsedMs": 10570,
-        "generation": 1
-      },
-      {
-        "model": "claude-sonnet-5",
-        "scenarioId": "V04",
-        "caseStatus": "passed",
-        "operation": "listModels",
-        "failureType": "timeout",
-        "elapsedMs": 15130,
-        "generation": 1
-      },
-      {
-        "model": "claude-haiku-4.5",
-        "scenarioId": "V04",
-        "caseStatus": "passed",
-        "operation": "listModels",
-        "failureType": "timeout",
-        "elapsedMs": 15041,
-        "generation": 1
-      }
-    ],
-    "catalogCases": [
-      {
-        "model": "claude-sonnet-5",
-        "scenarioId": "V04",
-        "recoveries": 1
-      },
-      {
-        "model": "claude-haiku-4.5",
-        "scenarioId": "V04",
-        "recoveries": 1
-      }
-    ]
+    "catalogRecoveries": 0,
+    "modelSessionErrors": 0
   },
   "localRegressions": {
     "local-tests": {
-      "total": 392,
-      "passed": 392,
+      "total": 423,
+      "passed": 423,
       "failed": 0,
       "cancelled": 0,
       "skipped": 0,
-      "durationMs": 11304.63875,
+      "durationMs": 12513.570542,
       "log": ".runtime/verification-final/local-tests.log",
-      "sha256": "a269e48a5b312cf5183a35b6617853815fa8c11b35de9a1e39724bb40bedded2"
+      "sha256": "1214c95fafe64b0372cc0ef66eb03e06bb436cb230325bb50982b24d25e68fa2"
     },
     "runtime-tests": {
       "total": 22,
@@ -859,94 +859,80 @@
       "failed": 0,
       "cancelled": 0,
       "skipped": 0,
-      "durationMs": 178385.863916,
+      "durationMs": 217287.810375,
       "log": ".runtime/verification-final/runtime-tests.log",
-      "sha256": "319f21d8fd2fa22e95788469b7e439a348c050a0a52221fcc80d205a630a9e6e"
+      "sha256": "4abdcf0304629d26fbb5c708bd73f4a04fc110be06aaf6fbb794ce1b4b9514db"
     }
   },
-  "localExecutionNote": "The complete local regressions, offline real-Codex runtime tests and a new live matrix ran sequentially on the same source fingerprint. Only this final 36-case run is scored; no automatic case retries, fallback models, relaxed conditions or pooled scores.",
+  "localExecutionNote": "The final local suites and the complete new live matrix ran sequentially on one source fingerprint. No case retries or pooling with any earlier run.",
   "evidence": {
     "rawReport": ".runtime/verification-final/report.json",
-    "rawReportSha256": "f0db812b024300cc7c190b743806cf0e0d245a784ff8c57c14fb769ddf30e98b",
+    "rawReportSha256": "8ef7f8c6043d508a0d2470791424783f73b2113e26c62ac6622dc713aa9ab8f5",
     "automaticallyRecomputed": true,
-    "verificationSha256": "7906e8ae4fa608df0fb6a07092158e5b2584835242ca7dc0abb1827c89683bfa",
-    "postCleanupVerificationSha256": "7906e8ae4fa608df0fb6a07092158e5b2584835242ca7dc0abb1827c89683bfa",
-    "frozenVerificationSha256": "7906e8ae4fa608df0fb6a07092158e5b2584835242ca7dc0abb1827c89683bfa",
+    "verificationSha256": "473149a9a9df88d4062f446d0eba178eaad8bb819708db08647eb25c14ec5082",
+    "frozenVerificationSha256": "473149a9a9df88d4062f446d0eba178eaad8bb819708db08647eb25c14ec5082",
+    "postCleanupVerificationSha256": "473149a9a9df88d4062f446d0eba178eaad8bb819708db08647eb25c14ec5082",
     "requiresOriginalArtifacts": true,
-    "recheckedAfterCleanup": true,
-    "frozenSourceVerified": true
+    "frozenSourceVerified": true,
+    "recheckedAfterCleanup": true
   },
   "media": {
     "recordedTuiLaunches": 42,
     "rawVideoFiles": 42,
-    "checkpointScreenshots": 144,
+    "checkpointScreenshots": 150,
     "closingScreenshots": 42,
+    "publishedScreenshots": 8,
     "summary": {
       "file": "docs/validation/media/verification-summary.mp4",
-      "durationSeconds": 129.44,
-      "sha256": "e1775c2f46689e3b11f864599b52553e5fb645ca0403cc62c7a634c1c67c5940",
-      "bytes": 3215744
+      "sha256": "79a1ce0cff62427b5f51f50cc90842ce3960957db7c926ed65a42af8308eb316",
+      "bytes": 2625999,
+      "durationSeconds": 104
     },
-    "publishedScreenshots": 10,
     "manifest": "docs/validation/media/manifest.json",
-    "manifestSha256": "190336d7a8dcdad5cc5482e753d05d0c97a03d503b00e4fac40cd550a4322dde",
-    "editing": "Genuine 1x video excerpts, each followed by a clearly labeled two-second still of its actual checkpoint or failure screen. Every non-passing case is represented. Titles are outside the full source frame. No audio, rewritten model output, simulated results or case-score pooling. Representative scenes, not all 36 cases.",
-    "v02BaselineAndRepairShown": true,
-    "all36CasesShownInSummary": false,
+    "manifestSha256": "f883b7e6434e37717305749f0aa4555e5de0c835d8dd1e24fbc92fed7c6bcc46",
+    "editing": "Real-speed video excerpts followed by labeled two-second checkpoint stills. The complete source frame is preserved below an added title bar. No audio or substituted output. Every failed case is represented; this summary is not the full matrix recording.",
     "validation": {
-      "runId": "9c85cf9b-4e03-4224-8386-da6b64337df6",
-      "checkedAt": "2026-09-25T02:19:46.398Z",
+      "runId": "96a2b4e8-d38e-4bd4-a42d-56c54ac304d6",
+      "checkedAt": "2026-09-25T03:48:14.614Z",
       "decodedVideos": 43,
-      "screenshotOcrSamples": 10,
-      "summaryFrameOcrSamples": 20,
+      "screenshotOcrSamples": 8,
+      "summaryFrameOcrSamples": 16,
       "manualVisualReviewPerformed": false,
-      "manualVisualReviewUnavailableReason": "Image inputs are not supported in this session; programmatic decoding, hashes and OCR were used instead.",
-      "summaryLabelsMatchRecordedVerdict": true,
-      "allFailedCasesIncluded": true,
-      "sourceMediaHashesVerified": true,
-      "screenshotOcrLog": ".runtime/verification-final/media-ocr-screenshots.jsonl",
-      "screenshotOcrSha256": "b0538de5ec60b160859dab434bf04f417bc42d4471c36097f908ec4895051444",
-      "summaryFrameOcrLog": ".runtime/verification-final/media-ocr-summary.jsonl",
-      "summaryFrameOcrSha256": "8a04d571fe26f52fbacd12adcd70a8b8b6ed1a5eb0b86a704020f38bf22bb6bb",
+      "validationMethod": "Full decoding, matching source hashes and local OCR; not manual visual review.",
+      "labelsMatchVerdict": true,
+      "logs": {
+        "screenshots": {
+          "file": ".runtime/verification-final/media-ocr-screenshots.jsonl",
+          "sha256": "3b6bf6106d56352d415da62ee70ecabd3e78d8a41d8353c4ab2f7ceaa7560017",
+          "samples": 8
+        },
+        "summary": {
+          "file": ".runtime/verification-final/media-ocr-summary.jsonl",
+          "sha256": "489a32e059c6447afe64c2cc5087c8156c48932f108f7ec4dcf5cd179dca748f",
+          "samples": 16
+        }
+      },
       "audit": ".runtime/verification-final/media-review.json",
-      "auditSha256": "9ca9e4d5ff937e905fe76c352607b3b5d6615f143b990bfc51086e0fa05a5c13"
+      "auditSha256": "88e522fda579eac59ab0b22f748d1a60a730df2b8d09efd33d83f29e09107660"
     }
   },
   "cleanup": {
-    "previousRawRunsRetained": false,
     "retainedRawRun": ".runtime/verification-final",
+    "previousRawRunsRetained": false,
     "allFinalWorkerGroupsGone": true,
     "existingUserBridgesRestarted": false,
     "gitHistoryRewritten": false
   },
   "limits": [
-    "Only six essential scenarios on six models are scored; not whole-product or endurance certification.",
-    "Multimodal input, schema-enforced JSON, hosted tools, WebSockets and remote Responses compaction remain unsupported.",
-    "A specific commit's remote CI status is separate from this local live result."
+    "One essential integration assessment, not whole-product, endurance or universal instruction-following certification.",
+    "The prior catalog RPC lost its upstream code, so its network/authentication root cause remains unconfirmed.",
+    "The new prompt and stricter evidence checks are disclosed; earlier run scores were not regraded or pooled.",
+    "Remote CI is separate from this local live assessment."
   ],
-  "closeout": {
-    "reviewedBaseCommit": "ec4228453974070d73aa9ae62213e7c719132754",
-    "liveRunId": "9c85cf9b-4e03-4224-8386-da6b64337df6",
-    "newLiveExecution": true,
-    "productionRuntimeChanged": true,
-    "verificationReportingChanged": true,
-    "verificationScenarioSemanticsChanged": false,
-    "mediaRegenerated": true,
-    "changedSourceFiles": [
-      "src/bridge-daemon.mjs",
-      "scripts/verification/report-format.mjs",
-      "test/bridge-daemon.test.mjs",
-      "test/verification.test.mjs"
-    ],
-    "fixes": [
-      "Authenticated daemon status and stop use observational readiness, without reconnecting the SDK or requiring catalog availability.",
-      "Reports retain fixture cleanup failure details even when scenario checks passed."
-    ]
-  },
   "documentation": {
     "total": 6,
     "passed": 6,
     "log": ".runtime/verification-final/documentation.log",
-    "sha256": "a2542532fbeb1242a1f454872a43d5cc4f0262f1d86b86e1fd287c38e2a6b559"
+    "sha256": "10c88c8c75745bbbd7f1caa0a164f6ed2d16c4d1cf7663c52c7626e59c032274"
   }
 }

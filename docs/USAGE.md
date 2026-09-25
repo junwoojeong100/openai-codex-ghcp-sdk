@@ -234,7 +234,7 @@ See [recovery details](ARCHITECTURE.md#model-progress-and-recovery).
 
 These HTTP statuses apply before streaming starts. An already-started SSE response keeps HTTP 200 and reports the error in `response.failed`. For timeout handling, see [slow or disconnected upstream](#slow-or-disconnected-upstream).
 
-A startup `listModels` timeout can replace the SDK client once after confirmed cleanup, within the same `SDK_STARTUP_TIMEOUT_MS` budget (30 seconds by default). The first catalog attempt gets at most half that budget (15 seconds by default), also capped by the remaining startup time. Cleanup retains its separate bound. This read-only recovery makes no inference calls and does not retry authentication or arbitrary RPC errors.
+A startup `listModels` timeout or recognized transport/server/internal-JSON-RPC failure can replace the SDK client once after confirmed cleanup, within the same `SDK_STARTUP_TIMEOUT_MS` budget (30 seconds by default). The first catalog attempt gets at most half that budget (15 seconds by default), also capped by the remaining startup time. Cleanup retains its separate bound. Known authentication, authorization, rate-limit, invalid-parameter and cancellation failures, and untyped errors, are not retried. Diagnostics retain only bounded error categories/codes, never the upstream message. This read-only retry cannot replay a prompt or tool result.
 
 ### Restart the bridge safely
 

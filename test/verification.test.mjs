@@ -8,9 +8,10 @@ import { fileURLToPath } from "node:url";
 import { SUPPORTED_MODEL_IDS, modelCatalog, resolveContextTier } from "../src/model-map.mjs";
 import { parseArguments } from "../scripts/verify.mjs";
 import { CATALOG as C, SCENARIOS, catalogHash } from "../scripts/verification/catalog.mjs";
-import { evaluate, marker, recoveredTransportErrors, runScenario, sessionOptions, switchSource, TEST_COMMAND } from "../scripts/verification/scenarios.mjs";
+import { codeSample, evaluate, marker, recoveredTransportErrors, runScenario, sessionOptions, switchSource, TEST_COMMAND } from "../scripts/verification/scenarios.mjs";
 import { TuiSession, isExpectedTitleRejection, pickerRows, readRollouts } from "../scripts/verification/session.mjs";
-import { completionOutputTypes } from "../scripts/verification/observer.mjs";
+import { completionEvidence, completionOutputTypes } from "../scripts/verification/observer.mjs";
+import { observeSdk } from "../scripts/verification/instrumentation.mjs";
 import { matrix, summarize, markdown, verifyReport } from "../scripts/verification/report.mjs";
 import { snapshotSources } from "../scripts/verification/source.mjs";
 import { NativeHost } from "../scripts/verification/rpc.mjs";
@@ -22,9 +23,11 @@ const seed = "0a1b2c3d", scenario = id => SCENARIOS.find(row => row.id === id);
 const temp = t => { const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "essential-unit-"))); t.after(() => fs.rmSync(dir, { recursive: true, force: true })); return dir; };
 const info = id => ({ id, capabilities: { limits: { max_context_window_tokens: 200000, max_prompt_tokens: 180000 } } });
 const reply = value => ({ expected: value, observed: [value] });
+const clientReply = value => ({ method: "POST", path: "/v1/responses", status: 200, finished: true,
+  terminal: "response.completed", outputTypes: ["message"], outputText: value });
 
 function passingFacts(id, model = "gpt-6-astra") {
-  const m = n => marker(seed, n), selected = info(model), tier = resolveContextTier(selected);
+  const m = n => id === "V02" && n === 1 ? codeSample(seed) : marker(seed, n), selected = info(model), tier = resolveContextTier(selected);
   const launch = { cleanup: { childReaped: true, processGroupGone: true }, childExit: { code: 0 } };
   const facts = { seed, launchModel: model, answers: [reply(m(1))], before: {}, error: null, mcpLedger: [],
     observer: { sdk: [], http: [{ method: "POST", path: "/v1/responses", status: 200, contentType: "text/event-stream", finished: true, terminal: "response.completed", startedAt: 1000 },
@@ -163,19 +166,19 @@ for (const mode of ["valid", "missing-test", "zero-exit", "masked-exit", "wrong-
   test(`coding sends the repair request only after real baseline evidence (${mode})`, async t => {
     const dir = temp(t), workspace = path.join(dir, "workspace"), codexHome = path.join(dir, "codex");
     fs.mkdirSync(workspace); fs.mkdirSync(path.join(codexHome, "sessions"), { recursive: true });
-    const records = [], answers = [], prompts = [], facts = { answers: [] };
+    const records = [], answers = [], http = [], prompts = [], facts = { answers: [] };
     const command = (cmd, exitCode, output) => {
       const callId = `call-${records.length}`;
       records.push({ type: "response_item", payload: { type: "function_call", name: "exec_command", call_id: callId, arguments: JSON.stringify({ cmd }) } },
         { type: "event_msg", payload: { type: "exec_command_end", call_id: callId, command: ["/bin/zsh", "-c", cmd], exit_code: exitCode, aggregated_output: output } });
     };
-    const session = { workspace, codexHome, async launch() {}, observer: () => ({ answers }),
+    const session = { workspace, codexHome, async launch() {}, observer: () => ({ answers, http }),
       async ask(prompt, expected) {
         prompts.push(prompt);
         if (prompts.length === 1) {
           assert.match(prompt, /^Read-only baseline:/);
           assert.match(prompt, /do not edit any file or fix the bug/);
-          assert.ok(!prompt.includes(marker(seed, 1)), "the hidden file value is not supplied in the request");
+          assert.ok(!prompt.includes(codeSample(seed)), "the hidden file value is not supplied in the request");
           if (mode !== "missing-test") command(mode === "masked-exit" ? `${TEST_COMMAND}; true` : TEST_COMMAND,
             mode === "zero-exit" || mode === "masked-exit" ? 0 : 1, mode === "wrong-summary" ? "No tests found" : "# tests 3\n# fail 2");
           if (mode === "early-edit") fs.appendFileSync(path.join(workspace, "discount.mjs"), "\n// premature edit\n");
@@ -183,6 +186,8 @@ for (const mode of ["valid", "missing-test", "zero-exit", "masked-exit", "wrong-
         } else {
           assert.equal(mode, "valid", "invalid baseline must not get a corrective request");
           assert.match(prompt, /^Repair the verified failure:/);
+          assert.match(prompt, /re-read sample\.txt with the native shell/);
+          assert.ok(!prompt.includes(codeSample(seed)), "the repair prompt must not supply the file value");
           assert.deepEqual(facts.baseline.workspace, facts.before);
           assert.equal(facts.baseline.rollout.commands[0].exitCode, 1);
           assert.equal(facts.baseline.rollout.patchApplies, 0);
@@ -194,13 +199,14 @@ for (const mode of ["valid", "missing-test", "zero-exit", "masked-exit", "wrong-
         fs.writeFileSync(path.join(codexHome, "sessions/rollout-code.jsonl"), records.map(row => JSON.stringify(row)).join("\n")
           + (mode === "malformed-rollout" ? "\n{incomplete" : "") + "\n");
         answers.push({ content: expected });
+        http.push(clientReply(expected));
       },
     };
     const execution = runScenario(scenario("V02"), session, { model: "gpt-6-astra", seed, facts });
     if (mode === "valid") {
       await execution;
       assert.equal(prompts.length, 2);
-      assert.deepEqual(facts.answers.map(row => row.expected), [marker(seed, 2), marker(seed, 1)]);
+      assert.deepEqual(facts.answers.map(row => row.expected), [marker(seed, 2), codeSample(seed)]);
       assert.deepEqual(readRollouts(codexHome).commands.map(row => row.exitCode), [1, 0]);
       assert.notDeepEqual(tree(workspace), facts.baseline.workspace);
     } else {
@@ -248,9 +254,9 @@ test("MCP errors, model switches and fresh recall cannot be replaced with prose 
 
 test("interruption waits for a real SDK send, not the TUI's queued working indicator", async t => {
   let sent = false, escaped = false;
-  const answers = [], sdk = [], facts = { answers: [] };
+  const answers = [], sdk = [], http = [], facts = { answers: [] };
   const session = { workspace: temp(t), launch: async () => {}, submit: async () => {},
-    observer: () => ({ sdk, answers }), ready: text => text === "Conversation interrupted",
+    observer: () => ({ sdk, answers, http }), ready: text => text === "Conversation interrupted",
     async waitFor(label, predicate) {
       if (label === "in-flight") {
         assert.equal(predicate("Working"), false, "A queued prompt has not reached the SDK yet");
@@ -259,7 +265,7 @@ test("interruption waits for a real SDK send, not the TUI's queued working indic
       } else { assert.equal(label, "interrupted"); assert.ok(escaped); assert.equal(predicate("Conversation interrupted"), true); }
     },
     async escape() { assert.ok(sent); escaped = true; },
-    async ask(_prompt, expected) { answers.push({ content: expected }); },
+    async ask(_prompt, expected) { answers.push({ content: expected }); http.push(clientReply(expected)); },
   };
   await runScenario(scenario("V05"), session, { model: "gpt-6-astra", seed, facts });
   assert.equal(facts.inFlightSessionId, "active-session");
@@ -399,6 +405,24 @@ test("native rollout records actual commands and flags malformed JSON rather tha
   assert.deepEqual(evidence.errors, ["Invalid native rollout JSONL"]);
 });
 
+test("native tool results retain early output that command-completion events may omit", t => {
+  const dir = temp(t); fs.mkdirSync(path.join(dir, "sessions"));
+  const output = `Chunk ID: owned\nProcess exited with code 0\nOutput:\n${codeSample(seed)}TAP version 13\n# tests 3\n# pass 3\n`;
+  fs.writeFileSync(path.join(dir, "sessions/rollout-output.jsonl"), [
+    { type: "event_msg", payload: { type: "item_completed", item: { type: "CommandExecution", id: "read-and-test",
+      command: ["/bin/zsh", "-c", `cat sample.txt && ${TEST_COMMAND}`], exit_code: 0, aggregated_output: "# tests 3\n# pass 3\n" } } },
+    { type: "response_item", payload: { type: "function_call_output", call_id: "read-and-test", output,
+      internal_chat_message_metadata_passthrough: { turn_id: "owned" } } },
+    { type: "response_item", payload: { type: "custom_tool_call_output", call_id: "patch", output: [{ type: "input_text", text: "applied\n" }] } },
+    { type: "response_item", payload: { type: "function_call_output", output: "missing identity" } },
+  ].map(row => JSON.stringify(row)).join("\n") + "\n");
+  const evidence = readRollouts(dir);
+  assert.equal(evidence.commands[0].output, "# tests 3\n# pass 3\n");
+  assert.deepEqual(evidence.toolResults, [{ callId: "read-and-test", type: "function_call_output", output },
+    { callId: "patch", type: "custom_tool_call_output", output: "applied\n" }]);
+  assert.deepEqual(evidence.errors, ["Invalid native tool-result identity or text"]);
+});
+
 test("native task receipts preserve identities and reject malformed completion evidence", t => {
   const dir = temp(t); fs.mkdirSync(path.join(dir, "sessions"));
   fs.writeFileSync(path.join(dir, "sessions/rollout-tasks.jsonl"), [
@@ -424,6 +448,106 @@ test("a stale visible marker or completed refusal cannot stand in for a fresh mo
   await assert.rejects(session.ask("Recall", marker(seed, 1), 5000), /without the expected answer/);
 });
 
+for (const mode of ["earlier-commentary", "extra-prose"]) {
+  test(`the exact final client answer is required, not a matching earlier line (${mode})`, async () => {
+    const session = Object.create(TuiSession.prototype), sample = marker(seed, 1);
+    const answer = mode === "extra-prose" ? `${sample}\nAdditional explanation` : "wrong final answer";
+    let sent = false;
+    session.observer = () => ({ answers: sent ? [{ content: sample }, { content: answer }] : [],
+      http: sent ? [{ method: "POST", status: 200, finished: true, terminal: "response.completed", outputTypes: ["message"], outputText: answer }] : [] });
+    session.submit = async () => { sent = true; };
+    session.rollout = () => ({ tasks: sent ? [{ type: "task_started", turnId: "current" }, { type: "task_complete", turnId: "current" }] : [] });
+    session.screen = () => "An earlier expected marker remains visible";
+    session.ready = () => true; session.answered = () => true; session.steps = [];
+    session.capture = async () => {}; session.snapshot = () => {};
+    await assert.rejects(session.ask("Return the file contents", sample, 3000), /without the expected answer/);
+  });
+}
+
+test("a completed wrong answer remains in scenario facts instead of disappearing", async t => {
+  const answers = [], http = [], facts = { answers: [] };
+  const session = { workspace: temp(t), async launch() {}, observer: () => ({ answers, http }),
+    async ask() {
+      answers.push({ content: "wrong file contents" });
+      http.push(clientReply("wrong file contents"));
+      throw new Error("The model completed its turn without the expected answer");
+    } };
+  await assert.rejects(runScenario(scenario("V06"), session, { model: "gpt-6-astra", seed, facts }), /without the expected answer/);
+  assert.deepEqual(facts.answers, [{ expected: marker(seed, 2), observed: ["wrong file contents"] }]);
+});
+
+test("an unrecovered catalog failure cannot pass the upstream check", () => {
+  const facts = passingFacts("V01");
+  facts.observer.diagnostics.push({ event: "bridge.upstream_connect_failed", generation: 1, operation: "listModels", failureType: "rpc_error", at: 100 });
+  assert.ok(failures("V01", facts).some(check => check.id === "upstream"));
+});
+
+test("catalog recovery receipts must follow the failed generation in the same process", () => {
+  const facts = passingFacts("V01");
+  facts.observer.diagnostics.push(
+    { event: "bridge.upstream_connect_failed", pid: 123, generation: 1, operation: "listModels", failureType: "rpc_error", catalogFailure: { retryable: true }, at: 100 },
+    { event: "bridge.upstream_catalog_recovering", pid: 123, generation: 1, at: 110 },
+    { event: "bridge.upstream_catalog_recovered", pid: 123, generation: 2, at: 120 });
+  assert.deepEqual(failures("V01", facts), []);
+  for (const mutate of [f => { f.observer.diagnostics[2].generation = 3; }, f => { f.observer.diagnostics[1].at = 99; },
+    f => { f.observer.diagnostics[2].at = 109; }, f => { f.observer.diagnostics[0].catalogFailure.retryable = false; },
+    f => { f.observer.diagnostics[1].pid = 456; }, f => { f.observer.diagnostics[2].pid = 456; },
+    f => { for (const row of f.observer.diagnostics) delete row.pid; }]) {
+    const changed = structuredClone(facts); mutate(changed);
+    assert.ok(failures("V01", changed).some(check => check.id === "upstream"));
+  }
+});
+
+test("coding distinguishes a correct patch from a wrong final answer and hides the sample from the acknowledgment", () => {
+  assert.notEqual(codeSample(seed), marker(seed, 1));
+  assert.ok(!codeSample(seed).includes(seed));
+  const facts = passingFacts("V02");
+  facts.answers.at(-1).observed = [codeSample(seed), "export function discount(price, percent) { return price * (100 - percent); }"];
+  assert.deepEqual(failures("V02", facts).map(check => check.id), ["V02.answer"]);
+  facts.answers.at(-1).observed = [`${codeSample(seed)}\nExtra prose`];
+  assert.deepEqual(failures("V02", facts).map(check => check.id), ["V02.answer"]);
+});
+
+test("completion evidence captures only the last final client message", () => {
+  const message = (text, phase = "final_answer") => ({ type: "message", status: "completed", role: "assistant", phase,
+    content: [{ type: "output_text", text }] });
+  const frame = output => `event: response.completed\ndata: ${JSON.stringify({ type: "response.completed", response: { id: "resp_test", status: "completed", output } })}\n\n`;
+  assert.deepEqual(completionEvidence(frame([message("earlier", "commentary"), message("actual final")])),
+    { responseId: "resp_test", outputTypes: ["message", "message"], outputText: "actual final" });
+  assert.equal(completionEvidence(frame([message("tool commentary"), { type: "function_call" }])).outputText, null);
+  for (const invalid of [message("commentary only", "commentary"), { ...message("bad"), content: [{ type: "output_text", text: 42 }] },
+    { ...message("bad"), role: "user" }, { ...message("bad"), content: [] }]) assert.throws(() => completionEvidence(frame([invalid])));
+});
+
+test("tool submission evidence hashes exact bytes without rewriting or logging the result", async () => {
+  const records = [], request = { requestId: "rpc-one", result: { textResultForLlm: "private fixture\n안녕", resultType: "success" } };
+  let delivered;
+  const session = { sessionId: "session-one", on: () => () => {},
+    rpc: { tools: { handlePendingToolCall: async value => { delivered = value; return { success: true }; } } } };
+  const client = observeSdk({ createSession: async () => session }, records);
+  const observed = await client.createSession({ sessionId: session.sessionId, tools: [] });
+  await observed.rpc.tools.handlePendingToolCall(request);
+  assert.equal(delivered, request);
+  const receipt = records.find(row => row.type === "tool.submit");
+  assert.equal(receipt.resultHash, sha(request.result.textResultForLlm));
+  assert.equal(receipt.resultBytes, Buffer.byteLength(request.result.textResultForLlm));
+  assert.doesNotMatch(JSON.stringify(records), /private fixture/);
+});
+
+test("a correct completed client answer waits for delayed terminal rendering", async () => {
+  const session = Object.create(TuiSession.prototype), sample = marker(seed, 1);
+  let sent = false, rendered = false, timer;
+  session.observer = () => ({ answers: sent ? [{ content: sample }] : [], http: sent ? [clientReply(sample)] : [] });
+  session.submit = async () => { sent = true; timer = setTimeout(() => { rendered = true; }, 1300); };
+  session.rollout = () => ({ tasks: sent ? [{ type: "task_started", turnId: "current" }, { type: "task_complete", turnId: "current" }] : [] });
+  session.screen = () => "Terminal renderer is still flushing";
+  session.ready = () => true; session.answered = () => rendered; session.steps = []; session.capture = async () => {};
+  session.snapshot = () => assert.fail("Rendering delay is not a wrong model answer");
+  try { await session.ask("Return the file contents", sample, 3000); }
+  finally { clearTimeout(timer); }
+  assert.equal(rendered, true);
+});
+
 test("completion evidence distinguishes tool handoffs from final text and rejects malformed frames", () => {
   const frame = output => `event: response.completed\ndata: ${JSON.stringify({ type: "response.completed", response: { status: "completed", output } })}\n\n`;
   assert.deepEqual(completionOutputTypes(frame([{ type: "message" }])), ["message"]);
@@ -438,7 +562,7 @@ test("a temporarily ready composer during tool continuation cannot prematurely f
   const session = Object.create(TuiSession.prototype), sample = marker(seed, 1);
   let sent = false, completed = false, timer;
   const tool = { method: "POST", status: 200, finished: true, terminal: "response.completed", outputTypes: ["message", "function_call"] };
-  const final = { ...tool, outputTypes: ["message"] };
+  const final = { ...tool, outputTypes: ["message"], outputText: sample };
   session.observer = () => ({ answers: completed ? [{ content: sample }] : [], http: !sent ? [] : completed ? [tool, final] : [tool] });
   session.submit = async () => { sent = true; timer = setTimeout(() => { completed = true; }, 1100); };
   session.rollout = () => ({ tasks: !sent ? [] : [{ type: "task_started", turnId: "current" },
@@ -472,12 +596,28 @@ for (const mode of ["missing", "wrong-turn", "completion-before-start"]) {
 }
 
 test("V06 reports a rejected compact command without waiting out or retrying it", async t => {
-  const answers = [], commands = [], session = { workspace: temp(t), observer: () => ({ answers }), async launch() {},
-    async ask(_prompt, answer) { answers.push({ content: answer }); }, async slash(command) { commands.push(command); },
+  const answers = [], http = [], commands = [], session = { workspace: temp(t), observer: () => ({ answers, http }), async launch() {},
+    async ask(_prompt, answer) { answers.push({ content: answer }); http.push(clientReply(answer)); }, async slash(command) { commands.push(command); },
     async waitFor(label, predicate) { assert.equal(label, "compacted"); predicate("\u25a0 '/compact' is disabled while a task is in progress."); },
     ready: () => true };
   await assert.rejects(runScenario(scenario("V06"), session, { model: "gpt-6-astra", seed, facts: { answers: [] } }), /Codex rejected \/compact/);
   assert.deepEqual(commands, ["/compact"]);
+});
+
+test("browser failures cannot pass a stale ready screen or hide the failed capture step", async () => {
+  const session = Object.create(TuiSession.prototype);
+  session.launches = [{ label: "launch-2", browserError: "render timeout" }];
+  session.screen = () => "ready screen from before the renderer failed";
+  await assert.rejects(session.waitFor("ready", () => assert.fail("Do not accept a failed renderer"), 1000),
+    /Browser rendering failed while waiting for ready: render timeout/);
+  delete session.launches[0].browserError;
+  const cause = new DOMException("The operation was aborted due to timeout", "TimeoutError");
+  session.renderer = { capture: async () => { throw cause; } };
+  await assert.rejects(session.capture("answer-sample"), error => {
+    assert.match(error.message, /Browser capture failed at launch-2\/answer-sample/);
+    assert.equal(error.cause, cause);
+    return true;
+  });
 });
 
 test("isolation, fresh output directories and bounded process cancellation stay fail-closed", async t => {

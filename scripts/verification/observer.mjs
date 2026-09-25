@@ -3,10 +3,11 @@ import http from "node:http";
 import path from "node:path";
 import { StringDecoder } from "node:string_decoder";
 import { SessionManager } from "../../src/session-manager.mjs";
+import { canonicalItem } from "../../src/request-policy.mjs";
 import { observeSdk } from "./instrumentation.mjs";
-import { ROOT, safeRead, scrubber, writeJson } from "./util.mjs";
+import { ROOT, safeRead, scrubber, sha, writeJson } from "./util.mjs";
 
-export function completionOutputTypes(frame) {
+function completedResponse(frame) {
   const prefix = "event: response.completed\ndata: ";
   if (typeof frame !== "string" || !frame.startsWith(prefix)) throw new Error("Invalid completion frame");
   const event = JSON.parse(frame.slice(prefix.length).trim());
@@ -14,7 +15,27 @@ export function completionOutputTypes(frame) {
     || !Array.isArray(event.response.output) || event.response.output.some(item => typeof item?.type !== "string")) {
     throw new Error("Invalid completed response output");
   }
-  return event.response.output.map(item => item.type);
+  return event.response;
+}
+
+export function completionOutputTypes(frame) {
+  return completedResponse(frame).output.map(item => item.type);
+}
+
+export function completionEvidence(frame) {
+  const response = completedResponse(frame), outputTypes = response.output.map(item => item.type);
+  if (typeof response.id !== "string" || !response.id) throw new Error("Missing completed response identity");
+  let outputText = null;
+  if (outputTypes.length && outputTypes.every(type => type === "message")) {
+    const final = response.output.at(-1);
+    if (final.role !== "assistant" || final.status !== "completed" || final.phase !== "final_answer"
+      || !Array.isArray(final.content) || !final.content.length
+      || final.content.some(part => part?.type !== "output_text" || typeof part.text !== "string")) {
+      throw new Error("Invalid final completed-response message");
+    }
+    outputText = final.content.map(part => part.text).join("");
+  }
+  return { responseId: response.id, outputTypes, outputText };
 }
 
 if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === path.join(ROOT, "src/server.mjs")) {
@@ -29,7 +50,7 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
     inputTokens: 0, outputTokens: 0, filtered: 0, errors: 0, modelMismatches: 0, streamFailures: 0, streamCompletions: 0,
     requestBytes: 0, responseBytes: 0, maxRssBytes: 0, maxHeapBytes: 0 };
   const append = (name, row) => fs.appendFileSync(path.join(config.output, name),
-    JSON.stringify(clean({ ...row, at: row.at ?? Date.now() })) + "\n", { mode: 0o600 });
+    JSON.stringify(clean({ ...row, pid: process.pid, at: row.at ?? Date.now() })) + "\n", { mode: 0o600 });
   const records = { push(row) {
     const root = !row.agentId && !row.data?.agentId && !row.data?.parentToolCallId;
     if (row.type === "session.created") {
@@ -62,9 +83,11 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
         errorType: row.data?.errorType, errorCode: row.data?.errorCode, statusCode: row.data?.statusCode });
     } else if (row.type === "external_tool.requested" && root) {
       metrics.toolRequests++;
-      append("sdk.jsonl", { type: row.type, sessionId: row.sessionId, toolName: row.data?.toolName });
+      append("sdk.jsonl", { type: row.type, sessionId: row.sessionId, toolName: row.data?.toolName,
+        requestId: row.data?.requestId, callId: row.data?.toolCallId });
     } else if (["session.setModel", "session.abort", "session.disconnect", "session.send", "tool.submit"].includes(row.type)) {
       append("sdk.jsonl", { type: row.type, sessionId: row.sessionId,
+        ...(row.type === "tool.submit" ? { requestId: row.requestId, resultHash: row.resultHash, resultBytes: row.resultBytes } : {}),
         ...(row.type === "session.setModel" ? { model: row.model, effort: row.effort ?? null, contextTier: row.contextTier } : {}) });
     } else if (["models.list", "session.model_verified", "session.model_verification_failed"].includes(row.type)) {
       append("sdk.jsonl", row);
@@ -106,6 +129,11 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
             const body = JSON.parse(requestBody);
             row.requestShape = { model: body.model, stream: body.stream, format: body.text?.format,
               toolCount: body.tools?.length ?? 0 };
+            row.toolResults = (Array.isArray(body.input) ? body.input : [])
+              .filter(item => ["function_call_output", "custom_tool_call_output"].includes(item?.type)).map(item => {
+                const normalized = canonicalItem(item);
+                return { callId: normalized.call_id, resultHash: sha(normalized.output), resultBytes: Buffer.byteLength(normalized.output) };
+              });
           } catch { row.invalidRequestShape = true; }
         });
         const write = res.write.bind(res), end = res.end.bind(res);
@@ -118,8 +146,7 @@ if (process.env.GHCP_SOAK_OBSERVER && path.resolve(process.argv[1] || "") === pa
           if (text.startsWith("event: response.completed\n")) {
             row.terminal = "response.completed"; metrics.streamCompletions++;
             try {
-              row.outputTypes = completionOutputTypes(text);
-              row.responseId = JSON.parse(text.slice("event: response.completed\ndata: ".length)).response.id;
+              Object.assign(row, completionEvidence(text));
             }
             catch { row.invalidCompletion = true; }
           }

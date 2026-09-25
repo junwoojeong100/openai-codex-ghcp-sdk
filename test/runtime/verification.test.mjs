@@ -31,6 +31,22 @@ for (const { scenario, model } of cases) test(`${scenario.id}/${model}: essentia
     assert.ok(facts.baseline.rollout.commands.some(command => command.exitCode === 1 && /# fail 2\b/.test(command.output)));
     assert.equal(facts.answers.length, 2);
     assert.deepEqual(facts.evidence.rollout.commands.slice(0, facts.baseline.rollout.commands.length), facts.baseline.rollout.commands);
+    const repairCommands = facts.evidence.rollout.commands.slice(facts.baseline.rollout.commands.length);
+    assert.ok(repairCommands.some(command => /cat sample\.txt/.test(command.command) && facts.evidence.rollout.toolResults.some(result =>
+      result.callId === command.callId && result.output.includes(facts.answers[1].expected))),
+      JSON.stringify({ expectedSample: facts.answers[1].expected, repairCommands }));
+    assert.equal(facts.answers[1].observed.at(-1), facts.answers[1].expected);
+    const received = facts.observer.http.flatMap(row => row.toolResults ?? []);
+    const requests = facts.observer.sdk.filter(row => row.type === "external_tool.requested");
+    const submissions = facts.observer.sdk.filter(row => row.type === "tool.submit");
+    assert.ok(submissions.length > 0);
+    for (const submission of submissions) {
+      const pending = requests.find(row => row.sessionId === submission.sessionId && row.requestId === submission.requestId);
+      assert.ok(pending);
+      assert.ok(received.some(row => row.callId === pending.callId && row.resultHash === submission.resultHash && row.resultBytes === submission.resultBytes));
+      assert.ok(facts.evidence.rollout.toolResults.some(row => row.callId === pending.callId
+        && sha(row.output) === submission.resultHash && Buffer.byteLength(row.output) === submission.resultBytes));
+    }
   }
   for (const launch of facts.evidence.launches) {
     const dir = path.join(directory, launch.label);

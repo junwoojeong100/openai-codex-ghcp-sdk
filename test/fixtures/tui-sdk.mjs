@@ -123,9 +123,10 @@ if (path.resolve(process.argv[1] || "") === path.join(root, "src/server.mjs")) {
         }
         if (session.fixtureFlow !== "code-repair") throw new Error("Unexpected native result in SDK double");
         switch (session.fixtureStep++) {
-          case 0: shell(session, testCommand); break;
+          case 0: shell(session, `cat sample.txt && ${testCommand}`); break;
           case 1:
-            if (!session.sample) throw new Error("Native file read omitted the sample");
+            session.sample = /TUI_[0-9a-f]{8}_\d{6}/.exec(output)?.[0];
+            if (!session.sample) throw new Error("The native repair turn must re-read the sample");
             if (!/(?:#|ℹ) pass 3\b/.test(output)) throw new Error("The native repair must pass all three tests");
             session.reply(session.sample); break;
           default: throw new Error("Unexpected extra code-fixture result");

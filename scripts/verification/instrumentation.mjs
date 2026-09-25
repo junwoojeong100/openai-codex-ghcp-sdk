@@ -27,7 +27,10 @@ export function observeSdk(client, records, { verifyModelState = false } = {}) {
     }
     return new Proxy(session, { get(target, key) {
       if (key === "rpc") return { ...target.rpc, tools: { ...target.rpc.tools, handlePendingToolCall: async request => {
-        record({ type: "tool.submit", sessionId, requestId: request.requestId });
+        const text = request.result?.textResultForLlm;
+        record({ type: "tool.submit", sessionId, requestId: request.requestId,
+          resultHash: typeof text === "string" ? sha(text) : null,
+          resultBytes: typeof text === "string" ? Buffer.byteLength(text) : null });
         return target.rpc.tools.handlePendingToolCall(request);
       } } };
       if (["send", "setModel", "abort", "disconnect"].includes(key)) return async (...args) => {

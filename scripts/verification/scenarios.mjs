@@ -2,12 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { isDeepStrictEqual as same } from "node:util";
 import { SUPPORTED_MODEL_IDS, modelCatalog, resolveContextTier } from "../../src/model-map.mjs";
-import { ROOT, hasUnmaskedFinalCommand, run, tree } from "./util.mjs";
+import { ROOT, hasUnmaskedFinalCommand, run, sha, tree } from "./util.mjs";
 import { CATALOG } from "./catalog.mjs";
 import { TuiSession, isExpectedTitleRejection, pickerRows, readRollouts } from "./session.mjs";
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export const marker = (seed, n) => `TUI_${seed}_${String(n).padStart(6, "0")}`;
+export const codeSample = seed => marker(sha(`V02 sample:${seed}`).slice(0, 8), 1);
 export const switchSource = model => model === "gpt-6-astra" ? "gpt-6-luna" : "gpt-6-astra";
 export const TEST_COMMAND = "node --test --experimental-test-isolation=none discount.test.mjs";
 const SHELL_TOOLS = new Set(["shell", "shell_command", "exec_command", "unified_exec", "local_shell_call", "container.exec"]);
@@ -76,11 +77,16 @@ async function selectModel(s, facts, model) {
 }
 
 export async function runScenario(scenario, s, { model, seed, facts }) {
-  const m = n => marker(seed, n);
+  const m = n => scenario.id === "V02" && n === 1 ? codeSample(seed) : marker(seed, n);
   const ask = async (prompt, answer, timeout) => {
-    const offset = s.observer().answers.length;
-    await s.ask(prompt, answer, timeout);
-    facts.answers.push({ expected: answer, observed: s.observer().answers.slice(offset).map(row => row.content) });
+    const offset = s.observer().http.length;
+    try { await s.ask(prompt, answer, timeout); }
+    finally {
+      facts.answers.push({ expected: answer, observed: s.observer().http.slice(offset)
+        .filter(row => row.method === "POST" && row.path === "/v1/responses" && row.status === 200
+          && row.finished && row.terminal === "response.completed" && typeof row.outputText === "string")
+        .map(row => row.outputText) });
+    }
   };
   const reply = n => `Reply with only ${m(n)}. Do not use tools.`;
   if (scenario.id === "V02") {
@@ -117,7 +123,7 @@ export async function runScenario(scenario, s, { model, seed, facts }) {
       if (!verifiedCodeBaseline(facts.before, facts.baseline)) {
         throw new Error("V02 baseline was not verified: require actual failing tests with an unmasked nonzero exit and no file changes before requesting a repair.");
       }
-      await ask(`Repair the verified failure: use apply_patch to fix only discount.mjs, then run exactly ${TEST_COMMAND} again. Keep that test command last; do not append echo, pipe its output, mask its exit status, edit tests or install dependencies. After all three tests pass, reply with only the exact sample.txt contents on one plain line.`, m(1));
+      await ask(`Repair the verified failure: use apply_patch to fix only discount.mjs. After applying the patch, re-read sample.txt with the native shell; do not infer its contents from earlier messages. Then run exactly ${TEST_COMMAND} again. Keep that test command last; do not append echo, pipe its output, mask its exit status, edit tests or install dependencies. After all three tests pass, reply with only the exact value just read from sample.txt on one plain line, not source code or test output.`, m(1));
       break;
     case "V03":
       await ask('Use only the fixture MCP lookup tool. First call it with key "missing". After receiving its ENOENT result, call it with key "selected" once. Reply with only the returned synthetic sample on one plain line. Do not read files or use shell tools.', m(1));
@@ -220,10 +226,18 @@ export function evaluate(scenario, model, facts) {
   const health = http.filter(row => row.path === "/health" && row.status === 200);
   check("watchdog", health.length > 0 && health.every(row => row.body?.ready === true && row.body.protocol === "responses"
     && Object.entries(CATALOG.watchdog).every(([key, value]) => row.body.turnWatchdog?.[key] === value)), "Production timeouts and bounded recovery remain enabled");
-  check("upstream", !usage.some(row => row.contentFilterTriggered === true || row.finishReason === "content_filter")
+  const diagnostics = facts.observer?.diagnostics ?? [];
+  const startupRecovered = failure => failure.operation === "listModels" && Number.isSafeInteger(failure.pid)
+    && (failure.failureType === "timeout" || failure.catalogFailure?.retryable === true)
+    && diagnostics.some(row => row.event === "bridge.upstream_catalog_recovering" && row.pid === failure.pid
+      && row.generation === failure.generation && row.at >= failure.at
+      && diagnostics.some(done => done.event === "bridge.upstream_catalog_recovered" && done.pid === failure.pid
+        && done.generation === failure.generation + 1 && done.at >= row.at));
+  check("upstream", diagnostics.filter(row => row.event === "bridge.upstream_connect_failed").every(startupRecovered)
+    && !usage.some(row => row.contentFilterTriggered === true || row.finishReason === "content_filter")
     && sdk.filter(row => row.type === "session.error").length === recoveredTransportErrors(facts)
     && !http.some(row => row.terminal === "response.failed" || row.status >= 400 && !isExpectedTitleRejection(row)),
-  "No unrecovered upstream/stream error; transport recovery requires matching cleanup, recovery and completed-response receipts");
+  "No unrecovered startup, upstream or stream error; recovery requires matching receipts");
   check("mcp-isolation", ev.samples?.count > 0 && ev.samples.maxRuntimes >= 1 && ev.samples.maxRuntimeMcp === 0 && ev.sampleErrors?.length === 0, "No MCP server ran under the Copilot runtime during owned process observations");
   const allowed = scenario.id === "V02" ? ["discount.mjs"] : [];
   check("workspace", facts.before && ev.workspace && [...new Set([...Object.keys(facts.before), ...Object.keys(ev.workspace)])]
@@ -234,8 +248,9 @@ export function evaluate(scenario, model, facts) {
     && !facts.observer?.diagnostics?.some(row => row.event === "bridge.session_cleanup_failed")
     && ev.leftovers?.length === 0 && ev.catalogLeft?.length === 0, "Owned PTY, bridge, runtime, browser and private catalogs are gone");
   check("execution", !facts.error && ev.rollout?.errors?.length === 0, "No case execution or native-evidence error");
-  const answer = value => (facts.answers ?? []).filter(row => row.expected === value && row.observed?.some(text => text.split(/\r?\n/).some(line => line.trim() === value))).length;
-  const m = n => marker(facts.seed, n), toolNames = (ev.rollout?.toolCalls ?? []).map(row => row.name);
+  const answer = value => (facts.answers ?? []).filter(row => row.expected === value && row.observed?.at(-1)?.trim() === value).length;
+  const m = n => scenario.id === "V02" && n === 1 ? codeSample(facts.seed) : marker(facts.seed, n);
+  const toolNames = (ev.rollout?.toolCalls ?? []).map(row => row.name);
   switch (scenario.id) {
     case "V01":
       check("V01.cli", facts.cli?.exitCode === 0 && facts.cli.events.some(row => row.type === "turn.completed")
@@ -255,8 +270,9 @@ export function evaluate(scenario, model, facts) {
         && /(?:#|ℹ) pass 3\b/.test(tests.at(-1).output), "Verified unchanged baseline with actual failing tests, then the same three passing tests in the repair turn; unmasked exits required");
       check("V02.edit", toolNames.some(name => SHELL_TOOLS.has(name)) && toolNames.includes("apply_patch")
         && sdk.some(row => row.type === "external_tool.requested") && facts.before?.["discount.mjs"]?.hash !== ev.workspace?.["discount.mjs"]?.hash
-        && typeof ev.workspace?.["discount.mjs"]?.hash === "string" && answer(m(1)) === 1 && launches.length === 1,
-      "Native read and apply_patch fix the source and return the hidden sample in the same process");
+        && typeof ev.workspace?.["discount.mjs"]?.hash === "string" && launches.length === 1,
+      "Native read and apply_patch fix only the source in the same process");
+      check("V02.answer", answer(m(1)) === 1, "The exact final client-visible answer is the hidden sample, not source code, commentary or test output");
       break;
     }
     case "V03": {

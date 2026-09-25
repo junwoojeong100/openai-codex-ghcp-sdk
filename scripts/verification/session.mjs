@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { performance } from "node:perf_hooks";
 import { isDeepStrictEqual } from "node:util";
 import { resolveCopilotHome } from "../../src/copilot-home.mjs";
+import { canonicalItem } from "../../src/request-policy.mjs";
 import { ROOT, environment, mkdir, tree, writeJson } from "./util.mjs";
 import { descendants, processTable } from "./processes.mjs";
 import { createBrowserTerminal } from "./browser.mjs";
@@ -50,7 +51,7 @@ export function readRollouts(codexHome) {
     }
   };
   walk(path.join(codexHome, "sessions"));
-  const summary = { files: files.length, toolCalls: [], commands: [], turnContexts: [], tasks: [], compactions: 0, userMessages: 0, patchApplies: 0, eventTypes: [], errors: [] };
+  const summary = { files: files.length, toolCalls: [], toolResults: [], commands: [], turnContexts: [], tasks: [], compactions: 0, userMessages: 0, patchApplies: 0, eventTypes: [], errors: [] };
   const eventTypes = new Set();
   const commandStarts = new Map();
   const commandText = argv => Array.isArray(argv) ? argv.length === 3 && /^-(?:l?c|cl)$/.test(argv[1])
@@ -83,6 +84,12 @@ export function readRollouts(codexHome) {
     }
     if (row.type === "turn_context") summary.turnContexts.push({ model: payload.model ?? null, effort: payload.effort ?? payload.reasoning_effort ?? null });
     else if (row.type === "compacted") summary.compactions++;
+    else if (row.type === "response_item" && ["function_call_output", "custom_tool_call_output"].includes(payload.type)) {
+      try {
+        const item = canonicalItem({ type: payload.type, call_id: payload.call_id, output: payload.output });
+        summary.toolResults.push({ callId: item.call_id, type: item.type, output: item.output });
+      } catch { summary.errors.push("Invalid native tool-result identity or text"); }
+    }
     else if (row.type === "response_item" && ["function_call", "custom_tool_call", "local_shell_call"].includes(payload.type)) {
       let name = payload.name ?? payload.type;
       // Codex intercepts `apply_patch` run through its shell tool; record only that fact, not the command.
@@ -195,7 +202,9 @@ export class TuiSession {
   async capture(label) {
     const launch = this.launches.at(-1);
     launch.screenshots ??= [];
-    const image = await this.renderer.capture(`checkpoint-${String(launch.screenshots.length + 1).padStart(2, "0")}.png`);
+    let image;
+    try { image = await this.renderer.capture(`checkpoint-${String(launch.screenshots.length + 1).padStart(2, "0")}.png`); }
+    catch (error) { throw new Error(`Browser capture failed at ${launch.label}/${label}: ${error.message}`, { cause: error }); }
     const textFile = image.file.replace(/\.png$/, ".txt"), text = this.screen() + "\n";
     fs.writeFileSync(path.join(this.directory, launch.label, textFile), text, { mode: 0o600 });
     launch.screenshots.push({ label, ...image, textFile, textHash: hash(text) });
@@ -204,6 +213,8 @@ export class TuiSession {
     const started = performance.now();
     for (;;) {
       const text = this.screen();
+      const browserError = this.launches?.at(-1)?.browserError;
+      if (browserError) throw new Error(`Browser rendering failed while waiting for ${label}: ${browserError}`);
       if (inspectTerminalScreen(text, { knownCodex: true }).update) {
         this.snapshot("unexpected-update-prompt");
         throw new Error("Codex displayed an update prompt. Verification will not select or install updates.");
@@ -278,10 +289,13 @@ export class TuiSession {
       if (this.ready(text) && finalText && nativeCompleted && !activeTasks.size) readySince ??= performance.now();
       else readySince = undefined;
       if (readySince === undefined || performance.now() - readySince < 500) return false;
-      const answers = this.observer().answers.slice(answerOffset);
-      if (this.answered(text, marker, prompt) && answers.some(answer => answer.content?.split(/\r?\n/).some(line => line.trim() === marker))) return true;
-      this.snapshot("unexpected-answer");
-      throw new Error("The model completed its turn without the expected answer; this is not a stream timeout.");
+      const sourceAnswer = this.observer().answers.slice(answerOffset).at(-1)?.content;
+      if (typeof latest.outputText !== "string" || latest.outputText.trim() !== marker
+        || typeof sourceAnswer !== "string" || sourceAnswer.trim() !== marker) {
+        this.snapshot("unexpected-answer");
+        throw new Error("The model completed its turn without the expected answer in the final client response; this is not a stream timeout.");
+      }
+      return this.answered(text, marker, prompt);
     }, timeoutMs);
   }
   async slash(command) {
