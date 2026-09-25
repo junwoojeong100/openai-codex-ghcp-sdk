@@ -253,11 +253,26 @@ export class SdkLifecycle {
     this.beginStop();
     this.closing = (async () => {
       const owned = new Set([this.client, ...this.retired]);
+      let failed = 0;
       for (const client of owned) {
         try {
           const errors = await withinDeadline(() => client.stop(), this.cleanupTimeoutMs);
           if (errors?.length) throw errors[0];
-        } catch { await this.#forceStop(client).catch(() => {}); }
+        } catch (error) {
+          this.#diagnostic({ event: "bridge.upstream_cleanup_failed", operation: "stop",
+            failureType: error?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error", timeoutMs: this.cleanupTimeoutMs });
+          try { await this.#forceStop(client); }
+          catch (forceError) {
+            failed++;
+            this.#diagnostic({ event: "bridge.upstream_cleanup_failed", operation: "forceStop",
+              failureType: forceError?.code === "sdk_operation_timeout" ? "timeout" : "rpc_error", timeoutMs: this.cleanupTimeoutMs });
+          }
+        }
+      }
+      if (failed) {
+        throw new BridgeRequestError(`Could not confirm shutdown of ${failed} owned Copilot SDK client(s).`, {
+          status: 503, code: "upstream_cleanup_failed",
+        });
       }
     })();
     return this.closing;

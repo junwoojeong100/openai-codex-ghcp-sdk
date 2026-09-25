@@ -2,9 +2,24 @@
 
 [한국어](STATUS_KO.md) · [Verification guide](VERIFICATION.md) · [Final result](validation/README.md)
 
+## v0.1.0 closeout
+
+The release freezes the documented text/client-tool bridge scope with two final safeguards:
+
+- Returned function/custom calls and their results share `MAX_TOOL_RESULTS` (default 32). Oversized batches fail before any call is delivered to Codex, rather than creating a continuation that cannot accept its results.
+- SDK shutdown diagnoses graceful failures, attempts force-stop, and reports unconfirmed cleanup after trying every owned client. The server and foreground launcher exit nonzero on final cleanup failure. The verification driver also rejects shutdown-failure diagnostics.
+
+These changes have offline boundary, HTTP/SSE, lifecycle and subprocess regressions. **No new live matrix was run for v0.1.0.** The 36/36 result below belongs to the pre-closeout source at `4c7fea2`, not to the release source. Release CI and the historical live result are separate evidence.
+
+The release source passed **449/449 unit/integration/documentation checks** and **22/22 real-Codex offline runtime checks**, sequentially on the unchanged implementation fingerprint `a893f3bde92f92bfdebb7b816359047971f337dc43e9a4c03a85f0ac006a5258`. Both suites use SDK doubles, not real model inference.
+
+The [MIT License](../LICENSE) defines reuse terms. The original run and frozen verifier also have a private, byte-identical backup outside this checkout; raw evidence is not a public release asset. The [v0.1.0 release](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/releases/tag/v0.1.0) is the maintenance baseline; unsupported features and endurance work are deferred.
+
+## Retained live result (before closeout)
+
 **codex-ghcp-essential-v1: 36/36 — PASS.** Actual execution: **2026-09-25, 12:30–12:40 KST**.
 
-A complete new live matrix passed on the corrected source, with `fullMatrixPassed=true` and `evidenceIntegrity=true`. All six models ran all six scenarios once; no case retries, fallback models or pooled results were used. The earlier failures were investigated, not regraded into successes.
+A complete live matrix passed on that pre-closeout source, with `fullMatrixPassed=true` and `evidenceIntegrity=true`. All six models ran all six scenarios once; no case retries, fallback models or pooled results were used. The earlier failures were investigated, not regraded into successes.
 
 | Model | Passed | Failed cases |
 | --- | --- | --- |

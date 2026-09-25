@@ -14,6 +14,8 @@ This is an **unofficial integration**, not a vendor-supported Codex/Copilot comb
 
 **Current assessment:** [implementation status and latest verification](docs/STATUS.md). The essential integration result is separate from unsupported or untested capabilities.
 
+**v0.1.0:** [release notes](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/releases/tag/v0.1.0). The retained 36/36 live result predates the final tool-limit and shutdown fixes; it is not a live verification of this release.
+
 | I want to | Start here |
 | --- | --- |
 | Install and try it | [Requirements](#requirements), then [Quick start](#quick-start) |
@@ -145,6 +147,8 @@ For development, `npm test` runs unit, safety and documentation regressions with
 Only the essential v1 suite and its latest result and media are retained. Full raw evidence is local and Git-ignored; a fresh clone contains the published summary and media, not the complete run.
 
 ## Contributors and references
+
+This project is licensed under the [MIT License](LICENSE). Dependencies retain their own licenses.
 
 Maintained by [junwoojeong100](https://github.com/junwoojeong100), with AI-assisted implementation, testing and documentation contributions from [Codex](https://github.com/codex) and [GitHub Copilot](https://github.com/Copilot).
 

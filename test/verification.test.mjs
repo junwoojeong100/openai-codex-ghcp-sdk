@@ -129,6 +129,16 @@ for (const id of SCENARIOS.map(row => row.id)) test(`${id}: essential checks req
   }
 });
 
+test("shutdown failure invalidates cleanup even when every owned process is gone", () => {
+  for (const id of SCENARIOS.map(row => row.id)) {
+    const facts = passingFacts(id);
+    facts.observer.diagnostics.push({ event: "bridge.shutdown_failed", code: "upstream_cleanup_failed" });
+    assert.ok(failures(id, facts).some(row => row.id === "cleanup"));
+    facts.observer.diagnostics = [{ event: "bridge.upstream_cleanup_failed", operation: "stop", failureType: "rpc_error" }];
+    assert.deepEqual(failures(id, facts), [], "a graceful-stop failure recovered by force-stop is not a final shutdown failure");
+  }
+});
+
 test("coding rejects masked exits, weakened tests and fake success summaries", () => {
   const repeated = passingFacts("V02");
   repeated.evidence.rollout.commands.push(structuredClone(repeated.evidence.rollout.commands.at(-1)));

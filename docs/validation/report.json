@@ -5,6 +5,8 @@
   "timezone": "Asia/Seoul",
   "contractId": "codex-ghcp-essential-v1",
   "executionKind": "live",
+  "sourceCommit": "4c7fea28077fa23742d59685b65e2ab7936be68a",
+  "scope": "Historical live result before the v0.1.0 tool-limit and shutdown fixes; not a live verification of v0.1.0.",
   "runId": "96a2b4e8-d38e-4bd4-a42d-56c54ac304d6",
   "startedAt": "2026-09-25T03:30:24.106Z",
   "finishedAt": "2026-09-25T03:40:27.667Z",

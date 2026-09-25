@@ -3,6 +3,8 @@ import test from "node:test";
 
 import { createBridgeServer, bridgeConfig } from "../src/server.mjs";
 import { BridgeRequestError, normalizeRequest } from "../src/request-policy.mjs";
+import { SessionManager } from "../src/session-manager.mjs";
+import { FakeClient } from "./helpers/stability-sdk.mjs";
 
 const model = "gpt-6-astra";
 const token = "local-test-token-not-a-github-credential";
@@ -132,6 +134,33 @@ test("context overflow retains its actionable code in both JSON and SSE", async 
   assert.equal(terminal.response.error.code, "context_length_exceeded");
   assert.doesNotMatch(streamed, /response.completed/);
 });
+
+for (const stream of [false, true]) {
+  test(`oversized tool batches fail before any call is delivered (${stream ? "SSE" : "JSON"})`, async t => {
+    const client = new FakeClient({ onSend: session => session.toolCalls(Array.from({ length: 33 }, (_, index) => ({
+      toolCallId: `batch-${index}`, name: session.config.tools[0].name, arguments: {},
+    }))) });
+    const manager = new SessionManager({ client, cleanupTimeoutMs: 30 });
+    t.after(() => manager.stop());
+    await manager.start();
+    const { post } = await setup(t, { execute: manager.execute.bind(manager) });
+    const response = await post({ model, input: "Use tools.", stream,
+      tools: [{ type: "function", name: "read_file", parameters: { type: "object", properties: {} } }] });
+    assert.equal(response.status, stream ? 200 : 502);
+    if (stream) {
+      const wire = await response.text();
+      const events = wire.split("\n").filter(line => line.startsWith("data: ")).map(line => JSON.parse(line.slice(6)));
+      assert.equal(events.at(-1).type, "response.failed");
+      assert.equal(events.at(-1).response.error.code, "tool_call_limit_exceeded");
+      assert.deepEqual(events.at(-1).response.output, []);
+      assert.ok(!events.some(event => event.type === "response.completed" || event.type === "response.output_item.added"));
+    } else assert.equal((await response.json()).error.code, "tool_call_limit_exceeded");
+    assert.equal(client.sessions[0].submitted.length, 0);
+    assert.equal(manager.states.size, 0);
+    assert.equal(manager.responses.size, 0);
+    assert.equal(manager.callStates.size, 0);
+  });
+}
 
 test("client disconnect cancels the corresponding SDK operation", async (t) => {
   let observeAbort;

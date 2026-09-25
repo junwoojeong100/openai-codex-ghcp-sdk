@@ -14,6 +14,8 @@ Codex → 로컬 HTTP/SSE bridge → GitHub Copilot SDK → 선택한 Copilot �
 
 **현재 평가:** [구현 상태와 최신 검증](docs/STATUS_KO.md). 핵심 연동 결과와 미지원·미검증 기능을 구분합니다.
 
+**v0.1.0:** [릴리스 안내](https://github.com/junwoojeong100/openai-codex-ghcp-sdk/releases/tag/v0.1.0). 보존된 실모델 36/36 결과는 마지막 도구 한도·종료 처리 보완 전 기록이며, 이번 릴리스의 실모델 검증 결과가 아닙니다.
+
 | 하려는 작업 | 시작할 곳 |
 | --- | --- |
 | 설치하고 사용해 보기 | [준비 사항](#준비-사항) → [빠른 시작](#빠른-시작) |
@@ -145,6 +147,8 @@ Copilot 사용량이 발생하며 결과 저장과 증거 재계산까지 자동
 핵심 v1 검증과 최신 결과·미디어만 보존합니다. 전체 원본 근거는 로컬에 있으며 Git에서 제외합니다. 새 clone에는 공개 요약과 미디어만 있고 전체 실행 근거는 없습니다.
 
 ## 기여자와 참고 자료
+
+이 프로젝트에는 [MIT 라이선스](LICENSE)를 적용합니다. 의존성에는 각각의 라이선스가 적용됩니다.
 
 [junwoojeong100](https://github.com/junwoojeong100)이 유지보수하며, [Codex](https://github.com/codex)와 [GitHub Copilot](https://github.com/Copilot)이 AI 도구로서 구현·테스트·문서 작성에 기여했습니다.
 

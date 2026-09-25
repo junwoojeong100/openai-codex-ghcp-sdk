@@ -245,7 +245,7 @@ export function evaluate(scenario, model, facts) {
   const launches = ev.launches ?? [];
   check("cleanup", launches.length > 0 && launches.every(row => row.cleanup?.childReaped && row.cleanup?.processGroupGone
     && !row.browserError && !row.rendererCloseError && !row.quitError)
-    && !facts.observer?.diagnostics?.some(row => row.event === "bridge.session_cleanup_failed")
+    && !facts.observer?.diagnostics?.some(row => ["bridge.session_cleanup_failed", "bridge.shutdown_failed"].includes(row.event))
     && ev.leftovers?.length === 0 && ev.catalogLeft?.length === 0, "Owned PTY, bridge, runtime, browser and private catalogs are gone");
   check("execution", !facts.error && ev.rollout?.errors?.length === 0, "No case execution or native-evidence error");
   const answer = value => (facts.answers ?? []).filter(row => row.expected === value && row.observed?.at(-1)?.trim() === value).length;

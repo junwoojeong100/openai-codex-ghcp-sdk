@@ -204,6 +204,7 @@ Settings ending in `_MS` use **milliseconds**, `_BYTES` use **bytes**, and attem
 | `TURN_IDLE_RECOVERY_ATTEMPTS` | 1 | Shared idle/transport session-recovery budget per request: 0–3; 0 disables these retries, not SDK connection/catalog recovery. |
 | `MAX_REQUESTS_PER_SESSION` | 8 | Running plus queued requests per conversation. |
 | `MAX_REQUESTS` | 128 | Running plus queued requests in total. |
+| `MAX_TOOL_RESULTS` | 32 | All function/custom calls returned in one turn and all corresponding results accepted together. An oversized call batch fails before any call is delivered. |
 | `SDK_READINESS_TIMEOUT_MS` | 2000 | Local SDK ping deadline. |
 | `SDK_READINESS_INTERVAL_MS` | 15000 | Background connection-check interval. Turn-watchdog diagnostics use the minimum of this, the first-progress limit and the idle limit. |
 | `SDK_RECOVERY_BACKOFF_MS` | 5000 | Minimum gap between failed connection-recovery attempts. |
@@ -229,6 +230,7 @@ See [recovery details](ARCHITECTURE.md#model-progress-and-recovery).
 | `copilot_timeout` | 504 | The whole-turn limit expired, including any recovery. |
 | `request_timeout` | 504 | The whole-request limit expired, including queue wait. |
 | `request_queue_full` | 429 | Too many running and queued requests. Nothing was submitted. |
+| `tool_call_limit_exceeded` | 502 | The model returned more calls than `MAX_TOOL_RESULTS`. None were forwarded; request a smaller batch rather than splitting its results. |
 | `upstream_unavailable` | 503 | The SDK connection could not become ready; this connection-recovery path does not retry inference. |
 | `upstream_session_lost` | 409 | The Copilot connection was lost. Start a new conversation. |
 
@@ -237,6 +239,8 @@ These HTTP statuses apply before streaming starts. An already-started SSE respon
 A startup `listModels` timeout or recognized transport/server/internal-JSON-RPC failure can replace the SDK client once after confirmed cleanup, within the same `SDK_STARTUP_TIMEOUT_MS` budget (30 seconds by default). The first catalog attempt gets at most half that budget (15 seconds by default), also capped by the remaining startup time. Cleanup retains its separate bound. Known authentication, authorization, rate-limit, invalid-parameter and cancellation failures, and untyped errors, are not retried. Diagnostics retain only bounded error categories/codes, never the upstream message. This read-only retry cannot replay a prompt or tool result.
 
 ### Restart the bridge safely
+
+If SDK force-stop fails, the server records `bridge.shutdown_failed` with `upstream_cleanup_failed` and exits with code 1. The foreground launcher also exits nonzero; a stopped background PID alone does not certify SDK cleanup, so check its private bridge log. Do not treat the failure as confirmed cleanup or repeat already-completed tools.
 
 **A bridge keeps the code and settings it started with.** To apply edited source files or changed environment variables, restart it. Keep the terminal in your **original working project**. The paths below assume a clone at `$HOME/GitHub/openai-codex-ghcp-sdk`; adjust them if needed.
 

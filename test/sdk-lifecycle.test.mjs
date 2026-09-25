@@ -18,6 +18,60 @@ function setup(t, options = {}) {
   t.after(() => lifecycle.stop()); return lifecycle;
 }
 
+for (const mode of ["rejected", "returned-errors", "timeout"]) {
+  test(`shutdown diagnoses graceful failure but accepts confirmed force-stop (${mode})`, async () => {
+    const diagnostics = [];
+    const client = peer({ async stop() {
+      this.stops++;
+      if (mode === "timeout") return new Promise(() => {});
+      if (mode === "returned-errors") return [new Error("private-stop-detail")];
+      throw new Error("private-stop-detail");
+    } });
+    const lifecycle = new SdkLifecycle({ client, cleanupTimeoutMs: 20, onDiagnostic: row => diagnostics.push(row) });
+    const first = lifecycle.stop();
+    assert.equal(lifecycle.stop(), first);
+    await first;
+    assert.equal(client.stops, 1);
+    assert.equal(client.forced, 1);
+    assert.deepEqual(diagnostics, [{ event: "bridge.upstream_cleanup_failed", operation: "stop",
+      failureType: mode === "timeout" ? "timeout" : "rpc_error", timeoutMs: 20 }]);
+    assert.equal(lifecycle.snapshot().ready, false);
+  });
+}
+
+for (const mode of ["rejected", "timeout", "missing-method"]) {
+  test(`shutdown rejects unconfirmed force-stop and still cleans other owned clients (${mode})`, async () => {
+    const diagnostics = [], retired = peer();
+    const client = peer({
+      async stop() { this.stops++; throw new Error("private-stop-detail"); },
+      async forceStop() {
+        this.forced++;
+        if (mode === "timeout") return new Promise(() => {});
+        throw new Error("private-force-detail");
+      },
+    });
+    if (mode === "missing-method") delete client.forceStop;
+    const lifecycle = new SdkLifecycle({ client, cleanupTimeoutMs: 20, onDiagnostic: row => diagnostics.push(row) });
+    lifecycle.retired.add(retired);
+    const stopped = lifecycle.stop();
+    assert.equal(lifecycle.stop(), stopped);
+    await assert.rejects(stopped, error => {
+      assert.equal(error.code, "upstream_cleanup_failed");
+      assert.match(error.message, /1 owned Copilot SDK client/);
+      assert.doesNotMatch(error.message, /private-/);
+      return true;
+    });
+    assert.equal(client.stops, 1);
+    assert.equal(retired.stops, 1);
+    assert.equal(retired.forced, 0);
+    assert.deepEqual(diagnostics.map(row => [row.operation, row.failureType]),
+      [["stop", "rpc_error"], ["forceStop", mode === "timeout" ? "timeout" : "rpc_error"]]);
+    assert.doesNotMatch(JSON.stringify(diagnostics), /private-/);
+    await assert.rejects(lifecycle.stop(), { code: "upstream_cleanup_failed" });
+    assert.equal(client.stops, 1);
+  });
+}
+
 test("simultaneous failed readiness probes share one recovery despite backoff", async t => {
   const old = peer(), replacement = peer(); let factories = 0, lost = 0;
   const lifecycle = setup(t, { client: old, clientFactory: () => { factories++; return replacement; }, onLost: () => { lost++; } });

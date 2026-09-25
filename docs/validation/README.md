@@ -1,6 +1,8 @@
-# Final verification result — 2026-09-25
+# Recorded live verification — 2026-09-25
 
 [한국어](README_KO.md) · [Verification guide](../VERIFICATION.md) · [JSON](report.json)
+
+**Historical scope:** this run records source commit `4c7fea2`, before the v0.1.0 tool-limit and shutdown fixes. It is not a live pass for the release. See [current implementation status](../STATUS.md) for that distinction; the original facts, scores and media are unchanged.
 
 ## Recorded results
 
@@ -76,10 +78,10 @@ This record retains only the latest local verification. A specific commit's remo
 This command needs the original local `.runtime/verification-final/` directory; Git does not include it. It recomputes the saved result without calling a model. A fresh clone's public summary and media are not enough to reproduce the integrity check.
 
 ```bash
-npm run verify -- --verify .runtime/verification-final/report.json
+node .runtime/verification-final/source-snapshot/scripts/verify.mjs --verify .runtime/verification-final/report.json
 ```
 
-Current and frozen-source verifiers reproduce the same passing result. This command returns **exit 0** for the retained run, without calling models or regrading an earlier run.
+Use the frozen verifier because the release source has changed. This command returns **exit 0** for the retained run, without calling models or regrading an earlier run. The current verifier intentionally rejects this historical report's different implementation fingerprint. The original directory also has a verified private backup outside the checkout; no raw evidence is uploaded with the release.
 
 ## Cleanup and limits
 

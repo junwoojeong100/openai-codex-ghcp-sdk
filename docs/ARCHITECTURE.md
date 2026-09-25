@@ -108,9 +108,9 @@ When a conversation has no live SDK session, for example after a bridge restart,
 ## Lifetime and security boundaries
 
 - **Access:** the HTTP listener is loopback-only and requires a bridge-specific credential on every route except `/health`. Launchers pass a generated local credential through child-process environment variables; they do not copy Copilot authentication into Codex configuration.
-- **Bounds:** session count, idle lifetime, body size, history size and turn duration are all limited.
+- **Bounds:** session count, idle lifetime, body size, history size and turn duration are all limited. `MAX_TOOL_RESULTS` also caps all returned function/custom calls in one turn. Oversized batches fail before any call is published or cached, so Codex cannot execute a batch whose results the bridge would reject.
 - **Eviction:** a client disconnect, or a failed or timed-out turn, evicts its bridge-owned SDK session. Cleanup attempts abort, disconnect and delete, each with a deadline. TTL or capacity eviction can invalidate pending calls; clients then get an explicit error, never a made-up tool result.
-- **Shutdown:** stops this project's SDK client, with a forced stop if graceful cleanup fails.
+- **Shutdown:** attempts every owned SDK client, with a bounded force-stop if graceful cleanup fails. `bridge.upstream_cleanup_failed` records only the operation and bounded failure metadata. If force-stop also fails, `upstream_cleanup_failed` propagates and the server logs `bridge.shutdown_failed` before exiting with code 1; the foreground launcher preserves that failure even if Codex exited successfully. Successful force-stop after a graceful failure still permits exit 0. A background stop command confirms process termination, not the SDK cleanup outcome; inspect its private bridge log for shutdown diagnostics.
 
 ### Model progress and recovery
 

@@ -149,16 +149,19 @@ async function requireModel(bridge, model) {
 
 export async function stopChildBridge(bridge, timeoutMs = shutdownTimeoutMs) {
   const child = bridge?.child;
-  if (!child || child.exitCode !== null || child.signalCode !== null) return;
-  child.kill("SIGTERM");
-  let timer;
-  const exited = await Promise.race([
-    bridge.exited.then(() => true),
-    new Promise((resolve) => { timer = setTimeout(() => resolve(false), timeoutMs); }),
-  ]).finally(() => clearTimeout(timer));
-  if (!exited && child.exitCode === null && child.signalCode === null) {
-    child.kill("SIGKILL");
-    await bridge.exited;
+  if (!child) return;
+  if (child.exitCode === null && child.signalCode === null) {
+    child.kill("SIGTERM");
+    let timer;
+    const exited = await Promise.race([
+      bridge.exited.then(() => true),
+      new Promise((resolve) => { timer = setTimeout(() => resolve(false), timeoutMs); }),
+    ]).finally(() => clearTimeout(timer));
+    if (!exited && child.exitCode === null && child.signalCode === null) child.kill("SIGKILL");
+  }
+  const { code, signal } = await bridge.exited;
+  if (code !== 0) {
+    throw new Error(`The GHCP bridge did not shut down cleanly (${signal ? `signal ${signal}` : `exit code ${code}`}). Check its cleanup diagnostics.`);
   }
 }
 
@@ -223,7 +226,8 @@ export async function startBridge({ env = process.env, model, port = 0, backgrou
     if (signal?.aborted) throw new Error("Bridge startup was cancelled.");
     return bridge;
   } catch (error) {
-    await stopChildBridge(bridge);
+    try { await stopChildBridge(bridge); }
+    catch (cleanupError) { error.message += ` ${cleanupError.message}`; }
     const detail = output.trim().replaceAll(token, "[local bridge token]");
     throw new Error(`${error.message}${detail ? `\n${detail}` : logPath ? ` See ${logPath}.` : ""}`);
   }
@@ -279,7 +283,8 @@ export async function ensureDaemon({ env = process.env, model, port = 0, signal 
       bridge.child.unref();
       return registry;
     } catch (error) {
-      await stopChildBridge(bridge);
+      try { await stopChildBridge(bridge); }
+      catch (cleanupError) { error.message += ` ${cleanupError.message}`; }
       if (readDaemonRegistry(paths)?.instanceId === registry.instanceId) fs.unlinkSync(paths.registry);
       throw error;
     }

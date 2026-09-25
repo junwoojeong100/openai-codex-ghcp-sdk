@@ -229,6 +229,9 @@ export class SessionManager {
     if (!Number.isSafeInteger(turnIdleRecoveryAttempts) || turnIdleRecoveryAttempts < 0 || turnIdleRecoveryAttempts > 3) {
       throw new Error("turnIdleRecoveryAttempts must be an integer from 0 through 3.");
     }
+    if (!Number.isSafeInteger(maxToolResults) || maxToolResults < 1) {
+      throw new Error("maxToolResults must be a positive safe integer.");
+    }
     this.clientFactory = clientFactory ?? (client ? null : () => new CopilotClient({
       mode: "empty", baseDirectory, logLevel, enableRemoteSessions: false,
     }));
@@ -619,9 +622,15 @@ export class SessionManager {
       if (state.evicted || state.fault) throw state.fault ?? abortError();
       const output = outputItems(turn.messages, tools);
       if (!output.length) throw invalidUpstream("Copilot became idle without an assistant answer or a tool call.");
-      if (!request.parallelToolCalls && output.filter(isCall).length > 1) {
+      const calls = output.filter(isCall);
+      if (!request.parallelToolCalls && calls.length > 1) {
         throw new BridgeRequestError("Copilot returned multiple tool calls when parallel_tool_calls=false. No calls were forwarded; start a new turn.", {
           status: 502, code: "parallel_tool_calls_violation",
+        });
+      }
+      if (calls.length > this.maxToolResults) {
+        throw new BridgeRequestError(`Copilot returned more than MAX_TOOL_RESULTS (${this.maxToolResults}) tool calls. No calls were forwarded; request a smaller batch.`, {
+          status: 502, code: "tool_call_limit_exceeded",
         });
       }
       const completeHistory = [...recordedInput, ...output.map(canonicalItem).filter(Boolean)];
@@ -632,7 +641,7 @@ export class SessionManager {
       validateResult?.(result);
       assertNotAborted(signal);
       if (state.evicted || state.fault) throw state.fault ?? abortError();
-      for (const item of output.filter(isCall)) {
+      for (const item of calls) {
         const owner = this.callStates.get(item.call_id);
         if (owner && owner !== state) throw new Error("Copilot returned a tool call ID belonging to another session.");
         if (state.completed.has(item.call_id)) throw new Error("Copilot reused a completed tool call ID.");

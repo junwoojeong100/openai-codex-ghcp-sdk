@@ -1,6 +1,8 @@
-# 최종 검증 결과 — 2026-09-25
+# 기록된 실모델 검증 — 2026-09-25
 
 [English](README.md) · [단일 검증 안내](../VERIFICATION_KO.md) · [JSON](report.json)
+
+**과거 실행의 범위:** 이 기록은 v0.1.0의 도구 한도·종료 처리 보완 전 `4c7fea2` 소스의 결과이며, 릴리스의 실모델 통과를 뜻하지 않습니다. [현재 구현 상태](../STATUS_KO.md)에서 범위를 구분하며 원본 fact·점수·미디어는 변경하지 않았습니다.
 
 ## 기록된 결과
 
@@ -76,10 +78,10 @@ Codex 0.154.0 · Copilot SDK 1.0.14 · darwin/arm64 · Node v22.16.0
 이 명령에는 원래 로컬 `.runtime/verification-final/` 폴더가 필요하며 Git에는 포함되지 않습니다. 모델 호출 없이 저장된 결과를 재계산합니다. 새 clone의 공개 요약·미디어만으로 무결성 검사를 재현할 수는 없습니다.
 
 ```bash
-npm run verify -- --verify .runtime/verification-final/report.json
+node .runtime/verification-final/source-snapshot/scripts/verify.mjs --verify .runtime/verification-final/report.json
 ```
 
-현재 소스와 동결 소스의 검증기가 같은 통과 결과를 재현합니다. 보존한 실행의 재검사는 **종료 코드 0**을 반환하며 모델을 호출하거나 이전 실행을 재채점하지 않습니다.
+릴리스 소스가 바뀌었으므로 동결 검증기를 사용합니다. 보존한 실행의 재검사는 **종료 코드 0**을 반환하며 모델을 호출하거나 이전 실행을 재채점하지 않습니다. 현재 검증기는 이 과거 보고서와 구현 지문이 다르므로 의도적으로 거절합니다. 원본 폴더는 checkout 밖에도 확인된 비공개 사본으로 보존하며 공개 릴리스에는 원시 근거를 업로드하지 않습니다.
 
 ## 정리와 한계
 

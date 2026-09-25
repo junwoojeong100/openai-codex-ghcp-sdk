@@ -248,8 +248,13 @@ async function main() {
     server.close();
     server.abortActiveRequests();
     server.closeAllConnections();
-    await manager.stop();
-    process.exit(0);
+    try {
+      await manager.stop();
+      process.exit(0);
+    } catch (error) {
+      onDiagnostic({ event: "bridge.shutdown_failed", code: error.code || "cleanup_failed" });
+      process.exit(1);
+    }
   };
   process.once("SIGINT", shutdown);
   process.once("SIGTERM", shutdown);
@@ -272,7 +277,10 @@ async function main() {
     console.log(JSON.stringify(event));
     process.send?.(event);
   } catch (error) {
-    await manager.stop();
+    try { await manager.stop(); }
+    catch (cleanupError) {
+      onDiagnostic({ event: "bridge.shutdown_failed", code: cleanupError.code || "cleanup_failed" });
+    }
     throw error;
   }
 }
@@ -280,6 +288,6 @@ async function main() {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(`${error.name}: ${error.message}`);
-    process.exitCode = 1;
+    process.exit(1);
   });
 }

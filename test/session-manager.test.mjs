@@ -254,6 +254,69 @@ test("serial tool requests fail closed if the SDK emits multiple calls", async (
   assert.equal(manager.callStates.size, 0);
 });
 
+for (const configuredLimit of [undefined, 2]) {
+  for (const overflow of [false, true]) {
+    const limit = configuredLimit ?? 32, count = limit + Number(overflow);
+    test(`tool-call batches respect the ${configuredLimit === undefined ? "default" : "configured"} result limit (${count} calls)`, async t => {
+      const request = body("Use tools.", { tools: [functionTool, customTool] });
+      const { manager, client } = await setup(t, { maxToolResults: configuredLimit }, {
+        onSend: session => session.toolCalls(Array.from({ length: count }, (_, index) =>
+          call(request, index % 2, `batch-${index}`, index % 2 ? { input: "raw patch" } : { path: "example" }))),
+        onSubmit: session => { if (session.submitted.length === count) session.reply("done"); },
+      });
+      let validated = false;
+      const first = manager.execute(request, headers("batch"), { responseId: "batch-first",
+        validateResult: () => { validated = true; } });
+      if (overflow) {
+        await assert.rejects(first, { status: 502, code: "tool_call_limit_exceeded" });
+        assert.equal(validated, false);
+        assert.equal(client.sessions[0].submitted.length, 0);
+        assert.equal(client.sessions[0].aborted, 1);
+        assert.equal(client.sessions[0].disconnected, 1);
+        assert.equal(client.deleted.length, 1);
+        assert.equal(manager.states.size, 0);
+        assert.equal(manager.responses.size, 0);
+        assert.equal(manager.callStates.size, 0);
+        client.onSend = session => session.reply("fresh turn");
+        assert.equal((await manager.execute(body("Continue without tools."), headers("batch"))).messages[0].content, "fresh turn");
+      } else {
+        const result = await first, calls = outputItems(result.messages, result.tools);
+        assert.equal(validated, true);
+        assert.equal(calls.length, limit);
+        const followup = body(calls.map(item => ({ type: `${item.type}_output`, call_id: item.call_id, output: "real result" })),
+          { previous_response_id: "batch-first" });
+        const final = await manager.execute(followup, headers("batch"));
+        assert.equal(final.messages[0].content, "done");
+        assert.equal(client.sessions[0].submitted.length, limit);
+        assert.deepEqual(await manager.execute(followup, headers("batch")), final);
+        assert.equal(client.sessions[0].submitted.length, limit);
+      }
+    });
+  }
+}
+
+test("tool-result limits must be positive safe integers", () => {
+  for (const maxToolResults of [0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, "32", null]) {
+    assert.throws(() => new SessionManager({ client: new FakeClient(), maxToolResults }), /maxToolResults/);
+  }
+});
+
+test("manager shutdown propagates unconfirmed SDK cleanup after draining owned sessions", async t => {
+  const client = new FakeClient();
+  client.stop = async () => { throw new Error("private-stop-detail"); };
+  client.forceStop = async () => { throw new Error("private-force-detail"); };
+  const manager = new SessionManager({ client, cleanupTimeoutMs: 30 });
+  t.after(() => assert.rejects(manager.stop(), { code: "upstream_cleanup_failed" }));
+  await manager.start();
+  await manager.execute(body());
+  await assert.rejects(manager.stop(), { code: "upstream_cleanup_failed" });
+  assert.equal(client.sessions[0].aborted, 1);
+  assert.equal(client.sessions[0].disconnected, 1);
+  assert.equal(client.deleted.length, 1);
+  assert.equal(manager.states.size, 0);
+  assert.equal(manager.queue.total, 0);
+});
+
 test("full transcript custom tool follow-up retains namespace and raw argument bytes", async (t) => {
   const request = body("read it", { tools: [{ type: "namespace", name: "functions", tools: [customTool] }] });
   const raw = "first\n  second\n";

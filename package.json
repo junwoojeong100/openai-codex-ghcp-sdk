@@ -2,6 +2,7 @@
   "name": "openai-codex-ghcp-sdk",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "description": "Run OpenAI Codex with GitHub Copilot models through the GitHub Copilot SDK.",
   "engines": {
